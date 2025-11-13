@@ -1,0 +1,1045 @@
+import 'package:businessbuddy/utils/exported_path.dart';
+
+class BusinessDetails extends StatefulWidget {
+  const BusinessDetails({super.key});
+
+  @override
+  State<BusinessDetails> createState() => _BusinessDetailsState();
+}
+
+class _BusinessDetailsState extends State<BusinessDetails> {
+  final List<String> _imageList = [
+    Images.hotelImg,
+    Images.hotelImg,
+    Images.hotelImg,
+    Images.hotelImg,
+  ];
+
+  // Business data variables
+  final String _businessName = 'Hotel Jyoti Family Restaurant';
+  final String _businessCategory = 'Restaurant';
+  final String _followersCount = '10K';
+  final double _businessRating = 4.9;
+  final int _reviewCount = 50;
+  final String _businessDescription =
+      'Chinese, Punjabi, Mughlai, Sea Food, North Indian, Malwani, Maharashtrian';
+  final String _businessPhone = '+91 XXXXXXXXXX';
+  final String _businessAddress =
+      'Opp HP Petrol Pump Near IT Adharv College, Ekta Nagar, Old Link Road, Kandivali West-400067';
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: _buildAppBar(),
+      floatingActionButton: _buildFloatingActionButton(),
+      body: _buildBody(),
+    );
+  }
+
+  PreferredSizeWidget _buildAppBar() {
+    return AppBar(
+      surfaceTintColor: Colors.white,
+      backgroundColor: Colors.white,
+      elevation: 0,
+      centerTitle: true,
+      flexibleSpace: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0XFFFF383C).withValues(alpha: 0.4),
+              Colors.white.withValues(alpha: 0.5),
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+      ),
+      title: CustomText(
+        title: "Business Details",
+        fontSize: 22.sp,
+        fontWeight: FontWeight.bold,
+        color: Colors.black87,
+      ),
+    );
+  }
+
+  Widget _buildFloatingActionButton() {
+    return FloatingActionButton(
+      backgroundColor: primaryColor,
+      foregroundColor: Colors.white,
+      shape: const CircleBorder(),
+      onPressed: _addNewContent,
+      child: const Icon(Icons.add),
+    );
+  }
+
+  Widget _buildBody() {
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(16.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildHeaderSection(),
+          SizedBox(height: 16.h),
+          const Divider(),
+          _buildImageGallery(),
+          SizedBox(height: 16.h),
+          const Divider(),
+          _buildAboutSection(),
+          // SizedBox(height: 24.h),
+          _buildContactSection(),
+          const Divider(),
+          _buildReviewsSection(),
+
+          _buildPostAndOffersSection(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeaderSection() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildBusinessImage(),
+        SizedBox(width: 12.w),
+        Expanded(child: _buildBusinessInfo()),
+      ],
+    );
+  }
+
+  Widget _buildBusinessImage() {
+    return Container(
+      width: 80.w,
+      height: 80.h,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withValues(alpha: 0.2),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12.r),
+        child: FadeInImage(
+          placeholder: const AssetImage(Images.logo),
+          image: AssetImage(Images.hotelImg),
+          fit: BoxFit.cover,
+          imageErrorBuilder: (context, error, stackTrace) {
+            return Container(
+              color: lightGrey,
+              padding: EdgeInsets.all(20.w),
+              child: Image.asset(Images.logo, fit: BoxFit.contain),
+            );
+          },
+          fadeInDuration: const Duration(milliseconds: 300),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBusinessInfo() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: CustomText(
+                textAlign: TextAlign.start,
+                title: _businessName,
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w700,
+                color: Colors.black87,
+                maxLines: 2,
+              ),
+            ),
+            SizedBox(width: 8.w),
+            _buildEditButton(),
+          ],
+        ),
+        SizedBox(height: 8.h),
+        _buildCategoryAndFollowers(),
+      ],
+    );
+  }
+
+  Widget _buildEditButton() {
+    return GestureDetector(
+      onTap: _editBusinessDetails,
+      child: Container(
+        padding: EdgeInsets.all(6.w),
+        decoration: BoxDecoration(
+          color: primaryColor.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(8.r),
+        ),
+        child: Icon(Icons.edit_outlined, size: 18.w, color: primaryColor),
+      ),
+    );
+  }
+
+  Widget _buildCategoryAndFollowers() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CustomText(
+          title: _businessCategory,
+          fontSize: 14.sp,
+          color: textLightGrey,
+          fontWeight: FontWeight.w500,
+        ),
+        SizedBox(height: 4.h),
+        RichText(
+          text: TextSpan(
+            children: [
+              TextSpan(
+                text: _followersCount,
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  color: primaryColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              TextSpan(
+                text: ' followers',
+                style: TextStyle(fontSize: 12.sp, color: textLightGrey),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildImageGallery() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CustomText(
+          title: 'Gallery',
+          fontSize: 16.sp,
+          fontWeight: FontWeight.w600,
+          color: Colors.black87,
+        ),
+        SizedBox(height: 8.h),
+        SizedBox(
+          height: 80.h,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: _imageList.length,
+            separatorBuilder: (_, __) => SizedBox(width: 12.w),
+            itemBuilder: (context, index) {
+              return _buildGalleryImage(index);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGalleryImage(int index) {
+    return GestureDetector(
+      onTap: () => _openImagePreview(index),
+      child: Container(
+        width: 80.w,
+        height: 80.h,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12.r),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withValues(alpha: 0.2),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12.r),
+          child: Image.asset(
+            _imageList[index],
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return Container(
+                color: lightGrey,
+                child: Icon(Icons.broken_image, color: Colors.grey.shade400),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAboutSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CustomText(
+          title: 'About',
+          fontSize: 18.sp,
+          fontWeight: FontWeight.w700,
+          color: Colors.black87,
+        ),
+        SizedBox(height: 8.h),
+        CustomText(
+          title: _businessDescription,
+          fontSize: 14.sp,
+          maxLines: 10,
+          textAlign: TextAlign.start,
+          color: Colors.grey.shade700,
+          // lineHeight: 1.5,
+        ),
+        Divider(),
+      ],
+    );
+  }
+
+  Widget _buildContactSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CustomText(
+          title: 'Contact Information',
+          fontSize: 18.sp,
+          fontWeight: FontWeight.w700,
+          color: Colors.black87,
+        ),
+        SizedBox(height: 12.h),
+        _buildContactItem(
+          icon: Icons.phone_outlined,
+          title: 'Mobile Number',
+          value: _businessPhone,
+          onTap: () => _makePhoneCall(_businessPhone),
+        ),
+        SizedBox(height: 12.h),
+        _buildContactItem(
+          icon: Icons.location_on_outlined,
+          title: 'Address',
+          value: _businessAddress,
+          onTap: () => _openMaps(_businessAddress),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildContactItem({
+    required IconData icon,
+    required String title,
+    required String value,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 8.h),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(icon, size: 20.w, color: primaryColor),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CustomText(
+                    title: title,
+                    fontSize: 14.sp,
+                    color: Colors.grey.shade600,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  SizedBox(height: 4.h),
+                  CustomText(
+                    maxLines: 3,
+                    textAlign: TextAlign.start,
+                    title: value,
+                    fontSize: 14.sp,
+                    color: Colors.black87,
+                    // lineHeight: 1.4,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildReviewsSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            CustomText(
+              title: 'Reviews & Ratings',
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w700,
+              color: Colors.black87,
+            ),
+            _buildRatingSummary(),
+          ],
+        ),
+        SizedBox(height: 16.h),
+        _buildReviewList(),
+      ],
+    );
+  }
+
+  Widget _buildRatingSummary() {
+    return GestureDetector(
+      onTap: _viewAllReviews,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade50,
+          borderRadius: BorderRadius.circular(20.r),
+          border: Border.all(color: Colors.grey.shade200),
+        ),
+        child: Row(
+          children: [
+            CustomText(
+              title: _businessRating.toString(),
+              fontSize: 14.sp,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+            SizedBox(width: 4.w),
+            Icon(Icons.star, color: Colors.amber, size: 16.w),
+            SizedBox(width: 4.w),
+            CustomText(
+              title: '($_reviewCount)',
+              fontSize: 12.sp,
+              color: Colors.grey.shade600,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildReviewList() {
+    return Column(
+      children: [
+        _buildReviewTile(
+          userName: 'Mandar',
+          review:
+              'At Hotel Jyoti Family Restaurant, I was delighted by the rich flavors and aromatic dishes. Each bite of their signature biryani was a culinary delight, bursting with spices.',
+          rating: 5,
+          date: '2 days ago',
+        ),
+        SizedBox(height: 16.h),
+        _buildReviewTile(
+          userName: 'Danish',
+          review:
+              'At Hotel Jyoti Family Restaurant, I was delighted by the rich flavors and aromatic dishes. Each bite of their signature biryani was a culinary delight, bursting with spices.',
+          rating: 5,
+          date: '1 week ago',
+        ),
+        SizedBox(height: 16.h),
+        Center(
+          child: TextButton(
+            onPressed: _viewAllReviews,
+            child: CustomText(
+              title: 'View All Reviews',
+              fontSize: 14.sp,
+              color: primaryColor,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildReviewTile({
+    required String userName,
+    required String review,
+    required int rating,
+    required String date,
+  }) {
+    return Container(
+      padding: EdgeInsets.all(12.w),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              CustomText(
+                title: userName,
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
+              CustomText(
+                title: date,
+                fontSize: 12.sp,
+                color: Colors.grey.shade500,
+              ),
+            ],
+          ),
+          SizedBox(height: 4.h),
+          _buildStarRating(rating),
+          SizedBox(height: 8.h),
+          CustomText(
+            maxLines: 10,
+            textAlign: TextAlign.start,
+            title: review,
+            fontSize: 14.sp,
+            color: Colors.grey.shade700,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStarRating(int rating) {
+    return Row(
+      children: List.generate(5, (index) {
+        return Icon(
+          index < rating ? Icons.star : Icons.star_border,
+          color: Colors.amber,
+          size: 16.w,
+        );
+      }),
+    );
+  }
+
+  Widget _buildPostAndOffersSection() {
+    return DefaultTabController(
+      length: 2,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12.r),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withValues(alpha: 0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            _buildTabBar(),
+            SizedBox(
+              height: 320.h,
+              child: TabBarView(
+                children: [_buildPostsGrid(), _buildPostsGrid()],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTabBar() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(12.r),
+          topRight: Radius.circular(12.r),
+        ),
+      ),
+      child: TabBar(
+        indicatorColor: primaryColor,
+        labelColor: primaryColor,
+        unselectedLabelColor: Colors.grey.shade600,
+        indicatorWeight: 2.0,
+        labelStyle: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
+        unselectedLabelStyle: TextStyle(
+          fontSize: 14.sp,
+          fontWeight: FontWeight.w500,
+        ),
+        tabs: const [
+          Tab(text: 'Posts'),
+          Tab(text: 'Offers'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPostsGrid() {
+    return GridView.builder(
+      padding: EdgeInsets.all(12.w),
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        crossAxisSpacing: 8.w,
+        mainAxisSpacing: 8.h,
+      ),
+      itemCount: 9,
+      itemBuilder: (context, index) {
+        return _buildGridItem(Images.hotelImg);
+      },
+    );
+  }
+
+  // Widget _buildOffersGrid() {
+  //   return GridView.builder(
+  //     padding: EdgeInsets.all(12.w),
+  //     physics: const NeverScrollableScrollPhysics(),
+  //     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+  //       crossAxisCount: 2,
+  //       crossAxisSpacing: 12.w,
+  //       mainAxisSpacing: 12.h,
+  //     ),
+  //     itemCount: 4,
+  //     itemBuilder: (context, index) {
+  //       return _buildOfferItem();
+  //     },
+  //   );
+  // }
+
+  Widget _buildGridItem(String imagePath) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8.r),
+      child: Image.asset(imagePath, fit: BoxFit.cover),
+    );
+  }
+
+  Widget _buildOfferItem() {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12.r),
+        color: primaryColor.withValues(alpha: 0.1),
+        border: Border.all(color: primaryColor.withValues(alpha: 0.3)),
+      ),
+      padding: EdgeInsets.all(12.w),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.local_offer_outlined, color: primaryColor, size: 24.w),
+          SizedBox(height: 8.h),
+          CustomText(
+            title: 'Special Offer',
+            fontSize: 14.sp,
+            fontWeight: FontWeight.w600,
+            color: primaryColor,
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 4.h),
+          CustomText(
+            title: '20% OFF',
+            fontSize: 12.sp,
+            color: Colors.grey.shade700,
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Action methods
+  void _editBusinessDetails() {
+    // Navigate to edit business details screen
+    print('Edit business details tapped');
+  }
+
+  void _addNewContent() {
+    // Show bottom sheet for adding new content
+    print('Add new content tapped');
+  }
+
+  void _openImagePreview(int index) {
+    // Open image in full screen
+    print('Open image preview at index: $index');
+  }
+
+  void _makePhoneCall(String phoneNumber) {
+    // Implement phone call functionality
+    print('Make phone call to: $phoneNumber');
+  }
+
+  void _openMaps(String address) {
+    // Open maps with business location
+    print('Open maps for address: $address');
+  }
+
+  void _viewAllReviews() {
+    // Navigate to all reviews screen
+    print('View all reviews tapped');
+  }
+}
+
+// import 'package:businessbuddy/utils/exported_path.dart';
+//
+// class BusinessDetails extends StatefulWidget {
+//   const BusinessDetails({super.key});
+//
+//   @override
+//   State<BusinessDetails> createState() => _BusinessDetailsState();
+// }
+//
+// class _BusinessDetailsState extends State<BusinessDetails> {
+//   final List<String> imageList = [
+//     Images.hotelImg,
+//     Images.hotelImg,
+//     Images.hotelImg,
+//     Images.hotelImg,
+//   ];
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: Colors.white,
+//       appBar: _buildAppBar(),
+//       floatingActionButton: FloatingActionButton.small(
+//         backgroundColor: primaryColor,
+//         foregroundColor: Colors.white,
+//         shape: CircleBorder(),
+//         onPressed: () {},
+//         child: Icon(Icons.add),
+//       ),
+//       body: SingleChildScrollView(
+//         padding: EdgeInsets.all(12.w),
+//         child: Column(
+//           children: [
+//             Row(
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 _buildImage(),
+//                 SizedBox(width: 4.w),
+//                 _buildContent(),
+//               ],
+//             ),
+//             Divider(),
+//             _buildImageGallery(),
+//             Divider(),
+//             _buildAboutSection(),
+//             _buildContactSection(),
+//             _buildReviewsSection(),
+//             _buildPostAndOffers(),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+//
+//   PreferredSizeWidget _buildAppBar() {
+//     return AppBar(
+//       surfaceTintColor: Colors.white,
+//       backgroundColor: Colors.white,
+//       elevation: 0,
+//       centerTitle: true,
+//       flexibleSpace: Container(
+//         decoration: BoxDecoration(
+//           gradient: LinearGradient(
+//             colors: [
+//
+//               Colors.white.withValues(alpha: 0.5),
+//             ],
+//             begin: Alignment.topCenter,
+//             end: Alignment.bottomCenter,
+//           ),
+//         ),
+//       ),
+//       title: CustomText(
+//         title: "Business Details",
+//         fontSize: 22.sp,
+//         fontWeight: FontWeight.bold,
+//       ),
+//     );
+//   }
+//
+//   Widget _buildImage() {
+//     return ClipRRect(
+//       borderRadius: BorderRadius.circular(12.r),
+//       child: Container(
+//         width: 80.w,
+//         height: 80.h,
+//         decoration: BoxDecoration(
+//           color: lightGrey,
+//           borderRadius: BorderRadius.circular(12.r),
+//         ),
+//         child: FadeInImage(
+//           placeholder: const AssetImage(Images.logo),
+//           image: AssetImage(Images.hotelImg),
+//           width: 80.w,
+//           height: 80.h,
+//           imageErrorBuilder: (context, error, stackTrace) {
+//             return Container(
+//               width: 80.w,
+//               height: 80.h,
+//               padding: EdgeInsets.all(24.w),
+//               color: lightGrey,
+//               child: Image.asset(Images.logo, fit: BoxFit.contain),
+//             );
+//           },
+//           fit: BoxFit.cover,
+//           placeholderFit: BoxFit.contain,
+//           fadeInDuration: const Duration(milliseconds: 300),
+//         ),
+//       ),
+//     );
+//   }
+//
+//   Widget _buildContent() {
+//     return Expanded(
+//       child: Column(
+//         spacing: 8.h,
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [_buildHeader(), _buildCategory()],
+//       ),
+//     );
+//   }
+//
+//   Widget _buildHeader() {
+//     return Row(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         Expanded(
+//           child: CustomText(
+//             title: 'Hotel Jyoti Family Restaurant',
+//             fontSize: 16.sp,
+//             textAlign: TextAlign.start,
+//             maxLines: 2,
+//             style: TextStyle(
+//               height: 1.2,
+//               fontSize: 16.sp,
+//               color: textDarkGrey,
+//               fontWeight: FontWeight.w700,
+//             ),
+//           ),
+//         ),
+//         SizedBox(width: 8.w),
+//         HugeIcon(icon: HugeIcons.strokeRoundedPencilEdit02),
+//       ],
+//     );
+//   }
+//
+//   Widget _buildCategory() {
+//     return Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         CustomText(
+//           title: 'Restaurant',
+//           textAlign: TextAlign.start,
+//           fontSize: 12.sp,
+//           color: textLightGrey,
+//           maxLines: 1,
+//         ),
+//         CustomText(
+//           title: '10K',
+//           textAlign: TextAlign.start,
+//           fontSize: 14.sp,
+//           color: textLightGrey,
+//           fontWeight: FontWeight.bold,
+//           maxLines: 1,
+//         ),
+//         CustomText(
+//           title: 'followers',
+//           textAlign: TextAlign.start,
+//           fontSize: 12.sp,
+//           color: textLightGrey,
+//           maxLines: 1,
+//         ),
+//       ],
+//     );
+//   }
+//
+//   Widget _buildImageGallery() {
+//     return SizedBox(
+//       height: 60.h,
+//       child: ListView.separated(
+//         scrollDirection: Axis.horizontal,
+//         itemCount: imageList.length,
+//         separatorBuilder: (_, __) => SizedBox(width: 8.w),
+//         itemBuilder: (context, index) {
+//           return GestureDetector(
+//             onTap: () {
+//               // Add image preview functionality
+//             },
+//             child: Container(
+//               width: 64.w,
+//               height: 64.h,
+//               decoration: BoxDecoration(
+//                 borderRadius: BorderRadius.circular(12.r),
+//                 border: Border.all(color: Colors.grey.shade200, width: 1),
+//                 image: DecorationImage(
+//                   image: AssetImage(imageList[index]),
+//                   fit: BoxFit.cover,
+//                 ),
+//               ),
+//             ),
+//           );
+//         },
+//       ),
+//     );
+//   }
+//
+//   Widget _buildAboutSection() {
+//     return Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         CustomText(
+//           title: 'About',
+//           fontSize: 18.sp,
+//           fontWeight: FontWeight.w700,
+//           color: Colors.black87,
+//         ),
+//         CustomText(
+//           title:
+//               'Chinese, Punjabi, Mughlai, Sea Food, North Indian, Malwani, Maharashtrian',
+//           fontSize: 14.sp,
+//           maxLines: 20,
+//           textAlign: TextAlign.start,
+//           color: Colors.grey.shade700,
+//         ),
+//         SizedBox(height: 16.h),
+//         const Divider(height: 1),
+//       ],
+//     );
+//   }
+//
+//   Widget _buildContactSection() {
+//     return Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         CustomText(
+//           title: 'Contact Information',
+//           fontSize: 18.sp,
+//           fontWeight: FontWeight.w700,
+//           color: Colors.black87,
+//         ),
+//         CustomText(
+//           title: 'Mobile Number',
+//           fontSize: 14.sp,
+//           maxLines: 20,
+//           textAlign: TextAlign.start,
+//           color: Colors.grey.shade700,
+//         ),
+//         CustomText(
+//           title: '+91 XXXXXXXXXX',
+//           fontSize: 14.sp,
+//           maxLines: 20,
+//           textAlign: TextAlign.start,
+//           color: Colors.grey.shade700,
+//         ),
+//         SizedBox(height: 16.h),
+//         CustomText(
+//           title: 'Address',
+//           fontSize: 14.sp,
+//           maxLines: 20,
+//           textAlign: TextAlign.start,
+//           color: Colors.grey.shade700,
+//         ),
+//         CustomText(
+//           title:
+//
+//           fontSize: 14.sp,
+//           maxLines: 20,
+//           textAlign: TextAlign.start,
+//           color: Colors.grey.shade700,
+//         ),
+//         const Divider(height: 1),
+//       ],
+//     );
+//   }
+//
+//   Widget _buildReviewsSection() {
+//     return Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         Row(
+//           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//           children: [
+//             CustomText(
+//               title: 'Reviews & Ratings',
+//               fontSize: 18.sp,
+//               fontWeight: FontWeight.w700,
+//               color: Colors.black87,
+//             ),
+//             Row(
+//               children: [
+//                 CustomText(
+//                   title: '4.9',
+//                   fontSize: 12.sp,
+//                   color: Colors.black87,
+//                 ),
+//                 buildStarRating(5),
+//                 CustomText(
+//                   title: '50 reviews',
+//                   fontSize: 12.sp,
+//                   color: Colors.black87,
+//                 ),
+//               ],
+//             ),
+//           ],
+//         ),
+//         buildReviewTile(
+//           userName: 'Mandar',
+//           review:
+//               'At Hotel Jyoti Family Restaurant, I was delighted by the rich flavors and aromatic dishes. Each bite of their signature biryani was a culinary delight, bursting with spices.',
+//           rating: 5,
+//         ),
+//         SizedBox(height: 16.h),
+//         const Divider(height: 1),
+//         SizedBox(height: 16.h),
+//         buildReviewTile(
+//           userName: 'Danish',
+//           review:
+//               'At Hotel Jyoti Family Restaurant, I was delighted by the rich flavors and aromatic dishes. Each bite of their signature biryani was a culinary delight, bursting with spices.',
+//           rating: 5,
+//         ),
+//         const Divider(height: 1),
+//       ],
+//     );
+//   }
+//
+//   Widget _buildPostAndOffers() {
+//     return DefaultTabController(
+//       length: 2,
+//       child: Container(
+//         decoration: BoxDecoration(
+//           color: Colors.white,
+//           borderRadius: BorderRadius.circular(12.r),
+//         ),
+//         child: Column(
+//           mainAxisSize: MainAxisSize.min,
+//           children: [
+//             // --- Tab Bar ---
+//             TabBar(
+//               indicatorColor: primaryColor,
+//               labelColor: primaryColor,
+//               indicatorSize: TabBarIndicatorSize.tab,
+//               unselectedLabelColor: Colors.grey,
+//               labelStyle: TextStyle(
+//                 fontSize: 14.sp,
+//                 fontWeight: FontWeight.w600,
+//               ),
+//               tabs: const [
+//                 Tab(text: 'Post'),
+//                 Tab(text: 'Offer'),
+//               ],
+//             ),
+//
+//             // --- Tab Content ---
+//             SizedBox(
+//               height: Get.height * 0.45.h,
+//               child: TabBarView(
+//                 physics: const NeverScrollableScrollPhysics(), // prevents
+//                 children: [buildGridImages(9), buildGridImages(6)],
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }

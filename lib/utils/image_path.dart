@@ -1,0 +1,22 @@
+class Images {
+  static const logo = 'assets/images/ic_logo.png';
+  static const noInternet = 'assets/images/no_internet_connection.png';
+  static const intro_1 = 'assets/images/ic_intro_1.png';
+  static const intro_2 = 'assets/images/ic_intro_2.png';
+  static const intro_3 = 'assets/images/ic_intro_3.png';
+  static const restaurants = 'assets/new_icon/ic_restaurant.png';
+  static const fitness = 'assets/new_icon/ic_fitness.png';
+  static const music = 'assets/new_icon/ic_music.png';
+  static const salon = 'assets/new_icon/ic_salon.png';
+  static const hospital = 'assets/new_icon/ic_hospital.png';
+  static const book = 'assets/new_icon/ic_book.png';
+  static const hotel = 'assets/new_icon/ic_hotels.png';
+  static const paint = 'assets/new_icon/ic_paint.png';
+  static const hotelImg = 'assets/images/hotel_img.png';
+  static const feedImg = 'assets/images/feed_img.png';
+  static const noBusiness = 'assets/new_icon/ic_no_business.png';
+  static const emptyBusiness = 'assets/images/empty_business.png';
+  static const defaultImage = 'assets/images/default.png';
+  static const hotelImgLarge = 'assets/images/hotel_img_large.png';
+  static const offerImage = 'assets/images/offer_image.png';
+}
