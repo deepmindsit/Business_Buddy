@@ -341,349 +341,53 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<dynamic> newsDetails(String newsId, String? userId) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    queryParameters.removeWhere((k, v) => v == null);
-    final _headers = <String, dynamic>{};
-    final _data = FormData();
-    _data.fields.add(MapEntry('news_id', newsId));
-    if (userId != null) {
-      _data.fields.add(MapEntry('user_id', userId));
-    }
-    final _options = _setStreamType<dynamic>(
-      Options(method: 'POST', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            'http://192.168.29.41/business_buddy/api/user/v1/news_details.php',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
-    final _result = await _dio.fetch(_options);
-    final _value = _result.data;
-    return _value;
-  }
-
-  @override
-  Future<dynamic> newsByCategory(
-    String categoryId,
-    String page,
-    String perPage,
-    String? userId,
-  ) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    queryParameters.removeWhere((k, v) => v == null);
-    final _headers = <String, dynamic>{};
-    final _data = FormData();
-    _data.fields.add(MapEntry('category_id', categoryId));
-    _data.fields.add(MapEntry('page', page));
-    _data.fields.add(MapEntry('per_page', perPage));
-    if (userId != null) {
-      _data.fields.add(MapEntry('user_id', userId));
-    }
-    final _options = _setStreamType<dynamic>(
-      Options(method: 'POST', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            'http://192.168.29.41/business_buddy/api/user/v1/get_news_by_category.php',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
-    final _result = await _dio.fetch(_options);
-    final _value = _result.data;
-    return _value;
-  }
-
-  @override
-  Future<dynamic> newsByTag(
-    String categoryId,
-    String page,
-    String perPage,
-    String? userId,
-  ) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    queryParameters.removeWhere((k, v) => v == null);
-    final _headers = <String, dynamic>{};
-    final _data = FormData();
-    _data.fields.add(MapEntry('tag_id', categoryId));
-    _data.fields.add(MapEntry('page', page));
-    _data.fields.add(MapEntry('per_page', perPage));
-    if (userId != null) {
-      _data.fields.add(MapEntry('user_id', userId));
-    }
-    final _options = _setStreamType<dynamic>(
-      Options(method: 'POST', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            'http://192.168.29.41/business_buddy/api/user/v1/get_news_by_tag.php',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
-    final _result = await _dio.fetch(_options);
-    final _value = _result.data;
-    return _value;
-  }
-
-  @override
-  Future<dynamic> newsBySearch(
-    String keyword,
-    String page,
-    String perPage,
-    String? userId,
-  ) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    queryParameters.removeWhere((k, v) => v == null);
-    final _headers = <String, dynamic>{};
-    final _data = FormData();
-    _data.fields.add(MapEntry('keyword', keyword));
-    _data.fields.add(MapEntry('page', page));
-    _data.fields.add(MapEntry('per_page', perPage));
-    if (userId != null) {
-      _data.fields.add(MapEntry('user_id', userId));
-    }
-    final _options = _setStreamType<dynamic>(
-      Options(method: 'POST', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            'http://192.168.29.41/business_buddy/api/user/v1/global_search.php',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
-    final _result = await _dio.fetch(_options);
-    final _value = _result.data;
-    return _value;
-  }
-
-  @override
-  Future<dynamic> getProfile(String? userId) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    queryParameters.removeWhere((k, v) => v == null);
-    final _headers = <String, dynamic>{};
-    final _data = FormData();
-    if (userId != null) {
-      _data.fields.add(MapEntry('user_id', userId));
-    }
-    final _options = _setStreamType<dynamic>(
-      Options(method: 'POST', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            'http://192.168.29.41/business_buddy/api/user/v1/get_profile.php',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
-    final _result = await _dio.fetch(_options);
-    final _value = _result.data;
-    return _value;
-  }
-
-  @override
-  Future<dynamic> legalPage(String? slug) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    queryParameters.removeWhere((k, v) => v == null);
-    final _headers = <String, dynamic>{};
-    final _data = FormData();
-    if (slug != null) {
-      _data.fields.add(MapEntry('page_slug', slug));
-    }
-    final _options = _setStreamType<dynamic>(
-      Options(method: 'POST', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            'http://192.168.29.41/business_buddy/api/user/v1/get_legal_page.php',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
-    final _result = await _dio.fetch(_options);
-    final _value = _result.data;
-    return _value;
-  }
-
-  @override
-  Future<dynamic> deleteProfile(String? userId) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    queryParameters.removeWhere((k, v) => v == null);
-    final _headers = <String, dynamic>{};
-    final _data = FormData();
-    if (userId != null) {
-      _data.fields.add(MapEntry('user_id', userId));
-    }
-    final _options = _setStreamType<dynamic>(
-      Options(method: 'POST', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            'http://192.168.29.41/business_buddy/api/user/v1/delete_profile.php',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
-    final _result = await _dio.fetch(_options);
-    final _value = _result.data;
-    return _value;
-  }
-
-  @override
-  Future<dynamic> getBookmarks(
-    String? userId,
-    String page,
-    String perPage,
-    String token,
-  ) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    queryParameters.removeWhere((k, v) => v == null);
-    final _headers = <String, dynamic>{};
-    final _data = FormData();
-    if (userId != null) {
-      _data.fields.add(MapEntry('user_id', userId));
-    }
-    _data.fields.add(MapEntry('page', page));
-    _data.fields.add(MapEntry('per_page', perPage));
-    _data.fields.add(MapEntry('session_token', token));
-    final _options = _setStreamType<dynamic>(
-      Options(method: 'POST', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            'http://192.168.29.41/business_buddy/api/user/v1/get_bookmarks.php',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
-    final _result = await _dio.fetch(_options);
-    final _value = _result.data;
-    return _value;
-  }
-
-  @override
-  Future<dynamic> addBookmarks(String? newsId, String token) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    queryParameters.removeWhere((k, v) => v == null);
-    final _headers = <String, dynamic>{};
-    final _data = FormData();
-    if (newsId != null) {
-      _data.fields.add(MapEntry('news_id', newsId));
-    }
-    _data.fields.add(MapEntry('session_token', token));
-    final _options = _setStreamType<dynamic>(
-      Options(method: 'POST', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            'http://192.168.29.41/business_buddy/api/user/v1/bookmark_post.php',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
-    final _result = await _dio.fetch(_options);
-    final _value = _result.data;
-    return _value;
-  }
-
-  @override
-  Future<dynamic> removeBookmarks(
-    String? newsId,
-    String token,
-    String action,
-  ) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    queryParameters.removeWhere((k, v) => v == null);
-    final _headers = <String, dynamic>{};
-    final _data = FormData();
-    if (newsId != null) {
-      _data.fields.add(MapEntry('news_id', newsId));
-    }
-    _data.fields.add(MapEntry('session_token', token));
-    _data.fields.add(MapEntry('action', action));
-    final _options = _setStreamType<dynamic>(
-      Options(method: 'POST', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            'http://192.168.29.41/business_buddy/api/user/v1/bookmark_post.php',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
-    final _result = await _dio.fetch(_options);
-    final _value = _result.data;
-    return _value;
-  }
-
-  @override
-  Future<dynamic> addComment(
-    String? newsId,
-    String token,
-    String content,
-  ) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    queryParameters.removeWhere((k, v) => v == null);
-    final _headers = <String, dynamic>{};
-    final _data = FormData();
-    if (newsId != null) {
-      _data.fields.add(MapEntry('news_id', newsId));
-    }
-    _data.fields.add(MapEntry('session_token', token));
-    _data.fields.add(MapEntry('content', content));
-    final _options = _setStreamType<dynamic>(
-      Options(method: 'POST', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            'http://192.168.29.41/business_buddy/api/user/v1/add_comment.php',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
-    final _result = await _dio.fetch(_options);
-    final _value = _result.data;
-    return _value;
-  }
-
-  @override
-  Future<dynamic> editProfile(
-    String? userId,
+  Future<dynamic> addOffer(
+    String userId,
+    String businessId,
     String name,
-    String email,
-    String number,
-  ) async {
+    String details,
+    String startDate,
+    String endDate,
+    List<String> highlightPoints, {
+    File? profileImage,
+  }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     final _data = FormData();
-    if (userId != null) {
-      _data.fields.add(MapEntry('user_id', userId));
+    _data.fields.add(MapEntry('user_id', userId));
+    _data.fields.add(MapEntry('business_id', businessId));
+    _data.fields.add(MapEntry('name', name));
+    _data.fields.add(MapEntry('details', details));
+    _data.fields.add(MapEntry('start_date', startDate));
+    _data.fields.add(MapEntry('end_date', endDate));
+    highlightPoints.forEach((i) {
+      _data.fields.add(MapEntry('highlight_points[]', i));
+    });
+    if (profileImage != null) {
+      if (profileImage != null) {
+        _data.files.add(
+          MapEntry(
+            'image',
+            MultipartFile.fromFileSync(
+              profileImage.path,
+              filename: profileImage.path.split(Platform.pathSeparator).last,
+            ),
+          ),
+        );
+      }
     }
-    _data.fields.add(MapEntry('display_name', name));
-    _data.fields.add(MapEntry('email', email));
-    _data.fields.add(MapEntry('phone_number', number));
     final _options = _setStreamType<dynamic>(
-      Options(method: 'POST', headers: _headers, extra: _extra)
+      Options(
+            method: 'POST',
+            headers: _headers,
+            extra: _extra,
+            contentType: 'multipart/form-data',
+          )
           .compose(
             _dio.options,
-            'http://192.168.29.41/business_buddy/api/user/v1/update_profile.php',
+            'http://192.168.29.41/business_buddy/api/user/v1/add_business_offer',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -695,28 +399,20 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<dynamic> updatePassword(
-    String? userId,
-    String currentPassword,
-    String newPassword,
-    String confirmPassword,
-  ) async {
+  Future<dynamic> postDetails(String? postId) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     final _data = FormData();
-    if (userId != null) {
-      _data.fields.add(MapEntry('user_id', userId));
+    if (postId != null) {
+      _data.fields.add(MapEntry('post_id', postId));
     }
-    _data.fields.add(MapEntry('current_password', currentPassword));
-    _data.fields.add(MapEntry('new_password', newPassword));
-    _data.fields.add(MapEntry('confirm_password', confirmPassword));
     final _options = _setStreamType<dynamic>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'http://192.168.29.41/business_buddy/api/user/v1/update_password.php',
+            'http://192.168.29.41/business_buddy/api/user/v1/get_post_details',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -728,113 +424,20 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<dynamic> forgetPassword(String emailOrPhone) async {
+  Future<dynamic> offerDetails(String? offerId) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     final _data = FormData();
-    _data.fields.add(MapEntry('email_or_phone', emailOrPhone));
+    if (offerId != null) {
+      _data.fields.add(MapEntry('offer_id', offerId));
+    }
     final _options = _setStreamType<dynamic>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'http://192.168.29.41/business_buddy/api/user/v1/forgot_password_request.php',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
-    final _result = await _dio.fetch(_options);
-    final _value = _result.data;
-    return _value;
-  }
-
-  @override
-  Future<dynamic> forgetVerifyOtp(String emailOrPhone, String otp) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final _data = FormData();
-    _data.fields.add(MapEntry('email_or_phone', emailOrPhone));
-    _data.fields.add(MapEntry('otp', otp));
-    final _options = _setStreamType<dynamic>(
-      Options(method: 'POST', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            'http://192.168.29.41/business_buddy/api/user/v1/forgot_password_verify_otp.php',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
-    final _result = await _dio.fetch(_options);
-    final _value = _result.data;
-    return _value;
-  }
-
-  @override
-  Future<dynamic> forgetPasswordReset(
-    String emailOrPhone,
-    String token,
-    String password,
-  ) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final _data = FormData();
-    _data.fields.add(MapEntry('email_or_phone', emailOrPhone));
-    _data.fields.add(MapEntry('verification_token', token));
-    _data.fields.add(MapEntry('new_password', password));
-    final _options = _setStreamType<dynamic>(
-      Options(method: 'POST', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            'http://192.168.29.41/business_buddy/api/user/v1/forgot_password_reset.php',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
-    final _result = await _dio.fetch(_options);
-    final _value = _result.data;
-    return _value;
-  }
-
-  @override
-  Future<dynamic> updateFirebaseToken(String token) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final _data = FormData();
-    _data.fields.add(MapEntry('firebase_token', token));
-    final _options = _setStreamType<dynamic>(
-      Options(method: 'POST', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            'http://192.168.29.41/business_buddy/api/user/v1/update_firebase_token.php',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
-    final _result = await _dio.fetch(_options);
-    final _value = _result.data;
-    return _value;
-  }
-
-  @override
-  Future<dynamic> getNotification(String page, String perPage) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final _data = FormData();
-    _data.fields.add(MapEntry('page', page));
-    _data.fields.add(MapEntry('per_page', perPage));
-    final _options = _setStreamType<dynamic>(
-      Options(method: 'POST', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            'http://192.168.29.41/business_buddy/api/user/v1/get_notifications.php',
+            'http://192.168.29.41/business_buddy/api/user/v1/get_offer_details',
             queryParameters: queryParameters,
             data: _data,
           )

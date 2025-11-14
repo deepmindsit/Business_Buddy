@@ -8,24 +8,18 @@ class BusinessDetails extends StatefulWidget {
 }
 
 class _BusinessDetailsState extends State<BusinessDetails> {
-  final List<String> _imageList = [
-    Images.hotelImg,
-    Images.hotelImg,
-    Images.hotelImg,
-    Images.hotelImg,
-  ];
+  final controller = getIt<ExplorerController>();
+
+  @override
+  void initState() {
+    controller.getBusinessDetails(Get.arguments['businessId']);
+    super.initState();
+  }
 
   // Business data variables
-  final String _businessName = 'Hotel Jyoti Family Restaurant';
-  final String _businessCategory = 'Restaurant';
   final String _followersCount = '10K';
   final double _businessRating = 4.9;
   final int _reviewCount = 50;
-  final String _businessDescription =
-      'Chinese, Punjabi, Mughlai, Sea Food, North Indian, Malwani, Maharashtrian';
-  final String _businessPhone = '+91 XXXXXXXXXX';
-  final String _businessAddress =
-      'Opp HP Petrol Pump Near IT Adharv College, Ekta Nagar, Old Link Road, Kandivali West-400067';
 
   @override
   Widget build(BuildContext context) {
@@ -75,26 +69,40 @@ class _BusinessDetailsState extends State<BusinessDetails> {
   }
 
   Widget _buildBody() {
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(16.w),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildHeaderSection(),
-          SizedBox(height: 16.h),
-          const Divider(),
-          _buildImageGallery(),
-          SizedBox(height: 16.h),
-          const Divider(),
-          _buildAboutSection(),
-          // SizedBox(height: 24.h),
-          _buildContactSection(),
-          const Divider(),
-          _buildReviewsSection(),
-
-          _buildPostAndOffersSection(),
-        ],
-      ),
+    return Obx(
+      () => controller.isDetailsLoading.isTrue
+          ? LoadingWidget(color: primaryColor)
+          : controller.businessDetails.isEmpty
+          ? Center(
+              child: CustomText(
+                title: 'No Data Found',
+                fontSize: 20.sp,
+                fontWeight: FontWeight.bold,
+              ),
+            )
+          : SingleChildScrollView(
+              padding: EdgeInsets.all(16.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildHeaderSection(),
+                  SizedBox(height: 16.h),
+                  const Divider(),
+                  _buildImageGallery(),
+                  if (controller.businessDetails['attachments'].length != 0)
+                    SizedBox(height: 16.h),
+                  if (controller.businessDetails['attachments'].length != 0)
+                    const Divider(),
+                  _buildAboutSection(),
+                  // SizedBox(height: 24.h),
+                  _buildContactSection(),
+                  // const Divider(),
+                  _buildPostAndOffersSection(),
+                  const Divider(),
+                  _buildReviewsSection(),
+                ],
+              ),
+            ),
     );
   }
 
@@ -110,6 +118,7 @@ class _BusinessDetailsState extends State<BusinessDetails> {
   }
 
   Widget _buildBusinessImage() {
+    final image = controller.businessDetails['image'];
     return Container(
       width: 80.w,
       height: 80.h,
@@ -127,11 +136,11 @@ class _BusinessDetailsState extends State<BusinessDetails> {
         borderRadius: BorderRadius.circular(12.r),
         child: FadeInImage(
           placeholder: const AssetImage(Images.logo),
-          image: AssetImage(Images.hotelImg),
+          image: NetworkImage(image),
           fit: BoxFit.cover,
           imageErrorBuilder: (context, error, stackTrace) {
             return Container(
-              color: lightGrey,
+              // color: lightGrey,
               padding: EdgeInsets.all(20.w),
               child: Image.asset(Images.logo, fit: BoxFit.contain),
             );
@@ -152,7 +161,7 @@ class _BusinessDetailsState extends State<BusinessDetails> {
             Expanded(
               child: CustomText(
                 textAlign: TextAlign.start,
-                title: _businessName,
+                title: controller.businessDetails['name'] ?? '',
                 fontSize: 18.sp,
                 fontWeight: FontWeight.w700,
                 color: Colors.black87,
@@ -188,7 +197,7 @@ class _BusinessDetailsState extends State<BusinessDetails> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CustomText(
-          title: _businessCategory,
+          title: controller.businessDetails['category'] ?? '',
           fontSize: 14.sp,
           color: textLightGrey,
           fontWeight: FontWeight.w500,
@@ -217,6 +226,8 @@ class _BusinessDetailsState extends State<BusinessDetails> {
   }
 
   Widget _buildImageGallery() {
+    final images = controller.businessDetails['attachments'];
+    if (images.length == 0) return Container();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -231,10 +242,11 @@ class _BusinessDetailsState extends State<BusinessDetails> {
           height: 80.h,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
-            itemCount: _imageList.length,
+            itemCount: images.length,
             separatorBuilder: (_, __) => SizedBox(width: 12.w),
             itemBuilder: (context, index) {
-              return _buildGalleryImage(index);
+              final attach = images[index];
+              return _buildGalleryImage(attach);
             },
           ),
         ),
@@ -242,9 +254,9 @@ class _BusinessDetailsState extends State<BusinessDetails> {
     );
   }
 
-  Widget _buildGalleryImage(int index) {
+  Widget _buildGalleryImage(dynamic attach) {
     return GestureDetector(
-      onTap: () => _openImagePreview(index),
+      onTap: () => _openImagePreview(attach),
       child: Container(
         width: 80.w,
         height: 80.h,
@@ -260,16 +272,30 @@ class _BusinessDetailsState extends State<BusinessDetails> {
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(12.r),
-          child: Image.asset(
-            _imageList[index],
+          child: FadeInImage(
+            placeholder: const AssetImage(Images.defaultImage),
+            image: NetworkImage(attach),
             fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
+            imageErrorBuilder: (context, error, stackTrace) {
               return Container(
-                color: lightGrey,
-                child: Icon(Icons.broken_image, color: Colors.grey.shade400),
+                // color: lightGrey,
+                padding: EdgeInsets.all(20.w),
+                child: Image.asset(Images.defaultImage, fit: BoxFit.contain),
               );
             },
+            fadeInDuration: const Duration(milliseconds: 300),
           ),
+
+          // Image.asset(
+          //   _imageList[index],
+          //   fit: BoxFit.cover,
+          //   errorBuilder: (context, error, stackTrace) {
+          //     return Container(
+          //       color: lightGrey,
+          //       child: Icon(Icons.broken_image, color: Colors.grey.shade400),
+          //     );
+          //   },
+          // ),
         ),
       ),
     );
@@ -287,12 +313,11 @@ class _BusinessDetailsState extends State<BusinessDetails> {
         ),
         SizedBox(height: 8.h),
         CustomText(
-          title: _businessDescription,
+          title: controller.businessDetails['about_business'] ?? '',
           fontSize: 14.sp,
           maxLines: 10,
           textAlign: TextAlign.start,
           color: Colors.grey.shade700,
-          // lineHeight: 1.5,
         ),
         Divider(),
       ],
@@ -313,15 +338,16 @@ class _BusinessDetailsState extends State<BusinessDetails> {
         _buildContactItem(
           icon: Icons.phone_outlined,
           title: 'Mobile Number',
-          value: _businessPhone,
-          onTap: () => _makePhoneCall(_businessPhone),
+          value: controller.businessDetails['mobile_number'] ?? '',
+          onTap: () =>
+              _makePhoneCall(controller.businessDetails['mobile_number'] ?? ''),
         ),
         SizedBox(height: 12.h),
         _buildContactItem(
           icon: Icons.location_on_outlined,
           title: 'Address',
-          value: _businessAddress,
-          onTap: () => _openMaps(_businessAddress),
+          value: controller.businessDetails['address'] ?? '',
+          onTap: () {},
         ),
       ],
     );
@@ -538,7 +564,10 @@ class _BusinessDetailsState extends State<BusinessDetails> {
             SizedBox(
               height: 320.h,
               child: TabBarView(
-                children: [_buildPostsGrid(), _buildPostsGrid()],
+                children: [
+                  buildGridImages(controller.businessDetails['posts'],'post'),
+                  buildGridImages(controller.businessDetails['offers'],'offer'),
+                ],
               ),
             ),
           ],
@@ -574,21 +603,21 @@ class _BusinessDetailsState extends State<BusinessDetails> {
     );
   }
 
-  Widget _buildPostsGrid() {
-    return GridView.builder(
-      padding: EdgeInsets.all(12.w),
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        crossAxisSpacing: 8.w,
-        mainAxisSpacing: 8.h,
-      ),
-      itemCount: 9,
-      itemBuilder: (context, index) {
-        return _buildGridItem(Images.hotelImg);
-      },
-    );
-  }
+  // Widget _buildPostsGrid() {
+  //   return GridView.builder(
+  //     padding: EdgeInsets.all(12.w),
+  //     physics: const NeverScrollableScrollPhysics(),
+  //     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+  //       crossAxisCount: 3,
+  //       crossAxisSpacing: 8.w,
+  //       mainAxisSpacing: 8.h,
+  //     ),
+  //     itemCount: 9,
+  //     itemBuilder: (context, index) {
+  //       return _buildGridItem(Images.hotelImg);
+  //     },
+  //   );
+  // }
 
   // Widget _buildOffersGrid() {
   //   return GridView.builder(
@@ -606,44 +635,44 @@ class _BusinessDetailsState extends State<BusinessDetails> {
   //   );
   // }
 
-  Widget _buildGridItem(String imagePath) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(8.r),
-      child: Image.asset(imagePath, fit: BoxFit.cover),
-    );
-  }
-
-  Widget _buildOfferItem() {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12.r),
-        color: primaryColor.withValues(alpha: 0.1),
-        border: Border.all(color: primaryColor.withValues(alpha: 0.3)),
-      ),
-      padding: EdgeInsets.all(12.w),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.local_offer_outlined, color: primaryColor, size: 24.w),
-          SizedBox(height: 8.h),
-          CustomText(
-            title: 'Special Offer',
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w600,
-            color: primaryColor,
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 4.h),
-          CustomText(
-            title: '20% OFF',
-            fontSize: 12.sp,
-            color: Colors.grey.shade700,
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildGridItem(String imagePath) {
+  //   return ClipRRect(
+  //     borderRadius: BorderRadius.circular(8.r),
+  //     child: Image.asset(imagePath, fit: BoxFit.cover),
+  //   );
+  // }
+  //
+  // Widget _buildOfferItem() {
+  //   return Container(
+  //     decoration: BoxDecoration(
+  //       borderRadius: BorderRadius.circular(12.r),
+  //       color: primaryColor.withValues(alpha: 0.1),
+  //       border: Border.all(color: primaryColor.withValues(alpha: 0.3)),
+  //     ),
+  //     padding: EdgeInsets.all(12.w),
+  //     child: Column(
+  //       mainAxisAlignment: MainAxisAlignment.center,
+  //       children: [
+  //         Icon(Icons.local_offer_outlined, color: primaryColor, size: 24.w),
+  //         SizedBox(height: 8.h),
+  //         CustomText(
+  //           title: 'Special Offer',
+  //           fontSize: 14.sp,
+  //           fontWeight: FontWeight.w600,
+  //           color: primaryColor,
+  //           textAlign: TextAlign.center,
+  //         ),
+  //         SizedBox(height: 4.h),
+  //         CustomText(
+  //           title: '20% OFF',
+  //           fontSize: 12.sp,
+  //           color: Colors.grey.shade700,
+  //           textAlign: TextAlign.center,
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   // Action methods
   void _editBusinessDetails() {
@@ -664,11 +693,6 @@ class _BusinessDetailsState extends State<BusinessDetails> {
   void _makePhoneCall(String phoneNumber) {
     // Implement phone call functionality
     print('Make phone call to: $phoneNumber');
-  }
-
-  void _openMaps(String address) {
-    // Open maps with business location
-    print('Open maps for address: $address');
   }
 
   void _viewAllReviews() {

@@ -1,5 +1,3 @@
-import 'package:businessbuddy/utils/utils.dart';
-
 import '../../../../../utils/exported_path.dart';
 
 class CategoryDetailPage extends StatefulWidget {
@@ -551,8 +549,8 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
               child: TabBarView(
                 physics: const NeverScrollableScrollPhysics(), // prevents
                 children: [
-                  buildGridImages(controller.businessDetails['posts']),
-                  buildGridImages(controller.businessDetails['offers']),
+                  buildGridImages(controller.businessDetails['posts'],'post'),
+                  buildGridImages(controller.businessDetails['offers'],'offer'),
                 ],
               ),
             ),

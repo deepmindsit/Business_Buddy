@@ -23,6 +23,7 @@ export 'package:businessbuddy/presentation/business_partner/widget/add_recruitme
 export 'package:businessbuddy/presentation/special_offer/view/special_offer.dart';
 export 'package:businessbuddy/common/notification_list.dart';
 export 'package:businessbuddy/presentation/home_screen/widget/business/widget/add_offer.dart';
+export 'package:businessbuddy/presentation/home_screen/widget/business/view/add_business.dart';
 
 //widget
 export 'package:businessbuddy/utils/color.dart';
@@ -39,6 +40,7 @@ export 'package:businessbuddy/presentation/home_screen/widget/explorer/widget/ca
 export 'package:businessbuddy/network/api_service.dart';
 export 'package:businessbuddy/network/initial_bindings.dart';
 export 'package:businessbuddy/utils/utils.dart';
+export 'package:businessbuddy/components/documents_preparation.dart';
 
 //component
 export 'package:businessbuddy/components/screenutil_config.dart';

@@ -18,47 +18,50 @@ class _AddOfferState extends State<AddOffer> {
       appBar: AppbarPlain(title: "New Offer"),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildProfileImage(),
-            Divider(height: 32.h),
-            _buildLabel('Title'),
-            buildTextField(
-              controller: controller.titleCtrl,
-              hintText: 'Enter title',
-              validator: (value) =>
-                  value!.trim().isEmpty ? 'Please enter title' : null,
-            ),
-            SizedBox(height: 12.h),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildDateField(
-                    'Start Date',
-                    controller.startDateCtrl,
+        child: Form(
+          key: controller.offerKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildProfileImage(),
+              Divider(height: 32.h),
+              _buildLabel('Title'),
+              buildTextField(
+                controller: controller.titleCtrl,
+                hintText: 'Enter title',
+                validator: (value) =>
+                    value!.trim().isEmpty ? 'Please enter title' : null,
+              ),
+              SizedBox(height: 12.h),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildDateField(
+                      'Start Date',
+                      controller.startDateCtrl,
+                    ),
                   ),
-                ),
-                SizedBox(width: 12.w),
-                Expanded(
-                  child: _buildDateField('End Date', controller.endDateCtrl),
-                ),
-              ],
-            ),
-            SizedBox(height: 12.h),
-            _buildLabel('Description'),
-            buildTextField(
-              controller: controller.descriptionCtrl,
-              hintText: 'Enter description',
-              maxLines: 3,
-              validator: (value) =>
-                  value!.trim().isEmpty ? 'Please enter description' : null,
-            ),
-            SizedBox(height: 20.h),
-            _buildHighlightSection(),
-            SizedBox(height: 24.h),
-            _buildAddOfferButton(),
-          ],
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: _buildDateField('End Date', controller.endDateCtrl),
+                  ),
+                ],
+              ),
+              SizedBox(height: 12.h),
+              _buildLabel('Description'),
+              buildTextField(
+                controller: controller.descriptionCtrl,
+                hintText: 'Enter description',
+                maxLines: 3,
+                validator: (value) =>
+                    value!.trim().isEmpty ? 'Please enter description' : null,
+              ),
+              SizedBox(height: 20.h),
+              _buildHighlightSection(),
+              SizedBox(height: 24.h),
+              _buildAddOfferButton(),
+            ],
+          ),
         ),
       ),
     );
@@ -66,59 +69,59 @@ class _AddOfferState extends State<AddOffer> {
 
   Widget _buildProfileImage() {
     return Center(
-      child: GestureDetector(
-        onTap: () {
-          CustomFilePicker.showPickerBottomSheet(
-            onFilePicked: (file) {
-              controller.offerImage.value = file;
-            },
-          );
-        },
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Container(
-              width: Get.width * 0.7,
-              height: Get.height * 0.3,
-              decoration: BoxDecoration(
-                border: Border.all(color: lightGrey, width: 0.5.w),
-                borderRadius: BorderRadius.circular(12.r),
-              ),
-              child: Obx(() {
-                final imageFile = controller.offerImage.value;
-                final ImageProvider<Object> imageProvider = imageFile != null
-                    ? FileImage(imageFile)
-                    : const AssetImage(Images.defaultImage);
-
-                return ClipRRect(
-                  borderRadius: BorderRadius.circular(12.r),
-                  child: FadeInImage(
-                    placeholder: const AssetImage(Images.logo),
-                    image: imageProvider,
-                    imageErrorBuilder: (context, error, stackTrace) {
-                      return Image.asset(
-                        Images.defaultImage,
-                        fit: BoxFit.contain,
-                      );
-                    },
-                    fit: BoxFit.cover,
-                    placeholderFit: BoxFit.contain,
-                    fadeInDuration: const Duration(milliseconds: 300),
-                  ),
-                );
-              }),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            width: Get.width * 0.7,
+            height: Get.height * 0.3,
+            decoration: BoxDecoration(
+              border: Border.all(color: lightGrey, width: 0.5.w),
+              borderRadius: BorderRadius.circular(12.r),
             ),
-            Positioned(
-              bottom: -10,
-              right: -10,
+            child: Obx(() {
+              final imageFile = controller.offerImage.value;
+              final ImageProvider<Object> imageProvider = imageFile != null
+                  ? FileImage(imageFile)
+                  : const AssetImage(Images.defaultImage);
+
+              return ClipRRect(
+                borderRadius: BorderRadius.circular(12.r),
+                child: FadeInImage(
+                  placeholder: const AssetImage(Images.logo),
+                  image: imageProvider,
+                  imageErrorBuilder: (context, error, stackTrace) {
+                    return Image.asset(
+                      Images.defaultImage,
+                      fit: BoxFit.contain,
+                    );
+                  },
+                  fit: BoxFit.cover,
+                  placeholderFit: BoxFit.contain,
+                  fadeInDuration: const Duration(milliseconds: 300),
+                ),
+              );
+            }),
+          ),
+          Positioned(
+            bottom: -10,
+            right: -10,
+            child: GestureDetector(
+              onTap: () {
+                CustomFilePicker.showPickerBottomSheet(
+                  onFilePicked: (file) {
+                    controller.offerImage.value = file;
+                  },
+                );
+              },
               child: CircleAvatar(
                 radius: 18.r,
                 backgroundColor: primaryColor,
                 child: Icon(Icons.edit, size: 20.sp, color: Colors.white),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -270,25 +273,31 @@ class _AddOfferState extends State<AddOffer> {
   }
 
   Widget _buildAddOfferButton() {
-    return GestureDetector(
-      onTap: () {
-        // you can also access highlightPoints here
-      },
-      child: Container(
-        width: Get.width,
-        padding: EdgeInsets.symmetric(vertical: 14.h),
-        decoration: BoxDecoration(
-          color: primaryColor,
-          borderRadius: BorderRadius.circular(12.r),
-        ),
-        alignment: Alignment.center,
-        child: CustomText(
-          title: 'Post',
-          fontSize: 16.sp,
-          color: Colors.white,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
+    return Obx(
+      () => controller.isOfferLoading.isTrue
+          ? LoadingWidget(color: primaryColor)
+          : GestureDetector(
+              onTap: () async {
+                if (controller.offerKey.currentState!.validate()) {
+                  await controller.addNewOffer();
+                }
+              },
+              child: Container(
+                width: Get.width,
+                padding: EdgeInsets.symmetric(vertical: 14.h),
+                decoration: BoxDecoration(
+                  color: primaryColor,
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+                alignment: Alignment.center,
+                child: CustomText(
+                  title: 'Post',
+                  fontSize: 16.sp,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
     );
   }
 

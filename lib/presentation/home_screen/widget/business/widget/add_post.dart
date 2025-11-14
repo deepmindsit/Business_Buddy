@@ -11,6 +11,13 @@ class _AddPostState extends State<AddPost> {
   final controller = getIt<LBOController>();
 
   @override
+  void initState() {
+    controller.postImage.value = null;
+    controller.postAbout.text = '';
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -38,81 +45,82 @@ class _AddPostState extends State<AddPost> {
 
   Widget _buildProfileImage() {
     return Center(
-      child: GestureDetector(
-        // onTap: controller.pickImage,
-        onTap: () {
-          CustomFilePicker.showPickerBottomSheet(
-            onFilePicked: (file) {
-              controller.postImage.value = file;
-              // controller.postImage.add(file);
-            },
-          );
-        },
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Container(
-              width: Get.width * 0.7.w,
-              height: Get.height * 0.3.h,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12.r),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Obx(() {
+            final imageFile = controller.postImage.value;
+            final ImageProvider<Object> imageProvider = imageFile != null
+                ? FileImage(imageFile)
+                : const AssetImage(Images.defaultImage);
+            return ClipRRect(
+              borderRadius: BorderRadius.circular(12.r),
+              child: FadeInImage(
+                width: Get.width * 0.7.w,
+                height: Get.height * 0.3.h,
+                placeholder: const AssetImage(Images.logo),
+                image: imageProvider,
+                imageErrorBuilder: (context, error, stackTrace) {
+                  return Image.asset(
+                    Images.defaultImage,
+                    width: Get.width * 0.7.w,
+                    height: Get.height * 0.3.h,
+                    fit: BoxFit.cover,
+                  );
+                },
+                fit: BoxFit.cover,
+                placeholderFit: BoxFit.contain,
+                fadeInDuration: const Duration(milliseconds: 300),
               ),
-              child: Obx(() {
-                final imageFile = controller.postImage.value;
-                final ImageProvider<Object> imageProvider = imageFile != null
-                    ? FileImage(imageFile)
-                    : const AssetImage(Images.defaultImage);
-                return FadeInImage(
-                  placeholder: const AssetImage(Images.logo),
-                  image: imageProvider,
-                  imageErrorBuilder: (context, error, stackTrace) {
-                    return Image.asset(
-                      Images.defaultImage,
-                      width: 100.w,
-                      height: 100.h,
-                      fit: BoxFit.contain,
-                    );
+            );
+          }),
+          Positioned(
+            bottom: 0,
+            right: -10,
+            child: GestureDetector(
+              onTap: () {
+                CustomFilePicker.showPickerBottomSheet(
+                  onFilePicked: (file) {
+                    controller.postImage.value = file;
+                    // controller.postImage.add(file);
                   },
-                  fit: BoxFit.contain,
-                  placeholderFit: BoxFit.contain,
-                  fadeInDuration: const Duration(milliseconds: 300),
                 );
-              }),
-            ),
-            Positioned(
-              bottom: 0,
-              right: -10,
+              },
               child: CircleAvatar(
                 radius: 18.r,
                 backgroundColor: primaryColor,
                 child: Icon(Icons.edit, size: 20.sp, color: Colors.white),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildAddPostButton() {
-    return GestureDetector(
-      onTap: () async {
-        await controller.addNewPost();
-      },
-      child: Container(
-        width: Get.width,
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-        decoration: BoxDecoration(
-          color: primaryColor,
-          borderRadius: BorderRadius.circular(12.r),
-        ),
-        child: CustomText(
-          title: 'Post',
-          fontSize: 16.sp,
-          color: Colors.white,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
+    return Obx(
+      () => controller.isPostLoading.isTrue
+          ? LoadingWidget(color: primaryColor)
+          : GestureDetector(
+              onTap: () async {
+                await controller.addNewPost();
+              },
+              child: Container(
+                width: Get.width,
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                decoration: BoxDecoration(
+                  color: primaryColor,
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+                child: CustomText(
+                  title: 'Post',
+                  fontSize: 16.sp,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
     );
   }
 }

@@ -71,22 +71,22 @@ class CustomFilePicker {
                   if (file != null) onFilePicked(file);
                 },
               ),
-              Divider(height: 5, thickness: 0.5),
-              ListTile(
-                leading: HugeIcon(
-                  icon: HugeIcons.strokeRoundedDocumentValidation,
-                ),
-                title: CustomText(
-                  title: 'Document',
-                  textAlign: TextAlign.start,
-                  fontSize: 14.sp,
-                ),
-                onTap: () async {
-                  Get.back();
-                  File? file = await pickDocument();
-                  if (file != null) onFilePicked(file);
-                },
-              ),
+              // Divider(height: 5, thickness: 0.5),
+              // ListTile(
+              //   leading: HugeIcon(
+              //     icon: HugeIcons.strokeRoundedDocumentValidation,
+              //   ),
+              //   title: CustomText(
+              //     title: 'Document',
+              //     textAlign: TextAlign.start,
+              //     fontSize: 14.sp,
+              //   ),
+              //   onTap: () async {
+              //     Get.back();
+              //     File? file = await pickDocument();
+              //     if (file != null) onFilePicked(file);
+              //   },
+              // ),
             ],
           ),
         ),

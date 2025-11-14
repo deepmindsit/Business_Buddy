@@ -489,7 +489,7 @@ class OfferTile extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: point.map((v) {
-                    return _buildBulletPoint(text: v);
+                    return buildBulletPoint(text: v);
                   }).toList(),
                 ),
 
@@ -503,29 +503,30 @@ class OfferTile extends StatelessWidget {
     );
   }
 
-  Widget _buildBulletPoint({required String text}) {
-    return Row(
-      children: [
-        // Bullet point
-        Container(
-          margin: EdgeInsets.only(right: 8.w),
-          width: 8.r,
-          height: 8.r,
-          decoration: BoxDecoration(
-            color: primaryColor,
-            shape: BoxShape.circle,
-          ),
+
+}
+Widget buildBulletPoint({required String text}) {
+  return Row(
+    children: [
+      // Bullet point
+      Container(
+        margin: EdgeInsets.only(right: 8.w),
+        width: 8.r,
+        height: 8.r,
+        decoration: BoxDecoration(
+          color: primaryColor,
+          shape: BoxShape.circle,
         ),
-        // Text
-        Expanded(
-          child: CustomText(
-            title: text,
-            fontSize: 12.sp,
-            color: Colors.grey.shade700,
-            textAlign: TextAlign.start,
-          ),
+      ),
+      // Text
+      Expanded(
+        child: CustomText(
+          title: text,
+          fontSize: 12.sp,
+          color: Colors.grey.shade700,
+          textAlign: TextAlign.start,
         ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
 }

@@ -1,4 +1,3 @@
-import 'package:businessbuddy/presentation/home_screen/widget/business/view/add_business.dart';
 import 'package:businessbuddy/utils/exported_path.dart';
 
 class LboScreen extends StatefulWidget {
@@ -14,7 +13,10 @@ class _LboScreenState extends State<LboScreen> {
 
   @override
   void initState() {
-    controller.getMyBusinesses();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.getMyBusinesses();
+      controller.selectedBusiness.value = 0;
+    });
     super.initState();
   }
 
@@ -39,40 +41,47 @@ class _LboScreenState extends State<LboScreen> {
 
   // ---------------- FAB -----------------
   Widget _buildExpandableFab() {
-    return ExpandableFab(
-      distance: 70,
-      type: ExpandableFabType.up,
-      openButtonBuilder: RotateFloatingActionButtonBuilder(
-        fabSize: ExpandableFabSize.small,
-        child: const Icon(Icons.add, color: Colors.white, size: 24),
-        backgroundColor: primaryColor,
-        foregroundColor: Colors.white,
-        shape: const CircleBorder(),
-        // elevation: 8,
-      ),
-      closeButtonBuilder: RotateFloatingActionButtonBuilder(
-        fabSize: ExpandableFabSize.small,
-        child: const Icon(Icons.close, color: Colors.white, size: 20),
-        backgroundColor: Colors.redAccent,
-        foregroundColor: Colors.white,
-        shape: const CircleBorder(),
-        // elevation: 6,
-      ),
-      children: [
-        _buildFabChild(
-          icon: Icons.post_add,
-          text: 'Post',
-          color: Colors.black,
-          onPressed: () => Get.toNamed(Routes.addPost),
+    return Obx(() {
+      if (controller.isBusinessApproved.value == '0') {
+        return const SizedBox();
+      }
+
+      return ExpandableFab(
+        distance: 70,
+        type: ExpandableFabType.up,
+        openButtonBuilder: RotateFloatingActionButtonBuilder(
+          fabSize: ExpandableFabSize.small,
+          child: const Icon(Icons.add, color: Colors.white, size: 24),
+          backgroundColor: primaryColor,
+          foregroundColor: Colors.white,
+          shape: const CircleBorder(),
+          elevation: 0,
+          // elevation: 8,
         ),
-        _buildFabChild(
-          icon: Icons.local_offer,
-          text: 'Offer',
-          color: Colors.red,
-          onPressed: () => Get.toNamed(Routes.addOffer),
+        closeButtonBuilder: RotateFloatingActionButtonBuilder(
+          fabSize: ExpandableFabSize.small,
+          child: const Icon(Icons.close, color: Colors.white, size: 20),
+          backgroundColor: Colors.redAccent,
+          foregroundColor: Colors.white,
+          shape: const CircleBorder(),
+          // elevation: 6,
         ),
-      ],
-    );
+        children: [
+          _buildFabChild(
+            icon: Icons.post_add,
+            text: 'Post',
+            color: Colors.black,
+            onPressed: () => Get.toNamed(Routes.addPost),
+          ),
+          _buildFabChild(
+            icon: Icons.local_offer,
+            text: 'Offer',
+            color: Colors.red,
+            onPressed: () => Get.toNamed(Routes.addOffer),
+          ),
+        ],
+      );
+    });
   }
 
   // Helper method to create consistent FAB children
@@ -111,15 +120,18 @@ class _LboScreenState extends State<LboScreen> {
   // ---------------- MAIN CONTENT -----------------
   Widget _buildBusinessList() {
     return SingleChildScrollView(
-      padding: EdgeInsets.all(12.w),
-      child: Column(
-        spacing: 8.h,
-        children: [
-          _buildAddBusinessButton(),
-          _buildBusinessListBody(),
-          _buildPostAndOffers(),
-          SizedBox(height: 12.h),
-        ],
+      child: Obx(
+        () => Column(
+          spacing: 8.h,
+          children: [
+            _buildAddBusinessButton(),
+            _buildBusinessListBody(),
+            if (controller.isBusinessApproved.value == '0') _pendingBusiness(),
+            if (controller.isBusinessApproved.value == '1')
+              _buildPostAndOffers(),
+            SizedBox(height: 12.h),
+          ],
+        ),
       ),
     );
   }
@@ -162,7 +174,13 @@ class _LboScreenState extends State<LboScreen> {
                 controller.selectedBusinessId.value = business['id'].toString();
                 controller.postList.value = business['posts'] ?? [];
                 controller.offerList.value = business['offers'] ?? [];
-                Get.toNamed(Routes.businessDetails);
+                controller.isBusinessApproved.value = business['is_approved'];
+                if (controller.isBusinessApproved.value == '1') {
+                  Get.toNamed(
+                    Routes.businessDetails,
+                    arguments: {'businessId': business['id'].toString()},
+                  );
+                }
               },
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 250),
@@ -260,7 +278,7 @@ class _LboScreenState extends State<LboScreen> {
               ),
               tabs: const [
                 Tab(text: 'Post'),
-                Tab(text: 'Offer'),
+                Tab(text: 'Special Offer'),
               ],
             ),
 
@@ -271,8 +289,8 @@ class _LboScreenState extends State<LboScreen> {
               child: TabBarView(
                 physics: const NeverScrollableScrollPhysics(), // prevents
                 children: [
-                  buildGridImages(controller.postList),
-                  buildGridImages(controller.offerList),
+                  buildGridImages(controller.postList, 'post'),
+                  buildGridImages(controller.offerList, 'offer'),
                 ],
               ),
             ),
@@ -314,6 +332,62 @@ class _LboScreenState extends State<LboScreen> {
               isLoading: false.obs,
               onPressed: () => navController.openSubPage(AddBusiness()),
               text: 'Add Business',
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _pendingBusiness() {
+    return Card(
+      color: Colors.white,
+      surfaceTintColor: Colors.white,
+      margin: const EdgeInsets.symmetric(horizontal: 24),
+      child: Padding(
+        padding: const EdgeInsets.all(18),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 80.w,
+              height: 80.h,
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: primaryColor.withValues(alpha: 0.1),
+                  width: 2,
+                ),
+              ),
+              child: HugeIcon(
+                icon: HugeIcons.strokeRoundedLoading01,
+                size: 12,
+                color: primaryColor.withValues(alpha: 0.5),
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            const Text(
+              "Approval Pending",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: Colors.black87,
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            Text(
+              "Your business is currently under review. We'll notify you once the verification process is complete.",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 14,
+                height: 1.5,
+                color: Colors.grey.shade700,
+              ),
             ),
           ],
         ),
