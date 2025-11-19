@@ -9,12 +9,21 @@ class BusinessPartner extends StatefulWidget {
 
 class _BusinessPartnerState extends State<BusinessPartner> {
   final navController = getIt<NavigationController>();
+  final controller = getIt<PartnerDataController>();
+
+  @override
+  void initState() {
+    controller.getBusinessRequired();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: _buildPartnerList(),
       floatingActionButton: FloatingActionButton.small(
         backgroundColor: primaryColor,
+        elevation: 0,
         foregroundColor: Colors.white,
         shape: CircleBorder(),
         onPressed: () {
@@ -22,12 +31,6 @@ class _BusinessPartnerState extends State<BusinessPartner> {
         },
         child: Icon(Icons.add),
       ),
-      // SingleChildScrollView(
-      //   child: Column(children: [
-      //     _buildPartnerList()
-      //     // _buildEmptyPartner()
-      //   ]),
-      // ),
     );
   }
 
@@ -72,14 +75,21 @@ class _BusinessPartnerState extends State<BusinessPartner> {
   }
 
   Widget _buildRequirement() {
-    return ListView.separated(
-      separatorBuilder: (context, index) =>
-          Divider(height: 5, color: lightGrey),
-      padding: const EdgeInsets.all(8),
-      itemCount: 10,
-      itemBuilder: (context, index) {
-        return BusinessCard(status: 'Basic');
-      },
+    return Obx(
+      () => controller.isLoading.isTrue
+          ? LoadingWidget(color: primaryColor)
+          : controller.requirementList.isEmpty
+          ? _buildEmptyPartner()
+          : ListView.separated(
+              separatorBuilder: (context, index) =>
+                  Divider(height: 5, color: lightGrey),
+              padding: const EdgeInsets.all(8),
+              itemCount: controller.requirementList.length,
+              itemBuilder: (context, index) {
+                final data = controller.requirementList[index];
+                return BusinessCard(status: 'Basic', data: data);
+              },
+            ),
     );
   }
 

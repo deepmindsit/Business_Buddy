@@ -59,6 +59,12 @@ abstract class ApiService {
     @Part(name: "lat_long") String? latLong,
   );
 
+  @POST(AllUrl.myBusinessDetails)
+  Future<dynamic> myBusinessDetails(
+    @Part(name: "business_id") String? catId,
+    @Part(name: "lat_long") String? latLong,
+  );
+
   @POST(AllUrl.myBusiness)
   Future<dynamic> myBusiness(@Part(name: "user_id") String? userId);
 
@@ -84,22 +90,58 @@ abstract class ApiService {
     @Part(name: 'image') File? profileImage,
   });
 
-
   @POST(AllUrl.postDetails)
   Future<dynamic> postDetails(@Part(name: "post_id") String? postId);
 
   @POST(AllUrl.offerDetails)
   Future<dynamic> offerDetails(@Part(name: "offer_id") String? offerId);
 
-  // @POST(AllUrl.addFileComment)
-  // @MultiPart()
-  // Future<dynamic> addFileComment(
-  //   @Part(name: "user_id") String userId,
-  //   @Part(name: "file_id") String fileId,
-  //   @Part(name: "status_id") String statusId,
-  //   @Part(name: "description") String description, {
-  //   @Part(name: 'attachments[]') List<MultipartFile>? attachment,
-  // });
+  @POST(AllUrl.getFeeds)
+  Future<dynamic> getFeeds(@Part(name: "lat_long") String? latLong);
+
+  @POST(AllUrl.getSpecialOffer)
+  Future<dynamic> getSpecialOffer();
+
+  @POST(AllUrl.businessReqList)
+  Future<dynamic> businessReqList(@Part(name: "user_id") String? userId);
+
+  @POST(AllUrl.getWulf)
+  Future<dynamic> getWulf();
+
+  @POST(AllUrl.getCapacity)
+  Future<dynamic> getCapacity(@Part(name: "wulf_id") String? wulfId);
+
+  @POST(AllUrl.addBusinessReq)
+  Future<dynamic> addBusinessReq(
+    @Part(name: "user_id") String userId,
+    @Part(name: "name") String name,
+    @Part(name: "location") String location,
+    @Part(name: "lat_long") String latLng,
+    @Part(name: "wulf_id") String wulfId,
+    @Part(name: "investment_cap_id") String capacityId,
+    @Part(name: "history") String history,
+    @Part(name: "note") String note,
+    @Part(name: "can_invest") String canInvest,
+    @Part(name: "category_ids[]") List<String> catIds,
+  );
+
+  @POST(AllUrl.getMyProfile)
+  Future<dynamic> getMyProfile(@Part(name: "user_id") String? userId);
+
+  @POST(AllUrl.getUserProfile)
+  Future<dynamic> getUserProfile(@Part(name: "user_id") String? userId);
+
+  @POST(AllUrl.updateProfile)
+  @MultiPart()
+  Future<dynamic> updateProfile(
+    @Part(name: "user_id") String userId,
+    @Part(name: "name") String name,
+    @Part(name: "experience") String experience,
+    @Part(name: "education") String education,
+    @Part(name: "specialization_id") String specializationId,
+    @Part(name: "about") String about, {
+    @Part(name: 'profile_image') File? profileImage,
+  });
 }
 
 //

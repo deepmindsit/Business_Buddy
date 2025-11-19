@@ -43,7 +43,10 @@ class CustomMainHeader extends StatelessWidget {
                         ),
                         _buildActionIcon(
                           icon: HugeIcons.strokeRoundedUserStory,
-                          onTap: () => Get.toNamed(Routes.profile),
+                          onTap: () => Get.toNamed(
+                            Routes.profile,
+                            arguments: {'user_id': 'self'},
+                          ),
                         ),
                       ],
                     ),

@@ -79,6 +79,7 @@ class OnboardingController extends GetxController {
           'user_id',
           response['data']['user_details']['user_id'].toString(),
         );
+        numberController.clear();
         Get.offAllNamed(Routes.mainScreen);
         ToastUtils.showSuccessToast(response['common']['message'].toString());
       } else {
@@ -111,10 +112,10 @@ class OnboardingController extends GetxController {
           'user_id',
           response['data']['user_details']['user_id'].toString(),
         );
+        numberController.clear();
         Get.offAllNamed(Routes.mainScreen);
         ToastUtils.showSuccessToast(response['common']['message'].toString());
       } else {
-        // Get.offAllNamed(Routes.register);
         ToastUtils.showErrorToast(response['common']['message'].toString());
       }
     } catch (e) {

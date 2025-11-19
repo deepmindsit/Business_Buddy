@@ -10,8 +10,7 @@ Future<http.Client> getHttpClient() async {
 }
 
 class AllUrl {
-  static const String baseUrl =
-      "http://192.168.29.41/business_buddy/api/user/v1";
+  static const String baseUrl = "http://192.168.29.41/bizyaari/api/user/v1";
   // static const String baseUrl =
   //     "https://businessbuddy.deepmindsit.com/api/user/v1";
 
@@ -22,12 +21,20 @@ class AllUrl {
   static const String regBusiness = '$baseUrl/register_business';
   static const String explore = '$baseUrl/explore';
   static const String businessDetails = '$baseUrl/business_details';
+  static const String myBusinessDetails = '$baseUrl/my_business_details';
   static const String myBusiness = '$baseUrl/my_businesses';
   static const String addBusiness = '$baseUrl/register_business';
   static const String addPost = '$baseUrl/add_business_post';
   static const String addOffer = '$baseUrl/add_business_offer';
   static const String postDetails = '$baseUrl/get_post_details';
   static const String offerDetails = '$baseUrl/get_offer_details';
-
-
+  static const String getFeeds = '$baseUrl/get_feeds';
+  static const String getSpecialOffer = '$baseUrl/get_special_offers';
+  static const String businessReqList = '$baseUrl/business_requirement_list';
+  static const String getWulf = '$baseUrl/get_wulf_list';
+  static const String getCapacity = '$baseUrl/get_investment_capacity_list';
+  static const String addBusinessReq = '$baseUrl/add_business_requirement';
+  static const String getMyProfile = '$baseUrl/my_profile_details';
+  static const String getUserProfile = '$baseUrl/user_profile_details';
+  static const String updateProfile = '$baseUrl/update_profile';
 }

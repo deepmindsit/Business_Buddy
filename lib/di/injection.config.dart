@@ -16,6 +16,8 @@ import 'package:businessbuddy/presentation/home_screen/widget/business/controlle
     as _i745;
 import 'package:businessbuddy/presentation/home_screen/widget/explorer/controller/explorer_controller.dart'
     as _i481;
+import 'package:businessbuddy/presentation/home_screen/widget/feeds/controller/feeds_controller.dart'
+    as _i729;
 import 'package:businessbuddy/presentation/inbox/controller/inbox_controller.dart'
     as _i655;
 import 'package:businessbuddy/presentation/navigation/controller/navigation_controller.dart'
@@ -26,6 +28,8 @@ import 'package:businessbuddy/presentation/onboarding/controller/splash_controll
     as _i446;
 import 'package:businessbuddy/presentation/profile/controller/profile_controller.dart'
     as _i634;
+import 'package:businessbuddy/presentation/special_offer/controller/special_offer_controller.dart'
+    as _i68;
 import 'package:dio/dio.dart' as _i361;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
@@ -44,6 +48,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i481.ExplorerController>(
       () => _i481.ExplorerController(),
     );
+    gh.lazySingleton<_i729.FeedsController>(() => _i729.FeedsController());
     gh.lazySingleton<_i655.InboxController>(() => _i655.InboxController());
     gh.lazySingleton<_i445.NavigationController>(
       () => _i445.NavigationController(),
@@ -53,6 +58,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i446.SplashController>(() => _i446.SplashController());
     gh.lazySingleton<_i634.ProfileController>(() => _i634.ProfileController());
+    gh.lazySingleton<_i68.SpecialOfferController>(
+      () => _i68.SpecialOfferController(),
+    );
     gh.factory<_i889.ApiService>(() => _i889.ApiService(gh<_i361.Dio>()));
     return this;
   }

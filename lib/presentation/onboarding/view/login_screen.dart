@@ -1,5 +1,4 @@
 import 'package:businessbuddy/utils/exported_path.dart';
-import 'package:flutter/gestures.dart';
 import 'package:sms_autofill/sms_autofill.dart';
 
 class LoginScreen extends StatefulWidget {

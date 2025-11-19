@@ -1,5 +1,4 @@
 import 'package:businessbuddy/utils/exported_path.dart';
-import 'package:businessbuddy/utils/location_service.dart';
 
 class NavigationScreen extends StatefulWidget {
   const NavigationScreen({super.key});
@@ -54,7 +53,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
             boxShadow: [
               if (theme.brightness == Brightness.light)
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.07),
+                  color: mainGrey.withValues(alpha: 0.07),
                   blurRadius: 10,
                   offset: const Offset(0, -2),
                 )
@@ -69,10 +68,10 @@ class _NavigationScreenState extends State<NavigationScreen> {
           child: ClipRRect(
             borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
             child: BottomNavigationBar(
-              backgroundColor: Colors.black,
-              selectedItemColor: Colors.white,
+              backgroundColor: mainGrey,
+              selectedItemColor: Colors.red,
               showUnselectedLabels: true,
-              unselectedItemColor: Colors.white70,
+              unselectedItemColor: Colors.grey,
               selectedLabelStyle: const TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 12,
@@ -121,7 +120,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
     double? iconSize,
   }) {
     return BottomNavigationBarItem(
-      backgroundColor: Colors.black,
+      backgroundColor: mainGrey,
       icon: Container(
         decoration: BoxDecoration(
           color: isSelected ? Colors.red : Colors.transparent,
@@ -131,7 +130,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
         child: HugeIcon(
           size: iconSize ?? Get.width * 0.06,
           icon: icon,
-          color: isSelected ? Colors.white : Colors.white38,
+          color: isSelected ? Colors.white : Colors.grey,
         ),
       ),
       label: label,

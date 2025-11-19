@@ -18,7 +18,7 @@ class LBOController extends GetxController {
         profileImage.value = File(pickedFile.path);
       }
     } catch (e) {
-      _showError(e);
+      showError(e);
     }
   }
 
@@ -31,6 +31,8 @@ class LBOController extends GetxController {
   final offerList = <dynamic>[].obs;
   final selectedBusinessId = ''.obs;
   final isBusinessApproved = ''.obs;
+  final isDetailsLoading = false.obs;
+  final businessDetails = {}.obs;
 
   Future<void> getMyBusinesses({bool showLoading = true}) async {
     if (showLoading) isBusinessLoading.value = true;
@@ -49,13 +51,46 @@ class LBOController extends GetxController {
           postList.value = firstBusiness['posts'] ?? [];
           offerList.value = firstBusiness['offers'] ?? [];
           selectedBusinessId.value = firstBusiness['id'].toString();
-          isBusinessApproved.value = firstBusiness['is_approved'].toString();
+          isBusinessApproved.value = firstBusiness['is_business_approved']
+              .toString();
         }
       }
     } catch (e) {
-      _showError(e);
+      showError(e);
     } finally {
       if (showLoading) isBusinessLoading.value = false;
+    }
+  }
+
+  Future<void> getMyBusinessDetails(
+    String businessId, {
+    bool showLoading = true,
+  }) async {
+    if (showLoading) isDetailsLoading.value = true;
+    // final userId = await LocalStorage.getString('user_id') ?? '';
+    // print('userId==========>$userId');
+    businessDetails.clear();
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      final response = await _apiService.myBusinessDetails(
+        businessId,
+        '${position.latitude},${position.longitude}',
+      );
+      if (response['common']['status'] == true) {
+        businessDetails.value = response['data'] ?? {};
+      }
+    } catch (e) {
+      ToastUtils.showToast(
+        title: 'Something went wrong',
+        description: e.toString(),
+        type: ToastificationType.error,
+        icon: Icons.error,
+      );
+      debugPrint("Error: $e");
+    } finally {
+      if (showLoading) isDetailsLoading.value = false;
     }
   }
 
@@ -108,7 +143,7 @@ class LBOController extends GetxController {
         ToastUtils.showErrorToast(response['common']['message'].toString());
       }
     } catch (e) {
-      _showError(e);
+      showError(e);
     } finally {
       isAddBusinessLoading.value = false;
     }
@@ -151,7 +186,7 @@ class LBOController extends GetxController {
         ToastUtils.showErrorToast(response['common']['message'].toString());
       }
     } catch (e) {
-      _showError(e);
+      showError(e);
     } finally {
       isPostLoading.value = false;
     }
@@ -195,7 +230,7 @@ class LBOController extends GetxController {
         ToastUtils.showErrorToast(response['common']['message'].toString());
       }
     } catch (e) {
-      _showError(e);
+      showError(e);
     } finally {
       isOfferLoading.value = false;
     }
@@ -210,7 +245,6 @@ class LBOController extends GetxController {
     highlightCtrl.clear();
     points.clear();
   }
-
 
   /// ------------------------
   /// SINGLE POST DETAILS
@@ -228,7 +262,7 @@ class LBOController extends GetxController {
         singlePost.value = response['data'] ?? {};
       }
     } catch (e) {
-      _showError(e);
+      showError(e);
     } finally {
       if (showLoading) isSinglePostLoading.value = false;
     }
@@ -250,7 +284,7 @@ class LBOController extends GetxController {
         singleOffer.value = response['data'] ?? {};
       }
     } catch (e) {
-      _showError(e);
+      showError(e);
     } finally {
       if (showLoading) isSingleOfferLoading.value = false;
     }
@@ -259,13 +293,5 @@ class LBOController extends GetxController {
   /// ------------------------
   /// COMMON ERROR HANDLER
   /// ------------------------
-  void _showError(dynamic e) {
-    ToastUtils.showToast(
-      title: 'Something went wrong',
-      description: e.toString(),
-      type: ToastificationType.error,
-      icon: Icons.error,
-    );
-    debugPrint("Error: $e");
-  }
+
 }

@@ -1,7 +1,11 @@
 import 'package:businessbuddy/utils/exported_path.dart';
 
 class FeedCard extends StatelessWidget {
-  const FeedCard({super.key});
+  final dynamic data;
+
+  FeedCard({super.key, this.data});
+
+  final navController = getIt<NavigationController>();
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +28,13 @@ class FeedCard extends StatelessWidget {
             // Image Section
             _buildImageSection(),
             // SizedBox(height: 16.h),
-
+            // CustomText(
+            //   title: data['created_at'] ?? '',
+            //   fontSize: 12.sp,
+            //   textAlign: TextAlign.start,
+            //   color: Colors.grey.shade600,
+            //   maxLines: 1,
+            // ),
             // Engagement Section
             _buildEngagementSection(),
 
@@ -38,35 +48,65 @@ class FeedCard extends StatelessWidget {
   }
 
   Widget _buildHeader() {
+    final image = data['business_profile_image'] ?? '';
     return Row(
       children: [
         CircleAvatar(
           radius: 20.r,
           backgroundColor: Colors.grey.shade100,
-          backgroundImage: AssetImage(Images.hotelImg),
+          child: ClipOval(
+            child: FadeInImage(
+              placeholder: const AssetImage(Images.defaultImage),
+              image: NetworkImage(image),
+              width: double.infinity,
+              height: 100.w,
+              fit: BoxFit.cover,
+              imageErrorBuilder: (context, error, stackTrace) {
+                return Center(
+                  child: Image.asset(
+                    Images.defaultImage,
+                    width: 100.w,
+                    height: 100.w,
+                  ),
+                );
+              },
+              fadeInDuration: const Duration(milliseconds: 500),
+            ),
+          ),
+          // backgroundImage: AssetImage(Images.hotelImg),
         ),
-        SizedBox(width: 12.w),
+        SizedBox(width: 8.w),
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomText(
-                title: 'Deepminds Infotech Pvt. Ltd.',
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w700,
-                textAlign: TextAlign.start,
-                color: Colors.black87,
-                maxLines: 1,
-              ),
-              SizedBox(height: 2.h),
-              CustomText(
-                title: 'Information Technology & Services',
-                fontSize: 12.sp,
-                textAlign: TextAlign.start,
-                color: Colors.grey.shade600,
-                maxLines: 1,
-              ),
-            ],
+          child: GestureDetector(
+            onTap: () {
+              navController.openSubPage(
+                CategoryDetailPage(
+                  title: data['business_name'] ?? '',
+                  businessId: data['business_id']?.toString() ?? '',
+                ),
+              );
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CustomText(
+                  title: data['business_name'] ?? '',
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w700,
+                  textAlign: TextAlign.start,
+                  color: Colors.black87,
+                  maxLines: 1,
+                ),
+                SizedBox(height: 2.h),
+                CustomText(
+                  title: data['category'] ?? '',
+                  fontSize: 12.sp,
+                  textAlign: TextAlign.start,
+                  color: Colors.grey.shade600,
+                  maxLines: 1,
+                ),
+              ],
+            ),
           ),
         ),
         SizedBox(width: 8.w),
@@ -119,31 +159,27 @@ class FeedCard extends StatelessWidget {
   }
 
   Widget _buildImageSection() {
+    final image = data['image'] ?? '';
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        border: Border.all(color: Colors.grey.shade300, width: 0.5),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16.r),
         child: AspectRatio(
           aspectRatio: 1.4,
           child: FadeInImage(
-            placeholder: const AssetImage(Images.logo),
-            image: AssetImage(Images.feedImg),
+            placeholder: const AssetImage(Images.defaultImage),
+            image: NetworkImage(image),
             width: double.infinity,
-            fit: BoxFit.cover,
+            fit: BoxFit.contain,
             imageErrorBuilder: (context, error, stackTrace) {
-              return Container(
-                color: Colors.grey.shade100,
-                child: Center(
-                  child: Image.asset(Images.logo, width: 150.w, height: 150.w),
+              return Center(
+                child: Image.asset(
+                  Images.defaultImage,
+                  width: 150.w,
+                  height: 150.w,
                 ),
               );
             },
@@ -176,7 +212,7 @@ class FeedCard extends StatelessWidget {
         ),
 
         // Offers Button
-        _buildOffersButton(),
+        // _buildOffersButton(),
       ],
     );
   }
@@ -211,65 +247,59 @@ class FeedCard extends StatelessWidget {
     );
   }
 
-  Widget _buildOffersButton() {
-    return GestureDetector(
-      onTap: () {
-        // Handle offers view
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-        decoration: BoxDecoration(
-          color: primaryColor.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(8.r),
-          border: Border.all(
-            color: primaryColor.withValues(alpha: 0.3),
-            width: 1,
-          ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            HugeIcon(
-              icon: HugeIcons.strokeRoundedDiscount,
-              color: primaryColor,
-              size: 16.sp,
-            ),
-            SizedBox(width: 6.w),
-            CustomText(
-              title: 'View Offers',
-              fontSize: 12.sp,
-              color: primaryColor,
-              fontWeight: FontWeight.w600,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  // Widget _buildOffersButton() {
+  //   return GestureDetector(
+  //     onTap: () {
+  //       // Handle offers view
+  //     },
+  //     child: Container(
+  //       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+  //       decoration: BoxDecoration(
+  //         color: primaryColor.withValues(alpha: 0.1),
+  //         borderRadius: BorderRadius.circular(8.r),
+  //         border: Border.all(
+  //           color: primaryColor.withValues(alpha: 0.3),
+  //           width: 1,
+  //         ),
+  //       ),
+  //       child: Row(
+  //         mainAxisSize: MainAxisSize.min,
+  //         children: [
+  //           HugeIcon(
+  //             icon: HugeIcons.strokeRoundedDiscount,
+  //             color: primaryColor,
+  //             size: 16.sp,
+  //           ),
+  //           SizedBox(width: 6.w),
+  //           CustomText(
+  //             title: 'View Offers',
+  //             fontSize: 12.sp,
+  //             color: primaryColor,
+  //             fontWeight: FontWeight.w600,
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildContentSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CustomText(
-          title: 'Boost Your Local Business with Business Buddy!',
-          fontSize: 15.sp,
-          fontWeight: FontWeight.w600,
-          color: Colors.black87,
-          textAlign: TextAlign.start,
-          maxLines: 2,
-        ),
-        // SizedBox(height: 4.h),
-        CustomText(
-          title:
-              'Share offers, promote products, and connect directly with nearby customers — all in one app. Grow your business with our powerful marketing tools and reach more customers in your area.',
-          fontSize: 13.sp,
-          color: Colors.grey.shade700,
-          maxLines: 2,
-          textAlign: TextAlign.start,
-        ),
-      ],
+    return CustomText(
+      title: data['details'] ?? '',
+      fontSize: 14.sp,
+      // fontWeight: FontWeight.w600,
+      // color: primaryColor,
+      textAlign: TextAlign.start,
+      maxLines: 2,
     );
+
+    //   CustomText(
+    //   title: data['details'] ?? '',
+    //   fontSize: 13.sp,
+    //   color: Colors.grey.shade700,
+    //   maxLines: 2,
+    //   textAlign: TextAlign.start,
+    // );
   }
 
   void _handleLike() {

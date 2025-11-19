@@ -259,7 +259,9 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
               Icon(Icons.star_rounded, color: Colors.white, size: 14.sp),
               SizedBox(width: 4.w),
               CustomText(
-                title: '4.9',
+                title:
+                    controller.businessDetails['total_rating']?.toString() ??
+                    '',
                 fontSize: 12.sp,
                 textAlign: TextAlign.start,
                 color: Colors.white,
@@ -270,7 +272,8 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
         ),
         SizedBox(width: 8.w),
         CustomText(
-          title: '(500+ reviews)',
+          title:
+              '(${controller.businessDetails['reviews_count']?.toString() ?? ''} reviews)',
           fontSize: 12.sp,
           color: Colors.grey.shade600,
         ),
@@ -309,23 +312,102 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
     );
   }
 
+  // Widget _buildLocationSection() {
+  //   final details = controller.businessDetails;
+  //
+  //   final address = (details['address'] ?? '').toString();
+  //   final distance = (details['distance'] ?? '').toString();
+  //   final lat = double.tryParse(details['latitude']?.toString() ?? '');
+  //   final lng = double.tryParse(details['longitude']?.toString() ?? '');
+  //
+  //   return Row(
+  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //     children: [
+  //       Expanded(
+  //         child: Row(
+  //           children: [
+  //             Icon(
+  //               Icons.location_on_outlined,
+  //               color: Colors.grey.shade600,
+  //               size: 16.sp,
+  //             ),
+  //             SizedBox(width: 6.w),
+  //             Expanded(
+  //               child: CustomText(
+  //                 title:
+  //                     '${controller.businessDetails['address'] ?? ''} | ${controller.businessDetails['distance']?.toString() ?? ''} km',
+  //                 fontSize: 14.sp,
+  //                 textAlign: TextAlign.start,
+  //                 color: Colors.grey.shade700,
+  //                 maxLines: 1,
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //       GestureDetector(
+  //         onTap: () {
+  //           openMap(
+  //             double.parse(controller.businessDetails['latitude']),
+  //             double.parse(controller.businessDetails['longitude']),
+  //           );
+  //         },
+  //         child: HugeIcon(
+  //           icon: HugeIcons.strokeRoundedLocation05,
+  //           color: primaryColor,
+  //           // size: 20.sp,
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
   Widget _buildLocationSection() {
+    final details = controller.businessDetails;
+
+    final address = (details['address'] ?? '').toString();
+    final distance = (details['distance'] ?? '').toString();
+    final lat = double.tryParse(details['latitude']?.toString() ?? '');
+    final lng = double.tryParse(details['longitude']?.toString() ?? '');
+
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
+        /// LEFT SIDE: Address + Distance
         Icon(
           Icons.location_on_outlined,
           color: Colors.grey.shade600,
           size: 16.sp,
         ),
         SizedBox(width: 6.w),
+
         Expanded(
           child: CustomText(
-            title:
-                '${controller.businessDetails['address'] ?? ''} | ${controller.businessDetails['distance']?.toString() ?? ''} km',
+            title: '$address | $distance km',
             fontSize: 14.sp,
-            textAlign: TextAlign.start,
             color: Colors.grey.shade700,
             maxLines: 1,
+          ),
+        ),
+
+        /// PUSHES ICON TO THE RIGHT SIDE
+        // Spacer(),
+
+        /// RIGHT SIDE ICON
+        GestureDetector(
+          onTap: () {
+            if (lat != null && lng != null) {
+              openMap(lat, lng);
+            } else {
+              Get.snackbar(
+                "Location Error",
+                "Unable to open map. Invalid coordinates.",
+                snackPosition: SnackPosition.BOTTOM,
+              );
+            }
+          },
+          child: HugeIcon(
+            icon: HugeIcons.strokeRoundedLocation05,
+            color: primaryColor,
           ),
         ),
       ],
@@ -549,8 +631,11 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
               child: TabBarView(
                 physics: const NeverScrollableScrollPhysics(), // prevents
                 children: [
-                  buildGridImages(controller.businessDetails['posts'],'post'),
-                  buildGridImages(controller.businessDetails['offers'],'offer'),
+                  buildGridImages(controller.businessDetails['posts'], 'post'),
+                  buildGridImages(
+                    controller.businessDetails['offers'],
+                    'offer',
+                  ),
                 ],
               ),
             ),
@@ -561,6 +646,7 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
   }
 
   Widget _buildReviewsSection() {
+    final reviewList = controller.businessDetails['reviews'] ?? [];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -574,21 +660,35 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
           ),
           childrenPadding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
           children: [
-            buildReviewTile(
-              userName: 'Mandar',
-              review:
-                  'At Hotel Jyoti Family Restaurant, I was delighted by the rich flavors and aromatic dishes. Each bite of their signature biryani was a culinary delight, bursting with spices.',
-              rating: 5,
-            ),
-            SizedBox(height: 16.h),
-            const Divider(height: 1),
-            SizedBox(height: 16.h),
-            buildReviewTile(
-              userName: 'Danish',
-              review:
-                  'At Hotel Jyoti Family Restaurant, I was delighted by the rich flavors and aromatic dishes. Each bite of their signature biryani was a culinary delight, bursting with spices.',
-              rating: 5,
-            ),
+            ...reviewList.map((item) {
+              return Padding(
+                padding: EdgeInsets.only(bottom: 16),
+                child: _buildReviewTile(
+                  userName: item['user_name'] ?? "",
+                  review: item['review'] ?? "",
+                  rating: item['rating'] ?? '0',
+                  imageUrl: item['user_profile_image'] ?? "",
+                  date: item['created_at'] ?? "",
+                ),
+              );
+            }).toList(),
+
+            //
+            // buildReviewTile(
+            //   userName: 'Mandar',
+            //   review:
+            //       'At Hotel Jyoti Family Restaurant, I was delighted by the rich flavors and aromatic dishes. Each bite of their signature biryani was a culinary delight, bursting with spices.',
+            //   rating: 5,
+            // ),
+            // SizedBox(height: 16.h),
+            // const Divider(height: 1),
+            // SizedBox(height: 16.h),
+            // buildReviewTile(
+            //   userName: 'Danish',
+            //   review:
+            //       'At Hotel Jyoti Family Restaurant, I was delighted by the rich flavors and aromatic dishes. Each bite of their signature biryani was a culinary delight, bursting with spices.',
+            //   rating: 5,
+            // ),
             SizedBox(height: 8.h),
             _buildViewAllReviews(),
           ],
@@ -616,6 +716,73 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
                 ],
               ),
             ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildReviewTile({
+    required String userName,
+    required String review,
+    required String rating,
+    required String date,
+    String? imageUrl,
+  }) {
+    return Row(
+      spacing: 12.w,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CircleAvatar(
+          radius: 22.r,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(100.r),
+            child: FadeInImage(
+              placeholder: const AssetImage(Images.defaultImage),
+              image: NetworkImage(imageUrl!),
+              fit: BoxFit.cover,
+              width: 100,
+              height: 100,
+              imageErrorBuilder: (context, error, stackTrace) {
+                return Container(
+                  padding: EdgeInsets.all(20.w),
+                  child: Image.asset(Images.defaultImage, fit: BoxFit.contain),
+                );
+              },
+              fadeInDuration: const Duration(milliseconds: 300),
+            ),
+          ),
+        ),
+        // Content
+        Expanded(
+          child: Column(
+            spacing: 4.h,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CustomText(
+                title: userName,
+                fontWeight: FontWeight.bold,
+                fontSize: 14.sp,
+                textAlign: TextAlign.start,
+                maxLines: 2,
+              ),
+
+              // Rating
+              // buildStarRating(int.parse(rating)),
+              Row(
+                children: [
+                  Icon(Icons.star, size: 16.r, color: Colors.orange),
+                  SizedBox(width: 4),
+                  Text(rating.toString(), style: TextStyle(fontSize: 13.sp)),
+                ],
+              ),
+              CustomText(
+                title: review,
+                fontSize: 13.sp,
+                textAlign: TextAlign.start,
+                maxLines: 20,
+              ),
+            ],
           ),
         ),
       ],

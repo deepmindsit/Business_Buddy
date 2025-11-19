@@ -1,9 +1,15 @@
 import 'package:businessbuddy/utils/exported_path.dart';
 
-class BusinessCard extends StatelessWidget {
+class BusinessCard extends StatefulWidget {
   final String status;
-  const BusinessCard({super.key, required this.status});
+  final dynamic data;
+  const BusinessCard({super.key, required this.status, this.data});
 
+  @override
+  State<BusinessCard> createState() => _BusinessCardState();
+}
+
+class _BusinessCardState extends State<BusinessCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -34,12 +40,18 @@ class BusinessCard extends StatelessWidget {
               thickness: 1,
               width: 1,
             ),
+
             // _buildRightData(),
-            status == 'Requested'
-                ? _buildRightDataRequested()
-                : status == 'Approved'
-                ? _buildRightAccepted()
-                : _buildRightData(),
+            if (widget.data['self'] == true) _buildIsMeCondition(),
+            if (widget.data['requested'] == true &&
+                widget.data['accepted'] == false)
+              _buildPendingRequested(),
+            if (widget.data['requested'] == false &&
+                widget.data['self'] == false)
+              _buildSendRequest(),
+            if (widget.data['requested'] == true &&
+                widget.data['accepted'] == true)
+              _buildAcceptedRequest(),
           ],
         ),
       ),
@@ -56,43 +68,37 @@ class BusinessCard extends StatelessWidget {
           spacing: 8.h,
           children: [
             // Header Section
-            Row(
-              children: [
-                CircleAvatar(
-                  backgroundColor: Colors.white,
-                  backgroundImage: AssetImage(Images.hotelImg),
-                  radius: 22.r,
-                ),
-                SizedBox(width: 12.w),
-                Expanded(
-                  child: CustomText(
-                    title: 'Electronics Retail Store Expansion',
-                    fontSize: 16.sp,
-                    textAlign: TextAlign.start,
-                    color: primaryColor,
-                    fontWeight: FontWeight.w600,
-                    maxLines: 2,
-                  ),
-                ),
-              ],
+            Expanded(
+              child: CustomText(
+                title: widget.data['name'] ?? '',
+                fontSize: 16.sp,
+                textAlign: TextAlign.start,
+                color: primaryColor,
+                fontWeight: FontWeight.w600,
+                maxLines: 2,
+              ),
             ),
             Divider(color: Colors.grey.shade300, thickness: 1, height: 5.h),
 
             // Business Details
             _buildDetailRow(
               firstText: 'Business Interest: ',
-              secondText:
-                  'Consumer Electronics, Mobile Accessories, Repair Services',
+              secondText: widget.data['category_names'].join(", "),
             ),
 
-            _buildDetailRow(
-              firstText: 'Investment Capacity: ',
-              secondText: ' ₹20–30 Lakhs',
-            ),
+            widget.data['what_you_look_for_id'].toString() == '3'
+                ? _buildDetailRow(
+                    firstText: 'Experience: ',
+                    secondText: widget.data['investment_capacity'] ?? '',
+                  )
+                : _buildDetailRow(
+                    firstText: 'Investment Capacity: ',
+                    secondText: widget.data['investment_capacity'] ?? '',
+                  ),
 
             _buildDetailRow(
               firstText: 'Location: ',
-              secondText: 'Nashik, Maharashtra',
+              secondText: widget.data['location'] ?? '',
             ),
           ],
         ),
@@ -100,7 +106,7 @@ class BusinessCard extends StatelessWidget {
     );
   }
 
-  Widget _buildRightData() {
+  Widget _buildSendRequest() {
     return Expanded(
       flex: 1,
       child: Padding(
@@ -132,7 +138,39 @@ class BusinessCard extends StatelessWidget {
     );
   }
 
-  Widget _buildRightDataRequested() {
+  Widget _buildIsMeCondition() {
+    return Expanded(
+      flex: 1,
+      child: Padding(
+        padding: EdgeInsets.all(16.r),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 40.r,
+              height: 40.r,
+              decoration: BoxDecoration(
+                color: primaryColor.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(Icons.edit, size: 20.r, color: primaryColor),
+            ),
+            SizedBox(height: 8.h),
+            CustomText(
+              title: 'Edit',
+              fontSize: 12.sp,
+              maxLines: 2,
+              color: textGrey,
+              fontWeight: FontWeight.w500,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPendingRequested() {
     return Expanded(
       flex: 1,
       child: Padding(
@@ -151,7 +189,7 @@ class BusinessCard extends StatelessWidget {
     );
   }
 
-  Widget _buildRightAccepted() {
+  Widget _buildAcceptedRequest() {
     return Expanded(
       flex: 1,
       child: Padding(
@@ -159,19 +197,30 @@ class BusinessCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              width: 40.r,
-              height: 40.r,
-              padding: EdgeInsets.all(8.r),
-              decoration: BoxDecoration(
-                color: primaryColor.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-              ),
-              child: HugeIcon(
-                icon: HugeIcons.strokeRoundedCall02,
-                color: primaryColor,
+            Center(
+              child: CustomText(
+                title: 'Approved',
+                fontSize: 12.sp,
+                maxLines: 4,
+                color: Colors.green,
+                fontWeight: FontWeight.w500,
+                textAlign: TextAlign.center,
               ),
             ),
+
+            // Container(
+            //   width: 40.r,
+            //   height: 40.r,
+            //   padding: EdgeInsets.all(8.r),
+            //   decoration: BoxDecoration(
+            //     color: primaryColor.withValues(alpha: 0.1),
+            //     shape: BoxShape.circle,
+            //   ),
+            //   child: HugeIcon(
+            //     icon: HugeIcons.strokeRoundedCall02,
+            //     color: primaryColor,
+            //   ),
+            // ),
             // SizedBox(height: 8.h),
             Divider(),
             Container(

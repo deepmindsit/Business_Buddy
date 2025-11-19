@@ -3,6 +3,7 @@ export 'package:flutter/material.dart';
 export 'dart:async';
 export 'dart:convert';
 export 'package:flutter/services.dart';
+export 'package:flutter/gestures.dart';
 
 //screens
 export 'package:businessbuddy/presentation/onboarding/view/splash_screen.dart';
@@ -41,6 +42,7 @@ export 'package:businessbuddy/network/api_service.dart';
 export 'package:businessbuddy/network/initial_bindings.dart';
 export 'package:businessbuddy/utils/utils.dart';
 export 'package:businessbuddy/components/documents_preparation.dart';
+export 'package:businessbuddy/utils/location_service.dart';
 
 //component
 export 'package:businessbuddy/components/screenutil_config.dart';
@@ -70,6 +72,8 @@ export 'package:businessbuddy/presentation/home_screen/widget/business/controlle
 export 'package:businessbuddy/presentation/business_partner/controller/partner_controller.dart';
 export 'package:businessbuddy/presentation/profile/controller/profile_controller.dart';
 export 'package:businessbuddy/presentation/home_screen/widget/explorer/controller/explorer_controller.dart';
+export 'package:businessbuddy/presentation/home_screen/widget/feeds/controller/feeds_controller.dart';
+export 'package:businessbuddy/presentation/special_offer/controller/special_offer_controller.dart';
 
 //plugins
 export 'package:get/get.dart';
@@ -88,3 +92,5 @@ export 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 export 'package:cached_network_image/cached_network_image.dart';
 export 'package:toastification/toastification.dart';
 export 'package:url_launcher/url_launcher.dart';
+export 'package:widget_zoom/widget_zoom.dart';
+

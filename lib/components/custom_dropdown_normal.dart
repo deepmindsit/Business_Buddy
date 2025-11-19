@@ -44,7 +44,7 @@ class AppDropdownField extends StatelessWidget {
           materialTapTargetSize: MaterialTapTargetSize.padded,
           child: DropdownButtonFormField(
             borderRadius: BorderRadius.circular(12.r),
-            // value: value,
+            initialValue: value,
             icon: const Icon(Icons.keyboard_arrow_down, color: Colors.grey),
             decoration: InputDecoration(
               contentPadding: EdgeInsets.symmetric(

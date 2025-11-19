@@ -4,8 +4,8 @@ class CatItemCard extends StatelessWidget {
   final String name;
   final String location;
   final String category;
-  final double rating;
-  final int reviewCount;
+  final String rating;
+  final String reviewCount;
   final String offerText;
   final String phoneNumber;
   final String distance;
@@ -156,7 +156,7 @@ class CatItemCard extends StatelessWidget {
               Icon(Icons.star, color: Colors.white, size: 14.sp),
               SizedBox(width: 4.w),
               CustomText(
-                title: rating.toStringAsFixed(1),
+                title: rating,
                 fontSize: 12.sp,
                 color: Colors.white,
                 fontWeight: FontWeight.w600,
@@ -166,7 +166,7 @@ class CatItemCard extends StatelessWidget {
         ),
         SizedBox(height: 2.h),
         CustomText(
-          title: 'By ${reviewCount.formatCount()}',
+          title: 'By $reviewCount',
           fontSize: 10.sp,
           color: textLightGrey,
         ),

@@ -174,7 +174,8 @@ class _LboScreenState extends State<LboScreen> {
                 controller.selectedBusinessId.value = business['id'].toString();
                 controller.postList.value = business['posts'] ?? [];
                 controller.offerList.value = business['offers'] ?? [];
-                controller.isBusinessApproved.value = business['is_approved'];
+                controller.isBusinessApproved.value =
+                    business['is_business_approved'];
                 if (controller.isBusinessApproved.value == '1') {
                   Get.toNamed(
                     Routes.businessDetails,

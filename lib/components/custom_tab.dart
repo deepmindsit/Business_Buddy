@@ -35,7 +35,7 @@ class _CustomTabBarState extends State<CustomTabBar> {
                 child: Container(
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: isSelected ? primaryColor : Colors.black,
+                    color: isSelected ? primaryColor : mainGrey,
                     // borderRadius: BorderRadius.circular(6.r),
                   ),
                   padding: EdgeInsets.symmetric(horizontal: 4.w),
@@ -44,7 +44,7 @@ class _CustomTabBarState extends State<CustomTabBar> {
                     children: [
                       HugeIcon(
                         icon: tabs[index]['icon'],
-                        color: isSelected ? Colors.white : Colors.grey.shade400,
+                        color: isSelected ? Colors.white : mainTextGrey,
                         size: 18.sp,
                       ),
                       SizedBox(width: 6.w),
@@ -57,9 +57,7 @@ class _CustomTabBarState extends State<CustomTabBar> {
                             fontWeight: isSelected
                                 ? FontWeight.w600
                                 : FontWeight.w400,
-                            color: isSelected
-                                ? Colors.white
-                                : Colors.grey.shade300,
+                            color: isSelected ? Colors.white : mainTextGrey,
                             height: 1.2,
                           ),
                         ),

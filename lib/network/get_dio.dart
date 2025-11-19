@@ -5,7 +5,6 @@ import 'package:businessbuddy/network/local_storage.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import '../routes/routes_names.dart';
 import 'package:get/get.dart';
 
@@ -21,22 +20,20 @@ class DioClient {
 
     final dio = Dio(options);
 
-    (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate = (
-      HttpClient client,
-    ) {
-      client.badCertificateCallback =
-          (X509Certificate cert, String host, int port) => true;
-      return client;
-    };
+    // (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate = (
+    //   HttpClient client,
+    // ) {
+    //   client.badCertificateCallback =
+    //       (X509Certificate cert, String host, int port) => true;
+    //   return client;
+    // };
 
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          final token = 'demo';
-          // options.uri == Uri.parse(AllUrl.register)
-          //     ? 'demo'
-          //     : await LocalStorage.getString('auth_key') ?? 'demo';
           // final token = 'demo';
+          // options.uri ==  ;
+          final token = await LocalStorage.getString('auth_key') ?? 'demo';
 
           options.headers.clear();
           options.headers.addAll({

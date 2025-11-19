@@ -8,25 +8,23 @@ class BusinessDetails extends StatefulWidget {
 }
 
 class _BusinessDetailsState extends State<BusinessDetails> {
-  final controller = getIt<ExplorerController>();
+  final controller = getIt<LBOController>();
 
   @override
   void initState() {
-    controller.getBusinessDetails(Get.arguments['businessId']);
+    controller.getMyBusinessDetails(Get.arguments['businessId']);
     super.initState();
   }
 
   // Business data variables
   final String _followersCount = '10K';
-  final double _businessRating = 4.9;
-  final int _reviewCount = 50;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: _buildAppBar(),
-      floatingActionButton: _buildFloatingActionButton(),
+      // floatingActionButton: _buildFloatingActionButton(),
       body: _buildBody(),
     );
   }
@@ -255,47 +253,29 @@ class _BusinessDetailsState extends State<BusinessDetails> {
   }
 
   Widget _buildGalleryImage(dynamic attach) {
-    return GestureDetector(
-      onTap: () => _openImagePreview(attach),
-      child: Container(
-        width: 80.w,
-        height: 80.h,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12.r),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withValues(alpha: 0.2),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: ClipRRect(
+    return Container(
+      width: 80.w,
+      height: 80.h,
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade200),
+        borderRadius: BorderRadius.circular(12.r),
+      ),
+      child: WidgetZoom(
+        heroAnimationTag: 'tag $attach',
+        zoomWidget: ClipRRect(
           borderRadius: BorderRadius.circular(12.r),
           child: FadeInImage(
             placeholder: const AssetImage(Images.defaultImage),
             image: NetworkImage(attach),
-            fit: BoxFit.cover,
+            fit: BoxFit.contain,
             imageErrorBuilder: (context, error, stackTrace) {
               return Container(
-                // color: lightGrey,
                 padding: EdgeInsets.all(20.w),
                 child: Image.asset(Images.defaultImage, fit: BoxFit.contain),
               );
             },
             fadeInDuration: const Duration(milliseconds: 300),
           ),
-
-          // Image.asset(
-          //   _imageList[index],
-          //   fit: BoxFit.cover,
-          //   errorBuilder: (context, error, stackTrace) {
-          //     return Container(
-          //       color: lightGrey,
-          //       child: Icon(Icons.broken_image, color: Colors.grey.shade400),
-          //     );
-          //   },
-          // ),
         ),
       ),
     );
@@ -431,7 +411,7 @@ class _BusinessDetailsState extends State<BusinessDetails> {
         child: Row(
           children: [
             CustomText(
-              title: _businessRating.toString(),
+              title: '${controller.businessDetails['total_rating']}',
               fontSize: 14.sp,
               fontWeight: FontWeight.bold,
               color: Colors.black87,
@@ -440,7 +420,7 @@ class _BusinessDetailsState extends State<BusinessDetails> {
             Icon(Icons.star, color: Colors.amber, size: 16.w),
             SizedBox(width: 4.w),
             CustomText(
-              title: '($_reviewCount)',
+              title: '(${controller.businessDetails['reviews_count']})',
               fontSize: 12.sp,
               color: Colors.grey.shade600,
             ),
@@ -451,30 +431,30 @@ class _BusinessDetailsState extends State<BusinessDetails> {
   }
 
   Widget _buildReviewList() {
+    final reviewList = controller.businessDetails['reviews'] ?? [];
+    if (reviewList.isEmpty) return Container();
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildReviewTile(
-          userName: 'Mandar',
-          review:
-              'At Hotel Jyoti Family Restaurant, I was delighted by the rich flavors and aromatic dishes. Each bite of their signature biryani was a culinary delight, bursting with spices.',
-          rating: 5,
-          date: '2 days ago',
-        ),
-        SizedBox(height: 16.h),
-        _buildReviewTile(
-          userName: 'Danish',
-          review:
-              'At Hotel Jyoti Family Restaurant, I was delighted by the rich flavors and aromatic dishes. Each bite of their signature biryani was a culinary delight, bursting with spices.',
-          rating: 5,
-          date: '1 week ago',
-        ),
-        SizedBox(height: 16.h),
+        ...reviewList.map((item) {
+          return Padding(
+            padding: EdgeInsets.only(bottom: 16),
+            child: _buildReviewTile(
+              userName: item['user_name'] ?? "",
+              review: item['review'] ?? "",
+              rating: item['rating'] ?? '0',
+              imageUrl: item['user_profile_image'] ?? "",
+              date: item['created_at'] ?? "",
+            ),
+          );
+        }).toList(),
+
         Center(
           child: TextButton(
             onPressed: _viewAllReviews,
             child: CustomText(
               title: 'View All Reviews',
-              fontSize: 14.sp,
+              fontSize: 14,
               color: primaryColor,
               fontWeight: FontWeight.w600,
             ),
@@ -487,61 +467,126 @@ class _BusinessDetailsState extends State<BusinessDetails> {
   Widget _buildReviewTile({
     required String userName,
     required String review,
-    required int rating,
+    required String rating,
     required String date,
+    String? imageUrl,
   }) {
-    return Container(
-      padding: EdgeInsets.all(12.w),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade50,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.grey.shade200),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Row(
+      spacing: 12.w,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CircleAvatar(
+          radius: 22.r,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12.r),
+            child: FadeInImage(
+              placeholder: const AssetImage(Images.defaultImage),
+              image: NetworkImage(imageUrl!),
+              fit: BoxFit.cover,
+              imageErrorBuilder: (context, error, stackTrace) {
+                return Container(
+                  padding: EdgeInsets.all(20.w),
+                  child: Image.asset(Images.defaultImage, fit: BoxFit.contain),
+                );
+              },
+              fadeInDuration: const Duration(milliseconds: 300),
+            ),
+          ),
+        ),
+        // Content
+        Expanded(
+          child: Column(
+            spacing: 4.h,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomText(
                 title: userName,
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
+                fontWeight: FontWeight.bold,
+                fontSize: 14.sp,
+                textAlign: TextAlign.start,
+                maxLines: 2,
               ),
+
+              // Rating
+              Row(
+                children: [
+                  Icon(Icons.star, size: 16.r, color: Colors.orange),
+                  SizedBox(width: 4),
+                  Text(rating.toString(), style: TextStyle(fontSize: 13.sp)),
+                ],
+              ),
+
               CustomText(
-                title: date,
-                fontSize: 12.sp,
-                color: Colors.grey.shade500,
+                title: review,
+                fontSize: 13.sp,
+                textAlign: TextAlign.start,
+                maxLines: 20,
               ),
             ],
           ),
-          SizedBox(height: 4.h),
-          _buildStarRating(rating),
-          SizedBox(height: 8.h),
-          CustomText(
-            maxLines: 10,
-            textAlign: TextAlign.start,
-            title: review,
-            fontSize: 14.sp,
-            color: Colors.grey.shade700,
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  Widget _buildStarRating(int rating) {
-    return Row(
-      children: List.generate(5, (index) {
-        return Icon(
-          index < rating ? Icons.star : Icons.star_border,
-          color: Colors.amber,
-          size: 16.w,
-        );
-      }),
-    );
-  }
+  // Widget _buildReviewTile({
+  //   required String userName,
+  //   required String review,
+  //   required int rating,
+  //   required String date,
+  // }) {
+  //   return Container(
+  //     padding: EdgeInsets.all(12.w),
+  //     decoration: BoxDecoration(
+  //       color: Colors.grey.shade50,
+  //       borderRadius: BorderRadius.circular(12.r),
+  //       border: Border.all(color: Colors.grey.shade200),
+  //     ),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         Row(
+  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //           children: [
+  //             CustomText(
+  //               title: userName,
+  //               fontSize: 16.sp,
+  //               fontWeight: FontWeight.w600,
+  //               color: Colors.black87,
+  //             ),
+  //             CustomText(
+  //               title: date,
+  //               fontSize: 12.sp,
+  //               color: Colors.grey.shade500,
+  //             ),
+  //           ],
+  //         ),
+  //         SizedBox(height: 4.h),
+  //         _buildStarRating(rating),
+  //         SizedBox(height: 8.h),
+  //         CustomText(
+  //           maxLines: 10,
+  //           textAlign: TextAlign.start,
+  //           title: review,
+  //           fontSize: 14.sp,
+  //           color: Colors.grey.shade700,
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
+  // Widget _buildStarRating(int rating) {
+  //   return Row(
+  //     children: List.generate(5, (index) {
+  //       return Icon(
+  //         index < rating ? Icons.star : Icons.star_border,
+  //         color: Colors.amber,
+  //         size: 16.w,
+  //       );
+  //     }),
+  //   );
+  // }
 
   Widget _buildPostAndOffersSection() {
     return DefaultTabController(
@@ -565,8 +610,11 @@ class _BusinessDetailsState extends State<BusinessDetails> {
               height: 320.h,
               child: TabBarView(
                 children: [
-                  buildGridImages(controller.businessDetails['posts'],'post'),
-                  buildGridImages(controller.businessDetails['offers'],'offer'),
+                  buildGridImages(controller.businessDetails['posts'], 'post'),
+                  buildGridImages(
+                    controller.businessDetails['offers'],
+                    'offer',
+                  ),
                 ],
               ),
             ),

@@ -18,6 +18,8 @@ Color textGrey = const Color(0xFF3F3F3F);
 Color textDarkGrey = const Color(0xFF383838);
 Color textLightGrey = const Color(0xFF727272);
 Color lightGrey = const Color(0xFFE8E8E8);
+Color mainGrey = const Color(0xFFEBEBEB);
+Color mainTextGrey = const Color(0xFFA3A3A3);
 
 InputBorder errorBorder = OutlineInputBorder(
   borderSide: const BorderSide(color: Colors.red),

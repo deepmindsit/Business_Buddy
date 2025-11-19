@@ -11,18 +11,18 @@ class _EditProfileState extends State<EditProfile> {
   final controller = getIt<ProfileController>();
 
   @override
+  void initState() {
+    controller.setPreselected();
+    getIt<ExplorerController>().getCategories();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: _buildAppBar(),
-      body: Column(
-        children: [
-          // SizedBox(height: 16.h),
-          // _buildProfileImage(),
-          // SizedBox(height: 12.h),
-          Expanded(child: _buildBody()),
-        ],
-      ),
+      body: _buildBody(),
     );
   }
 
@@ -53,6 +53,7 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   Widget _buildProfileImage() {
+    final image = controller.profileDetails['profile_image'];
     return Center(
       child: GestureDetector(
         onTap: () {
@@ -70,7 +71,7 @@ class _EditProfileState extends State<EditProfile> {
 
               final ImageProvider<Object> imageProvider = imageFile != null
                   ? FileImage(imageFile)
-                  : const AssetImage(Images.defaultImage);
+                  : NetworkImage(image);
 
               return CircleAvatar(
                 radius: 51.r,
@@ -130,7 +131,7 @@ class _EditProfileState extends State<EditProfile> {
                   children: [
                     buildLabel('Your name'),
                     buildTextField(
-                      controller: TextEditingController(),
+                      controller: controller.nameCtrl,
                       hintText: 'Enter name',
                       keyboardType: TextInputType.name,
                       validator: (value) =>
@@ -153,16 +154,21 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   Widget _buildSpecialization() {
-    return AppDropdownField(
-      title: 'Specialization',
-      // value: controller.specialization.value,
-      items: ["Cat1", "Cat2", "Cat3", "Cat4", "Cat5"],
-      hintText: 'Specialization',
-      validator: (value) =>
-          value == null ? 'Please select specialization' : null,
-      onChanged: (val) async {
-        controller.specialization.value = val!;
-      },
+    return Obx(
+      () => getIt<ExplorerController>().isLoading.isTrue
+          ? LoadingWidget(color: primaryColor)
+          : AppDropdownField(
+              isDynamic: true,
+              title: 'Specialization',
+              value: controller.specialization.value,
+              items: getIt<ExplorerController>().categories,
+              hintText: 'Specialization',
+              validator: (value) =>
+                  value == null ? 'Please select specialization' : null,
+              onChanged: (val) async {
+                controller.specialization.value = val!;
+              },
+            ),
     );
   }
 
@@ -213,6 +219,7 @@ class _EditProfileState extends State<EditProfile> {
         buildTextField(
           controller: controller.aboutCtrl,
           hintText: 'Enter About',
+          maxLines: 4,
           validator: (value) =>
               value!.trim().isEmpty ? 'Please enter About' : null,
         ),
@@ -221,23 +228,29 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   Widget _buildSubmitButton() {
-    return GestureDetector(
-      onTap: () {},
-      child: Container(
-        width: Get.width,
-        padding: EdgeInsets.symmetric(vertical: 14.h),
-        decoration: BoxDecoration(
-          color: primaryColor,
-          borderRadius: BorderRadius.circular(100.r),
-        ),
-        alignment: Alignment.center,
-        child: CustomText(
-          title: 'Update Profile',
-          fontSize: 16.sp,
-          color: Colors.white,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
+    return Obx(
+      () => controller.isLoading.isTrue
+          ? LoadingWidget(color: primaryColor)
+          : GestureDetector(
+              onTap: () async {
+                await controller.updateProfile();
+              },
+              child: Container(
+                width: Get.width,
+                padding: EdgeInsets.symmetric(vertical: 14.h),
+                decoration: BoxDecoration(
+                  color: primaryColor,
+                  borderRadius: BorderRadius.circular(100.r),
+                ),
+                alignment: Alignment.center,
+                child: CustomText(
+                  title: 'Update Profile',
+                  fontSize: 16.sp,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
     );
   }
 }

@@ -32,8 +32,9 @@ class ExplorerController extends GetxController {
   /////////////////////////////////business List///////////////////////////////
   final isBusinessLoading = false.obs;
   final isDetailsLoading = false.obs;
-  final businessList = [].obs;
   final businessDetails = {}.obs;
+  final businessList = [].obs;
+
 
   Future<void> getBusinesses(String catId, {bool showLoading = true}) async {
     if (showLoading) isBusinessLoading.value = true;

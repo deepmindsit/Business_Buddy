@@ -45,8 +45,8 @@ class _RequestedScreenState extends State<RequestedScreen> {
                   fontWeight: FontWeight.w600,
                 ),
                 tabs: const [
-                  Tab(text: 'Send'),
-                  Tab(text: 'Receive'),
+                  Tab(text: 'Sent'),
+                  Tab(text: 'Received'),
                 ],
               ),
             ),
@@ -107,8 +107,7 @@ class _RequestedScreenState extends State<RequestedScreen> {
 
   Widget _buildReceivedList() {
     return ListView.separated(
-      separatorBuilder: (context, index) =>
-          SizedBox(height: 5,),
+      separatorBuilder: (context, index) => SizedBox(height: 5),
       padding: const EdgeInsets.all(12),
       itemCount: 10,
       itemBuilder: (context, index) {

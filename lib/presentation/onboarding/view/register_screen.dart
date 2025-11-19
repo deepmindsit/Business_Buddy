@@ -9,7 +9,7 @@ class RegisterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // resizeToAvoidBottomInset: false,
+      // resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
       appBar: const CustomAppBar(showBackButton: false, titleSpacing: null),
       body: SafeArea(
@@ -23,12 +23,14 @@ class RegisterScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      SizedBox(height: Get.height * 0.03),
+                      // SizedBox(height: Get.height * 0.03),
                       _buildWelcomeHeader(),
                       SizedBox(height: Get.height * 0.01),
                       _buildProfileImage(),
                       SizedBox(height: Get.height * 0.02),
                       _buildNameField('Full Name'),
+                      SizedBox(height: Get.height * 0.02),
+                      _buildNumberField('Mobile Number'),
                       SizedBox(height: Get.height * 0.02),
                       _buildEmailField('Email Address'),
                       SizedBox(height: Get.height * 0.04),
@@ -36,14 +38,14 @@ class RegisterScreen extends StatelessWidget {
                       SizedBox(height: Get.height * 0.03),
                       _buildSignUpText(),
                       SizedBox(height: Get.height * 0.05),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 20.h),
+                        child: _buildPrivacySection(),
+                      ),
                     ],
                   ),
                 ),
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(bottom: 20.h),
-              child: _buildPrivacySection(),
             ),
           ],
         ),
@@ -139,6 +141,34 @@ class RegisterScreen extends StatelessWidget {
           keyboardType: TextInputType.name,
           validator: (value) =>
               value!.trim().isEmpty ? 'Please enter name' : null,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNumberField(String label) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        buildLabel(label),
+        SizedBox(height: 8.h),
+        buildTextField(
+          controller: controller.numberController,
+          hintText: 'Enter your mobile number',
+          keyboardType: TextInputType.number,
+          inputFormatters: [
+            FilteringTextInputFormatter.digitsOnly,
+            LengthLimitingTextInputFormatter(10),
+          ],
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter mobile number';
+            }
+            if (!RegExp(r'^[6-9]\d{9}$').hasMatch(value)) {
+              return 'Enter a valid mobile number';
+            }
+            return null;
+          },
         ),
       ],
     );
