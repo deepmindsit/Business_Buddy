@@ -82,6 +82,10 @@ class _CategoryListState extends State<CategoryList> {
                         phoneNumber: item['mobile_number'] ?? '',
                         imagePath: item['image'] ?? '',
                         onCall: () {
+                          if (!getIt<DemoService>().isDemo) {
+                            ToastUtils.showLoginToast();
+                            return;
+                          }
                           if (item['mobile_number'] != null) {
                             makePhoneCall(item['mobile_number']);
                           }
@@ -92,6 +96,12 @@ class _CategoryListState extends State<CategoryList> {
                             businessId: item['id']?.toString() ?? '',
                           ),
                         ),
+                        onFollow: () {
+                          if (!getIt<DemoService>().isDemo) {
+                            ToastUtils.showLoginToast();
+                            return;
+                          }
+                        },
                       );
                     },
                   ),

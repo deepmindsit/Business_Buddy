@@ -14,6 +14,7 @@ class _BusinessPartnerState extends State<BusinessPartner> {
   @override
   void initState() {
     controller.getBusinessRequired();
+    controller.getRequestedBusiness();
     super.initState();
   }
 
@@ -21,15 +22,18 @@ class _BusinessPartnerState extends State<BusinessPartner> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _buildPartnerList(),
-      floatingActionButton: FloatingActionButton.small(
-        backgroundColor: primaryColor,
-        elevation: 0,
-        foregroundColor: Colors.white,
-        shape: CircleBorder(),
-        onPressed: () {
-          navController.openSubPage(AddRecruitment());
-        },
-        child: Icon(Icons.add),
+      floatingActionButton: Visibility(
+        visible: getIt<DemoService>().isDemo,
+        child: FloatingActionButton.small(
+          backgroundColor: primaryColor,
+          elevation: 0,
+          foregroundColor: Colors.white,
+          shape: CircleBorder(),
+          onPressed: () {
+            navController.openSubPage(AddRecruitment());
+          },
+          child: Icon(Icons.add),
+        ),
       ),
     );
   }
@@ -87,23 +91,30 @@ class _BusinessPartnerState extends State<BusinessPartner> {
               itemCount: controller.requirementList.length,
               itemBuilder: (context, index) {
                 final data = controller.requirementList[index];
-                return BusinessCard(status: 'Basic', data: data);
+                return BusinessCard(data: data);
               },
             ),
     );
   }
 
   Widget _buildRequested() {
-    return ListView.separated(
-      separatorBuilder: (context, index) =>
-          Divider(height: 5, color: lightGrey),
-      padding: const EdgeInsets.all(8),
-      itemCount: 10,
-      itemBuilder: (context, index) {
-        return index.isEven
-            ? BusinessCard(status: 'Requested')
-            : BusinessCard(status: 'Approved');
-      },
+    return Obx(
+      () => controller.isLoading.isTrue
+          ? LoadingWidget(color: primaryColor)
+          : controller.requestedBusinessList.isEmpty
+          ? Center(
+              child: CustomText(title: 'No Data Found', fontSize: 16.sp),
+            )
+          : ListView.separated(
+              separatorBuilder: (context, index) =>
+                  Divider(height: 5, color: lightGrey),
+              padding: const EdgeInsets.all(8),
+              itemCount: controller.requestedBusinessList.length,
+              itemBuilder: (context, index) {
+                final data = controller.requestedBusinessList[index];
+                return BusinessCard(data: data, isRequested: true);
+              },
+            ),
     );
   }
 
@@ -125,23 +136,28 @@ class _BusinessPartnerState extends State<BusinessPartner> {
             SizedBox(height: 20.h),
             CustomText(
               title: 'Looking for business partner?',
-              fontSize: 22.sp,
+              fontSize: 18.sp,
               fontWeight: FontWeight.bold,
             ),
             SizedBox(height: 20.h),
+            // CustomButton(
+            //   height: 60,
+            //   width: Get.width.w,
+            //   backgroundColor: primaryColor,
+            //   isLoading: false.obs,
+            //   onPressed: () {},
+            //   text: 'See all open\nBusiness Requirements',
+            // ),
             CustomButton(
-              height: 60,
               width: Get.width.w,
               backgroundColor: primaryColor,
               isLoading: false.obs,
-              onPressed: () {},
-              text: 'See all open\nBusiness Requirements',
-            ),
-            CustomButton(
-              width: Get.width.w,
-              backgroundColor: Colors.black,
-              isLoading: false.obs,
-              onPressed: () {},
+              onPressed: () {
+                if (!getIt<DemoService>().isDemo) {
+                  ToastUtils.showLoginToast();
+                  return;
+                }
+              },
               text: 'Post Recruitment',
             ),
           ],

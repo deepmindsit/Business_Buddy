@@ -19,4 +19,5 @@ class Images {
   static const defaultImage = 'assets/images/default.png';
   static const hotelImgLarge = 'assets/images/hotel_img_large.png';
   static const offerImage = 'assets/images/offer_image.png';
+  static const appIcon = 'assets/images/app_icon.png';
 }

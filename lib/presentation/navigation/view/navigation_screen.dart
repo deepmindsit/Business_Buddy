@@ -1,3 +1,4 @@
+import 'package:businessbuddy/components/appbar_main_2.dart';
 import 'package:businessbuddy/utils/exported_path.dart';
 
 class NavigationScreen extends StatefulWidget {
@@ -34,7 +35,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
           },
           child: Column(
             children: [
-              CustomMainHeader(searchController: TextEditingController()),
+              CustomMainHeader2(searchController: TextEditingController()),
               Expanded(child: Obx(() => controller.pageStack.last)),
               // Expanded(
               //   child: NavigationController

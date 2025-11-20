@@ -165,68 +165,6 @@ class AllDialogs {
     );
   }
 
-  void requestDialog() {
-    Get.dialog(
-      Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.r),
-        ),
-        surfaceTintColor: Colors.white,
-        backgroundColor: Colors.white,
-        insetPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.all(16.w),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Header with close icon
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    CustomText(
-                      title: 'Request',
-                      fontSize: 18.sp,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    GestureDetector(
-                      onTap: () => Get.back(),
-                      child: Icon(Icons.close, color: Colors.grey, size: 20.sp),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 8.h),
-                const Divider(),
-                // Offers list
-                SizedBox(height: 8.h),
-                buildRequestCard(
-                  name: 'Ramesh Patil',
-                  title:
-                      'Requirement Title: Looking for Food Ingredient Supplier',
-                  message:
-                      'You’ve received a new collaboration request from Restaurant.',
-                  date: '30 Oct 2025 • 10:42 AM',
-                  buttonText: 'Accept Request',
-                ),
-                SizedBox(height: 12.h),
-
-                // Request Card 2
-                buildRequestCard(
-                  name: 'Neha Deshmukh',
-                  message:
-                      'You’ve received a new chat request from Pizza Point Café.',
-                  date: '30 Oct 2025 • 10:42 AM',
-                  buttonText: 'Accept Chat',
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 
   void showConfirmationDialog(
     String title,
@@ -296,98 +234,7 @@ class AllDialogs {
     );
   }
 
-  Widget buildRequestCard({
-    required String name,
-    String? title,
-    required String message,
-    required String date,
-    required String buttonText,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.2),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      padding: EdgeInsets.all(10.w),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Avatar
-          CircleAvatar(
-            radius: 22.r,
-            backgroundColor: Colors.grey.shade300,
-            child: const Icon(Icons.person, color: Colors.white, size: 24),
-          ),
-          SizedBox(width: 10.w),
-          // Info
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Name + Date
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      name,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16.sp,
-                      ),
-                    ),
-                    Text(
-                      date,
-                      style: TextStyle(fontSize: 10.sp, color: Colors.grey),
-                    ),
-                  ],
-                ),
-                if (title != null) ...[
-                  SizedBox(height: 3.h),
-                  Text(
-                    title,
-                    style: TextStyle(fontSize: 11.sp, color: Colors.black54),
-                  ),
-                ],
-                SizedBox(height: 4.h),
-                Text(
-                  message,
-                  style: TextStyle(fontSize: 11.sp, color: Colors.black87),
-                ),
-                SizedBox(height: 8.h),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: OutlinedButton(
-                    onPressed: () {},
-                    style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: Colors.red),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 12.w,
-                        vertical: 4.h,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.r),
-                      ),
-                    ),
-                    child: Text(
-                      buttonText,
-                      style: TextStyle(color: Colors.red, fontSize: 12.sp),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+
 
   Widget _buildOfferTile(dynamic offer) {
     return OfferTile(
@@ -502,9 +349,8 @@ class OfferTile extends StatelessWidget {
       ),
     );
   }
-
-
 }
+
 Widget buildBulletPoint({required String text}) {
   return Row(
     children: [
@@ -513,10 +359,7 @@ Widget buildBulletPoint({required String text}) {
         margin: EdgeInsets.only(right: 8.w),
         width: 8.r,
         height: 8.r,
-        decoration: BoxDecoration(
-          color: primaryColor,
-          shape: BoxShape.circle,
-        ),
+        decoration: BoxDecoration(color: primaryColor, shape: BoxShape.circle),
       ),
       // Text
       Expanded(

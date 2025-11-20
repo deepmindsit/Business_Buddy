@@ -395,6 +395,10 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
         /// RIGHT SIDE ICON
         GestureDetector(
           onTap: () {
+            if (!getIt<DemoService>().isDemo) {
+              ToastUtils.showLoginToast();
+              return;
+            }
             if (lat != null && lng != null) {
               openMap(lat, lng);
             } else {
@@ -806,14 +810,26 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
   }
 
   void _handleCall() {
+    if (!getIt<DemoService>().isDemo) {
+      ToastUtils.showLoginToast();
+      return;
+    }
     makePhoneCall(controller.businessDetails['mobile_number'] ?? '');
   }
 
   void _handleFollow() {
+    if (!getIt<DemoService>().isDemo) {
+      ToastUtils.showLoginToast();
+      return;
+    }
     // Implement follow functionality
   }
 
   void _addReview() {
+    if (!getIt<DemoService>().isDemo) {
+      ToastUtils.showLoginToast();
+      return;
+    }
     // Implement add review functionality
   }
 }

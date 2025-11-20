@@ -37,4 +37,15 @@ class AllUrl {
   static const String getMyProfile = '$baseUrl/my_profile_details';
   static const String getUserProfile = '$baseUrl/user_profile_details';
   static const String updateProfile = '$baseUrl/update_profile';
+  static const String sendBusinessRequest =
+      '$baseUrl/send_business_requirement_request';
+
+  static const String getBusinessRequested =
+      '$baseUrl/my_requested_business_requirements';
+
+
+  static const String getBusinessReceived =
+      '$baseUrl/my_received_business_requirement_requests';
+  static const String acceptBusinessRequest =
+      '$baseUrl/accept_business_requirement_request';
 }

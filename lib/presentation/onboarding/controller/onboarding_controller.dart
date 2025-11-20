@@ -71,6 +71,9 @@ class OnboardingController extends GetxController {
         otpController.text.trim(),
       );
       if (response['common']['status'] == true) {
+        await getIt<DemoService>().updateDemoStatus(
+          response['data']['user_details']['auth_key']!.toString(),
+        );
         await LocalStorage.setString(
           'auth_key',
           response['data']['user_details']['auth_key']?.toString() ?? 'demo',
@@ -83,8 +86,12 @@ class OnboardingController extends GetxController {
         Get.offAllNamed(Routes.mainScreen);
         ToastUtils.showSuccessToast(response['common']['message'].toString());
       } else {
-        Get.offAllNamed(Routes.register);
-        ToastUtils.showErrorToast(response['common']['message'].toString());
+        if (response['common']['message'] == 'Incorrect OTP') {
+          ToastUtils.showErrorToast(response['common']['message'].toString());
+        } else {
+          Get.offAllNamed(Routes.register);
+          ToastUtils.showErrorToast(response['common']['message'].toString());
+        }
       }
     } catch (e) {
       ToastUtils.showErrorToast('Something went wrong please try later.');
@@ -104,6 +111,10 @@ class OnboardingController extends GetxController {
         profileImage: profileImage.value,
       );
       if (response['common']['status'] == true) {
+        await getIt<DemoService>().updateDemoStatus(
+          response['data']['user_details']['auth_key']!.toString(),
+        );
+
         await LocalStorage.setString(
           'auth_key',
           response['data']['user_details']['auth_key']?.toString() ?? 'demo',

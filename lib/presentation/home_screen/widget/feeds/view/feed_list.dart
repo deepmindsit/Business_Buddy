@@ -30,7 +30,6 @@ class _NewFeedState extends State<NewFeed> {
               ),
             )
           : ListView.builder(
-              // physics: NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               padding: EdgeInsets.symmetric(horizontal: 8.w),
               itemCount: controller.feedList.length,
@@ -43,7 +42,5 @@ class _NewFeedState extends State<NewFeed> {
               },
             ),
     );
-
-    // SingleChildScrollView(child: Column(children: [FeedCard(), FeedCard()]));
   }
 }

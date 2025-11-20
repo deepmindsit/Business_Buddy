@@ -7,6 +7,7 @@ class PartnerDataController extends GetxController {
 
   final isLoading = true.obs;
   final isAddLoading = false.obs;
+  final isSendLoading = false.obs;
   final isMainLoading = true.obs;
   final recTitle = TextEditingController();
   final location = TextEditingController();
@@ -100,6 +101,54 @@ class PartnerDataController extends GetxController {
       showError(e);
     } finally {
       if (showLoading) isAddLoading.value = false;
+    }
+  }
+
+  final businessLoadingMap = <String, bool>{}.obs;
+
+  Future<void> sendBusinessRequest(
+    String businessId, {
+    bool showLoading = true,
+  }) async {
+    businessLoadingMap[businessId] = true;
+    businessLoadingMap.refresh();
+    if (showLoading) isSendLoading.value = true;
+    final userId = await LocalStorage.getString('user_id') ?? '';
+    try {
+      final response = await _apiService.sendBusinessRequest(
+        userId,
+        businessId,
+      );
+
+      if (response['common']['status'] == true) {
+        await getBusinessRequired();
+        ToastUtils.showSuccessToast(response['common']['message']);
+      } else {
+        ToastUtils.showWarningToast(response['common']['message']);
+      }
+    } catch (e) {
+      showError(e);
+    } finally {
+      businessLoadingMap[businessId] = false;
+      businessLoadingMap.refresh();
+    }
+  }
+
+  final requestedBusinessList = [].obs;
+
+  Future<void> getRequestedBusiness({bool showLoading = true}) async {
+    if (showLoading) isLoading.value = true;
+    try {
+      final userId = await LocalStorage.getString('user_id') ?? '';
+      final response = await _apiService.getBusinessRequested(userId);
+
+      if (response['common']['status'] == true) {
+        requestedBusinessList.value = response['data'] ?? [];
+      }
+    } catch (e) {
+      showError(e);
+    } finally {
+      if (showLoading) isLoading.value = false;
     }
   }
 

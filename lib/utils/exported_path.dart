@@ -25,6 +25,8 @@ export 'package:businessbuddy/presentation/special_offer/view/special_offer.dart
 export 'package:businessbuddy/common/notification_list.dart';
 export 'package:businessbuddy/presentation/home_screen/widget/business/widget/add_offer.dart';
 export 'package:businessbuddy/presentation/home_screen/widget/business/view/add_business.dart';
+export 'package:businessbuddy/presentation/inbox/widget/chat_screen.dart';
+export 'package:businessbuddy/presentation/inbox/widget/requested_screen.dart';
 
 //widget
 export 'package:businessbuddy/utils/color.dart';
@@ -74,6 +76,8 @@ export 'package:businessbuddy/presentation/profile/controller/profile_controller
 export 'package:businessbuddy/presentation/home_screen/widget/explorer/controller/explorer_controller.dart';
 export 'package:businessbuddy/presentation/home_screen/widget/feeds/controller/feeds_controller.dart';
 export 'package:businessbuddy/presentation/special_offer/controller/special_offer_controller.dart';
+export 'package:businessbuddy/presentation/inbox/controller/inbox_controller.dart';
+export 'package:businessbuddy/common/check_demo.dart';
 
 //plugins
 export 'package:get/get.dart';
@@ -93,4 +97,3 @@ export 'package:cached_network_image/cached_network_image.dart';
 export 'package:toastification/toastification.dart';
 export 'package:url_launcher/url_launcher.dart';
 export 'package:widget_zoom/widget_zoom.dart';
-

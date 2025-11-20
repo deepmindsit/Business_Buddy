@@ -142,6 +142,25 @@ abstract class ApiService {
     @Part(name: "about") String about, {
     @Part(name: 'profile_image') File? profileImage,
   });
+
+  @POST(AllUrl.sendBusinessRequest)
+  Future<dynamic> sendBusinessRequest(
+    @Part(name: "user_id") String? userId,
+    @Part(name: "business_requirement_id") String? businessId,
+  );
+
+  @POST(AllUrl.getBusinessRequested)
+  Future<dynamic> getBusinessRequested(@Part(name: "user_id") String? userId);
+
+  @POST(AllUrl.getBusinessReceived)
+  Future<dynamic> getBusinessReceivedRequest(
+    @Part(name: "user_id") String? userId,
+  );
+  @POST(AllUrl.acceptBusinessRequest)
+  Future<dynamic> acceptBusinessRequest(
+    @Part(name: "user_id") String? userId,
+    @Part(name: "request_id") String? reqId,
+  );
 }
 
 //

@@ -293,5 +293,4 @@ class LBOController extends GetxController {
   /// ------------------------
   /// COMMON ERROR HANDLER
   /// ------------------------
-
 }

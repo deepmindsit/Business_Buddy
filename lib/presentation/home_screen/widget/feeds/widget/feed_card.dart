@@ -13,6 +13,7 @@ class FeedCard extends StatelessWidget {
       surfaceTintColor: Colors.white,
       color: Colors.white,
       elevation: 2,
+      // shadowColor: lightGrey,
       margin: EdgeInsets.all(8.w),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
       child: Padding(
@@ -118,6 +119,10 @@ class FeedCard extends StatelessWidget {
   Widget _buildFollowButton() {
     return GestureDetector(
       onTap: () {
+        if (!getIt<DemoService>().isDemo) {
+          ToastUtils.showLoginToast();
+          return;
+        }
         // Handle follow action
       },
       child: Container(

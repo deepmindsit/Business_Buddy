@@ -20,7 +20,7 @@ class _CustomTabBarState extends State<CustomTabBar> {
     return Obx(
       () => Container(
         width: Get.width,
-        height: 50.h,
+        height: 35.h,
         margin: EdgeInsets.symmetric(vertical: 8.h),
         decoration: BoxDecoration(color: Colors.black),
         child: Row(
@@ -35,8 +35,7 @@ class _CustomTabBarState extends State<CustomTabBar> {
                 child: Container(
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: isSelected ? primaryColor : mainGrey,
-                    // borderRadius: BorderRadius.circular(6.r),
+                    color: isSelected ? primaryColor : Colors.grey.shade100,
                   ),
                   padding: EdgeInsets.symmetric(horizontal: 4.w),
                   child: Row(

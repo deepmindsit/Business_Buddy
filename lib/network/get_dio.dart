@@ -1,4 +1,3 @@
-
 import 'dart:developer';
 import 'dart:io';
 import 'package:businessbuddy/network/local_storage.dart';
@@ -7,6 +6,8 @@ import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
 import '../routes/routes_names.dart';
 import 'package:get/get.dart';
+
+import '../utils/exported_path.dart';
 
 class DioClient {
   static Dio getInstance() {
@@ -54,7 +55,16 @@ class DioClient {
           if (kDebugMode) {
             log('✅ Response: ${response.statusCode} → ${response.data}');
           }
-          final requestPath = response.requestOptions.path;
+          // final requestPath = response.requestOptions.path;
+
+          if (response.data.containsKey('user_login') &&
+              response.data.containsKey('message')) {
+            checkLogin(
+              status: response.data['user_login'],
+              message: response.data['message'],
+            );
+          }
+
           // if (!requestPath.contains('sign-in')) {
           //   if (response.data['user_login'] == false) {
           //     Get.snackbar(

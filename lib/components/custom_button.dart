@@ -36,7 +36,7 @@ class CustomButton extends StatelessWidget {
               ? LoadingWidget(color: Colors.white)
               : CustomText(
                   title: text,
-                  fontSize: 18.sp,
+                  fontSize: 16.sp,
                   maxLines: 2,
                   color: Colors.white,
                   fontWeight: FontWeight.bold,

@@ -15,7 +15,6 @@ void sendingMails(String mail) async {
   }
 }
 
-
 void openMap(double latitude, double longitude) async {
   final url =
       'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
@@ -25,5 +24,8 @@ void openMap(double latitude, double longitude) async {
   }
 }
 
-
-
+Future<bool> isDemo() async {
+  String authKey = await LocalStorage.getString('auth_key') ?? '';
+  bool isDemo = authKey != 'demo';
+  return isDemo;
+}

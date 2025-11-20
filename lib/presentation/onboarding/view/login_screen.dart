@@ -75,12 +75,14 @@ class _LoginScreenState extends State<LoginScreen> {
       titleSpacing: null,
       actions: [
         GestureDetector(
-          onTap: () => Get.offAllNamed(Routes.mainScreen),
+          onTap: () async {
+            await getIt<DemoService>().updateDemoStatus("demo");
+            Get.offAllNamed(Routes.mainScreen);
+          },
           child: Container(
             margin: EdgeInsets.symmetric(horizontal: 12.w),
             padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
             decoration: BoxDecoration(
-              // color: backgroundColor,
               border: Border.all(color: Colors.red),
               borderRadius: BorderRadius.circular(100.r),
             ),

@@ -216,19 +216,20 @@ class _AddBusinessState extends State<AddBusiness> {
 
   Widget _buildOffering() {
     return Obx(
-      () =>expController.isLoading.isTrue ?
-      LoadingWidget(color: primaryColor):
-      AppDropdownField(
-        title: 'Offering',
-        isDynamic: true,
-        value: controller.offering.value,
-        items: expController.categories,
-        hintText: 'Eg. Salon, Spa',
-        validator: (value) => value == null ? 'Please select Offer' : null,
-        onChanged: (val) async {
-          controller.offering.value = val!;
-        },
-      ),
+      () => expController.isLoading.isTrue
+          ? LoadingWidget(color: primaryColor)
+          : AppDropdownField(
+              title: 'Offering',
+              isDynamic: true,
+              value: controller.offering.value,
+              items: expController.categories,
+              hintText: 'Eg. Salon, Spa',
+              validator: (value) =>
+                  value == null ? 'Please select Offer' : null,
+              onChanged: (val) async {
+                controller.offering.value = val!;
+              },
+            ),
     );
   }
 

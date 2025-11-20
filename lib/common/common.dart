@@ -623,13 +623,26 @@ Widget buildHighlightPoint(String text) {
   );
 }
 
-
 void showError(dynamic e) {
   ToastUtils.showToast(
     title: 'Something went wrong',
-    description: e.toString(),
+    // description: e.toString(),
     type: ToastificationType.error,
     icon: Icons.error,
   );
   debugPrint("Error: $e");
+}
+
+void checkLogin({required bool status, required String message}) async {
+  if (status == false && message == "Invalid App Security Key" ||
+      message == "Invalid Request") {
+    Get.snackbar(
+      'Logged Out',
+      "Your account is logged in on another device. You have been logged out.",
+      colorText: Colors.black,
+      icon: const Icon(Icons.add_alert),
+    );
+    Get.offAllNamed(Routes.login);
+    LocalStorage.clear();
+  }
 }

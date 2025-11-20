@@ -1,5 +1,3 @@
-import 'package:businessbuddy/presentation/inbox/widget/chat_screen.dart';
-import 'package:businessbuddy/presentation/inbox/widget/requested_screen.dart';
 import 'package:businessbuddy/utils/exported_path.dart';
 
 class InboxList extends StatefulWidget {
@@ -11,6 +9,15 @@ class InboxList extends StatefulWidget {
 
 class _InboxListState extends State<InboxList> {
   final navController = getIt<NavigationController>();
+  final controller = getIt<InboxController>();
+
+  @override
+  void initState() {
+    controller.getReceiveBusinessRequest();
+    getIt<PartnerDataController>().getRequestedBusiness();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

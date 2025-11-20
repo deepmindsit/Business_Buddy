@@ -211,6 +211,10 @@ class CatItemCard extends StatelessWidget {
         ),
         GestureDetector(
           onTap: () {
+            if (!getIt<DemoService>().isDemo) {
+              ToastUtils.showLoginToast();
+              return;
+            }
             openMap(double.parse(latitude), double.parse(longitude));
           },
           child: HugeIcon(

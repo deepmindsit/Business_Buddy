@@ -35,7 +35,10 @@ class _LboScreenState extends State<LboScreen> {
         ),
       ),
       floatingActionButtonLocation: ExpandableFab.location,
-      floatingActionButton: _buildExpandableFab(),
+      floatingActionButton: Visibility(
+        visible: getIt<DemoService>().isDemo,
+        child: _buildExpandableFab(),
+      ),
     );
   }
 
@@ -138,7 +141,14 @@ class _LboScreenState extends State<LboScreen> {
 
   Widget _buildAddBusinessButton() {
     return GestureDetector(
-      onTap: () => navController.openSubPage(const AddBusiness()),
+      onTap: () {
+        if (!getIt<DemoService>().isDemo) {
+          ToastUtils.showLoginToast();
+          return;
+        }
+        navController.openSubPage(const AddBusiness());
+      },
+
       child: Container(
         width: Get.width,
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
@@ -331,7 +341,13 @@ class _LboScreenState extends State<LboScreen> {
               width: Get.width.w,
               backgroundColor: primaryColor,
               isLoading: false.obs,
-              onPressed: () => navController.openSubPage(AddBusiness()),
+              onPressed: () {
+                if (!getIt<DemoService>().isDemo) {
+                  ToastUtils.showLoginToast();
+                  return;
+                }
+                navController.openSubPage(AddBusiness());
+              },
               text: 'Add Business',
             ),
           ],

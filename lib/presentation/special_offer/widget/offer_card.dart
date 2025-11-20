@@ -105,7 +105,10 @@ class OfferCard extends StatelessWidget {
   Widget _buildFollowButton() {
     return GestureDetector(
       onTap: () {
-        // Handle follow action
+        if (!getIt<DemoService>().isDemo) {
+          ToastUtils.showLoginToast();
+          return;
+        }
       },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),

@@ -8,6 +8,14 @@ class RequestedScreen extends StatefulWidget {
 }
 
 class _RequestedScreenState extends State<RequestedScreen> {
+  final controller = getIt<InboxController>();
+
+  @override
+  void initState() {
+    getIt<PartnerDataController>().getRequestedBusiness();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -65,61 +73,260 @@ class _RequestedScreenState extends State<RequestedScreen> {
   }
 
   Widget _buildSendList() {
-    return ListView.separated(
-      separatorBuilder: (context, index) =>
-          Divider(height: 5, color: lightGrey),
-      padding: const EdgeInsets.all(0),
-      itemCount: 10,
-      itemBuilder: (context, index) {
-        return ListTile(
-          dense: true,
-          leading: CircleAvatar(backgroundImage: AssetImage(Images.hotelImg)),
-          title: CustomText(
-            title: 'PizzaPoint',
-            fontSize: 14.sp,
-            textAlign: TextAlign.start,
-            fontWeight: FontWeight.bold,
-          ),
-          onTap: () {
-            // Push a subpage within Inbox
-            // navController.openSubPage(
-            //   ChatDetailPage(chatId: index),
-            // );
-          },
-          trailing: Container(
-            padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
-            decoration: BoxDecoration(
-              // color: primaryColor,
-              border: Border.all(color: primaryColor),
-              borderRadius: BorderRadius.circular(8.r),
+    return Obx(
+      () => getIt<PartnerDataController>().isLoading.isTrue
+          ? LoadingWidget(color: primaryColor)
+          : getIt<PartnerDataController>().requestedBusinessList.isEmpty
+          ? Center(
+              child: CustomText(title: 'No Data Found', fontSize: 14.sp),
+            )
+          : ListView.separated(
+              separatorBuilder: (context, index) =>
+                  Divider(height: 5, color: lightGrey),
+              padding: const EdgeInsets.all(8),
+              itemCount:
+                  getIt<PartnerDataController>().requestedBusinessList.length,
+              itemBuilder: (context, index) {
+                final data =
+                    getIt<PartnerDataController>().requestedBusinessList[index];
+                return ListTile(
+                  dense: true,
+                  leading: CircleAvatar(
+                    radius: 22.r,
+                    backgroundColor: Colors.grey.shade300,
+                    child: ClipOval(
+                      child: FadeInImage(
+                        placeholder: const AssetImage(Images.defaultImage),
+                        image: NetworkImage(
+                          data['requiement_user_profile_image'],
+                        ),
+                        imageErrorBuilder: (context, error, stackTrace) {
+                          return Image.asset(
+                            Images.defaultImage,
+                            width: 100.w,
+                            height: 100.h,
+                            fit: BoxFit.contain,
+                          );
+                        },
+                        width: 100.w,
+                        height: 100.h,
+                        fit: BoxFit.cover,
+                        placeholderFit: BoxFit.contain,
+                        fadeInDuration: const Duration(milliseconds: 300),
+                      ),
+                    ),
+                    // backgroundImage: AssetImage(Images.hotelImg),
+                  ),
+                  title: CustomText(
+                    title: data['requirement_user_name'] ?? '',
+                    fontSize: 14.sp,
+                    textAlign: TextAlign.start,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  subtitle: CustomText(
+                    title: data['requirement_name'] ?? '',
+                    fontSize: 12.sp,
+                    maxLines: 2,
+                    textAlign: TextAlign.start,
+                  ),
+                  onTap: () {},
+                  trailing:
+                      data['requested'] == true && data['accepted'] == false
+                      ? Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 4.w,
+                            vertical: 2.h,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: primaryColor),
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
+                          child: CustomText(
+                            title: 'Requested',
+                            fontSize: 12.sp,
+                            color: primaryColor,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        )
+                      : Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 4.w,
+                            vertical: 2.h,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.green),
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
+                          child: CustomText(
+                            title: 'Accepted',
+                            fontSize: 12.sp,
+                            color: Colors.green,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                );
+              },
             ),
-            child: CustomText(
-              title: 'Requested',
-              fontSize: 12.sp,
-              color: primaryColor,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        );
-      },
     );
   }
 
   Widget _buildReceivedList() {
-    return ListView.separated(
-      separatorBuilder: (context, index) => SizedBox(height: 5),
-      padding: const EdgeInsets.all(12),
-      itemCount: 10,
-      itemBuilder: (context, index) {
-        return AllDialogs().buildRequestCard(
-          name: 'Ramesh Patil',
-          title: 'Requirement Title: Looking for Food Ingredient Supplier',
-          message:
-              'You’ve received a new collaboration request from Restaurant.',
-          date: '30 Oct 2025 • 10:42 AM',
-          buttonText: 'Accept Request',
-        );
-      },
+    return Obx(
+      () => controller.isLoading.isTrue
+          ? LoadingWidget(color: primaryColor)
+          : controller.receivedRequestList.isEmpty
+          ? Center(
+              child: CustomText(title: 'No Data Found', fontSize: 14.sp),
+            )
+          : ListView.separated(
+              separatorBuilder: (context, index) =>
+                  Divider(height: 5, color: lightGrey),
+              padding: const EdgeInsets.all(8),
+              itemCount: controller.receivedRequestList.length,
+              itemBuilder: (context, index) {
+                final data = controller.receivedRequestList[index];
+                return buildRequestCard(
+                  name: data['requesting_user_name'] ?? '',
+                  title: 'Requirement Title: ${data['requirement_name'] ?? ''}',
+                  message: 'You’ve received a new collaboration request.',
+                  date: data['requested_at'] ?? '',
+                  buttonText: data['accepted'] == true
+                      ? 'Accepted'
+                      : 'Accept Request',
+
+                  image: data['requesting_user_profile_image'] ?? '',
+                  onPressed: () async {
+                    await controller.acceptRequest(
+                      data['request_id']?.toString() ?? '',
+                    );
+                  },
+                );
+              },
+            ),
+    );
+  }
+
+  Widget buildRequestCard({
+    required String name,
+    String? title,
+    required String message,
+    required String date,
+    required String image,
+    required String buttonText,
+    void Function()? onPressed,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withValues(alpha: 0.2),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      padding: EdgeInsets.all(10.w),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Avatar
+          CircleAvatar(
+            radius: 22.r,
+            backgroundColor: Colors.grey.shade300,
+            child: ClipOval(
+              child: FadeInImage(
+                placeholder: const AssetImage(Images.defaultImage),
+                image: NetworkImage(image),
+                imageErrorBuilder: (context, error, stackTrace) {
+                  return Image.asset(
+                    Images.defaultImage,
+                    width: 100.w,
+                    height: 100.h,
+                    fit: BoxFit.contain,
+                  );
+                },
+                width: 100.w,
+                height: 100.h,
+                fit: BoxFit.cover,
+                placeholderFit: BoxFit.contain,
+                fadeInDuration: const Duration(milliseconds: 300),
+              ),
+            ),
+
+            // const Icon(Icons.person, color: Colors.white, size: 24),
+          ),
+          SizedBox(width: 10.w),
+          // Info
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Name + Date
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      name,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16.sp,
+                      ),
+                    ),
+                    Text(
+                      date,
+                      style: TextStyle(fontSize: 10.sp, color: Colors.grey),
+                    ),
+                  ],
+                ),
+                if (title != null) ...[
+                  SizedBox(height: 3.h),
+                  Text(
+                    title,
+                    style: TextStyle(fontSize: 11.sp, color: Colors.black54),
+                  ),
+                ],
+                SizedBox(height: 4.h),
+                Text(
+                  message,
+                  style: TextStyle(fontSize: 11.sp, color: Colors.black87),
+                ),
+                SizedBox(height: 8.h),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: OutlinedButton(
+                    onPressed: onPressed,
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(
+                        color: buttonText == 'Accepted'
+                            ? Colors.green
+                            : Colors.red,
+                      ),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12.w,
+                        vertical: 4.h,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.r),
+                      ),
+                    ),
+                    child: Text(
+                      buttonText,
+                      style: TextStyle(
+                        color: buttonText == 'Accepted'
+                            ? Colors.green
+                            : Colors.red,
+                        fontSize: 12.sp,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
