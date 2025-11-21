@@ -2,8 +2,9 @@ import 'package:businessbuddy/utils/exported_path.dart';
 
 class FeedCard extends StatelessWidget {
   final dynamic data;
-
-  FeedCard({super.key, this.data});
+  final void Function()? onFollow;
+  final void Function() onLike;
+  FeedCard({super.key, this.data, this.onFollow, required this.onLike});
 
   final navController = getIt<NavigationController>();
 
@@ -117,50 +118,52 @@ class FeedCard extends StatelessWidget {
   }
 
   Widget _buildFollowButton() {
-    return GestureDetector(
-      onTap: () {
-        if (!getIt<DemoService>().isDemo) {
-          ToastUtils.showLoginToast();
-          return;
-        }
-        // Handle follow action
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [primaryColor, primaryColor.withValues(alpha: 0.8)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(8.r),
-          boxShadow: [
-            BoxShadow(
-              color: primaryColor.withValues(alpha: 0.3),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.person_add_alt_1_rounded,
-              color: Colors.white,
-              size: 16.sp,
-            ),
-            SizedBox(width: 6.w),
-            CustomText(
-              title: 'Follow',
-              fontSize: 12.sp,
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
-            ),
-          ],
-        ),
-      ),
-    );
+    if (data['self_business'] == true) return SizedBox();
+
+    return Obx(() {
+      bool isLoading = false;
+      if (data['is_followed'] == true) {
+        isLoading =
+            getIt<FeedsController>().followingLoadingMap[data['follow_id']
+                .toString()] ==
+            true;
+      } else {
+        isLoading =
+            getIt<FeedsController>().followingLoadingMap[data['business_id']
+                .toString()] ==
+            true;
+      }
+
+      return isLoading
+          ? LoadingWidget(color: primaryColor)
+          : GestureDetector(
+              onTap: onFollow,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [primaryColor, primaryColor.withValues(alpha: 0.8)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(8.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: primaryColor.withValues(alpha: 0.3),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: CustomText(
+                  title: data['is_followed'] == true ? 'Following' : 'Follow',
+                  fontSize: 12.sp,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            );
+    });
   }
 
   Widget _buildImageSection() {
@@ -202,11 +205,25 @@ class FeedCard extends StatelessWidget {
         // Likes and Comments
         Row(
           children: [
-            _buildEngagementItem(
-              icon: HugeIcons.strokeRoundedFavourite,
-              count: '10K',
-              onTap: () => _handleLike(),
-            ),
+            Obx(() {
+              bool isLoading = false;
+              if (data['is_liked'] == true) {
+                isLoading =
+                    getIt<FeedsController>().likeLoadingMap[data['liked_id'].toString()] == true;
+              } else {
+                isLoading =
+                    getIt<FeedsController>().likeLoadingMap[data['business_id'].toString()] == true;
+              }
+
+              return isLoading
+                  ? LoadingWidget(color: primaryColor, size: 20.r)
+                  : _buildEngagementItem(
+                      icon: HugeIcons.strokeRoundedFavourite,
+                      count: data['likes_count'].toString(),
+                      onTap: onLike,
+                      isLike: true,
+                    );
+            }),
             SizedBox(width: 12.w),
             _buildEngagementItem(
               icon: HugeIcons.strokeRoundedMessage02,
@@ -226,6 +243,7 @@ class FeedCard extends StatelessWidget {
     required var icon,
     required String count,
     required VoidCallback onTap,
+    bool isLike = false,
   }) {
     return GestureDetector(
       onTap: onTap,
@@ -238,7 +256,13 @@ class FeedCard extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            HugeIcon(icon: icon, color: Colors.grey.shade700, size: 18.sp),
+            isLike && data['is_liked'] == true
+                ? Icon(Icons.favorite, color: Colors.red)
+                : HugeIcon(
+                    icon: icon,
+                    color: Colors.grey.shade700,
+                    size: 18.sp,
+                  ),
             SizedBox(width: 6.w),
             CustomText(
               title: count,
@@ -292,8 +316,6 @@ class FeedCard extends StatelessWidget {
     return CustomText(
       title: data['details'] ?? '',
       fontSize: 14.sp,
-      // fontWeight: FontWeight.w600,
-      // color: primaryColor,
       textAlign: TextAlign.start,
       maxLines: 2,
     );
@@ -305,10 +327,6 @@ class FeedCard extends StatelessWidget {
     //   maxLines: 2,
     //   textAlign: TextAlign.start,
     // );
-  }
-
-  void _handleLike() {
-    // Implement like functionality
   }
 
   void _handleComment() {

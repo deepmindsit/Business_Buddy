@@ -1,5 +1,4 @@
 import 'package:businessbuddy/utils/exported_path.dart';
-import 'package:businessbuddy/utils/utils.dart';
 
 class CategoryList extends StatefulWidget {
   final String categoryName;
@@ -71,6 +70,7 @@ class _CategoryListState extends State<CategoryList> {
                       return CatItemCard(
                         offers: item['offers'] ?? [],
                         latitude: item['latitude'] ?? '',
+                        isFollowed: item['is_followed'] ?? false,
                         longitude: item['longitude'] ?? '',
                         distance: item['distance']?.toString() ?? '',
                         name: item['name'] ?? '',

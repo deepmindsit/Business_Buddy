@@ -1,12 +1,8 @@
 import 'dart:developer';
 import 'dart:io';
-import 'package:businessbuddy/network/local_storage.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
-import '../routes/routes_names.dart';
-import 'package:get/get.dart';
-
 import '../utils/exported_path.dart';
 
 class DioClient {

@@ -26,6 +26,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> with CodeAutoFill {
   @override
   void dispose() {
     SmsAutoFill().unregisterListener();
+    // controller.otpController.dispose();
     super.dispose();
   }
 

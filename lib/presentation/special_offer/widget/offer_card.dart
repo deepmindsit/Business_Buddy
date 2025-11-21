@@ -103,49 +103,105 @@ class OfferCard extends StatelessWidget {
   }
 
   Widget _buildFollowButton() {
-    return GestureDetector(
-      onTap: () {
-        if (!getIt<DemoService>().isDemo) {
-          ToastUtils.showLoginToast();
-          return;
-        }
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [primaryColor, primaryColor.withValues(alpha: 0.8)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(8.r),
-          boxShadow: [
-            BoxShadow(
-              color: primaryColor.withValues(alpha: 0.3),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.person_add_alt_1_rounded,
-              color: Colors.white,
-              size: 16.sp,
-            ),
-            SizedBox(width: 6.w),
-            CustomText(
-              title: 'Follow',
-              fontSize: 12.sp,
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
-            ),
-          ],
-        ),
-      ),
-    );
+    if (data['self_business'] == true) return SizedBox();
+    return Obx(() {
+      bool isLoading = false;
+      if (data['is_followed'] == true) {
+        isLoading =
+            getIt<FeedsController>().followingLoadingMap[data['follow_id']
+                .toString()] ==
+            true;
+      } else {
+        isLoading =
+            getIt<FeedsController>().followingLoadingMap[data['business_id']
+                .toString()] ==
+            true;
+      }
+
+      return isLoading
+          ? LoadingWidget(color: primaryColor)
+          : GestureDetector(
+              onTap: () async {
+                if (getIt<DemoService>().isDemo == false) {
+                  ToastUtils.showLoginToast();
+                  return;
+                }
+
+                print('before');
+                print(data['is_followed']);
+                if (data['is_followed'] == true) {
+                  await getIt<FeedsController>().unfollowBusiness(
+                    data['follow_id'].toString(),
+                  );
+                } else {
+                  await getIt<FeedsController>().followBusiness(
+                    data['business_id'].toString(),
+                  );
+                }
+                data['is_followed'] = !data['is_followed'];
+                await getIt<FeedsController>().getFeeds(showLoading: false);
+
+                // Handle follow action
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [primaryColor, primaryColor.withValues(alpha: 0.8)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(8.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: primaryColor.withValues(alpha: 0.3),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: CustomText(
+                  title: data['is_followed'] == true ? 'Following' : 'Follow',
+                  fontSize: 12.sp,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            );
+    });
+
+    //   GestureDetector(
+    //   onTap: () {
+    //     if (!getIt<DemoService>().isDemo) {
+    //       ToastUtils.showLoginToast();
+    //       return;
+    //     }
+    //   },
+    //   child: Container(
+    //     padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+    //     decoration: BoxDecoration(
+    //       gradient: LinearGradient(
+    //         colors: [primaryColor, primaryColor.withValues(alpha: 0.8)],
+    //         begin: Alignment.topLeft,
+    //         end: Alignment.bottomRight,
+    //       ),
+    //       borderRadius: BorderRadius.circular(8.r),
+    //       boxShadow: [
+    //         BoxShadow(
+    //           color: primaryColor.withValues(alpha: 0.3),
+    //           blurRadius: 4,
+    //           offset: const Offset(0, 2),
+    //         ),
+    //       ],
+    //     ),
+    //     child: CustomText(
+    //       title: data['is_followed'] == true ? 'Following' : 'Follow',
+    //       fontSize: 12.sp,
+    //       color: Colors.white,
+    //       fontWeight: FontWeight.w600,
+    //     ),
+    //   ),
+    // );
   }
 
   Widget _buildImageSection() {
@@ -186,15 +242,22 @@ class OfferCard extends StatelessWidget {
       children: [
         // Title
         CustomText(
-          title: data['details'] ?? '',
+          title: data['offer_name'] ?? '',
           fontSize: 16.sp,
           fontWeight: FontWeight.w600,
           color: primaryColor,
           textAlign: TextAlign.start,
           maxLines: 2,
         ),
+        // SizedBox(height: 8.h),
+        CustomText(
+          title: data['details'] ?? '',
+          fontSize: 14.sp,
+          color: Colors.black,
+          textAlign: TextAlign.start,
+          maxLines: 2,
+        ),
         SizedBox(height: 8.h),
-
         // Date Section
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,

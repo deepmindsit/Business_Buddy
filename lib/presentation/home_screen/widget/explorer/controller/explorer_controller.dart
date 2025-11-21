@@ -38,7 +38,7 @@ class ExplorerController extends GetxController {
 
   Future<void> getBusinesses(String catId, {bool showLoading = true}) async {
     if (showLoading) isBusinessLoading.value = true;
-    // final userId = await LocalStorage.getString('user_id') ?? '';
+    final userId = await LocalStorage.getString('user_id') ?? '';
     // print('userId==========>$userId');
     businessList.clear();
     try {
@@ -47,7 +47,7 @@ class ExplorerController extends GetxController {
       );
       final response = await _apiService.explore(
         catId,
-        '${position.latitude},${position.longitude}',
+        '${position.latitude},${position.longitude}',userId
       );
       if (response['common']['status'] == true) {
         businessList.value = response['data']['businesses'] ?? [];
@@ -70,7 +70,7 @@ class ExplorerController extends GetxController {
     bool showLoading = true,
   }) async {
     if (showLoading) isDetailsLoading.value = true;
-    // final userId = await LocalStorage.getString('user_id') ?? '';
+    final userId = await LocalStorage.getString('user_id') ?? '';
     // print('userId==========>$userId');
     businessDetails.clear();
     try {
@@ -79,7 +79,7 @@ class ExplorerController extends GetxController {
       );
       final response = await _apiService.businessDetails(
         businessId,
-        '${position.latitude},${position.longitude}',
+        '${position.latitude},${position.longitude}',userId
       );
       if (response['common']['status'] == true) {
         businessDetails.value = response['data'] ?? {};

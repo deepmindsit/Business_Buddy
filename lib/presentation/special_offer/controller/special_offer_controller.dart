@@ -8,8 +8,9 @@ class SpecialOfferController extends GetxController {
 
   Future<void> getSpecialOffer({bool showLoading = true}) async {
     if (showLoading) isLoading.value = true;
+    final userId = await LocalStorage.getString('user_id') ?? '';
     try {
-      final response = await _apiService.getSpecialOffer();
+      final response = await _apiService.getSpecialOffer(userId);
 
       if (response['common']['status'] == true) {
         offerList.value = response['data'] ?? [];

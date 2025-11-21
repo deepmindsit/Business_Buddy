@@ -74,10 +74,10 @@ class OnboardingController extends GetxController {
         await getIt<DemoService>().updateDemoStatus(
           response['data']['user_details']['auth_key']!.toString(),
         );
-        await LocalStorage.setString(
-          'auth_key',
-          response['data']['user_details']['auth_key']?.toString() ?? 'demo',
-        );
+        // await LocalStorage.setString(
+        //   'auth_key',
+        //   response['data']['user_details']['auth_key']?.toString() ?? 'demo',
+        // );
         await LocalStorage.setString(
           'user_id',
           response['data']['user_details']['user_id'].toString(),

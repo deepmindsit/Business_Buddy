@@ -3,6 +3,7 @@ import 'package:businessbuddy/network/all_url.dart';
 import 'package:injectable/injectable.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart';
+
 part 'api_service.g.dart';
 
 @RestApi()
@@ -51,18 +52,21 @@ abstract class ApiService {
   Future<dynamic> explore(
     @Part(name: "category_id") String? catId,
     @Part(name: "lat_long") String? latLong,
+      @Part(name: "user_id") String? userId,
   );
 
   @POST(AllUrl.businessDetails)
   Future<dynamic> businessDetails(
     @Part(name: "business_id") String? catId,
     @Part(name: "lat_long") String? latLong,
+      @Part(name: "user_id") String? userId,
   );
 
   @POST(AllUrl.myBusinessDetails)
   Future<dynamic> myBusinessDetails(
     @Part(name: "business_id") String? catId,
     @Part(name: "lat_long") String? latLong,
+      @Part(name: "user_id") String? userId,
   );
 
   @POST(AllUrl.myBusiness)
@@ -97,10 +101,13 @@ abstract class ApiService {
   Future<dynamic> offerDetails(@Part(name: "offer_id") String? offerId);
 
   @POST(AllUrl.getFeeds)
-  Future<dynamic> getFeeds(@Part(name: "lat_long") String? latLong);
+  Future<dynamic> getFeeds(
+    @Part(name: "lat_long") String? latLong,
+    @Part(name: "user_id") String? userId,
+  );
 
   @POST(AllUrl.getSpecialOffer)
-  Future<dynamic> getSpecialOffer();
+  Future<dynamic> getSpecialOffer(@Part(name: "user_id") String? userId);
 
   @POST(AllUrl.businessReqList)
   Future<dynamic> businessReqList(@Part(name: "user_id") String? userId);
@@ -156,11 +163,39 @@ abstract class ApiService {
   Future<dynamic> getBusinessReceivedRequest(
     @Part(name: "user_id") String? userId,
   );
+
   @POST(AllUrl.acceptBusinessRequest)
   Future<dynamic> acceptBusinessRequest(
     @Part(name: "user_id") String? userId,
     @Part(name: "request_id") String? reqId,
   );
+
+  @POST(AllUrl.followBusiness)
+  Future<dynamic> followBusiness(
+    @Part(name: "user_id") String? userId,
+    @Part(name: "business_id") String? businessId,
+  );
+
+  @POST(AllUrl.unfollowBusiness)
+  Future<dynamic> unfollowBusiness(
+    @Part(name: "user_id") String? userId,
+    @Part(name: "follow_id") String? followId,
+  );
+
+
+  @POST(AllUrl.likeBusiness)
+  Future<dynamic> likeBusiness(
+      @Part(name: "user_id") String? userId,
+      @Part(name: "business_id") String? businessId,
+      @Part(name: "business_post_id") String? postId,
+      );
+
+
+  @POST(AllUrl.unlikeBusiness)
+  Future<dynamic> unlikeBusiness(
+      @Part(name: "user_id") String? userId,
+      @Part(name: "liked_id") String? likeId,
+      );
 }
 
 //

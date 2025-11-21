@@ -10,9 +10,9 @@ Future<http.Client> getHttpClient() async {
 }
 
 class AllUrl {
-  static const String baseUrl = "http://192.168.29.41/bizyaari/api/user/v1";
-  // static const String baseUrl =
-  //     "https://businessbuddy.deepmindsit.com/api/user/v1";
+  // static const String baseUrl = "http://192.168.29.41/bizyaari/api/user/v1";
+  static const String baseUrl =
+      "https://businessbuddy.deepmindsit.com/api/user/v1";
 
   static const String sendOtp = '$baseUrl/check_user';
   static const String verifyOtp = '$baseUrl/verify_user';
@@ -43,9 +43,14 @@ class AllUrl {
   static const String getBusinessRequested =
       '$baseUrl/my_requested_business_requirements';
 
-
   static const String getBusinessReceived =
       '$baseUrl/my_received_business_requirement_requests';
   static const String acceptBusinessRequest =
       '$baseUrl/accept_business_requirement_request';
+
+  static const String followBusiness = '$baseUrl/follow_business';
+  static const String unfollowBusiness = '$baseUrl/unfollow_business';
+
+  static const String likeBusiness = '$baseUrl/like_business_post';
+  static const String unlikeBusiness = '$baseUrl/unlike_business_post';
 }

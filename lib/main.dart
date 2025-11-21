@@ -3,6 +3,7 @@ import 'package:businessbuddy/utils/exported_path.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await configureDependencies();
+  await getIt<DemoService>().init();
   runApp(const MyApp());
 }
 

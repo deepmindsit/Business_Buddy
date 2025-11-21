@@ -12,6 +12,7 @@ class CatItemCard extends StatelessWidget {
   final String imagePath;
   final String latitude;
   final String longitude;
+  final bool isFollowed;
   final List offers;
   final VoidCallback? onCall;
   final VoidCallback? onFollow;
@@ -29,6 +30,7 @@ class CatItemCard extends StatelessWidget {
     required this.rating,
     required this.reviewCount,
     required this.offerText,
+    required this.isFollowed,
     required this.phoneNumber,
     this.imagePath = Images.hotelImg,
     this.onCall,
@@ -290,15 +292,16 @@ class CatItemCard extends StatelessWidget {
           ),
         ),
         SizedBox(width: 8.w),
-        Expanded(
-          flex: 2,
-          child: _buildActionButton(
-            icon: HugeIcons.strokeRoundedUserAdd02,
-            text: 'Follow',
-            onPressed: onFollow,
-            backgroundColor: Colors.transparent,
+        if (!isFollowed)
+          Expanded(
+            flex: 2,
+            child: _buildActionButton(
+              icon: HugeIcons.strokeRoundedUserAdd02,
+              text: 'Follow',
+              onPressed: onFollow,
+              backgroundColor: Colors.transparent,
+            ),
           ),
-        ),
         SizedBox(width: 8.w),
         Expanded(
           flex: 3,

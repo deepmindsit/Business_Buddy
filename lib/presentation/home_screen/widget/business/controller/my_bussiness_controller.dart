@@ -67,7 +67,7 @@ class LBOController extends GetxController {
     bool showLoading = true,
   }) async {
     if (showLoading) isDetailsLoading.value = true;
-    // final userId = await LocalStorage.getString('user_id') ?? '';
+    final userId = await LocalStorage.getString('user_id') ?? '';
     // print('userId==========>$userId');
     businessDetails.clear();
     try {
@@ -77,6 +77,7 @@ class LBOController extends GetxController {
       final response = await _apiService.myBusinessDetails(
         businessId,
         '${position.latitude},${position.longitude}',
+        userId,
       );
       if (response['common']['status'] == true) {
         businessDetails.value = response['data'] ?? {};

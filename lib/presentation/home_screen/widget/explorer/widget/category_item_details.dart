@@ -116,7 +116,8 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
           SizedBox(height: 18.h),
           _buildHotelDetails(),
           SizedBox(height: 12.h),
-          _buildActionButtons(),
+          if (controller.businessDetails['self_business'] == false)
+            _buildActionButtons(),
           Divider(),
           _buildAboutSection(),
           _buildPostAndOffers(),
@@ -534,7 +535,9 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
         Expanded(
           child: _buildActionButton(
             icon: Icons.person_add_outlined,
-            text: 'Follow',
+            text: controller.businessDetails['is_followed'] == true
+                ? 'Following'
+                : 'Follow',
             onPressed: () => _handleFollow(),
             backgroundColor: Colors.transparent,
             isPrimary: false,
