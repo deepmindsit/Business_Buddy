@@ -13,6 +13,7 @@ class CatItemCard extends StatelessWidget {
   final String latitude;
   final String longitude;
   final bool isFollowed;
+  final bool isSelf;
   final List offers;
   final VoidCallback? onCall;
   final VoidCallback? onFollow;
@@ -31,6 +32,7 @@ class CatItemCard extends StatelessWidget {
     required this.reviewCount,
     required this.offerText,
     required this.isFollowed,
+    required this.isSelf,
     required this.phoneNumber,
     this.imagePath = Images.hotelImg,
     this.onCall,
@@ -282,17 +284,20 @@ class CatItemCard extends StatelessWidget {
   Widget _buildActionButtons() {
     return Row(
       children: [
-        Expanded(
-          flex: 2,
-          child: _buildActionButton(
-            icon: HugeIcons.strokeRoundedCall02,
-            text: 'Call',
-            onPressed: onCall,
-            backgroundColor: Colors.transparent,
+        Visibility(
+          visible: isSelf == false,
+          child: Expanded(
+            flex: 2,
+            child: _buildActionButton(
+              icon: HugeIcons.strokeRoundedCall02,
+              text: 'Call',
+              onPressed: onCall,
+              backgroundColor: Colors.transparent,
+            ),
           ),
         ),
         SizedBox(width: 8.w),
-        if (!isFollowed)
+        if (!isFollowed && isSelf == false)
           Expanded(
             flex: 2,
             child: _buildActionButton(

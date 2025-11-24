@@ -52,21 +52,21 @@ abstract class ApiService {
   Future<dynamic> explore(
     @Part(name: "category_id") String? catId,
     @Part(name: "lat_long") String? latLong,
-      @Part(name: "user_id") String? userId,
+    @Part(name: "user_id") String? userId,
   );
 
   @POST(AllUrl.businessDetails)
   Future<dynamic> businessDetails(
     @Part(name: "business_id") String? catId,
     @Part(name: "lat_long") String? latLong,
-      @Part(name: "user_id") String? userId,
+    @Part(name: "user_id") String? userId,
   );
 
   @POST(AllUrl.myBusinessDetails)
   Future<dynamic> myBusinessDetails(
     @Part(name: "business_id") String? catId,
     @Part(name: "lat_long") String? latLong,
-      @Part(name: "user_id") String? userId,
+    @Part(name: "user_id") String? userId,
   );
 
   @POST(AllUrl.myBusiness)
@@ -182,20 +182,26 @@ abstract class ApiService {
     @Part(name: "follow_id") String? followId,
   );
 
-
   @POST(AllUrl.likeBusiness)
   Future<dynamic> likeBusiness(
-      @Part(name: "user_id") String? userId,
-      @Part(name: "business_id") String? businessId,
-      @Part(name: "business_post_id") String? postId,
-      );
-
+    @Part(name: "user_id") String? userId,
+    @Part(name: "business_id") String? businessId,
+    @Part(name: "business_post_id") String? postId,
+  );
 
   @POST(AllUrl.unlikeBusiness)
   Future<dynamic> unlikeBusiness(
-      @Part(name: "user_id") String? userId,
-      @Part(name: "liked_id") String? likeId,
-      );
+    @Part(name: "user_id") String? userId,
+    @Part(name: "liked_id") String? likeId,
+  );
+
+  @POST(AllUrl.addReview)
+  Future<dynamic> addReview(
+    @Part(name: "user_id") String? userId,
+    @Part(name: "business_id") String? businessId,
+    @Part(name: "review") String? review,
+    @Part(name: "rating") String? rating,
+  );
 }
 
 //

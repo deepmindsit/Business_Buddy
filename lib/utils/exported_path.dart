@@ -65,6 +65,8 @@ export 'package:businessbuddy/presentation/home_screen/widget/feeds/widget/feed_
 export 'package:businessbuddy/presentation/business_partner/widget/business_card.dart';
 export 'package:businessbuddy/components/custom_toast_utils.dart';
 export 'package:businessbuddy/presentation/special_offer/widget/offer_card.dart';
+export 'package:businessbuddy/components/review_dialog.dart';
+export 'package:businessbuddy/components/appbar_main_2.dart';
 
 //controller
 export 'package:businessbuddy/presentation/onboarding/controller/splash_controller.dart';
@@ -78,6 +80,7 @@ export 'package:businessbuddy/presentation/home_screen/widget/feeds/controller/f
 export 'package:businessbuddy/presentation/special_offer/controller/special_offer_controller.dart';
 export 'package:businessbuddy/presentation/inbox/controller/inbox_controller.dart';
 export 'package:businessbuddy/common/check_demo.dart';
+export 'package:businessbuddy/presentation/home_screen/controller/search_controller.dart';
 
 //plugins
 export 'package:get/get.dart';
@@ -97,3 +100,4 @@ export 'package:cached_network_image/cached_network_image.dart';
 export 'package:toastification/toastification.dart';
 export 'package:url_launcher/url_launcher.dart';
 export 'package:widget_zoom/widget_zoom.dart';
+export 'package:flutter_rating_bar/flutter_rating_bar.dart';

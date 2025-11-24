@@ -1,4 +1,3 @@
-import 'package:businessbuddy/components/appbar_main_2.dart';
 import 'package:businessbuddy/utils/exported_path.dart';
 
 class NavigationScreen extends StatefulWidget {
@@ -10,16 +9,18 @@ class NavigationScreen extends StatefulWidget {
 
 class _NavigationScreenState extends State<NavigationScreen> {
   final controller = getIt<NavigationController>();
+  final searchController = getIt<SearchNewController>();
 
   @override
   void initState() {
     super.initState();
-    getLocationData();
+    searchController.getLiveLocation();
+    // getLocationData();
   }
 
-  void getLocationData() async {
-    controller.address.value = await updateUserLocation();
-  }
+  // void getLocationData() async {
+  //   searchController.address.value = await updateUserLocation();
+  // }
 
   @override
   Widget build(BuildContext context) {

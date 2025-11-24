@@ -13,6 +13,8 @@ import 'package:businessbuddy/common/check_demo.dart' as _i771;
 import 'package:businessbuddy/network/api_service.dart' as _i889;
 import 'package:businessbuddy/presentation/business_partner/controller/partner_controller.dart'
     as _i235;
+import 'package:businessbuddy/presentation/home_screen/controller/search_controller.dart'
+    as _i726;
 import 'package:businessbuddy/presentation/home_screen/widget/business/controller/my_bussiness_controller.dart'
     as _i745;
 import 'package:businessbuddy/presentation/home_screen/widget/explorer/controller/explorer_controller.dart'
@@ -45,6 +47,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i771.DemoService>(() => _i771.DemoService());
     gh.lazySingleton<_i235.PartnerDataController>(
       () => _i235.PartnerDataController(),
+    );
+    gh.lazySingleton<_i726.SearchNewController>(
+      () => _i726.SearchNewController(),
     );
     gh.lazySingleton<_i745.LBOController>(() => _i745.LBOController());
     gh.lazySingleton<_i481.ExplorerController>(

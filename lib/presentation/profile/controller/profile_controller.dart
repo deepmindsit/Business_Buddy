@@ -20,7 +20,8 @@ class ProfileController extends GetxController {
     aboutCtrl.text = profileDetails['about'] ?? '';
     educationCtrl.text = profileDetails['education'] ?? '';
     experienceCtrl.text = profileDetails['experience'] ?? '';
-    specialization.value = profileDetails['specialization_id'].toString();
+    specialization.value =
+        profileDetails['specialization_id'] ?? null;
   }
 
   Future<void> getProfile({bool showLoading = true}) async {

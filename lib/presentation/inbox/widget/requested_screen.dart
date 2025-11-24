@@ -196,9 +196,11 @@ class _RequestedScreenState extends State<RequestedScreen> {
 
                   image: data['requesting_user_profile_image'] ?? '',
                   onPressed: () async {
-                    await controller.acceptRequest(
-                      data['request_id']?.toString() ?? '',
-                    );
+                    if (data['accepted'] == false) {
+                      await controller.acceptRequest(
+                        data['request_id']?.toString() ?? '',
+                      );
+                    }
                   },
                 );
               },

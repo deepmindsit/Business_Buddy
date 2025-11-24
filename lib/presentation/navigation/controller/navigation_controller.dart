@@ -100,7 +100,4 @@ class NavigationController extends GetxController {
     topTabIndex.value = 1; // default Explorer
     isTopTabSelected.value = true;
   }
-
-  //////////////////////////////////location////////////////////
-  final address = ''.obs;
 }

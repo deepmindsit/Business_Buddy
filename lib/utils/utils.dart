@@ -29,3 +29,11 @@ Future<bool> isDemo() async {
   bool isDemo = authKey != 'demo';
   return isDemo;
 }
+
+
+double calcHeight(List items) {
+  int count = items.length;
+  int rows = (count / 3).ceil();   // assuming 3 columns
+  double height = rows * 120;      // item height
+  return height.toDouble();
+}

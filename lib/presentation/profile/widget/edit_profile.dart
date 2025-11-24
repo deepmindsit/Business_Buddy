@@ -12,8 +12,10 @@ class _EditProfileState extends State<EditProfile> {
 
   @override
   void initState() {
-    controller.setPreselected();
-    getIt<ExplorerController>().getCategories();
+    getIt<ExplorerController>().getCategories().then((v) {
+      controller.setPreselected();
+    });
+
     super.initState();
   }
 
@@ -154,6 +156,8 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   Widget _buildSpecialization() {
+    print('controller.specialization.value');
+    print(controller.specialization.value);
     return Obx(
       () => getIt<ExplorerController>().isLoading.isTrue
           ? LoadingWidget(color: primaryColor)

@@ -1,3 +1,5 @@
+import 'package:businessbuddy/components/search_location.dart';
+
 import '../utils/exported_path.dart';
 
 class CustomMainHeader2 extends StatelessWidget {
@@ -34,22 +36,75 @@ class CustomMainHeader2 extends StatelessWidget {
               children: [
                 /// 🔹 Location Label
                 Obx(
-                  () => Row(
-                    children: [
-                      SizedBox(width: 8.w),
-                      Icon(Icons.location_on, color: Colors.black, size: 14.sp),
-                      CustomText(
-                        title: controller.address.value,
-                        fontSize: 14.sp,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
+                  () => GestureDetector(
+                    onTap: () {
+                      Get.bottomSheet(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20.r),
+                            topRight: Radius.circular(20.r),
+                          ),
+                        ),
+                        backgroundColor: Colors.white,
+                        isScrollControlled: true,
+                        SafeArea(
+                          child: DraggableScrollableSheet(
+                            expand: false,
+                            initialChildSize: 0.8,
+                            minChildSize: 0.4,
+                            maxChildSize: 1.0,
+                            builder: (_, controllerScroll) {
+                              return Container(
+                                padding: EdgeInsets.only(
+                                  bottom: MediaQuery.of(
+                                    context,
+                                  ).viewInsets.bottom,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(20.r),
+                                    topRight: Radius.circular(20.r),
+                                  ),
+                                ),
+                                child: SingleChildScrollView(
+                                  controller: controllerScroll,
+                                  child: SearchLocation(),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        enableDrag: true, // Allow dragging to close
+                        isDismissible: true, // Allow tapping outside to close
+                      );
+                    },
+                    child: SizedBox(
+                      width: Get.width * 0.65.w,
+                      child: Row(
+                        children: [
+                          SizedBox(width: 8.w),
+                          Icon(
+                            Icons.location_on,
+                            color: Colors.black,
+                            size: 14.sp,
+                          ),
+                          CustomText(
+                            title: getIt<SearchNewController>().address.value,
+                            fontSize: 14.sp,
+                            color: Colors.black,
+                            maxLines: 1,
+                            textAlign: TextAlign.start,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          Icon(
+                            Icons.arrow_drop_down,
+                            color: Colors.black,
+                            size: 14.sp,
+                          ),
+                        ],
                       ),
-                      Icon(
-                        Icons.arrow_drop_down,
-                        color: Colors.black,
-                        size: 14.sp,
-                      ),
-                    ],
+                    ),
                   ),
                 ),
                 SizedBox(height: 8.h),

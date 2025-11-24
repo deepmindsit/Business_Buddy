@@ -121,6 +121,10 @@ class _BusinessCardState extends State<BusinessCard> {
               ? LoadingWidget(color: primaryColor)
               : GestureDetector(
                   onTap: () async {
+                    if (!getIt<DemoService>().isDemo) {
+                      ToastUtils.showLoginToast();
+                      return;
+                    }
                     await controller.sendBusinessRequest(
                       widget.data['id'].toString(),
                     );

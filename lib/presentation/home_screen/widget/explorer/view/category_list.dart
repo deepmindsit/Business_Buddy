@@ -3,6 +3,7 @@ import 'package:businessbuddy/utils/exported_path.dart';
 class CategoryList extends StatefulWidget {
   final String categoryName;
   final String categoryId;
+
   const CategoryList({
     super.key,
     required this.categoryName,
@@ -16,6 +17,7 @@ class CategoryList extends StatefulWidget {
 class _CategoryListState extends State<CategoryList> {
   final navController = getIt<NavigationController>();
   final controller = getIt<ExplorerController>();
+  final feedsController = getIt<FeedsController>();
 
   @override
   void initState() {
@@ -71,6 +73,7 @@ class _CategoryListState extends State<CategoryList> {
                         offers: item['offers'] ?? [],
                         latitude: item['latitude'] ?? '',
                         isFollowed: item['is_followed'] ?? false,
+                        isSelf: item['self_business'] ?? false,
                         longitude: item['longitude'] ?? '',
                         distance: item['distance']?.toString() ?? '',
                         name: item['name'] ?? '',
@@ -96,11 +99,27 @@ class _CategoryListState extends State<CategoryList> {
                             businessId: item['id']?.toString() ?? '',
                           ),
                         ),
-                        onFollow: () {
+                        onFollow: () async {
+                          print('object');
                           if (!getIt<DemoService>().isDemo) {
                             ToastUtils.showLoginToast();
                             return;
                           }
+                          if (item['is_followed'] == true) {
+                            await feedsController.unfollowBusiness(
+                              item['follow_id'].toString(),
+                            );
+                          } else {
+                            await feedsController.followBusiness(
+                              item['id'].toString(),
+                            );
+                          }
+
+                          item['is_followed'] = !item['is_followed'];
+                          await controller.getBusinesses(
+                            widget.categoryId,
+                            showLoading: false,
+                          );
                         },
                       );
                     },

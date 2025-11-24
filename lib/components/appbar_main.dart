@@ -63,7 +63,7 @@ class CustomMainHeader extends StatelessWidget {
                         size: 14.sp,
                       ),
                       CustomText(
-                        title: controller.address.value,
+                        title: getIt<SearchNewController>().address.value,
                         fontSize: 14.sp,
                         color: textLightGrey,
                         fontWeight: FontWeight.bold,

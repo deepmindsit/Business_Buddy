@@ -8,11 +8,11 @@ Future<http.Client> getHttpClient() async {
         true;
   return IOClient(ioc);
 }
-
+const googleMapsApi = 'AIzaSyAvg-gpAbB2_lKgSIJ9tG6JqjGJFaVeXNc';
 class AllUrl {
-  // static const String baseUrl = "http://192.168.29.41/bizyaari/api/user/v1";
-  static const String baseUrl =
-      "https://businessbuddy.deepmindsit.com/api/user/v1";
+  static const String baseUrl = "http://192.168.29.41/bizyaari/api/user/v1";
+  // static const String baseUrl =
+  //     "https://businessbuddy.deepmindsit.com/api/user/v1";
 
   static const String sendOtp = '$baseUrl/check_user';
   static const String verifyOtp = '$baseUrl/verify_user';
@@ -53,4 +53,5 @@ class AllUrl {
 
   static const String likeBusiness = '$baseUrl/like_business_post';
   static const String unlikeBusiness = '$baseUrl/unlike_business_post';
+  static const String addReview = '$baseUrl/add_review_rating';
 }

@@ -16,7 +16,7 @@ class CategoryDetailPage extends StatefulWidget {
 class _CategoryDetailPageState extends State<CategoryDetailPage> {
   final controller = getIt<ExplorerController>();
   final navController = getIt<NavigationController>();
-
+  final feedsController = getIt<FeedsController>();
   @override
   void initState() {
     controller.getBusinessDetails(widget.businessId);
@@ -185,24 +185,58 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
         itemCount: images.length,
         separatorBuilder: (_, __) => SizedBox(width: 8.w),
         itemBuilder: (context, index) {
-          return GestureDetector(
-            onTap: () {
-              // Add image preview functionality
-            },
-            child: Container(
-              width: 64.w,
-              height: 64.h,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(color: Colors.grey.shade200, width: 1),
-                image: DecorationImage(
-                  image: NetworkImage(images[index]),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-          );
+          final attach = images[index];
+          return _buildGalleryImage(attach);
+
+          //   return GestureDetector(
+          //     onTap: () {
+          //       // Add image preview functionality
+          //     },
+          //     child: Container(
+          //       width: 64.w,
+          //       height: 64.h,
+          //       decoration: BoxDecoration(
+          //         borderRadius: BorderRadius.circular(12.r),
+          //         border: Border.all(color: Colors.grey.shade200, width: 1),
+          //         image: DecorationImage(
+          //           image: NetworkImage(images[index]),
+          //           fit: BoxFit.cover,
+          //         ),
+          //       ),
+          //     ),
+          //   );
         },
+      ),
+    );
+  }
+
+  Widget _buildGalleryImage(dynamic attach) {
+    return Container(
+      width: 64.w,
+      height: 64.h,
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade200),
+        borderRadius: BorderRadius.circular(12.r),
+      ),
+      child: WidgetZoom(
+        heroAnimationTag: 'tag $attach',
+        zoomWidget: ClipRRect(
+          borderRadius: BorderRadius.circular(12.r),
+          child: FadeInImage(
+            width: 64.w,
+            height: 64.h,
+            placeholder: const AssetImage(Images.defaultImage),
+            image: NetworkImage(attach),
+            fit: BoxFit.contain,
+            imageErrorBuilder: (context, error, stackTrace) {
+              return Container(
+                padding: EdgeInsets.all(20.w),
+                child: Image.asset(Images.defaultImage, fit: BoxFit.contain),
+              );
+            },
+            fadeInDuration: const Duration(milliseconds: 300),
+          ),
+        ),
       ),
     );
   }
@@ -301,7 +335,8 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
                 color: Colors.grey,
               ),
               CustomText(
-                title: '1200+ Followers',
+                title:
+                    '${controller.businessDetails['followers_count']} Followers',
                 fontSize: 12.sp,
                 color: Colors.grey,
                 fontWeight: FontWeight.w600,
@@ -533,15 +568,21 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
           ),
         ),
         Expanded(
-          child: _buildActionButton(
-            icon: Icons.person_add_outlined,
-            text: controller.businessDetails['is_followed'] == true
-                ? 'Following'
-                : 'Follow',
-            onPressed: () => _handleFollow(),
-            backgroundColor: Colors.transparent,
-            isPrimary: false,
-          ),
+          child: Obx(() {
+            return controller.isFollowLoading.value
+                ? LoadingWidget(color: primaryColor)
+                : _buildActionButton(
+                    icon: controller.businessDetails['is_followed'] == true
+                        ? Icons.person_remove_alt_1_outlined
+                        : Icons.person_add_outlined,
+                    text: controller.businessDetails['is_followed'] == true
+                        ? 'Following'
+                        : 'Follow',
+                    onPressed: () => _handleFollow(),
+                    backgroundColor: Colors.transparent,
+                    isPrimary: false,
+                  );
+          }),
         ),
       ],
     );
@@ -618,6 +659,9 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
           children: [
             // --- Tab Bar ---
             TabBar(
+              onTap: (i) {
+                controller.tabIndex.value = i;
+              },
               indicatorColor: primaryColor,
               labelColor: primaryColor,
               indicatorSize: TabBarIndicatorSize.tab,
@@ -631,12 +675,9 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
                 Tab(text: 'Offer'),
               ],
             ),
-
-            // --- Tab Content ---
-            SizedBox(
-              height: Get.height * 0.45.h,
-              child: TabBarView(
-                physics: const NeverScrollableScrollPhysics(), // prevents
+            Obx(() {
+              return IndexedStack(
+                index: controller.tabIndex.value,
                 children: [
                   buildGridImages(controller.businessDetails['posts'], 'post'),
                   buildGridImages(
@@ -644,8 +685,23 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
                     'offer',
                   ),
                 ],
-              ),
-            ),
+              );
+            }),
+            // --- Tab Content ---
+            // Flexible(
+            //   fit: FlexFit.loose,
+            //   // height: Get.height * 0.45.h,
+            //   child: TabBarView(
+            //     physics: const NeverScrollableScrollPhysics(), // prevents
+            //     children: [
+            //       buildGridImages(controller.businessDetails['posts'], 'post'),
+            //       buildGridImages(
+            //         controller.businessDetails['offers'],
+            //         'offer',
+            //       ),
+            //     ],
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -654,77 +710,62 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
 
   Widget _buildReviewsSection() {
     final reviewList = controller.businessDetails['reviews'] ?? [];
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ExpansionTile(
-          title: CustomText(
-            title: 'Reviews & Ratings',
-            fontSize: 16.sp,
-            textAlign: TextAlign.start,
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-          ),
-          childrenPadding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
+    return ExpansionTile(
+      trailing: SizedBox(
+        width: 60.w, // Fixed width to prevent layout issues
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            ...reviewList.map((item) {
-              return Padding(
-                padding: EdgeInsets.only(bottom: 16),
-                child: _buildReviewTile(
-                  userName: item['user_name'] ?? "",
-                  review: item['review'] ?? "",
-                  rating: item['rating'] ?? '0',
-                  imageUrl: item['user_profile_image'] ?? "",
-                  date: item['created_at'] ?? "",
-                ),
-              );
-            }).toList(),
-
-            //
-            // buildReviewTile(
-            //   userName: 'Mandar',
-            //   review:
-            //       'At Hotel Jyoti Family Restaurant, I was delighted by the rich flavors and aromatic dishes. Each bite of their signature biryani was a culinary delight, bursting with spices.',
-            //   rating: 5,
-            // ),
-            // SizedBox(height: 16.h),
-            // const Divider(height: 1),
-            // SizedBox(height: 16.h),
-            // buildReviewTile(
-            //   userName: 'Danish',
-            //   review:
-            //       'At Hotel Jyoti Family Restaurant, I was delighted by the rich flavors and aromatic dishes. Each bite of their signature biryani was a culinary delight, bursting with spices.',
-            //   rating: 5,
-            // ),
-            SizedBox(height: 8.h),
-            _buildViewAllReviews(),
-          ],
-        ),
-        Center(
-          child: GestureDetector(
-            onTap: () => _addReview(),
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-              decoration: BoxDecoration(
-                color: primaryColor.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8.r),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.add, color: primaryColor, size: 16.sp),
-                  SizedBox(width: 4.w),
-                  CustomText(
-                    title: 'Add Review',
-                    fontSize: 12.sp,
-                    color: primaryColor,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ],
+            // Expansion arrow
+            Icon(
+              Icons.keyboard_arrow_down,
+              color: Colors.grey.shade600,
+              size: 22.w,
+            ),
+            SizedBox(width: 12.w),
+            GestureDetector(
+              onTap: () => _addReview(),
+              child: Icon(
+                Icons.add_circle_outline,
+                color: primaryColor,
+                size: 22.w,
               ),
             ),
-          ),
+          ],
         ),
+      ),
+      title: CustomText(
+        title: 'Reviews & Ratings',
+        fontSize: 16.sp,
+        textAlign: TextAlign.start,
+        fontWeight: FontWeight.w600,
+        color: Colors.black87,
+      ),
+      shape: const RoundedRectangleBorder(
+        // Remove border shape
+        borderRadius: BorderRadius.all(Radius.circular(0)),
+      ),
+      collapsedShape: const RoundedRectangleBorder(
+        // Remove collapsed border shape
+        borderRadius: BorderRadius.all(Radius.circular(0)),
+      ),
+      tilePadding: EdgeInsets.symmetric(horizontal: 0),
+      childrenPadding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
+      children: [
+        ...reviewList.map((item) {
+          return Padding(
+            padding: EdgeInsets.only(bottom: 16),
+            child: _buildReviewTile(
+              userName: item['user_name'] ?? "",
+              review: item['review'] ?? "",
+              rating: item['rating'] ?? '0',
+              imageUrl: item['user_profile_image'] ?? "",
+              date: item['created_at'] ?? "",
+            ),
+          );
+        }).toList(),
+        SizedBox(height: 8.h),
+        // _buildViewAllReviews(),
       ],
     );
   }
@@ -820,12 +861,24 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
     makePhoneCall(controller.businessDetails['mobile_number'] ?? '');
   }
 
-  void _handleFollow() {
+  void _handleFollow() async {
+    final isFollowed = controller.businessDetails['is_followed'] ?? false;
+    final item = controller.businessDetails;
     if (!getIt<DemoService>().isDemo) {
       ToastUtils.showLoginToast();
       return;
     }
-    // Implement follow functionality
+    controller.isFollowLoading.value = true;
+    if (isFollowed == true) {
+      await feedsController.unfollowBusiness(item['follow_id'].toString());
+    } else {
+      await feedsController.followBusiness(item['id'].toString());
+    }
+
+    item['is_followed'] = !item['is_followed'];
+    await controller.getBusinessDetails(widget.businessId, showLoading: false);
+
+    controller.isFollowLoading.value = false;
   }
 
   void _addReview() {
@@ -833,6 +886,17 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
       ToastUtils.showLoginToast();
       return;
     }
+    Get.dialog(
+      ReviewDialog(
+        productName: widget.title,
+        imageUrl: controller.businessDetails['image'] ?? "",
+        onSubmit: (rating, review) async {
+          await controller.addReview(
+            controller.businessDetails['id'].toString(),
+          );
+        },
+      ),
+    );
     // Implement add review functionality
   }
 }
