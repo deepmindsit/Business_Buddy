@@ -1,3 +1,4 @@
+import 'package:businessbuddy/presentation/home_screen/widget/explorer/widget/cat_item_card_shimmer.dart';
 import 'package:businessbuddy/utils/exported_path.dart';
 
 class CategoryList extends StatefulWidget {
@@ -53,7 +54,14 @@ class _CategoryListState extends State<CategoryList> {
         Expanded(
           child: Obx(
             () => controller.isBusinessLoading.isTrue
-                ? LoadingWidget(color: primaryColor)
+                // ? LoadingWidget(color: primaryColor)
+                ? ListView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    padding: EdgeInsets.symmetric(horizontal: 8.w),
+                    itemCount: 6, // shimmer items
+                    itemBuilder: (_, i) => CatItemCardShimmer(),
+                  )
                 : controller.businessList.isEmpty
                 ? Center(
                     child: CustomText(

@@ -177,12 +177,15 @@ class FeedCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         child: AspectRatio(
           aspectRatio: 1.4,
-          child: FadeInImage(
-            placeholder: const AssetImage(Images.defaultImage),
+          child: InstaLikeButton(
             image: NetworkImage(image),
-            width: double.infinity,
-            fit: BoxFit.contain,
-            imageErrorBuilder: (context, error, stackTrace) {
+            onChanged: onLike,
+            iconSize: 80.r,
+            icon: data['is_liked'] == true ? Icons.favorite : Icons.favorite,
+            iconColor: data['is_liked'] == true ? lightGrey : Colors.red,
+            curve: Curves.fastLinearToSlowEaseIn,
+            duration: const Duration(milliseconds: 500),
+            onImageError: (e, _) {
               return Center(
                 child: Image.asset(
                   Images.defaultImage,
@@ -191,8 +194,25 @@ class FeedCard extends StatelessWidget {
                 ),
               );
             },
-            fadeInDuration: const Duration(milliseconds: 500),
+            imageBoxfit: BoxFit.contain,
           ),
+
+          // FadeInImage(
+          //   placeholder: const AssetImage(Images.defaultImage),
+          //   image: NetworkImage(image),
+          //   width: double.infinity,
+          //   fit: BoxFit.contain,
+          //   imageErrorBuilder: (context, error, stackTrace) {
+          //     return Center(
+          //       child: Image.asset(
+          //         Images.defaultImage,
+          //         width: 150.w,
+          //         height: 150.w,
+          //       ),
+          //     );
+          //   },
+          //   fadeInDuration: const Duration(milliseconds: 500),
+          // ),
         ),
       ),
     );
@@ -209,10 +229,14 @@ class FeedCard extends StatelessWidget {
               bool isLoading = false;
               if (data['is_liked'] == true) {
                 isLoading =
-                    getIt<FeedsController>().likeLoadingMap[data['liked_id'].toString()] == true;
+                    getIt<FeedsController>().likeLoadingMap[data['liked_id']
+                        .toString()] ==
+                    true;
               } else {
                 isLoading =
-                    getIt<FeedsController>().likeLoadingMap[data['business_id'].toString()] == true;
+                    getIt<FeedsController>().likeLoadingMap[data['business_id']
+                        .toString()] ==
+                    true;
               }
 
               return isLoading
@@ -257,7 +281,7 @@ class FeedCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             isLike && data['is_liked'] == true
-                ? Icon(Icons.favorite, color: Colors.red)
+                ? Icon(Icons.favorite, color: Colors.red, size: 18.sp)
                 : HugeIcon(
                     icon: icon,
                     color: Colors.grey.shade700,

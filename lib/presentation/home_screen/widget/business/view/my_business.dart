@@ -28,7 +28,8 @@ class _LboScreenState extends State<LboScreen> {
         () => Padding(
           padding: EdgeInsets.all(12.w),
           child: controller.isBusinessLoading.isTrue
-              ? LoadingWidget(color: primaryColor)
+              // ? LoadingWidget(color: primaryColor)
+              ? _buildBusinessShimmer()
               : controller.businessList.isEmpty
               ? _buildEmptyLBO()
               : _buildBusinessList(),
@@ -186,12 +187,6 @@ class _LboScreenState extends State<LboScreen> {
                 controller.offerList.value = business['offers'] ?? [];
                 controller.isBusinessApproved.value =
                     business['is_business_approved'];
-                if (controller.isBusinessApproved.value == '1') {
-                  Get.toNamed(
-                    Routes.businessDetails,
-                    arguments: {'businessId': business['id'].toString()},
-                  );
-                }
               },
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 250),
@@ -212,51 +207,62 @@ class _LboScreenState extends State<LboScreen> {
                   ),
                 ),
                 padding: EdgeInsets.symmetric(horizontal: 12.w),
-                child: Row(
-                  // crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CircleAvatar(
-                      radius: 22.r,
-                      backgroundColor: Colors.grey.shade100,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12.r),
-                        child: FadeInImage(
-                          placeholder: const AssetImage(Images.logo),
-                          image: NetworkImage(business['image'] ?? ''),
-                          imageErrorBuilder: (context, error, stackTrace) {
-                            return Image.asset(
-                              Images.defaultImage,
-                              fit: BoxFit.contain,
-                            );
-                          },
-                          fit: BoxFit.cover,
-                          placeholderFit: BoxFit.contain,
-                          fadeInDuration: const Duration(milliseconds: 300),
+                child: GestureDetector(
+                  onTap: () {
+                    if (controller.isBusinessApproved.value == '1') {
+                      Get.toNamed(
+                        Routes.businessDetails,
+                        arguments: {'businessId': business['id'].toString()},
+                      );
+                    }
+                  },
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 22.r,
+                        backgroundColor: Colors.grey.shade100,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(100.r),
+                          child: FadeInImage(
+                            placeholder: const AssetImage(Images.logo),
+                            image: NetworkImage(business['image'] ?? ''),
+                            imageErrorBuilder: (context, error, stackTrace) {
+                              return Image.asset(
+                                Images.defaultImage,
+                                fit: BoxFit.contain,
+                              );
+                            },
+                            width: 100.w,
+                            height: 100.h,
+                            fit: BoxFit.cover,
+                            placeholderFit: BoxFit.contain,
+                            fadeInDuration: const Duration(milliseconds: 300),
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(width: 10.w),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CustomText(
-                            title: business['name'] ?? '',
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w700,
-                            maxLines: 1,
-                          ),
-                          SizedBox(height: 4.h),
-                          CustomText(
-                            title: business['category'] ?? '',
-                            fontSize: 12.sp,
-                            color: Colors.grey.shade600,
-                          ),
-                        ],
+                      SizedBox(width: 10.w),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CustomText(
+                              title: business['name'] ?? '',
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w700,
+                              maxLines: 1,
+                            ),
+                            SizedBox(height: 4.h),
+                            CustomText(
+                              title: business['category'] ?? '',
+                              fontSize: 12.sp,
+                              color: Colors.grey.shade600,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             );
@@ -404,6 +410,139 @@ class _LboScreenState extends State<LboScreen> {
                 fontSize: 14,
                 height: 1.5,
                 color: Colors.grey.shade700,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ---------------- MAIN CONTENT SHIMMER-----------------
+  Widget _buildBusinessShimmer() {
+    return SingleChildScrollView(
+      child: Column(
+        spacing: 12.h,
+        children: [
+          _shimmerAddBusinessButton(),
+          _shimmerBusinessList(),
+          _shimmerTabsSection(),
+        ],
+      ),
+    );
+  }
+
+  Widget _shimmerAddBusinessButton() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey.shade300,
+      highlightColor: Colors.grey.shade100,
+      child: Container(
+        width: Get.width,
+        height: 42.h,
+        decoration: BoxDecoration(
+          color: Colors.grey.shade300,
+          borderRadius: BorderRadius.circular(8.r),
+        ),
+      ),
+    );
+  }
+
+  Widget _shimmerBusinessList() {
+    return SizedBox(
+      height: 60.h,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: 4,
+        separatorBuilder: (_, __) => SizedBox(width: 8.w),
+        itemBuilder: (_, i) {
+          return Shimmer.fromColors(
+            baseColor: Colors.grey.shade300,
+            highlightColor: Colors.grey.shade100,
+            child: Container(
+              width: Get.width * 0.7.w,
+              padding: EdgeInsets.symmetric(horizontal: 12.w),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(16.r),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 44.r,
+                    height: 44.r,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  SizedBox(width: 10.w),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          height: 12.h,
+                          width: 120.w,
+                          color: Colors.white,
+                        ),
+                        SizedBox(height: 6.h),
+                        Container(
+                          height: 10.h,
+                          width: 80.w,
+                          color: Colors.white,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _shimmerTabsSection() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey.shade300,
+      highlightColor: Colors.grey.shade100,
+      child: Container(
+        width: Get.width,
+        padding: EdgeInsets.all(12.w),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade300,
+          borderRadius: BorderRadius.circular(12.r),
+        ),
+        child: Column(
+          children: [
+            // Tab bar shimmer
+            Row(
+              children: [
+                Container(height: 26.h, width: 80.w, color: Colors.white),
+                SizedBox(width: 12.w),
+                Container(height: 26.h, width: 120.w, color: Colors.white),
+              ],
+            ),
+
+            SizedBox(height: 16.h),
+
+            // Grid shimmer
+            Wrap(
+              spacing: 8.w,
+              runSpacing: 8.h,
+              children: List.generate(
+                6,
+                (i) => Container(
+                  // margin: EdgeInsets.all(8.w),
+                  width: (Get.width / 3) - 24.w,
+                  height: 90.h,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                ),
               ),
             ),
           ],

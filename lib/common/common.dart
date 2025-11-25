@@ -53,7 +53,7 @@ Widget buildStarRating(int rating) {
   );
 }
 
-Widget buildGridImages(dynamic data, String type) {
+Widget buildGridImages(dynamic data, String type, {bool isEdit = false}) {
   if (data.isEmpty) {
     return Center(
       child: Text(
@@ -83,8 +83,8 @@ Widget buildGridImages(dynamic data, String type) {
         child: Stack(
           children: [
             Container(
-              width: 100.w, // 👈 Set your width
-              height: 110.h, // 👈 Set your height
+              width: 100.w,
+              height: 110.h,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8.r),
                 border: Border.all(color: Colors.grey.shade400, width: 1.5),
@@ -103,7 +103,7 @@ Widget buildGridImages(dynamic data, String type) {
             if (!isApproved)
               Positioned(
                 top: 4,
-                right: 4,
+                left: 4,
                 child: Container(
                   padding: EdgeInsets.all(4.w),
                   decoration: BoxDecoration(
@@ -113,41 +113,37 @@ Widget buildGridImages(dynamic data, String type) {
                   child: Icon(Icons.schedule, color: Colors.white, size: 12.r),
                 ),
               ),
+            if (isEdit)
+              Positioned(
+                top: 4,
+                right: 10,
+                child: GestureDetector(
+                  onTap: () {
+                    if (type == 'post') {
+                      Get.toNamed(
+                        Routes.editPost,
+                        arguments: {'postData': image},
+                      );
+                    } else {
+                      Get.toNamed(
+                        Routes.editOffer,
+                        arguments: {'offerData': image},
+                      );
+                    }
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(4.w),
+                    decoration: BoxDecoration(
+                      color: Colors.grey,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(Icons.edit, color: Colors.white, size: 12.r),
+                  ),
+                ),
+              ),
           ],
         ),
       );
-      // return GestureDetector(
-      //   onTap: () {
-      //     showPostBottomSheet(image['id'].toString(), type);
-      //   },
-      //   child: Banner(
-      //     message: isApproved ? "Approved" : "Pending",
-      //     location: BannerLocation.topStart,
-      //
-      //     color: isApproved ? Colors.green : Colors.orange,
-      //     textStyle: const TextStyle(
-      //       fontSize: 10,
-      //       fontWeight: FontWeight.w600,
-      //       color: Colors.white,
-      //     ),
-      //     child: Container(
-      //       decoration: BoxDecoration(
-      //         borderRadius: BorderRadius.circular(8.r),
-      //         border: Border.all(color: Colors.grey.shade400, width: 1.5),
-      //       ),
-      //       child: ClipRRect(
-      //         borderRadius: BorderRadius.circular(8.r),
-      //         child: FadeInImage.assetNetwork(
-      //           placeholder: Images.defaultImage,
-      //           image: image['image'] ?? '',
-      //           fit: BoxFit.cover,
-      //           imageErrorBuilder: (_, __, ___) =>
-      //               Image.asset(Images.defaultImage, fit: BoxFit.cover),
-      //         ),
-      //       ),
-      //     ),
-      //   ),
-      // );
     },
   );
 }
@@ -328,24 +324,6 @@ Future<dynamic> _showOffer(LBOController controller) {
                             fadeInDuration: const Duration(milliseconds: 300),
                           ),
                         ),
-
-                        // Image.network(
-                        //   controller.singleOffer['image'].toString(),
-                        //   width: double.infinity,
-                        //   // height: 180.h,
-                        //   fit: BoxFit.cover,
-                        //   errorBuilder: (context, error, stackTrace) {
-                        //     return Container(
-                        //       height: 180,
-                        //       color: Colors.grey.shade200,
-                        //       child: Icon(
-                        //         Icons.image_not_supported_outlined,
-                        //         color: Colors.grey.shade400,
-                        //         size: 40,
-                        //       ),
-                        //     );
-                        //   },
-                        // ),
                       ),
                     ),
 
@@ -362,17 +340,23 @@ Future<dynamic> _showOffer(LBOController controller) {
                     ),
 
                     SizedBox(height: 12),
+                    CustomText(
+                      title: controller.singleOffer['offer_name'].toString(),
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey.shade700,
+                      textAlign: TextAlign.start,
+                    ),
 
                     // Details
                     if (controller.singleOffer['details'] != null &&
                         controller.singleOffer['details'].toString().isNotEmpty)
-                      Text(
-                        controller.singleOffer['details'].toString(),
-                        style: TextStyle(
-                          fontSize: 15,
-                          height: 1.5,
-                          color: Colors.grey.shade700,
-                        ),
+                      CustomText(
+                        title: controller.singleOffer['details'].toString(),
+                        fontSize: 13.sp,
+                        maxLines: 10,
+                        textAlign: TextAlign.start,
+                        color: Colors.grey.shade700,
                       ),
 
                     SizedBox(height: 16),

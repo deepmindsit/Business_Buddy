@@ -158,8 +158,25 @@ class PartnerDataController extends GetxController {
     invHistory.clear();
     iCanInvest.clear();
     notes.clear();
-    invType.value = '';
+    invType.value = null;
     invCapacity.value = '';
     selectedBusiness.clear();
+  }
+
+  void preselectedRecruitment(dynamic data) async {
+    recTitle.text = data['name'] ?? '';
+    location.text = data['location'] ?? '';
+    invType.value = data['what_you_look_for_id'].toString();
+    selectedBusiness.value = List<String>.from(data['category_names'] ?? []);
+    await getCapacity(data['what_you_look_for_id'].toString()).then((v) {
+      invCapacity.value = data['investment_capacity'] ?? '';
+    });
+
+    // invHistory.clear();
+    // iCanInvest.clear();
+    // notes.clear();
+    // invType.value = null;
+    // invCapacity.value = '';
+    // selectedBusiness.clear();
   }
 }

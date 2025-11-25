@@ -10,9 +10,9 @@ Future<http.Client> getHttpClient() async {
 }
 const googleMapsApi = 'AIzaSyAvg-gpAbB2_lKgSIJ9tG6JqjGJFaVeXNc';
 class AllUrl {
-  static const String baseUrl = "http://192.168.29.41/bizyaari/api/user/v1";
-  // static const String baseUrl =
-  //     "https://businessbuddy.deepmindsit.com/api/user/v1";
+  // static const String baseUrl = "http://192.168.29.41/bizyaari/api/user/v1";
+  static const String baseUrl =
+      "https://businessbuddy.deepmindsit.com/api/user/v1";
 
   static const String sendOtp = '$baseUrl/check_user';
   static const String verifyOtp = '$baseUrl/verify_user';

@@ -688,6 +688,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.9.0"
+  insta_like_button:
+    dependency: "direct main"
+    description:
+      name: insta_like_button
+      sha256: "3195ddb12ce8b2b7bedf13e56e25fc7bbd46b98c217f9692f98b938f42eba380"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.1"
   internet_connection_checker:
     dependency: "direct main"
     description:
@@ -1141,6 +1149,14 @@ packages:
     description:
       name: shelf_web_socket
       sha256: "3632775c8e90d6c9712f883e633716432a27758216dfb61bd86a8321c0580925"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.0"
+  shimmer:
+    dependency: "direct main"
+    description:
+      name: shimmer
+      sha256: "5f88c883a22e9f9f299e5ba0e4f7e6054857224976a5d9f839d4ebdc94a14ac9"
       url: "https://pub.dev"
     source: hosted
     version: "3.0.0"

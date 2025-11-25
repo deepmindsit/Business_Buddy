@@ -80,7 +80,7 @@ class CustomMainHeader2 extends StatelessWidget {
                       );
                     },
                     child: SizedBox(
-                      width: Get.width * 0.65.w,
+                      width: Get.width * 0.8.w,
                       child: Row(
                         children: [
                           SizedBox(width: 8.w),
@@ -89,13 +89,15 @@ class CustomMainHeader2 extends StatelessWidget {
                             color: Colors.black,
                             size: 14.sp,
                           ),
-                          CustomText(
-                            title: getIt<SearchNewController>().address.value,
-                            fontSize: 14.sp,
-                            color: Colors.black,
-                            maxLines: 1,
-                            textAlign: TextAlign.start,
-                            fontWeight: FontWeight.bold,
+                          Expanded(
+                            child: CustomText(
+                              title: getIt<SearchNewController>().address.value,
+                              fontSize: 14.sp,
+                              color: Colors.black,
+                              maxLines: 1,
+                              textAlign: TextAlign.start,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           Icon(
                             Icons.arrow_drop_down,
@@ -222,7 +224,6 @@ class CustomMainHeader2 extends StatelessWidget {
     required var icon,
     required VoidCallback onTap,
     Color? color,
-    Color? iconColor,
   }) {
     return GestureDetector(
       onTap: onTap,
@@ -234,12 +235,7 @@ class CustomMainHeader2 extends StatelessWidget {
           color: Colors.white,
           shape: BoxShape.circle,
         ),
-        child: HugeIcon(
-          icon: icon,
-          // color: iconColor ?? textLightGrey,
-          color: primaryColor,
-          size: 18.sp,
-        ),
+        child: HugeIcon(icon: icon, color: primaryColor, size: 18.sp),
       ),
     );
   }

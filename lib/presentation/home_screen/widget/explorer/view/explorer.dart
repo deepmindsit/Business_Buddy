@@ -45,7 +45,8 @@ class _ExplorerState extends State<Explorer> {
           Expanded(
             child: Obx(
               () => controller.isLoading.isTrue
-                  ? LoadingWidget(color: primaryColor)
+                  // ? LoadingWidget(color: primaryColor)
+                  ? _buildShimmerLoader()
                   : controller.categories.isEmpty
                   ? Center(
                       child: CustomText(
@@ -89,6 +90,60 @@ class _ExplorerState extends State<Explorer> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildShimmerLoader() {
+    return GridView.builder(
+      padding: EdgeInsets.only(top: 8.h).copyWith(right: 8.w, left: 8.w),
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 4,
+        crossAxisSpacing: 12.w,
+        mainAxisSpacing: 8.h,
+        childAspectRatio: 0.7,
+      ),
+      itemCount: 8, // Show 8 shimmer items
+      itemBuilder: (context, index) {
+        return Shimmer.fromColors(
+          baseColor: Colors.grey.shade300,
+          highlightColor: Colors.grey.shade100,
+          child: Column(
+            children: [
+              // Image placeholder
+              Container(
+                width: 60.w,
+                height: 60.h,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+              ),
+              SizedBox(height: 8.h),
+              // Text placeholder
+              Container(
+                width: 60.w,
+                height: 12.h,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(4.r),
+                ),
+              ),
+              SizedBox(height: 4.h),
+              // Secondary text placeholder
+              Container(
+                width: 40.w,
+                height: 10.h,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(4.r),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

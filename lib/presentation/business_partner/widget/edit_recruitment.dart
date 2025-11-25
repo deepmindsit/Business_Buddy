@@ -1,14 +1,15 @@
 import 'package:businessbuddy/utils/exported_path.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 
-class AddRecruitment extends StatefulWidget {
-  const AddRecruitment({super.key});
+class EditRecruitment extends StatefulWidget {
+  final dynamic recruitmentData;
+  const EditRecruitment({super.key, required this.recruitmentData});
 
   @override
-  State<AddRecruitment> createState() => _AddRecruitmentState();
+  State<EditRecruitment> createState() => _EditRecruitmentState();
 }
 
-class _AddRecruitmentState extends State<AddRecruitment> {
+class _EditRecruitmentState extends State<EditRecruitment> {
   final controller = getIt<PartnerDataController>();
   final navController = getIt<NavigationController>();
   final catController = getIt<ExplorerController>();
@@ -16,7 +17,7 @@ class _AddRecruitmentState extends State<AddRecruitment> {
   @override
   void initState() {
     loadAllData();
-    controller.resetField();
+    controller.preselectedRecruitment(widget.recruitmentData);
     super.initState();
   }
 
@@ -74,46 +75,13 @@ class _AddRecruitmentState extends State<AddRecruitment> {
             child: const Icon(Icons.arrow_back),
           ),
           CustomText(
-            title: 'Post Recruitment',
+            title: 'Edit Post Recruitment',
             fontSize: 18.sp,
             fontWeight: FontWeight.bold,
           ),
         ],
       ),
     );
-    //   Container(
-    //   color: Colors.white,
-    //   padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-    //   child: Row(
-    //     children: [
-    //       GestureDetector(
-    //         onTap: () => navController.goBack(),
-    //         child: Container(
-    //           padding: EdgeInsets.all(8.w),
-    //           decoration: BoxDecoration(
-    //             color: Colors.grey.shade100,
-    //             borderRadius: BorderRadius.circular(8.r),
-    //           ),
-    //           child: Icon(
-    //             Icons.arrow_back_ios_rounded,
-    //             size: 18.sp,
-    //             color: Colors.grey.shade700,
-    //           ),
-    //         ),
-    //       ),
-    //       SizedBox(width: 12.w),
-    //       Expanded(
-    //         child: CustomText(
-    //           title: widget.title,
-    //           textAlign: TextAlign.start,
-    //           fontSize: 18.sp,
-    //           fontWeight: FontWeight.w700,
-    //           color: Colors.black87,
-    //         ),
-    //       ),
-    //     ],
-    //   ),
-    // );
   }
 
   Widget _buildTitle() {
@@ -136,6 +104,7 @@ class _AddRecruitmentState extends State<AddRecruitment> {
       children: [
         _buildLabel('Business Interest'),
         DropdownSearch<String>.multiSelection(
+          selectedItems: controller.selectedBusiness,
           decoratorProps: DropDownDecoratorProps(
             decoration: InputDecoration(
               fillColor: Colors.white,

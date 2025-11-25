@@ -101,3 +101,6 @@ export 'package:toastification/toastification.dart';
 export 'package:url_launcher/url_launcher.dart';
 export 'package:widget_zoom/widget_zoom.dart';
 export 'package:flutter_rating_bar/flutter_rating_bar.dart';
+export 'package:shimmer/shimmer.dart';
+export 'package:insta_like_button/insta_like_button.dart';
+

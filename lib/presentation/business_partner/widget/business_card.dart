@@ -1,5 +1,7 @@
 import 'package:businessbuddy/utils/exported_path.dart';
 
+import 'edit_recruitment.dart';
+
 class BusinessCard extends StatefulWidget {
   final dynamic data;
   final bool isRequested;
@@ -101,7 +103,14 @@ class _BusinessCardState extends State<BusinessCard> {
   Widget _buildRightSection() {
     if (widget.data['self'] == true) {
       return _rightWrapper(
-        child: _buildActionItem(icon: Icons.edit, text: "Edit"),
+        child: GestureDetector(
+          onTap: () {
+            getIt<NavigationController>().openSubPage(
+              EditRecruitment(recruitmentData: widget.data),
+            );
+          },
+          child: _buildActionItem(icon: Icons.edit, text: "Edit"),
+        ),
       );
     }
 

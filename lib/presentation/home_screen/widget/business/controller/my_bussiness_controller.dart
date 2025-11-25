@@ -33,6 +33,7 @@ class LBOController extends GetxController {
   final isBusinessApproved = ''.obs;
   final isDetailsLoading = false.obs;
   final businessDetails = {}.obs;
+  final tabIndex = 0.obs;
 
   Future<void> getMyBusinesses({bool showLoading = true}) async {
     if (showLoading) isBusinessLoading.value = true;
@@ -68,7 +69,6 @@ class LBOController extends GetxController {
   }) async {
     if (showLoading) isDetailsLoading.value = true;
     final userId = await LocalStorage.getString('user_id') ?? '';
-    // print('userId==========>$userId');
     businessDetails.clear();
     try {
       Position position = await Geolocator.getCurrentPosition(
@@ -161,6 +161,14 @@ class LBOController extends GetxController {
     attachments.clear();
   }
 
+  void preselectedBusiness() {
+    shopName.text = businessDetails['name'] ?? '';
+    address.text = businessDetails['address'] ?? '';
+    numberCtrl.text = businessDetails['mobile_number'] ?? '';
+    offering.value = businessDetails['category_id']?.toString() ?? null;
+    aboutCtrl.text = businessDetails['about_business'] ?? '';
+  }
+
   /// ------------------------
   /// ADD NEW POST
   /// ------------------------
@@ -245,6 +253,14 @@ class LBOController extends GetxController {
     descriptionCtrl.clear();
     highlightCtrl.clear();
     points.clear();
+  }
+
+  void preselectedOffer(dynamic data) {
+    titleCtrl.text = data['offer_name'] ?? '';
+    startDateCtrl.text = data['start_date'] ?? '';
+    endDateCtrl.text = data['end_date'] ?? '';
+    descriptionCtrl.text = data['details'] ?? '';
+    points.value = List<String>.from(data['highlight_points'] ?? []);
   }
 
   /// ------------------------

@@ -1,3 +1,5 @@
+import 'package:businessbuddy/presentation/business_partner/widget/business_card_shimmer.dart';
+import 'package:businessbuddy/presentation/business_partner/widget/edit_recruitment.dart';
 import 'package:businessbuddy/utils/exported_path.dart';
 
 class BusinessPartner extends StatefulWidget {
@@ -13,9 +15,17 @@ class _BusinessPartnerState extends State<BusinessPartner> {
 
   @override
   void initState() {
-    controller.getBusinessRequired();
-    controller.getRequestedBusiness();
+    loadAllData();
     super.initState();
+  }
+
+  Future<void> loadAllData() async {
+    controller.isMainLoading.value = true;
+    await Future.wait([
+      controller.getBusinessRequired(),
+      controller.getRequestedBusiness(),
+    ]);
+    controller.isMainLoading.value = false;
   }
 
   @override
@@ -80,8 +90,14 @@ class _BusinessPartnerState extends State<BusinessPartner> {
 
   Widget _buildRequirement() {
     return Obx(
-      () => controller.isLoading.isTrue
-          ? LoadingWidget(color: primaryColor)
+      () => controller.isMainLoading.isTrue
+          // ? LoadingWidget(color: primaryColor)
+          ? ListView.separated(
+              padding: EdgeInsets.all(8),
+              itemCount: 6,
+              separatorBuilder: (_, __) => SizedBox(height: 10),
+              itemBuilder: (context, index) => const BusinessCardShimmer(),
+            )
           : controller.requirementList.isEmpty
           ? _buildEmptyPartner()
           : ListView.separated(
@@ -99,7 +115,7 @@ class _BusinessPartnerState extends State<BusinessPartner> {
 
   Widget _buildRequested() {
     return Obx(
-      () => controller.isLoading.isTrue
+      () => controller.isMainLoading.isTrue
           ? LoadingWidget(color: primaryColor)
           : controller.requestedBusinessList.isEmpty
           ? Center(

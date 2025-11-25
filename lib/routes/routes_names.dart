@@ -10,8 +10,11 @@ class Routes {
   static const String catList = '/catList';
   static const String catDetails = '/mainScreen';
   static const String addPost = '/addPost';
+  static const String editPost = '/editPost';
   static const String addOffer = '/addOffer';
+  static const String editOffer = '/editOffer';
   static const String businessDetails = '/businessDetails';
+  static const String editBusiness = '/editBusiness';
   static const String homeScreen = '/homeScreen';
   static const String profile = '/profile';
   static const String editProfile = '/editProfile';

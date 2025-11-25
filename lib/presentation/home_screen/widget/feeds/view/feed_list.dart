@@ -1,3 +1,4 @@
+import 'package:businessbuddy/presentation/home_screen/widget/feeds/widget/feed_card_shimmer.dart';
 import 'package:businessbuddy/utils/exported_path.dart';
 
 class NewFeed extends StatefulWidget {
@@ -20,7 +21,12 @@ class _NewFeedState extends State<NewFeed> {
   Widget build(BuildContext context) {
     return Obx(
       () => controller.isLoading.isTrue
-          ? LoadingWidget(color: primaryColor)
+          // ? LoadingWidget(color: primaryColor)
+          ? ListView.builder(
+              padding: EdgeInsets.symmetric(horizontal: 8.w),
+              itemCount: 5, // shimmer count
+              itemBuilder: (_, i) => const FeedShimmer(),
+            )
           : controller.feedList.isEmpty
           ? Center(
               child: CustomText(

@@ -16,9 +16,6 @@ class _BusinessDetailsState extends State<BusinessDetails> {
     super.initState();
   }
 
-  // Business data variables
-  final String _followersCount = '10K';
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,15 +53,15 @@ class _BusinessDetailsState extends State<BusinessDetails> {
     );
   }
 
-  Widget _buildFloatingActionButton() {
-    return FloatingActionButton(
-      backgroundColor: primaryColor,
-      foregroundColor: Colors.white,
-      shape: const CircleBorder(),
-      onPressed: _addNewContent,
-      child: const Icon(Icons.add),
-    );
-  }
+  // Widget _buildFloatingActionButton() {
+  //   return FloatingActionButton(
+  //     backgroundColor: primaryColor,
+  //     foregroundColor: Colors.white,
+  //     shape: const CircleBorder(),
+  //     onPressed: _addNewContent,
+  //     child: const Icon(Icons.add),
+  //   );
+  // }
 
   Widget _buildBody() {
     return Obx(
@@ -178,7 +175,10 @@ class _BusinessDetailsState extends State<BusinessDetails> {
 
   Widget _buildEditButton() {
     return GestureDetector(
-      onTap: _editBusinessDetails,
+      onTap: () => Get.toNamed(
+        Routes.editBusiness,
+        arguments: {'data': controller.businessDetails},
+      ),
       child: Container(
         padding: EdgeInsets.all(6.w),
         decoration: BoxDecoration(
@@ -205,7 +205,8 @@ class _BusinessDetailsState extends State<BusinessDetails> {
           text: TextSpan(
             children: [
               TextSpan(
-                text: _followersCount,
+                text:
+                    controller.businessDetails['followers']?.toString() ?? '0',
                 style: TextStyle(
                   fontSize: 16.sp,
                   color: primaryColor,
@@ -478,11 +479,13 @@ class _BusinessDetailsState extends State<BusinessDetails> {
         CircleAvatar(
           radius: 22.r,
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(12.r),
+            borderRadius: BorderRadius.circular(100.r),
             child: FadeInImage(
               placeholder: const AssetImage(Images.defaultImage),
               image: NetworkImage(imageUrl!),
               fit: BoxFit.cover,
+              width: 100.w,
+              height: 100.h,
               imageErrorBuilder: (context, error, stackTrace) {
                 return Container(
                   padding: EdgeInsets.all(20.w),
@@ -529,65 +532,6 @@ class _BusinessDetailsState extends State<BusinessDetails> {
     );
   }
 
-  // Widget _buildReviewTile({
-  //   required String userName,
-  //   required String review,
-  //   required int rating,
-  //   required String date,
-  // }) {
-  //   return Container(
-  //     padding: EdgeInsets.all(12.w),
-  //     decoration: BoxDecoration(
-  //       color: Colors.grey.shade50,
-  //       borderRadius: BorderRadius.circular(12.r),
-  //       border: Border.all(color: Colors.grey.shade200),
-  //     ),
-  //     child: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         Row(
-  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //           children: [
-  //             CustomText(
-  //               title: userName,
-  //               fontSize: 16.sp,
-  //               fontWeight: FontWeight.w600,
-  //               color: Colors.black87,
-  //             ),
-  //             CustomText(
-  //               title: date,
-  //               fontSize: 12.sp,
-  //               color: Colors.grey.shade500,
-  //             ),
-  //           ],
-  //         ),
-  //         SizedBox(height: 4.h),
-  //         _buildStarRating(rating),
-  //         SizedBox(height: 8.h),
-  //         CustomText(
-  //           maxLines: 10,
-  //           textAlign: TextAlign.start,
-  //           title: review,
-  //           fontSize: 14.sp,
-  //           color: Colors.grey.shade700,
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
-  // Widget _buildStarRating(int rating) {
-  //   return Row(
-  //     children: List.generate(5, (index) {
-  //       return Icon(
-  //         index < rating ? Icons.star : Icons.star_border,
-  //         color: Colors.amber,
-  //         size: 16.w,
-  //       );
-  //     }),
-  //   );
-  // }
-
   Widget _buildPostAndOffersSection() {
     return DefaultTabController(
       length: 2,
@@ -606,9 +550,9 @@ class _BusinessDetailsState extends State<BusinessDetails> {
         child: Column(
           children: [
             _buildTabBar(),
-            SizedBox(
-              height: 320.h,
-              child: TabBarView(
+            Obx(() {
+              return IndexedStack(
+                index: controller.tabIndex.value,
                 children: [
                   buildGridImages(controller.businessDetails['posts'], 'post'),
                   buildGridImages(
@@ -616,8 +560,22 @@ class _BusinessDetailsState extends State<BusinessDetails> {
                     'offer',
                   ),
                 ],
-              ),
-            ),
+              );
+            }),
+
+            // IndexedStack(
+            //   index: controller.tabIndex.value,
+            //     children: [
+            //   child: TabBarView(
+            //     children: [
+            //       buildGridImages(controller.businessDetails['posts'], 'post'),
+            //       buildGridImages(
+            //         controller.businessDetails['offers'],
+            //         'offer',
+            //       ),
+            //     ],
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -634,8 +592,12 @@ class _BusinessDetailsState extends State<BusinessDetails> {
         ),
       ),
       child: TabBar(
+        onTap: (i) {
+          controller.tabIndex.value = i;
+        },
         indicatorColor: primaryColor,
         labelColor: primaryColor,
+        indicatorSize: TabBarIndicatorSize.tab,
         unselectedLabelColor: Colors.grey.shade600,
         indicatorWeight: 2.0,
         labelStyle: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
@@ -721,22 +683,6 @@ class _BusinessDetailsState extends State<BusinessDetails> {
   //     ),
   //   );
   // }
-
-  // Action methods
-  void _editBusinessDetails() {
-    // Navigate to edit business details screen
-    print('Edit business details tapped');
-  }
-
-  void _addNewContent() {
-    // Show bottom sheet for adding new content
-    print('Add new content tapped');
-  }
-
-  void _openImagePreview(int index) {
-    // Open image in full screen
-    print('Open image preview at index: $index');
-  }
 
   void _makePhoneCall(String phoneNumber) {
     // Implement phone call functionality

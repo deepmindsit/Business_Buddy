@@ -1,5 +1,7 @@
 import 'package:businessbuddy/utils/exported_path.dart';
 
+import '../../home_screen/widget/feeds/widget/feed_card_shimmer.dart';
+
 class SpecialOffer extends StatefulWidget {
   const SpecialOffer({super.key});
 
@@ -22,7 +24,12 @@ class _SpecialOfferState extends State<SpecialOffer> {
       backgroundColor: Colors.white,
       body: Obx(
         () => controller.isLoading.isTrue
-            ? LoadingWidget(color: primaryColor)
+            // ? LoadingWidget(color: primaryColor)
+            ? ListView.builder(
+                padding: EdgeInsets.symmetric(horizontal: 8.w),
+                itemCount: 5, // shimmer count
+                itemBuilder: (_, i) => const FeedShimmer(),
+              )
             : controller.offerList.isEmpty
             ? Center(
                 child: CustomText(
