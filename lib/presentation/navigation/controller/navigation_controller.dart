@@ -4,11 +4,11 @@ import '../../../utils/exported_path.dart';
 class NavigationController extends GetxController {
   final currentIndex = 0.obs;
   final topTabIndex = 1.obs; // default Explorer
-  final isTopTabSelected = true.obs;
+  final isTopTabSelected = false.obs;
   final RxBool isSubPageOpen = false.obs;
 
   // 🔹 Stack of pages
-  final RxList<Widget> _pageStack = <Widget>[const NewFeed()].obs;
+  final RxList<Widget> _pageStack = <Widget>[const HomeScreen()].obs;
 
   // 🔹 Public getter
   List<Widget> get pageStack => _pageStack;
@@ -32,9 +32,9 @@ class NavigationController extends GetxController {
 
     switch (index) {
       case 0:
-        _pageStack.add(const NewFeed());
-        topTabIndex.value = 1;
-        isTopTabSelected.value = true;
+        _pageStack.add(const HomeScreen());
+        // topTabIndex.value = 1;
+        // isTopTabSelected.value = true;
         break;
       case 1:
         _pageStack.add(const InboxList());

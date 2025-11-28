@@ -153,7 +153,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CustomText(
-                  title: '50+',
+                  title: '50',
                   fontSize: 22.sp,
                   fontWeight: FontWeight.bold,
                   color: Colors.grey[900],
@@ -418,7 +418,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                               SizedBox(width: 4.w),
                               Text(
-                                '1200+ Followers',
+                                '${business['followers']?.toString() ?? '0'} Followers',
                                 style: TextStyle(
                                   fontSize: 11.sp,
                                   color: Colors.grey[600],

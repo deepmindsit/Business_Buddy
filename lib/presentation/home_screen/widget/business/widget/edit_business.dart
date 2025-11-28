@@ -87,7 +87,7 @@ class _EditBusinessState extends State<EditBusiness> {
             ),
             _buildAddress(),
             _buildNumber(),
-            _buildOffering(),
+            _buildCategory(),
 
             _buildAbout(),
             Row(
@@ -229,18 +229,18 @@ class _EditBusinessState extends State<EditBusiness> {
     );
   }
 
-  Widget _buildOffering() {
+  Widget _buildCategory() {
     return Obx(
       () => expController.isLoading.isTrue
           ? LoadingWidget(color: primaryColor)
           : AppDropdownField(
-              title: 'Offering',
+              title: 'Category',
               isDynamic: true,
               value: controller.offering.value,
               items: expController.categories,
               hintText: 'Eg. Salon, Spa',
               validator: (value) =>
-                  value == null ? 'Please select Offer' : null,
+                  value == null ? 'Please select Category' : null,
               onChanged: (val) async {
                 controller.offering.value = val!;
               },

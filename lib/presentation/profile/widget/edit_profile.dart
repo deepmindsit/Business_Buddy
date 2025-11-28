@@ -12,8 +12,10 @@ class _EditProfileState extends State<EditProfile> {
 
   @override
   void initState() {
-    getIt<ExplorerController>().getCategories().then((v) {
-      controller.setPreselected();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getIt<ExplorerController>().getCategories().then((v) {
+        controller.setPreselected();
+      });
     });
 
     super.initState();

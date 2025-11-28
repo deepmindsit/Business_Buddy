@@ -73,7 +73,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
               backgroundColor: mainGrey,
               selectedItemColor: Colors.red,
               showUnselectedLabels: true,
-              unselectedItemColor: Colors.grey,
+              unselectedItemColor: Colors.black,
               selectedLabelStyle: const TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 12,
@@ -132,7 +132,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
         child: HugeIcon(
           size: iconSize ?? Get.width * 0.06,
           icon: icon,
-          color: isSelected ? Colors.white : Colors.grey,
+          color: isSelected ? Colors.white : Colors.black,
         ),
       ),
       label: label,

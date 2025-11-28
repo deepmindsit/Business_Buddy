@@ -83,6 +83,7 @@ class OnboardingController extends GetxController {
           response['data']['user_details']['user_id'].toString(),
         );
         numberController.clear();
+        otpController.clear();
         Get.offAllNamed(Routes.mainScreen);
         ToastUtils.showSuccessToast(response['common']['message'].toString());
       } else {
@@ -124,6 +125,8 @@ class OnboardingController extends GetxController {
           response['data']['user_details']['user_id'].toString(),
         );
         numberController.clear();
+        nameController.clear();
+        emailController.clear();
         Get.offAllNamed(Routes.mainScreen);
         ToastUtils.showSuccessToast(response['common']['message'].toString());
       } else {

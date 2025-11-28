@@ -94,7 +94,7 @@ class _AddBusinessState extends State<AddBusiness> {
             ),
             _buildAddress(),
             _buildNumber(),
-            _buildOffering(),
+            _buildCategory(),
             _buildReferralCode(),
             _buildAbout(),
             Padding(
@@ -136,6 +136,8 @@ class _AddBusinessState extends State<AddBusiness> {
                   return FadeInImage(
                     placeholder: const AssetImage(Images.defaultImage),
                     image: imageProvider,
+                    width: 100.w,
+                    height: 100.h,
                     imageErrorBuilder: (context, error, stackTrace) {
                       return Image.asset(
                         Images.defaultImage,
@@ -214,18 +216,18 @@ class _AddBusinessState extends State<AddBusiness> {
     );
   }
 
-  Widget _buildOffering() {
+  Widget _buildCategory() {
     return Obx(
       () => expController.isLoading.isTrue
           ? LoadingWidget(color: primaryColor)
           : AppDropdownField(
-              title: 'Offering',
+              title: 'Category',
               isDynamic: true,
               value: controller.offering.value,
               items: expController.categories,
               hintText: 'Eg. Salon, Spa',
               validator: (value) =>
-                  value == null ? 'Please select Offer' : null,
+                  value == null ? 'Please select Category' : null,
               onChanged: (val) async {
                 controller.offering.value = val!;
               },

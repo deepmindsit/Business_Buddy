@@ -43,7 +43,7 @@ class _CustomTabBarState extends State<CustomTabBar> {
                     children: [
                       HugeIcon(
                         icon: tabs[index]['icon'],
-                        color: isSelected ? Colors.white : mainTextGrey,
+                        color: isSelected ? Colors.white : Colors.black,
                         size: 18.sp,
                       ),
                       SizedBox(width: 6.w),
@@ -56,7 +56,7 @@ class _CustomTabBarState extends State<CustomTabBar> {
                             fontWeight: isSelected
                                 ? FontWeight.w600
                                 : FontWeight.w400,
-                            color: isSelected ? Colors.white : mainTextGrey,
+                            color: isSelected ? Colors.white : Colors.black,
                             height: 1.2,
                           ),
                         ),

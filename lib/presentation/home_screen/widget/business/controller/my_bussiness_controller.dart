@@ -7,6 +7,36 @@ class LBOController extends GetxController {
   final ApiService _apiService = Get.find();
   final NavigationController navController = getIt<NavigationController>();
 
+  final currentPostsList = [].obs;
+  final currentIndex = 0.obs;
+  final currentType = 'post'.obs;
+
+  // Navigation methods
+  void goToNextItem() {
+    if (currentIndex.value < currentPostsList.length - 1) {
+      currentIndex.value++;
+      loadCurrentItem();
+    }
+  }
+
+  void goToPreviousItem() {
+    if (currentIndex.value > 0) {
+      currentIndex.value--;
+      loadCurrentItem();
+    }
+  }
+
+  Future<void> loadCurrentItem() async {
+    if (currentPostsList.isEmpty) return;
+
+    final currentItem = currentPostsList[currentIndex.value];
+    if (currentType.value == 'post') {
+      await getSinglePost(currentItem['id'].toString());
+    } else {
+      await getSingleOffer(currentItem['id'].toString());
+    }
+  }
+
   /// ------------------------
   /// IMAGE PICKER
   /// ------------------------
@@ -37,7 +67,7 @@ class LBOController extends GetxController {
 
   Future<void> getMyBusinesses({bool showLoading = true}) async {
     if (showLoading) isBusinessLoading.value = true;
-
+    businessList.clear();
     final userId = await LocalStorage.getString('user_id') ?? '';
 
     try {
@@ -271,9 +301,9 @@ class LBOController extends GetxController {
 
   Future<void> getSinglePost(String postId, {bool showLoading = true}) async {
     if (showLoading) isSinglePostLoading.value = true;
-
+    final userId = await LocalStorage.getString('user_id') ?? '';
     try {
-      final response = await _apiService.postDetails(postId);
+      final response = await _apiService.postDetails(postId, userId);
 
       if (response['common']['status'] == true) {
         singlePost.value = response['data'] ?? {};

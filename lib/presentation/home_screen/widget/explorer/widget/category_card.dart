@@ -23,8 +23,6 @@ class CategoryCard extends StatelessWidget {
             imageErrorBuilder: (context, error, stackTrace) {
               return Image.asset(Images.defaultImage, fit: BoxFit.contain);
             },
-            // height: 80.w,
-            // width: double.infinity,
             fit: BoxFit.contain,
             fadeInDuration: const Duration(milliseconds: 300),
           ),

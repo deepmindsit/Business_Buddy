@@ -95,13 +95,20 @@ abstract class ApiService {
   });
 
   @POST(AllUrl.postDetails)
-  Future<dynamic> postDetails(@Part(name: "post_id") String? postId);
+  Future<dynamic> postDetails(@Part(name: "post_id") String? postId,
+      @Part(name: "user_id") String? userId,);
 
   @POST(AllUrl.offerDetails)
   Future<dynamic> offerDetails(@Part(name: "offer_id") String? offerId);
 
   @POST(AllUrl.getFeeds)
   Future<dynamic> getFeeds(
+    @Part(name: "lat_long") String? latLong,
+    @Part(name: "user_id") String? userId,
+  );
+
+  @POST(AllUrl.getHome)
+  Future<dynamic> getHome(
     @Part(name: "lat_long") String? latLong,
     @Part(name: "user_id") String? userId,
   );

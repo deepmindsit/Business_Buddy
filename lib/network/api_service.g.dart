@@ -448,7 +448,7 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<dynamic> postDetails(String? postId) async {
+  Future<dynamic> postDetails(String? postId, String? userId) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     queryParameters.removeWhere((k, v) => v == null);
@@ -456,6 +456,9 @@ class _ApiService implements ApiService {
     final _data = FormData();
     if (postId != null) {
       _data.fields.add(MapEntry('post_id', postId));
+    }
+    if (userId != null) {
+      _data.fields.add(MapEntry('user_id', userId));
     }
     final _options = _setStreamType<dynamic>(
       Options(method: 'POST', headers: _headers, extra: _extra)
@@ -515,6 +518,34 @@ class _ApiService implements ApiService {
           .compose(
             _dio.options,
             'https://businessbuddy.deepmindsit.com/api/user/v1/get_feeds',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch(_options);
+    final _value = _result.data;
+    return _value;
+  }
+
+  @override
+  Future<dynamic> getHome(String? latLong, String? userId) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    if (latLong != null) {
+      _data.fields.add(MapEntry('lat_long', latLong));
+    }
+    if (userId != null) {
+      _data.fields.add(MapEntry('user_id', userId));
+    }
+    final _options = _setStreamType<dynamic>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'https://businessbuddy.deepmindsit.com/api/user/v1/home',
             queryParameters: queryParameters,
             data: _data,
           )

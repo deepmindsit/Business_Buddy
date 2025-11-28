@@ -38,21 +38,96 @@ class _SpecialOfferState extends State<SpecialOffer> {
                   fontWeight: FontWeight.bold,
                 ),
               )
-            : ListView.builder(
-                shrinkWrap: true,
-                padding: EdgeInsets.symmetric(horizontal: 8.w),
-                itemCount: controller.offerList.length,
-                itemBuilder: (_, i) {
-                  final item = controller.offerList[i];
+            : SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          CustomText(
+                            title: 'Special Offers',
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          _buildFilterButton(),
+                        ],
+                      ),
+                    ),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      padding: EdgeInsets.symmetric(horizontal: 8.w),
+                      itemCount: controller.offerList.length,
+                      itemBuilder: (_, i) {
+                        final item = controller.offerList[i];
 
-                  return OfferCard(data: item);
-                },
+                        return OfferCard(data: item);
+                      },
+                    ),
+                  ],
+                ),
               ),
       ),
+    );
+  }
 
-      // SingleChildScrollView(
-      //   child: Column(children: [OfferCard(), OfferCard()]),
-      // ),
+  // Enhanced Filter Button Widget
+  Widget _buildFilterButton() {
+    return Container(
+      margin: EdgeInsets.only(right: 4.w),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12.r),
+        color: primaryColor.withValues(alpha: 0.1),
+        border: Border.all(
+          color: primaryColor.withValues(alpha: 0.3),
+          width: 1,
+        ),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => _showFilterBottomSheet(context),
+          borderRadius: BorderRadius.circular(12.r),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                HugeIcon(
+                  icon: HugeIcons.strokeRoundedFilter,
+                  size: 16.r,
+                  color: primaryColor,
+                ),
+                SizedBox(width: 2.w),
+                CustomText(
+                  title: 'Filter',
+                  fontSize: 13.sp,
+                  fontWeight: FontWeight.w600,
+                  color: primaryColor,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Filter Bottom Sheet Method
+  void _showFilterBottomSheet(BuildContext context) {
+    Get.bottomSheet(
+      isDismissible: true,
+      isScrollControlled: true,
+      backgroundColor: Colors.grey.withValues(alpha: 0.05),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      // context: context,
+      const FeedSheet(),
     );
   }
 }

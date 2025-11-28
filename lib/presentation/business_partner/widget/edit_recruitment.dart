@@ -54,6 +54,23 @@ class _EditRecruitmentState extends State<EditRecruitment> {
                     }),
                     _buildHistory(),
                     _buildNote(),
+                    Obx(
+                      () => Center(
+                        child: SwitchListTile(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                            side: BorderSide(color: Colors.grey, width: 0.2),
+                          ),
+                          title: Text('Is this requirement completed?'),
+                          value: controller.isCompleted.value,
+                          onChanged: (newValue) {
+                            controller.isCompleted.value = newValue;
+                          },
+                          activeThumbColor: primaryColor,
+                          inactiveThumbColor: lightGrey,
+                        ),
+                      ),
+                    ),
                     SizedBox(height: 12.h),
                     _buildPostButton(),
                   ],

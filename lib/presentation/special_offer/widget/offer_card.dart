@@ -83,14 +83,36 @@ class OfferCard extends StatelessWidget {
                   textAlign: TextAlign.start,
                   color: Colors.black87,
                   maxLines: 1,
+                  style: TextStyle(
+                    height: 1,
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black87,
+                  ),
                 ),
-                SizedBox(height: 2.h),
                 CustomText(
                   title: data['category'] ?? '',
-                  fontSize: 12.sp,
+                  fontSize: 10.sp,
                   textAlign: TextAlign.start,
                   color: Colors.grey.shade600,
                   maxLines: 1,
+                  style: TextStyle(
+                    height: 1,
+                    fontSize: 10.sp,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+                CustomText(
+                  title: getTimeAgo(data['created_at'] ?? ''),
+                  fontSize: 10.sp,
+                  textAlign: TextAlign.start,
+                  color: Colors.grey.shade600,
+                  maxLines: 1,
+                  style: TextStyle(
+                    height: 1,
+                    fontSize: 10.sp,
+                    color: Colors.grey.shade600,
+                  ),
                 ),
               ],
             ),
@@ -288,6 +310,13 @@ class OfferCard extends StatelessWidget {
             return buildBulletPoint(text: v);
           }).toList(),
         ),
+        // CustomText(
+        //   title: getTimeAgo(data['created_at'] ?? ''),
+        //   fontSize: 10.sp,
+        //   textAlign: TextAlign.start,
+        //   color: Colors.grey.shade600,
+        //   maxLines: 1,
+        // ),
       ],
     );
   }

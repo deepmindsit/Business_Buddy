@@ -113,7 +113,7 @@ class _BusinessDetailsState extends State<BusinessDetails> {
   }
 
   Widget _buildBusinessImage() {
-    final image = controller.businessDetails['image'];
+    final image = controller.businessDetails['image'] ?? '';
     return Container(
       width: 80.w,
       height: 80.h,
@@ -135,7 +135,7 @@ class _BusinessDetailsState extends State<BusinessDetails> {
           fit: BoxFit.cover,
           imageErrorBuilder: (context, error, stackTrace) {
             return Container(
-              // color: lightGrey,
+              color: lightGrey,
               padding: EdgeInsets.all(20.w),
               child: Image.asset(Images.logo, fit: BoxFit.contain),
             );

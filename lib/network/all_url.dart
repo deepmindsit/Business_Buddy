@@ -29,6 +29,7 @@ class AllUrl {
   static const String postDetails = '$baseUrl/get_post_details';
   static const String offerDetails = '$baseUrl/get_offer_details';
   static const String getFeeds = '$baseUrl/get_feeds';
+  static const String getHome = '$baseUrl/home';
   static const String getSpecialOffer = '$baseUrl/get_special_offers';
   static const String businessReqList = '$baseUrl/business_requirement_list';
   static const String getWulf = '$baseUrl/get_wulf_list';

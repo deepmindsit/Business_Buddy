@@ -92,7 +92,7 @@ class CustomMainHeader2 extends StatelessWidget {
                           Expanded(
                             child: CustomText(
                               title: getIt<SearchNewController>().address.value,
-                              fontSize: 14.sp,
+                              fontSize: 13.sp,
                               color: Colors.black,
                               maxLines: 1,
                               textAlign: TextAlign.start,

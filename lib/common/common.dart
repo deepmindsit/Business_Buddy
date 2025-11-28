@@ -56,9 +56,25 @@ Widget buildStarRating(int rating) {
 Widget buildGridImages(dynamic data, String type, {bool isEdit = false}) {
   if (data.isEmpty) {
     return Center(
-      child: Text(
-        'No items available',
-        style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            Images.noData,
+            width: 120.w,
+            height: 120.h,
+            fit: BoxFit.contain,
+          ),
+          SizedBox(height: 20),
+          Text(
+            "No data found",
+            style: TextStyle(
+              color: Colors.grey.shade600,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -78,7 +94,7 @@ Widget buildGridImages(dynamic data, String type, {bool isEdit = false}) {
       final isApproved = image['approved'] == "1";
       return GestureDetector(
         onTap: () {
-          showPostBottomSheet(image['id'].toString(), type);
+          showPostBottomSheet(image['id'].toString(), type, data, index);
         },
         child: Stack(
           children: [
@@ -94,23 +110,43 @@ Widget buildGridImages(dynamic data, String type, {bool isEdit = false}) {
                 child: FadeInImage.assetNetwork(
                   placeholder: Images.defaultImage,
                   image: image['image'] ?? '',
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
                   imageErrorBuilder: (_, __, ___) =>
                       Image.asset(Images.defaultImage, fit: BoxFit.cover),
                 ),
               ),
             ),
+            // Overlay for unapproved images
             if (!isApproved)
-              Positioned(
-                top: 4,
-                left: 4,
-                child: Container(
-                  padding: EdgeInsets.all(4.w),
-                  decoration: BoxDecoration(
-                    color: primaryColor,
-                    shape: BoxShape.circle,
+              Container(
+                width: 100.w,
+                height: 110.h,
+                decoration: BoxDecoration(
+                  color: Colors.black54,
+                  border: Border.all(color: Colors.red.shade400, width: 1.5),
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.pending_actions,
+                        color: Colors.white,
+                        size: 24.r,
+                      ),
+                      SizedBox(height: 8.h),
+                      Text(
+                        "Pending\nApproval",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 10.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ),
-                  child: Icon(Icons.schedule, color: Colors.white, size: 12.r),
                 ),
               ),
             if (isEdit)
@@ -148,297 +184,33 @@ Widget buildGridImages(dynamic data, String type, {bool isEdit = false}) {
   );
 }
 
-void showPostBottomSheet(String postId, String type) async {
+void showPostBottomSheet(
+  String postId,
+  String type,
+  dynamic data,
+  int initialIndex,
+) async {
   final controller = getIt<LBOController>();
-  if (type == 'post') await controller.getSinglePost(postId);
-  if (type == 'offer') await controller.getSingleOffer(postId);
+
+  // Store the data and current index in the controller
+  controller.currentPostsList.value = data;
+  controller.currentIndex.value = initialIndex;
+  controller.currentType.value = type;
+
+  // Load initial item
   if (type == 'post') {
+    await controller.getSinglePost(postId);
     _showPost(controller);
-    // Get.bottomSheet(
-    //   ConstrainedBox(
-    //     constraints: BoxConstraints(maxHeight: Get.height * 0.7.h),
-    //     child: Container(
-    //       decoration: BoxDecoration(
-    //         color: Colors.white,
-    //         borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
-    //       ),
-    //       padding: EdgeInsets.all(16.w),
-    //       child: Column(
-    //         mainAxisSize: MainAxisSize.min,
-    //         children: [
-    //           AspectRatio(
-    //             aspectRatio: 1,
-    //             child: ClipRRect(
-    //               borderRadius: BorderRadius.circular(12.r),
-    //               child: Image.network(
-    //                 controller.singlePost['image'].toString(),
-    //                 width: double.infinity,
-    //                 fit: BoxFit.cover,
-    //               ),
-    //             ),
-    //           ),
-    //           SizedBox(height: 12),
-    //           Text(
-    //             controller.singlePost['details'] ?? "",
-    //             style: TextStyle(fontSize: 14),
-    //           ),
-    //         ],
-    //       ),
-    //     ),
-    //   ),
-    //   isScrollControlled: true,
-    // );
   } else {
-    // Get.bottomSheet(
-    //   ConstrainedBox(
-    //     constraints: BoxConstraints(maxHeight: Get.height * 0.7.h),
-    //     child: Container(
-    //       decoration: BoxDecoration(
-    //         color: Colors.white,
-    //         borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
-    //       ),
-    //       padding: EdgeInsets.all(16),
-    //       child: Column(
-    //         mainAxisSize: MainAxisSize.min,
-    //         children: [
-    //           ClipRRect(
-    //             borderRadius: BorderRadius.circular(12.r),
-    //             child: Image.network(
-    //               controller.singleOffer['image'].toString(),
-    //               width: double.infinity,
-    //               fit: BoxFit.cover,
-    //             ),
-    //           ),
-    //           SizedBox(height: 12),
-    //           Column(
-    //             crossAxisAlignment: CrossAxisAlignment.start,
-    //             children: [
-    //               CustomText(
-    //                 title: controller.singleOffer['business_name'].toString(),
-    //                 fontSize: 14.sp,
-    //                 fontWeight: FontWeight.w600,
-    //                 textAlign: TextAlign.start,
-    //                 color: Colors.black87,
-    //               ),
-    //               SizedBox(height: 2.h),
-    //               CustomText(
-    //                 title: controller.singleOffer['details'] ?? "",
-    //                 textAlign: TextAlign.start,
-    //                 fontSize: 14.sp,
-    //                 maxLines: 10,
-    //               ),
-    //               SizedBox(height: 6.h),
-    //               Row(
-    //                 children: [
-    //                   Icon(
-    //                     Icons.calendar_today_outlined,
-    //                     size: 14.sp,
-    //                     color: Colors.grey,
-    //                   ),
-    //                   SizedBox(width: 4.w),
-    //                   CustomText(
-    //                     title:
-    //                         '${controller.singleOffer['start_date'] ?? ''} to ${controller.singleOffer['end_date'] ?? ''} ',
-    //                     fontSize: 13.sp,
-    //                     color: Colors.black54,
-    //                     textAlign: TextAlign.start,
-    //                   ),
-    //                 ],
-    //               ),
-    //               SizedBox(height: 4.h),
-    //
-    //               Column(
-    //                 crossAxisAlignment: CrossAxisAlignment.start,
-    //                 children: controller.singleOffer['highlight_points']
-    //                     .map<Widget>((v) {
-    //                       return buildBulletPoint(text: v);
-    //                     })
-    //                     .toList(),
-    //               ),
-    //             ],
-    //           ),
-    //         ],
-    //       ),
-    //     ),
-    //   ),
-    //   isScrollControlled: true,
-    // );
+    await controller.getSingleOffer(postId);
     _showOffer(controller);
   }
-}
-
-Future<dynamic> _showOffer(LBOController controller) {
-  return Get.bottomSheet(
-    ConstrainedBox(
-      constraints: BoxConstraints(maxHeight: Get.height * 0.75.h),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Header with drag indicator
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 12),
-              child: Container(
-                width: 40.w,
-                height: 4.h,
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ),
-
-            Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Image with better styling
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(width: 0.5, color: Colors.grey),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(16),
-                        child: AspectRatio(
-                          aspectRatio: 1,
-                          child: FadeInImage(
-                            placeholder: const AssetImage(Images.defaultImage),
-                            image: NetworkImage(
-                              controller.singleOffer['image'].toString(),
-                            ),
-                            imageErrorBuilder: (context, error, stackTrace) {
-                              return Image.asset(
-                                Images.defaultImage,
-                                fit: BoxFit.contain,
-                              );
-                            },
-                            fit: BoxFit.contain,
-                            placeholderFit: BoxFit.contain,
-                            fadeInDuration: const Duration(milliseconds: 300),
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(height: 20),
-
-                    // Business Name
-                    Text(
-                      controller.singleOffer['business_name'].toString(),
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.black87,
-                      ),
-                    ),
-
-                    SizedBox(height: 12),
-                    CustomText(
-                      title: controller.singleOffer['offer_name'].toString(),
-                      fontSize: 15.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey.shade700,
-                      textAlign: TextAlign.start,
-                    ),
-
-                    // Details
-                    if (controller.singleOffer['details'] != null &&
-                        controller.singleOffer['details'].toString().isNotEmpty)
-                      CustomText(
-                        title: controller.singleOffer['details'].toString(),
-                        fontSize: 13.sp,
-                        maxLines: 10,
-                        textAlign: TextAlign.start,
-                        color: Colors.grey.shade700,
-                      ),
-
-                    SizedBox(height: 16),
-
-                    // Date Range
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.blue.shade50,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: Colors.blue.shade100,
-                          width: 1,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.calendar_today_outlined,
-                            size: 16,
-                            color: Colors.blue.shade700,
-                          ),
-                          SizedBox(width: 8),
-                          Text(
-                            '${controller.singleOffer['start_date'] ?? ''} to ${controller.singleOffer['end_date'] ?? ''}',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.blue.shade800,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    SizedBox(height: 20),
-
-                    // Highlights Section
-                    if (controller.singleOffer['highlight_points'] != null)
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Highlights',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black87,
-                            ),
-                          ),
-                          SizedBox(height: 12),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: controller.singleOffer['highlight_points']
-                                .map<Widget>((v) => buildHighlightPoint(v))
-                                .toList(),
-                          ),
-                        ],
-                      ),
-
-                    SizedBox(height: 20),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    ),
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-  );
 }
 
 Future<dynamic> _showPost(LBOController controller) {
   return Get.bottomSheet(
     ConstrainedBox(
-      constraints: BoxConstraints(maxHeight: Get.height * 0.75.h),
+      constraints: BoxConstraints(maxHeight: Get.height * 0.85.h),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -451,124 +223,737 @@ Future<dynamic> _showPost(LBOController controller) {
             ),
           ],
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Drag handle
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 16),
-              child: Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade400,
-                  borderRadius: BorderRadius.circular(2),
+        child: Obx(
+          () => Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Drag handle
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 12),
+                child: Container(
+                  width: 40.w,
+                  height: 4.h,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
               ),
-            ),
 
-            Expanded(
-              child: SingleChildScrollView(
-                physics: BouncingScrollPhysics(),
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              // Navigation Header with indicators
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Image with enhanced styling
-                    Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(width: 0.5, color: Colors.grey),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(16),
-                        child: AspectRatio(
-                          aspectRatio: 1,
-                          child: FadeInImage(
-                            placeholder: const AssetImage(Images.defaultImage),
-                            image: NetworkImage(
-                              controller.singlePost['image'] ?? '',
-                            ),
-                            imageErrorBuilder: (context, error, stackTrace) {
-                              return Image.asset(
-                                Images.defaultImage,
-                                fit: BoxFit.contain,
-                              );
-                            },
-                            fit: BoxFit.contain,
-                            placeholderFit: BoxFit.contain,
-                            fadeInDuration: const Duration(milliseconds: 300),
+                    // Previous Button
+                    Opacity(
+                      opacity: controller.currentIndex > 0 ? 1.0 : 0.3,
+                      child: GestureDetector(
+                        onTap: controller.currentIndex > 0
+                            ? () {
+                                controller.goToPreviousItem();
+                              }
+                            : null,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12.w,
+                            vertical: 8.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(Icons.arrow_back_ios, size: 16.r),
+                              SizedBox(width: 4.w),
+                              Text(
+                                'Previous',
+                                style: TextStyle(fontSize: 12.sp),
+                              ),
+                            ],
                           ),
                         ),
                       ),
                     ),
 
-                    SizedBox(height: 10),
-
-                    // Content section
+                    // Page Indicator
                     Container(
-                      padding: EdgeInsets.all(16),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 8.h,
+                      ),
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade50,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: Colors.grey.shade200,
-                          width: 1,
+                        color: primaryColor.withValues(alpha: 0.8),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        '${controller.currentIndex.value + 1} / ${controller.currentPostsList.length}',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
                         ),
+                      ),
+                    ),
+
+                    // Next Button
+                    Opacity(
+                      opacity:
+                          controller.currentIndex.value <
+                              controller.currentPostsList.length - 1
+                          ? 1.0
+                          : 0.3,
+                      child: GestureDetector(
+                        onTap:
+                            controller.currentIndex.value <
+                                controller.currentPostsList.length - 1
+                            ? () {
+                                controller.goToNextItem();
+                              }
+                            : null,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12.w,
+                            vertical: 8.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            children: [
+                              Text('Next', style: TextStyle(fontSize: 12.sp)),
+                              SizedBox(width: 4.w),
+                              Icon(Icons.arrow_forward_ios, size: 16.r),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              SizedBox(height: 8.h),
+
+              Expanded(
+                child: GestureDetector(
+                  onHorizontalDragEnd: (details) {
+                    if (details.primaryVelocity! < -100) {
+                      controller.goToNextItem();
+                    } else if (details.primaryVelocity! > 100) {
+                      controller.goToPreviousItem();
+                    }
+                  },
+                  child: Obx(
+                    () => SingleChildScrollView(
+                      physics: BouncingScrollPhysics(),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.w,
+                        vertical: 8.h,
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Section title
-                          Row(
-                            children: [
-                              Container(
-                                padding: EdgeInsets.all(6),
-                                decoration: BoxDecoration(
-                                  color: Colors.blue.shade50,
-                                  shape: BoxShape.circle,
+                          // Image with enhanced styling
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                width: 0.5,
+                                color: Colors.grey.shade300,
+                              ),
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black12,
+                                  blurRadius: 8,
+                                  offset: Offset(0, 2),
                                 ),
-                                child: Icon(
-                                  Icons.description_outlined,
-                                  size: 16,
-                                  color: Colors.blue.shade700,
+                              ],
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(16),
+                              child: AspectRatio(
+                                aspectRatio: 1,
+                                child: FadeInImage(
+                                  placeholder: AssetImage(Images.defaultImage),
+                                  image: NetworkImage(
+                                    controller.singlePost['image']
+                                            ?.toString() ??
+                                        '',
+                                  ),
+                                  imageErrorBuilder:
+                                      (context, error, stackTrace) {
+                                        return Image.asset(
+                                          Images.defaultImage,
+                                          fit: BoxFit.contain,
+                                        );
+                                      },
+                                  fit: BoxFit.contain,
+                                  placeholderFit: BoxFit.contain,
+                                  fadeInDuration: Duration(milliseconds: 300),
                                 ),
                               ),
-                              SizedBox(width: 8),
-                              Text(
-                                'Post Details',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.black87,
-                                ),
+                            ),
+                          ),
+
+                          SizedBox(height: 16.h),
+
+                          // Date and Likes row
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              // Date
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.calendar_today_outlined,
+                                    size: 14.r,
+                                    color: Colors.grey.shade600,
+                                  ),
+                                  SizedBox(width: 6.w),
+                                  Text(
+                                    controller.singlePost['created_at']
+                                            ?.toString() ??
+                                        "",
+                                    style: TextStyle(
+                                      fontSize: 12.sp,
+                                      color: Colors.grey.shade700,
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              // Likes and Comments count
+                              Row(
+                                children: [
+                                  // Likes count
+                                  _buildLikeIconData(controller),
+
+                                  SizedBox(width: 8.w),
+
+                                  // Comment count
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 8.w,
+                                      vertical: 6.h,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey.shade50,
+                                      borderRadius: BorderRadius.circular(8.r),
+                                      border: Border.all(
+                                        color: Colors.grey.shade200,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.comment_outlined,
+                                          size: 16.r,
+                                          color: Colors.grey.shade600,
+                                        ),
+                                        SizedBox(width: 6.w),
+                                        Text(
+                                          controller
+                                                  .singlePost['comments_count']
+                                                  ?.toString() ??
+                                              '0',
+                                          style: TextStyle(
+                                            fontSize: 14.sp,
+                                            color: Colors.grey.shade700,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
 
-                          SizedBox(height: 12),
+                          SizedBox(height: 16.h),
 
-                          // Details text
-                          Text(
-                            controller.singlePost['details']?.toString() ??
-                                "No description available",
-                            style: TextStyle(
-                              fontSize: 15,
-                              height: 1.6,
-                              color: Colors.grey.shade700,
-                              letterSpacing: 0.2,
+                          // Content section
+                          Container(
+                            padding: EdgeInsets.all(16.w),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade50,
+                              borderRadius: BorderRadius.circular(12.r),
+                              border: Border.all(
+                                color: Colors.grey.shade200,
+                                width: 1,
+                              ),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Section title
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.all(6.w),
+                                      decoration: BoxDecoration(
+                                        color: Colors.blue.shade50,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Icon(
+                                        Icons.description_outlined,
+                                        size: 16.r,
+                                        color: Colors.blue.shade700,
+                                      ),
+                                    ),
+                                    SizedBox(width: 8.w),
+                                    Text(
+                                      'Post Details',
+                                      style: TextStyle(
+                                        fontSize: 16.sp,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
+                                SizedBox(height: 12.h),
+
+                                // Details text
+                                Text(
+                                  controller.singlePost['details']
+                                          ?.toString() ??
+                                      "No description available",
+                                  style: TextStyle(
+                                    fontSize: 15.sp,
+                                    height: 1.6,
+                                    color: Colors.grey.shade700,
+                                    letterSpacing: 0.2,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
+
+                          SizedBox(height: 20.h),
                         ],
                       ),
                     ),
-
-                    SizedBox(height: 8),
-                  ],
+                  ),
                 ),
               ),
+            ],
+          ),
+        ),
+      ),
+    ),
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    enableDrag: true,
+  );
+}
+
+Widget _buildLikeIconData(LBOController controller) {
+  return GestureDetector(
+    onTap: () async {
+      if (getIt<FeedsController>().isLikeProcessing.isTrue) {
+        return; // <<< stops multiple taps
+      }
+      getIt<FeedsController>().isLikeProcessing.value = true;
+
+      if (!getIt<DemoService>().isDemo) {
+        ToastUtils.showLoginToast();
+        getIt<FeedsController>().isLikeProcessing.value = false;
+        return;
+      }
+      try {
+        bool wasLiked = controller.singlePost['is_liked'];
+        int likeCount =
+            int.tryParse(controller.singlePost['likes_count'].toString()) ?? 0;
+
+        if (wasLiked) {
+          await getIt<FeedsController>().unLikeBusiness(
+            controller.singlePost['liked_id'].toString(),
+          );
+          controller.singlePost['likes_count'] = (likeCount - 1).clamp(
+            0,
+            999999,
+          );
+        } else {
+          await getIt<FeedsController>().likeBusiness(
+            controller.singlePost['business_id'].toString(),
+            controller.singlePost['id'].toString(),
+          );
+          controller.singlePost['likes_count'] = likeCount + 1;
+        }
+
+        // Toggle locally
+        controller.singlePost['is_liked'] = !wasLiked;
+        await controller.getSinglePost(
+          controller.singlePost['id'].toString(),
+          showLoading: false,
+        );
+      } catch (e) {
+        print("follow error: $e");
+      } finally {
+        getIt<FeedsController>().isLikeProcessing.value = false;
+      }
+    },
+    child: Container(
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(8.r),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Row(
+        children: [
+          Obx(() {
+            bool isLoading = false;
+            if (controller.singlePost['is_liked'] == true) {
+              isLoading =
+                  getIt<FeedsController>().likeLoadingMap[controller
+                      .singlePost['liked_id']
+                      .toString()] ==
+                  true;
+            } else {
+              isLoading =
+                  getIt<FeedsController>().likeLoadingMap[controller
+                      .singlePost['business_id']
+                      .toString()] ==
+                  true;
+            }
+
+            return isLoading
+                ? LoadingWidget(color: primaryColor, size: 20.r)
+                : controller.singlePost['is_liked'] == true
+                ? Icon(Icons.favorite, color: Colors.red, size: 18.sp)
+                : HugeIcon(
+                    icon: HugeIcons.strokeRoundedFavourite,
+                    color: Colors.grey.shade700,
+                    size: 18.sp,
+                  );
+          }),
+          SizedBox(width: 6.w),
+          Text(
+            controller.singlePost['likes_count']?.toString() ?? '0',
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: Colors.grey.shade700,
+              fontWeight: FontWeight.w500,
             ),
-          ],
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+Future<dynamic> _showOffer(LBOController controller) {
+  return Get.bottomSheet(
+    ConstrainedBox(
+      constraints: BoxConstraints(maxHeight: Get.height * 0.75.h),
+      child: SafeArea(
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: Obx(
+            () => Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Header with drag indicator
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                  child: Container(
+                    width: 40.w,
+                    height: 4.h,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Previous Button
+                      Opacity(
+                        opacity: controller.currentIndex.value > 0 ? 1.0 : 0.3,
+                        child: GestureDetector(
+                          onTap: controller.currentIndex.value > 0
+                              ? () {
+                                  controller.goToPreviousItem();
+                                }
+                              : null,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 12.w,
+                              vertical: 8.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(Icons.arrow_back_ios, size: 16.r),
+                                SizedBox(width: 4.w),
+                                Text(
+                                  'Previous',
+                                  style: TextStyle(fontSize: 12.sp),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      // Page Indicator
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16.w,
+                          vertical: 8.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: primaryColor.withValues(alpha: 0.8),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          '${controller.currentIndex.value + 1} / ${controller.currentPostsList.length}',
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+
+                      // Next Button
+                      Opacity(
+                        opacity:
+                            controller.currentIndex.value <
+                                controller.currentPostsList.length - 1
+                            ? 1.0
+                            : 0.3,
+                        child: GestureDetector(
+                          onTap:
+                              controller.currentIndex.value <
+                                  controller.currentPostsList.length - 1
+                              ? () {
+                                  controller.goToNextItem();
+                                }
+                              : null,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 12.w,
+                              vertical: 8.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Row(
+                              children: [
+                                Text('Next', style: TextStyle(fontSize: 12.sp)),
+                                SizedBox(width: 4.w),
+                                Icon(Icons.arrow_forward_ios, size: 16.r),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: GestureDetector(
+                    onHorizontalDragEnd: (details) {
+                      if (details.primaryVelocity! < -100) {
+                        controller.goToNextItem();
+                      } else if (details.primaryVelocity! > 100) {
+                        controller.goToPreviousItem();
+                      }
+                    },
+                    child: Obx(
+                      () => SingleChildScrollView(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 8,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Image with better styling
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
+                                  width: 0.5,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(16),
+                                child: AspectRatio(
+                                  aspectRatio: 1,
+                                  child: FadeInImage(
+                                    placeholder: const AssetImage(
+                                      Images.defaultImage,
+                                    ),
+                                    image: NetworkImage(
+                                      controller.singleOffer['image'].toString(),
+                                    ),
+                                    imageErrorBuilder:
+                                        (context, error, stackTrace) {
+                                          return Image.asset(
+                                            Images.defaultImage,
+                                            fit: BoxFit.contain,
+                                          );
+                                        },
+                                    fit: BoxFit.contain,
+                                    placeholderFit: BoxFit.contain,
+                                    fadeInDuration: const Duration(
+                                      milliseconds: 300,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            SizedBox(height: 20),
+
+                            // Business Name
+                            Text(
+                              controller.singleOffer['business_name'].toString(),
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.black87,
+                              ),
+                            ),
+
+                            SizedBox(height: 12),
+                            CustomText(
+                              title: controller.singleOffer['offer_name']
+                                  .toString(),
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey.shade700,
+                              textAlign: TextAlign.start,
+                            ),
+
+                            // Details
+                            if (controller.singleOffer['details'] != null &&
+                                controller.singleOffer['details']
+                                    .toString()
+                                    .isNotEmpty)
+                              CustomText(
+                                title: controller.singleOffer['details']
+                                    .toString(),
+                                fontSize: 13.sp,
+                                maxLines: 10,
+                                textAlign: TextAlign.start,
+                                color: Colors.grey.shade700,
+                              ),
+
+                            SizedBox(height: 16),
+
+                            // Date Range
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 8,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.blue.shade50,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: Colors.blue.shade100,
+                                  width: 1,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.calendar_today_outlined,
+                                    size: 16,
+                                    color: Colors.blue.shade700,
+                                  ),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    '${controller.singleOffer['start_date'] ?? ''} to ${controller.singleOffer['end_date'] ?? ''}',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.blue.shade800,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            SizedBox(height: 20),
+
+                            // Highlights Section
+                            if (controller.singleOffer['highlight_points'] !=
+                                null)
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Highlights',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  SizedBox(height: 12),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: controller
+                                        .singleOffer['highlight_points']
+                                        .map<Widget>(
+                                          (v) => buildHighlightPoint(v),
+                                        )
+                                        .toList(),
+                                  ),
+                                ],
+                              ),
+
+                            // SizedBox(height: 20),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.calendar_today_outlined,
+                                  size: 14.r,
+                                  color: Colors.grey.shade600,
+                                ),
+                                SizedBox(width: 6),
+                                Text(
+                                  controller.singleOffer['created_at']?.toString() ?? "",
+                                  style: TextStyle(
+                                    fontSize: 12.sp,
+                                    color: Colors.grey.shade700,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     ),
@@ -576,6 +961,237 @@ Future<dynamic> _showPost(LBOController controller) {
     backgroundColor: Colors.transparent,
   );
 }
+
+// Future<dynamic> _showPost(LBOController controller) {
+//   return Get.bottomSheet(
+//     ConstrainedBox(
+//       constraints: BoxConstraints(maxHeight: Get.height * 0.75.h),
+//       child: Container(
+//         decoration: BoxDecoration(
+//           color: Colors.white,
+//           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+//           boxShadow: [
+//             BoxShadow(
+//               blurRadius: 20,
+//               color: Colors.black.withValues(alpha: 0.15),
+//               offset: Offset(0, -2),
+//             ),
+//           ],
+//         ),
+//         child: Column(
+//           mainAxisSize: MainAxisSize.min,
+//           children: [
+//             // Drag handle
+//             Container(
+//               padding: EdgeInsets.symmetric(vertical: 16),
+//               child: Container(
+//                 width: 40,
+//                 height: 4,
+//                 decoration: BoxDecoration(
+//                   color: Colors.grey.shade400,
+//                   borderRadius: BorderRadius.circular(2),
+//                 ),
+//               ),
+//             ),
+//
+//             Expanded(
+//               child: SingleChildScrollView(
+//                 physics: BouncingScrollPhysics(),
+//                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+//                 child: Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: [
+//                     // Image with enhanced styling
+//                     Container(
+//                       decoration: BoxDecoration(
+//                         border: Border.all(width: 0.5, color: Colors.grey),
+//                         borderRadius: BorderRadius.circular(16),
+//                       ),
+//                       child: ClipRRect(
+//                         borderRadius: BorderRadius.circular(16),
+//                         child: AspectRatio(
+//                           aspectRatio: 1,
+//                           child: FadeInImage(
+//                             placeholder: const AssetImage(Images.defaultImage),
+//                             image: NetworkImage(
+//                               controller.singlePost['image'] ?? '',
+//                             ),
+//                             imageErrorBuilder: (context, error, stackTrace) {
+//                               return Image.asset(
+//                                 Images.defaultImage,
+//                                 fit: BoxFit.contain,
+//                               );
+//                             },
+//                             fit: BoxFit.contain,
+//                             placeholderFit: BoxFit.contain,
+//                             fadeInDuration: const Duration(milliseconds: 300),
+//                           ),
+//                         ),
+//                       ),
+//                     ),
+//
+//                     SizedBox(height: 10),
+//                     // Date and Likes row
+//                     Row(
+//                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                       children: [
+//                         // Date
+//                         Row(
+//                           children: [
+//                             Icon(
+//                               Icons.calendar_today_outlined,
+//                               size: 14.r,
+//                               color: Colors.grey.shade600,
+//                             ),
+//                             SizedBox(width: 6),
+//                             Text(
+//                               controller.singlePost['created_at']?.toString() ??
+//                                   "",
+//                               style: TextStyle(
+//                                 fontSize: 12.sp,
+//                                 color: Colors.grey.shade700,
+//                               ),
+//                             ),
+//                           ],
+//                         ),
+//                         // Likes count
+//                         Row(
+//                           spacing: 8,
+//                           children: [
+//                             Container(
+//                               padding: EdgeInsets.symmetric(
+//                                 horizontal: 8.w,
+//                                 vertical: 6.h,
+//                               ),
+//                               decoration: BoxDecoration(
+//                                 color: Colors.grey.shade50,
+//                                 borderRadius: BorderRadius.circular(8.r),
+//                               ),
+//                               child: Row(
+//                                 children: [
+//                                   HugeIcon(
+//                                     icon: HugeIcons.strokeRoundedFavourite,
+//                                     size: 16.r,
+//                                   ),
+//                                   SizedBox(width: 6),
+//                                   Text(
+//                                     controller.singlePost['likes_count']
+//                                             ?.toString() ??
+//                                         '0',
+//                                     style: TextStyle(
+//                                       fontSize: 14.sp,
+//                                       color: Colors.grey.shade700,
+//                                       fontWeight: FontWeight.w500,
+//                                     ),
+//                                   ),
+//                                 ],
+//                               ),
+//                             ),
+//
+//                             // Comment count
+//                             Container(
+//                               padding: EdgeInsets.symmetric(
+//                                 horizontal: 8.w,
+//                                 vertical: 6.h,
+//                               ),
+//                               decoration: BoxDecoration(
+//                                 color: Colors.grey.shade50,
+//                                 borderRadius: BorderRadius.circular(8.r),
+//                               ),
+//                               child: Row(
+//                                 children: [
+//                                   HugeIcon(
+//                                     icon: HugeIcons.strokeRoundedMessage02,
+//                                     size: 16.r,
+//                                   ),
+//                                   SizedBox(width: 6),
+//                                   Text(
+//                                     controller.singlePost['likes_count']
+//                                             ?.toString() ??
+//                                         '0',
+//                                     style: TextStyle(
+//                                       fontSize: 14.sp,
+//                                       color: Colors.grey.shade700,
+//                                       fontWeight: FontWeight.w500,
+//                                     ),
+//                                   ),
+//                                 ],
+//                               ),
+//                             ),
+//                           ],
+//                         ),
+//                       ],
+//                     ),
+//                     SizedBox(height: 12.h),
+//                     // Content section
+//                     Container(
+//                       padding: EdgeInsets.all(16),
+//                       decoration: BoxDecoration(
+//                         color: Colors.grey.shade50,
+//                         borderRadius: BorderRadius.circular(12),
+//                         border: Border.all(
+//                           color: Colors.grey.shade200,
+//                           width: 1,
+//                         ),
+//                       ),
+//                       child: Column(
+//                         crossAxisAlignment: CrossAxisAlignment.start,
+//                         children: [
+//                           // Section title
+//                           Row(
+//                             children: [
+//                               Container(
+//                                 padding: EdgeInsets.all(6),
+//                                 decoration: BoxDecoration(
+//                                   color: Colors.blue.shade50,
+//                                   shape: BoxShape.circle,
+//                                 ),
+//                                 child: Icon(
+//                                   Icons.description_outlined,
+//                                   size: 16,
+//                                   color: Colors.blue.shade700,
+//                                 ),
+//                               ),
+//                               SizedBox(width: 8),
+//                               Text(
+//                                 'Post Details',
+//                                 style: TextStyle(
+//                                   fontSize: 16,
+//                                   fontWeight: FontWeight.w600,
+//                                   color: Colors.black87,
+//                                 ),
+//                               ),
+//                             ],
+//                           ),
+//
+//                           SizedBox(height: 12),
+//
+//                           // Details text
+//                           Text(
+//                             controller.singlePost['details']?.toString() ?? "",
+//                             style: TextStyle(
+//                               fontSize: 15.sp,
+//                               height: 1.6,
+//                               color: Colors.grey.shade700,
+//                               letterSpacing: 0.2,
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                     ),
+//                     SizedBox(height: 8),
+//                   ],
+//                 ),
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     ),
+//     isScrollControlled: true,
+//     backgroundColor: Colors.transparent,
+//   );
+// }
 
 Widget buildHighlightPoint(String text) {
   return Padding(
@@ -629,4 +1245,148 @@ void checkLogin({required bool status, required String message}) async {
     Get.offAllNamed(Routes.login);
     LocalStorage.clear();
   }
+}
+
+Widget buildHeadingWithButton({
+  required String title,
+  required String rightText,
+  required var onTap,
+}) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      CustomText(title: title, fontSize: 18.sp, fontWeight: FontWeight.bold),
+      Container(
+        padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 8),
+        decoration: BoxDecoration(
+          color: lightGrey,
+          borderRadius: BorderRadius.circular(8.r),
+        ),
+        child: GestureDetector(
+          onTap: onTap,
+          child: CustomText(
+            title: rightText,
+            fontSize: 12.sp,
+            color: textDarkGrey,
+          ),
+        ),
+      ),
+    ],
+  );
+}
+
+String getTimeAgo(dynamic createdAt) {
+  try {
+    DateTime postTime;
+
+    // Handle different date formats
+    if (createdAt is String) {
+      // Handle "Nov 18, 2025 11:14 AM" format
+      if (createdAt.contains(',')) {
+        postTime = _parseCustomDateFormat(createdAt);
+      } else {
+        // Try parsing ISO format as fallback
+        postTime = DateTime.parse(createdAt);
+      }
+    } else if (createdAt is DateTime) {
+      postTime = createdAt;
+    } else if (createdAt is int) {
+      // Handle timestamp (assuming milliseconds)
+      postTime = DateTime.fromMillisecondsSinceEpoch(createdAt);
+    } else {
+      return '';
+    }
+
+    final now = DateTime.now();
+    final difference = now.difference(postTime);
+
+    if (difference.inMinutes < 1) {
+      return 'Just now';
+    } else if (difference.inMinutes < 60) {
+      return '${difference.inMinutes}m ago';
+    } else if (difference.inHours < 24) {
+      return '${difference.inHours}h ago';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays}d ago';
+    } else if (difference.inDays < 30) {
+      final weeks = (difference.inDays / 7).floor();
+      return '${weeks}w ago';
+    } else if (difference.inDays < 365) {
+      final months = (difference.inDays / 30).floor();
+      return '${months}mo ago';
+    } else {
+      final years = (difference.inDays / 365).floor();
+      return '${years}y ago';
+    }
+  } catch (e) {
+    // Return empty string if date parsing fails
+    return '';
+  }
+}
+
+DateTime _parseCustomDateFormat(String dateString) {
+  try {
+    // Parse format: "Nov 18, 2025 11:14 AM"
+    final parts = dateString.split(' ');
+    if (parts.length >= 4) {
+      final month = _getMonthNumber(parts[0]);
+      final day = int.parse(parts[1].replaceAll(',', ''));
+      final year = int.parse(parts[2]);
+
+      // Parse time and AM/PM
+      final timeParts = parts[3].split(':');
+      var hour = int.parse(timeParts[0]);
+      final minute = int.parse(timeParts[1]);
+
+      // Handle AM/PM if present
+      if (parts.length > 4) {
+        final period = parts[4].toUpperCase();
+        if (period == 'PM' && hour < 12) {
+          hour += 12;
+        } else if (period == 'AM' && hour == 12) {
+          hour = 0;
+        }
+      }
+
+      return DateTime(year, month, day, hour, minute);
+    }
+    throw FormatException('Invalid date format');
+  } catch (e) {
+    throw FormatException('Unable to parse date: $dateString');
+  }
+}
+
+int _getMonthNumber(String monthAbbreviation) {
+  const months = {
+    'Jan': 1,
+    'Feb': 2,
+    'Mar': 3,
+    'Apr': 4,
+    'May': 5,
+    'Jun': 6,
+    'Jul': 7,
+    'Aug': 8,
+    'Sep': 9,
+    'Oct': 10,
+    'Nov': 11,
+    'Dec': 12,
+  };
+
+  final monthKey = monthAbbreviation.substring(0, 3);
+  return months[monthKey] ?? 1;
+}
+
+// Helper widget
+Widget buildDotSeparator() {
+  return Padding(
+    padding: EdgeInsets.symmetric(horizontal: 4.w),
+    child: Container(
+      width: 4.r,
+      height: 4.r,
+      decoration: BoxDecoration(
+        color: Colors.grey.shade500,
+        shape: BoxShape.circle,
+      ),
+    ),
+  );
 }

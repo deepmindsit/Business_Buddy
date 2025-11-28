@@ -45,6 +45,8 @@ export 'package:businessbuddy/network/initial_bindings.dart';
 export 'package:businessbuddy/utils/utils.dart';
 export 'package:businessbuddy/components/documents_preparation.dart';
 export 'package:businessbuddy/utils/location_service.dart';
+export 'package:businessbuddy/presentation/home_screen/widget/feeds/widget/feed_card_shimmer.dart';
+export 'package:businessbuddy/presentation/business_partner/widget/business_card_shimmer.dart';
 
 //component
 export 'package:businessbuddy/components/screenutil_config.dart';
@@ -81,6 +83,7 @@ export 'package:businessbuddy/presentation/special_offer/controller/special_offe
 export 'package:businessbuddy/presentation/inbox/controller/inbox_controller.dart';
 export 'package:businessbuddy/common/check_demo.dart';
 export 'package:businessbuddy/presentation/home_screen/controller/search_controller.dart';
+export 'package:businessbuddy/presentation/home_screen/controller/home_controller.dart';
 
 //plugins
 export 'package:get/get.dart';
@@ -103,4 +106,5 @@ export 'package:widget_zoom/widget_zoom.dart';
 export 'package:flutter_rating_bar/flutter_rating_bar.dart';
 export 'package:shimmer/shimmer.dart';
 export 'package:insta_like_button/insta_like_button.dart';
+export 'package:carousel_slider/carousel_slider.dart';
 

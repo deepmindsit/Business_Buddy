@@ -15,6 +15,7 @@ class Images {
   static const hotelImg = 'assets/images/hotel_img.png';
   static const feedImg = 'assets/images/feed_img.png';
   static const noBusiness = 'assets/new_icon/ic_no_business.png';
+  static const noData = 'assets/images/no_data_found.png';
   static const emptyBusiness = 'assets/images/empty_business.png';
   static const defaultImage = 'assets/images/default.png';
   static const hotelImgLarge = 'assets/images/hotel_img_large.png';

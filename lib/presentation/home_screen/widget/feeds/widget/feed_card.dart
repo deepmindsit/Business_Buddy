@@ -29,18 +29,9 @@ class FeedCard extends StatelessWidget {
             _buildContentSection(),
             // Image Section
             _buildImageSection(),
-            // SizedBox(height: 16.h),
-            // CustomText(
-            //   title: data['created_at'] ?? '',
-            //   fontSize: 12.sp,
-            //   textAlign: TextAlign.start,
-            //   color: Colors.grey.shade600,
-            //   maxLines: 1,
-            // ),
-            // Engagement Section
-            _buildEngagementSection(),
 
-            // SizedBox(height: 12.h),
+            _buildEngagementSection(),
+            // _buildTimeDisplay(),
 
             // Content Section
           ],
@@ -98,15 +89,39 @@ class FeedCard extends StatelessWidget {
                   textAlign: TextAlign.start,
                   color: Colors.black87,
                   maxLines: 1,
+                  style: TextStyle(
+                    height: 1,
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black87,
+                  ),
                 ),
-                SizedBox(height: 2.h),
                 CustomText(
                   title: data['category'] ?? '',
-                  fontSize: 12.sp,
+                  fontSize: 10.sp,
                   textAlign: TextAlign.start,
                   color: Colors.grey.shade600,
                   maxLines: 1,
+                  style: TextStyle(
+                    // height: 1,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 10.sp,
+                    color: Colors.grey.shade600,
+                  ),
                 ),
+                _buildTimeDisplay(),
+                // CustomText(
+                //   title: getTimeAgo(data['created_at'] ?? ''),
+                //   fontSize: 10.sp,
+                //   textAlign: TextAlign.start,
+                //   color: Colors.grey.shade600,
+                //   maxLines: 1,
+                //   style: TextStyle(
+                //     height: 1,
+                //     fontSize: 10.sp,
+                //     color: Colors.grey.shade600,
+                //   ),
+                // ),
               ],
             ),
           ),
@@ -196,23 +211,6 @@ class FeedCard extends StatelessWidget {
             },
             imageBoxfit: BoxFit.contain,
           ),
-
-          // FadeInImage(
-          //   placeholder: const AssetImage(Images.defaultImage),
-          //   image: NetworkImage(image),
-          //   width: double.infinity,
-          //   fit: BoxFit.contain,
-          //   imageErrorBuilder: (context, error, stackTrace) {
-          //     return Center(
-          //       child: Image.asset(
-          //         Images.defaultImage,
-          //         width: 150.w,
-          //         height: 150.w,
-          //       ),
-          //     );
-          //   },
-          //   fadeInDuration: const Duration(milliseconds: 500),
-          // ),
         ),
       ),
     );
@@ -297,6 +295,21 @@ class FeedCard extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildTimeDisplay() {
+    final createdAt = data['created_at'] ?? '';
+    if (createdAt == null || createdAt.toString().isEmpty) {
+      return SizedBox();
+    }
+
+    return CustomText(
+      title: getTimeAgo(createdAt),
+      fontSize: 10.sp,
+      textAlign: TextAlign.start,
+      color: Colors.grey.shade600,
+      maxLines: 1,
     );
   }
 

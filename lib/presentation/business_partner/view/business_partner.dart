@@ -1,5 +1,3 @@
-import 'package:businessbuddy/presentation/business_partner/widget/business_card_shimmer.dart';
-import 'package:businessbuddy/presentation/business_partner/widget/edit_recruitment.dart';
 import 'package:businessbuddy/utils/exported_path.dart';
 
 class BusinessPartner extends StatefulWidget {
@@ -60,21 +58,56 @@ class _BusinessPartnerState extends State<BusinessPartner> {
           mainAxisSize: MainAxisSize.min,
           children: [
             // --- Tab Bar ---
-            TabBar(
-              indicatorColor: primaryColor,
-              labelColor: primaryColor,
-              indicatorSize: TabBarIndicatorSize.tab,
-              unselectedLabelColor: Colors.grey,
-              labelStyle: TextStyle(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w600,
-              ),
-              tabs: const [
-                Tab(text: 'Business Requirements', height: 35),
-                Tab(text: 'Requested', height: 35),
+            Row(
+              children: [
+                Expanded(
+                  child: TabBar(
+                    dividerColor: Colors.transparent,
+                    indicatorColor: primaryColor,
+                    labelColor: primaryColor,
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    unselectedLabelColor: Colors.grey,
+                    labelStyle: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    tabs: const [
+                      Tab(text: 'Business Requirements', height: 35),
+                      Tab(text: 'Requested', height: 35),
+                    ],
+                  ),
+                ),
+
+                /// ---- Filter Icon
+                GestureDetector(
+                  onTap: () {
+                    showModalBottomSheet(
+                      isScrollControlled: true,
+                      backgroundColor: Colors.grey.withValues(alpha: 0.05),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(20),
+                        ),
+                      ),
+                      context: context,
+                      builder: (_) => FilterSheet(),
+                    );
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12.w),
+                    child: CircleAvatar(
+                      radius: 18,
+                      backgroundColor: Colors.grey.withValues(alpha: 0.08),
+                      child: HugeIcon(
+                        icon: HugeIcons.strokeRoundedFilter,
+                        size: 18.r,
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
-
+            Divider(height: 0),
             // --- Tab Content ---
             Expanded(
               child: TabBarView(

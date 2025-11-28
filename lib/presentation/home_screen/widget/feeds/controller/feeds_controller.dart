@@ -93,6 +93,9 @@ class FeedsController extends GetxController {
     likeLoadingMap.refresh();
 
     final userId = await LocalStorage.getString('user_id') ?? '';
+    print('businessId===========>$businessId');
+    print('postId===========>$postId');
+    print('userId===========>$userId');
     try {
       final response = await _apiService.likeBusiness(
         userId,
