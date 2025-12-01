@@ -95,8 +95,10 @@ abstract class ApiService {
   });
 
   @POST(AllUrl.postDetails)
-  Future<dynamic> postDetails(@Part(name: "post_id") String? postId,
-      @Part(name: "user_id") String? userId,);
+  Future<dynamic> postDetails(
+    @Part(name: "post_id") String? postId,
+    @Part(name: "user_id") String? userId,
+  );
 
   @POST(AllUrl.offerDetails)
   Future<dynamic> offerDetails(@Part(name: "offer_id") String? offerId);
@@ -208,6 +210,30 @@ abstract class ApiService {
     @Part(name: "business_id") String? businessId,
     @Part(name: "review") String? review,
     @Part(name: "rating") String? rating,
+  );
+
+  @POST(AllUrl.addPostComment)
+  Future<dynamic> addPostComment(
+    @Part(name: "user_id") String? userId,
+    @Part(name: "business_id") String? businessId,
+    @Part(name: "business_post_id") String? postId,
+    @Part(name: "comment") String? comment,
+  );
+
+  @POST(AllUrl.chatList)
+  Future<dynamic> getChatList(@Part(name: "user_id") String? userId);
+
+  @POST(AllUrl.getSingleChat)
+  Future<dynamic> getSingleChat(
+    @Part(name: "user_id") String? userId,
+    @Part(name: "chat_id") String? chatId,
+  );
+
+  @POST(AllUrl.sendMsg)
+  Future<dynamic> sendMsg(
+    @Part(name: "user_id") String? userId,
+    @Part(name: "chat_id") String? chatId,
+    @Part(name: "message") String? message,
   );
 }
 

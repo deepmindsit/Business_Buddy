@@ -69,6 +69,7 @@ export 'package:businessbuddy/components/custom_toast_utils.dart';
 export 'package:businessbuddy/presentation/special_offer/widget/offer_card.dart';
 export 'package:businessbuddy/components/review_dialog.dart';
 export 'package:businessbuddy/components/appbar_main_2.dart';
+export 'package:businessbuddy/components/custom_carousel_slider.dart';
 
 //controller
 export 'package:businessbuddy/presentation/onboarding/controller/splash_controller.dart';

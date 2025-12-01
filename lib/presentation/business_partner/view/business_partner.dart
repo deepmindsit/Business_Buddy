@@ -122,29 +122,62 @@ class _BusinessPartnerState extends State<BusinessPartner> {
   }
 
   Widget _buildRequirement() {
-    return Obx(
-      () => controller.isMainLoading.isTrue
-          // ? LoadingWidget(color: primaryColor)
-          ? ListView.separated(
-              padding: EdgeInsets.all(8),
-              itemCount: 6,
-              separatorBuilder: (_, __) => SizedBox(height: 10),
-              itemBuilder: (context, index) => const BusinessCardShimmer(),
-            )
-          : controller.requirementList.isEmpty
-          ? _buildEmptyPartner()
-          : ListView.separated(
-              separatorBuilder: (context, index) =>
-                  Divider(height: 5, color: lightGrey),
-              padding: const EdgeInsets.all(8),
-              itemCount: controller.requirementList.length,
-              itemBuilder: (context, index) {
-                final data = controller.requirementList[index];
-                return BusinessCard(data: data);
-              },
-            ),
-    );
+    return Obx(() {
+      if (controller.isMainLoading.isTrue) {
+        return ListView.separated(
+          padding: EdgeInsets.all(8),
+          itemCount: 6,
+          separatorBuilder: (_, __) => SizedBox(height: 10),
+          itemBuilder: (_, index) => const BusinessCardShimmer(),
+        );
+      }
+
+      /// Filter list → remove cards where owner is same user
+      final filteredList = controller.requirementList.where((item) {
+        if (item['self'] == true) return true; // always show mine
+        return item['is_approved'].toString() == "1"; // others only if approved
+      }).toList();
+
+      if (filteredList.isEmpty) {
+        return _buildEmptyPartner(); // Clear & Perfect UI
+      }
+
+      return ListView.separated(
+        padding: const EdgeInsets.all(8),
+        separatorBuilder: (_, __) => Divider(height: 5.h, color: lightGrey),
+        itemCount: filteredList.length,
+        itemBuilder: (_, index) => BusinessCard(data: filteredList[index]),
+      );
+    });
   }
+
+  // Widget _buildRequirement() {
+  //   return Obx(
+  //     () => controller.isMainLoading.isTrue
+  //
+  //         ? ListView.separated(
+  //             padding: EdgeInsets.all(8),
+  //             itemCount: 6,
+  //             separatorBuilder: (_, __) => SizedBox(height: 10),
+  //             itemBuilder: (context, index) => const BusinessCardShimmer(),
+  //           )
+  //         : controller.requirementList.isEmpty
+  //         ? _buildEmptyPartner()
+  //         : ListView.separated(
+  //             separatorBuilder: (context, index) =>
+  //                 Divider(height: 5, color: lightGrey),
+  //             padding: const EdgeInsets.all(8),
+  //             itemCount: controller.requirementList.length,
+  //             itemBuilder: (context, index) {
+  //               final data = controller.requirementList[index];
+  //               return data['business_requirement_user_id'].toString() !=
+  //                       data['user_id'].toString()
+  //                   ? BusinessCard(data: data)
+  //                   : SizedBox();
+  //             },
+  //           ),
+  //   );
+  // }
 
   Widget _buildRequested() {
     return Obx(

@@ -13,6 +13,7 @@ class _InboxListState extends State<InboxList> {
 
   @override
   void initState() {
+    controller.getAllChat();
     controller.getReceiveBusinessRequest();
     getIt<PartnerDataController>().getRequestedBusiness();
     super.initState();

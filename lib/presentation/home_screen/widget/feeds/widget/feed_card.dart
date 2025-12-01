@@ -1,5 +1,7 @@
 import 'package:businessbuddy/utils/exported_path.dart';
 
+import 'comment_bottomsheet.dart';
+
 class FeedCard extends StatelessWidget {
   final dynamic data;
   final void Function()? onFollow;
@@ -249,7 +251,7 @@ class FeedCard extends StatelessWidget {
             SizedBox(width: 12.w),
             _buildEngagementItem(
               icon: HugeIcons.strokeRoundedMessage02,
-              count: '500',
+              count: data['comments_count'].toString(),
               onTap: () => _handleComment(),
             ),
           ],
@@ -367,6 +369,19 @@ class FeedCard extends StatelessWidget {
   }
 
   void _handleComment() {
+    Get.bottomSheet(
+      CommentsBottomSheet(postId: data['post_id']?.toString() ?? ''),
+      isDismissible: true,
+      isScrollControlled: true,
+      backgroundColor: Colors.grey.withValues(alpha: 0.05),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20.r),
+          topRight: Radius.circular(20.r),
+        ),
+      ),
+      ignoreSafeArea: false,
+    );
     // Implement comment functionality
   }
 }

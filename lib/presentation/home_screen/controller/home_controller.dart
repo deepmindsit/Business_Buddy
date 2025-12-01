@@ -10,6 +10,29 @@ class HomeController extends GetxController {
   final requirementList = [].obs;
   final sliderList = [].obs;
 
+  @override
+  void onReady() async {
+    super.onReady();
+    await requestLocationPermission(); // ensure permissions first
+  }
+
+  Future<void> requestLocationPermission() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      await Geolocator.openLocationSettings();
+      return;
+    }
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+    if (permission == LocationPermission.deniedForever) {
+      Get.snackbar("Permission Required", "Enable location from settings");
+      return;
+    }
+  }
+
   Future<void> getHomeApi({bool showLoading = true}) async {
     if (showLoading) isLoading.value = true;
     Position position = await Geolocator.getCurrentPosition(

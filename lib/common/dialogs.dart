@@ -692,12 +692,12 @@ class _FeedSheetState extends State<FeedSheet> {
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
-      initialChildSize: 0.75,
+      // initialChildSize: 0.75,
       maxChildSize: 0.85,
       minChildSize: 0.50,
       builder: (_, scroll) {
         return Container(
-          padding: EdgeInsets.all(16),
+          padding: EdgeInsets.all(16.w),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
             color: Colors.white,

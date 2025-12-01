@@ -82,6 +82,7 @@ class CustomMainHeader2 extends StatelessWidget {
                     child: SizedBox(
                       width: Get.width * 0.8.w,
                       child: Row(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           SizedBox(width: 8.w),
                           Icon(
@@ -89,7 +90,7 @@ class CustomMainHeader2 extends StatelessWidget {
                             color: Colors.black,
                             size: 14.sp,
                           ),
-                          Expanded(
+                          Flexible(
                             child: CustomText(
                               title: getIt<SearchNewController>().address.value,
                               fontSize: 13.sp,

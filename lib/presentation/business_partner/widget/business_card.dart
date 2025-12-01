@@ -101,6 +101,11 @@ class _BusinessCardState extends State<BusinessCard> {
 
   // RIGHT SECTION LOGIC
   Widget _buildRightSection() {
+    if (widget.data['self'] == true && widget.data['is_approved'] == '0') {
+      return _rightWrapper(
+        child: _buildTextOnly("Business requirement approval pending."),
+      );
+    }
     if (widget.data['self'] == true) {
       return _rightWrapper(
         child: GestureDetector(
@@ -197,7 +202,7 @@ class _BusinessCardState extends State<BusinessCard> {
       fontSize: 12.sp,
       color: textGrey,
       fontWeight: FontWeight.w500,
-      maxLines: 4,
+      maxLines: 10,
       textAlign: TextAlign.center,
     );
   }

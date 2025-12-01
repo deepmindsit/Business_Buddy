@@ -97,23 +97,13 @@ class OfferCard extends StatelessWidget {
                   color: Colors.grey.shade600,
                   maxLines: 1,
                   style: TextStyle(
-                    height: 1,
+                    // height: 1,
+                    fontWeight: FontWeight.w500,
                     fontSize: 10.sp,
                     color: Colors.grey.shade600,
                   ),
                 ),
-                CustomText(
-                  title: getTimeAgo(data['created_at'] ?? ''),
-                  fontSize: 10.sp,
-                  textAlign: TextAlign.start,
-                  color: Colors.grey.shade600,
-                  maxLines: 1,
-                  style: TextStyle(
-                    height: 1,
-                    fontSize: 10.sp,
-                    color: Colors.grey.shade600,
-                  ),
-                ),
+                _buildTimeDisplay(),
               ],
             ),
           ),
@@ -121,6 +111,21 @@ class OfferCard extends StatelessWidget {
         SizedBox(width: 8.w),
         _buildFollowButton(),
       ],
+    );
+  }
+
+  Widget _buildTimeDisplay() {
+    final createdAt = data['created_at'] ?? '';
+    if (createdAt == null || createdAt.toString().isEmpty) {
+      return SizedBox();
+    }
+
+    return CustomText(
+      title: getTimeAgo(createdAt),
+      fontSize: 10.sp,
+      textAlign: TextAlign.start,
+      color: Colors.grey.shade600,
+      maxLines: 1,
     );
   }
 

@@ -136,4 +136,64 @@ class FeedsController extends GetxController {
       likeLoadingMap.refresh();
     }
   }
+
+  ///////////////////////////////////////comment////////////////////////////////
+  final comments = [].obs;
+  final postData = {}.obs;
+  final isCommentLoading = false.obs;
+  final isAddCommentLoading = false.obs;
+  final newComment = ''.obs;
+  final commentTextController = TextEditingController();
+
+  Future<void> getSinglePost(String postId, {bool showLoading = true}) async {
+    if (showLoading) isCommentLoading.value = true;
+    postData.clear();
+    comments.clear();
+    final userId = await LocalStorage.getString('user_id') ?? '';
+    try {
+      final response = await _apiService.postDetails(postId, userId);
+
+      if (response['common']['status'] == true) {
+        postData.value = response['data'] ?? {};
+        comments.value = response['data']['comments'] ?? [];
+      }
+    } catch (e) {
+      showError(e);
+    } finally {
+      if (showLoading) isCommentLoading.value = false;
+    }
+  }
+
+  @override
+  void onClose() {
+    commentTextController.dispose();
+    super.onClose();
+  }
+
+  Future<void> addPostComment({bool showLoading = true}) async {
+    if (showLoading) isAddCommentLoading.value = true;
+
+    final userId = await LocalStorage.getString('user_id') ?? '';
+    try {
+      final response = await _apiService.addPostComment(
+        userId,
+        postData['business_id'].toString(),
+        postData['id'].toString(),
+        commentTextController.text.trim(),
+      );
+
+      if (response['common']['status'] == true) {
+        newComment.value = '';
+        commentTextController.clear();
+        await getSinglePost(postData['id'].toString(), showLoading: false);
+        ToastUtils.showSuccessToast(response['common']['message']);
+      } else {
+        ToastUtils.showWarningToast(response['common']['message']);
+      }
+    } catch (e) {
+      showError(e);
+    } finally {
+      if (showLoading) isAddCommentLoading.value = false;
+    }
+  }
 }

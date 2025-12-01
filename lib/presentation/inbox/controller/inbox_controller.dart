@@ -3,7 +3,7 @@ import 'package:businessbuddy/utils/exported_path.dart';
 @lazySingleton
 class InboxController extends GetxController {
   final ApiService _apiService = Get.find();
-  final controller = TextEditingController();
+
   final messages = [
     {'text': 'Hi there! 👋', 'isMe': false},
     {'text': 'Hey! How are you?', 'isMe': true},
@@ -16,7 +16,74 @@ class InboxController extends GetxController {
   ].obs;
 
   final isLoading = true.obs;
+
   final receivedRequestList = [].obs;
+
+  ///////////////////////////////////////chat////////////////////////////////
+  final allChats = [].obs;
+  final singleChat = {}.obs;
+  final isChatLoading = true.obs;
+  final isSingleLoading = true.obs;
+  final isSendLoading = false.obs;
+  final msgController = TextEditingController();
+  Future<void> getAllChat({bool showLoading = true}) async {
+    if (showLoading) isChatLoading.value = true;
+    final userId = await LocalStorage.getString('user_id') ?? '';
+    try {
+      final response = await _apiService.getChatList(userId);
+
+      if (response['common']['status'] == true) {
+        allChats.value = response['data'] ?? [];
+      }
+    } catch (e) {
+      showError(e);
+    } finally {
+      if (showLoading) isChatLoading.value = false;
+    }
+  }
+
+  Future<void> getSingleChat(String chatId, {bool showLoading = true}) async {
+    if (showLoading) isSingleLoading.value = true;
+    final userId = await LocalStorage.getString('user_id') ?? '';
+    try {
+      final response = await _apiService.getSingleChat(userId, chatId);
+
+      if (response['common']['status'] == true) {
+        singleChat.value = response['data'] ?? {};
+      }
+    } catch (e) {
+      showError(e);
+    } finally {
+      if (showLoading) isSingleLoading.value = false;
+    }
+  }
+
+
+
+  Future<void> sendMsg(String chatId, {bool showLoading = true}) async {
+    if (showLoading) isSendLoading.value = true;
+    final userId = await LocalStorage.getString('user_id') ?? '';
+    try {
+      final response = await _apiService.sendMsg(
+        userId,
+        chatId,
+        msgController.text.trim(),
+      );
+
+      if (response['common']['status'] == true) {
+        await getSingleChat(chatId);
+        // ToastUtils.showSuccessToast(response['common']['message'].toString());
+      } else {
+        ToastUtils.showErrorToast(response['common']['message'].toString());
+      }
+    } catch (e) {
+      showError(e);
+    } finally {
+      if (showLoading) isSendLoading.value = false;
+    }
+  }
+
+  ///////////////////////////////////////request////////////////////////////////
 
   Future<void> getReceiveBusinessRequest({bool showLoading = true}) async {
     if (showLoading) isLoading.value = true;

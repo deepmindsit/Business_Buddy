@@ -1,7 +1,5 @@
 import 'package:businessbuddy/utils/exported_path.dart';
 
-import '../../../components/custom_carousel_slider.dart';
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -21,7 +19,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _initializeData() async {
-    await _homeController.getHomeApi();
+    await _homeController.requestLocationPermission();
+    _homeController.getHomeApi();
   }
 
   @override
@@ -50,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
       () => _homeController.isLoading.isTrue
           ? _buildSliderLoader()
           : CustomCarouselSlider(
-              height: 0.15.h,
+              height: 0.2.h,
               margin: EdgeInsets.symmetric(horizontal: 8),
               radius: 16.r,
               imageList: _homeController.sliderList,

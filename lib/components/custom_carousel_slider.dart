@@ -54,7 +54,7 @@ class CustomCarouselSlider extends StatelessWidget {
                 child: Image.network(
                   imagePath['image'],
                   // imagePath,
-                  fit: BoxFit.contain,
+                  fit: BoxFit.cover,
                   width: double.infinity,
                 ),
               ),
