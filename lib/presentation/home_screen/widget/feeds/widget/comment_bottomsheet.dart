@@ -28,7 +28,6 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
       minChildSize: 0.50,
       builder: (context, scroll) {
         return Container(
-          // height: Get.height * 0.85.h,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(
@@ -123,8 +122,8 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
         children: [
           // Profile Image
           Container(
-            width: 40,
-            height: 40,
+            width: 35.w,
+            height: 35.h,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: Colors.grey[200],
@@ -176,7 +175,7 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: EdgeInsets.all(12),
+                  padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: Colors.grey[100],
                     borderRadius: BorderRadius.circular(12),
@@ -187,13 +186,13 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                       CustomText(
                         title: comment['user_name']?.toString() ?? '',
                         fontWeight: FontWeight.w600,
-                        fontSize: 14.sp,
+                        fontSize: 13.sp,
                         textAlign: TextAlign.start,
                       ),
-                      SizedBox(height: 4),
+                      SizedBox(height: 2),
                       CustomText(
                         title: comment['comment']?.toString() ?? '',
-                        fontSize: 14.sp,
+                        fontSize: 13.sp,
                         textAlign: TextAlign.start,
                         maxLines: 2,
                       ),
@@ -207,7 +206,7 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                     comment['created_at']?.toString() ?? '',
                     style: TextStyle(
                       color: Colors.grey.shade600,
-                      fontSize: 12.sp,
+                      fontSize: 10.sp,
                     ),
                   ),
                 ),
@@ -257,6 +256,7 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                           commentController.newComment.value = value,
                       decoration: InputDecoration(
                         hintText: 'Write a comment...',
+                        hintStyle: TextStyle(fontSize: 14.sp),
                         border: InputBorder.none,
                         contentPadding: EdgeInsets.symmetric(
                           horizontal: 16,

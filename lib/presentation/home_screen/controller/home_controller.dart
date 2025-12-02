@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart';
 class HomeController extends GetxController {
   final ApiService _apiService = Get.find();
   final isLoading = false.obs;
+  final isLikeAnimating = false.obs;
   final feedsList = [].obs;
   final categoryList = [].obs;
   final requirementList = [].obs;

@@ -169,15 +169,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _handleCategoryTap(Map<String, dynamic> category) {
-    _navigationController.openSubPage(
-      CategoryList(
-        categoryId: category['id'].toString(),
-        categoryName: category['name'].toString(),
-      ),
-    );
-  }
-
   Widget _buildSliderLoader() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8),

@@ -144,6 +144,9 @@ abstract class ApiService {
   @POST(AllUrl.getMyProfile)
   Future<dynamic> getMyProfile(@Part(name: "user_id") String? userId);
 
+  @POST(AllUrl.getFollowList)
+  Future<dynamic> getFollowList(@Part(name: "user_id") String? userId);
+
   @POST(AllUrl.getUserProfile)
   Future<dynamic> getUserProfile(@Part(name: "user_id") String? userId);
 
@@ -234,6 +237,12 @@ abstract class ApiService {
     @Part(name: "user_id") String? userId,
     @Part(name: "chat_id") String? chatId,
     @Part(name: "message") String? message,
+  );
+
+  @POST(AllUrl.initiateChat)
+  Future<dynamic> initiateChat(
+    @Part(name: "user_id") String? userId,
+    @Part(name: "business_requirement_id") String? chatId,
   );
 }
 

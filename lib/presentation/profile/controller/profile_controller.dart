@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:businessbuddy/utils/exported_path.dart';
 
 @lazySingleton
@@ -12,7 +11,9 @@ class ProfileController extends GetxController {
   final experienceCtrl = TextEditingController();
   final specialization = RxnString();
   final isLoading = false.obs;
+  final isFollowLoading = false.obs;
   final profileDetails = {}.obs;
+  final followList = [].obs;
   final isMe = true.obs;
 
   void setPreselected() {
@@ -79,6 +80,22 @@ class ProfileController extends GetxController {
       showError(e);
     } finally {
       if (showLoading) isLoading.value = false;
+    }
+  }
+
+  Future<void> getFollowList({bool showLoading = true}) async {
+    if (showLoading) isFollowLoading.value = true;
+    final userId = await LocalStorage.getString('user_id') ?? '';
+    try {
+      final response = await _apiService.getFollowList(userId);
+
+      if (response['common']['status'] == true) {
+        followList.value = response['data']['businesses'] ?? [];
+      }
+    } catch (e) {
+      showError(e);
+    } finally {
+      if (showLoading) isFollowLoading.value = false;
     }
   }
 }

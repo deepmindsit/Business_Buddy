@@ -235,29 +235,26 @@ class OfferCard extends StatelessWidget {
     final image = data['image'] ?? '';
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(12.r),
         border: Border.all(color: Colors.grey.shade300, width: 0.5),
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(16.r),
-        child: AspectRatio(
-          aspectRatio: 1.4,
-          child: FadeInImage(
-            placeholder: const AssetImage(Images.defaultImage),
-            image: NetworkImage(image),
-            width: double.infinity,
-            fit: BoxFit.contain,
-            imageErrorBuilder: (context, error, stackTrace) {
-              return Center(
-                child: Image.asset(
-                  Images.defaultImage,
-                  width: 150.w,
-                  height: 150.w,
-                ),
-              );
-            },
-            fadeInDuration: const Duration(milliseconds: 500),
-          ),
+        borderRadius: BorderRadius.circular(12.r),
+        child: FadeInImage(
+          placeholder: const AssetImage(Images.defaultImage),
+          image: NetworkImage(image),
+          width: double.infinity,
+          fit: BoxFit.contain,
+          imageErrorBuilder: (context, error, stackTrace) {
+            return Center(
+              child: Image.asset(
+                Images.defaultImage,
+                width: 150.w,
+                height: 150.w,
+              ),
+            );
+          },
+          fadeInDuration: const Duration(milliseconds: 500),
         ),
       ),
     );

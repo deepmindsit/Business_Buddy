@@ -8,7 +8,9 @@ Future<http.Client> getHttpClient() async {
         true;
   return IOClient(ioc);
 }
+
 const googleMapsApi = 'AIzaSyAvg-gpAbB2_lKgSIJ9tG6JqjGJFaVeXNc';
+
 class AllUrl {
   static const String baseUrl = "http://192.168.29.41/bizyaari/api/user/v1";
   // static const String baseUrl =
@@ -36,6 +38,7 @@ class AllUrl {
   static const String getCapacity = '$baseUrl/get_investment_capacity_list';
   static const String addBusinessReq = '$baseUrl/add_business_requirement';
   static const String getMyProfile = '$baseUrl/my_profile_details';
+  static const String getFollowList = '$baseUrl/get_business_following_list';
   static const String getUserProfile = '$baseUrl/user_profile_details';
   static const String updateProfile = '$baseUrl/update_profile';
   static const String sendBusinessRequest =
@@ -59,4 +62,5 @@ class AllUrl {
   static const String chatList = '$baseUrl/get_chat_list';
   static const String getSingleChat = '$baseUrl/get_messages';
   static const String sendMsg = '$baseUrl/send_message';
+  static const String initiateChat = '$baseUrl/initiate_chat';
 }

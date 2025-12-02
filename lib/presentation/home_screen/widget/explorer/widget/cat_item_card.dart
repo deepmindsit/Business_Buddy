@@ -115,65 +115,136 @@ class CatItemCard extends StatelessWidget {
       child: Column(
         spacing: 8.h,
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [_buildHeader(), _buildLocation(), _buildCategory()],
+        children: [_buildHeader(), _buildLocation(), _buildRating()],
       ),
     );
   }
+
+  // Widget _buildHeader() {
+  //   return Row(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       Expanded(
+  //         child: Column(
+  //           children: [
+  //             CustomText(
+  //               title: name,
+  //               fontSize: 16.sp,
+  //               textAlign: TextAlign.start,
+  //               maxLines: 2,
+  //               style: TextStyle(
+  //                 height: 1.2,
+  //                 fontSize: 16.sp,
+  //                 color: primaryColor,
+  //                 fontWeight: FontWeight.w700,
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //       SizedBox(width: 8.w),
+  //       _buildRating(),
+  //     ],
+  //   );
+  // }
 
   Widget _buildHeader() {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
-          child: CustomText(
-            title: name,
-            fontSize: 16.sp,
-            textAlign: TextAlign.start,
-            maxLines: 2,
-            style: TextStyle(
-              height: 1.2,
-              fontSize: 16.sp,
-              color: primaryColor,
-              fontWeight: FontWeight.w700,
-            ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CustomText(
+                title: name,
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w700,
+                color: Colors.black,
+                textAlign: TextAlign.start,
+                maxLines: 2,
+              ),
+              SizedBox(height: 2.h),
+              Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 8.w,
+                      vertical: 2.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: primaryColor.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(6.r),
+                    ),
+                    child: CustomText(
+                      title: category,
+                      fontSize: 11.sp,
+                      textAlign: TextAlign.start,
+                      color: primaryColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SizedBox(width: 8.w),
+                  CustomText(
+                    title: '·',
+                    fontSize: 12.sp,
+                    color: Colors.grey[400],
+                  ),
+                  SizedBox(width: 8.w),
+                  CustomText(
+                    title: '$distance km',
+                    fontSize: 12.sp,
+                    color: Colors.grey[600],
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
-        SizedBox(width: 8.w),
-        _buildRating(),
+
+        // Direction Icon
+
       ],
     );
   }
 
   Widget _buildRating() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
-          decoration: BoxDecoration(
-            color: primaryColor,
-            borderRadius: BorderRadius.circular(8.r),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.star, color: Colors.white, size: 14.sp),
-              SizedBox(width: 4.w),
-              CustomText(
-                title: rating,
-                fontSize: 12.sp,
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
+        Row(
+          spacing: 2.w,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+              decoration: BoxDecoration(
+                color: primaryColor,
+                borderRadius: BorderRadius.circular(8.r),
               ),
-            ],
-          ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.star, color: Colors.white, size: 14.sp),
+                  SizedBox(width: 4.w),
+                  CustomText(
+                    title: rating,
+                    fontSize: 12.sp,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 2.h),
+            CustomText(
+              title: 'By $reviewCount',
+              fontSize: 10.sp,
+              color: textLightGrey,
+            ),
+          ],
         ),
-        SizedBox(height: 2.h),
-        CustomText(
-          title: 'By $reviewCount',
-          fontSize: 10.sp,
-          color: textLightGrey,
-        ),
+        _buildCategory(),
       ],
     );
   }
@@ -185,7 +256,7 @@ class CatItemCard extends StatelessWidget {
         SizedBox(width: 4.w),
         Expanded(
           child: CustomText(
-            title: '$location  | $distance Km',
+            title: location,
             textAlign: TextAlign.start,
             fontSize: 12.sp,
             color: textLightGrey,
@@ -197,89 +268,68 @@ class CatItemCard extends StatelessWidget {
   }
 
   Widget _buildCategory() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 8.w),
+    return
+    // Direction Icon
+    Align(
+      alignment: Alignment.centerRight,
+      child: GestureDetector(
+        onTap: () {
+          if (!getIt<DemoService>().isDemo) {
+            ToastUtils.showLoginToast();
+            return;
+          }
+          openMap(double.parse(latitude), double.parse(longitude));
+        },
+        child: Container(
+          width: 30.w,
+          height: 30.h,
           decoration: BoxDecoration(
-            color: lightRed.withValues(alpha: 0.5),
-            borderRadius: BorderRadius.circular(6.r),
-            border: Border.all(color: lightRed.withValues(alpha: 0.3)),
+            color: Colors.grey[50],
+            borderRadius: BorderRadius.circular(10.r),
+            border: Border.all(color: Colors.grey[200]!),
           ),
-          child: CustomText(
-            title: category,
-            fontSize: 12.sp,
-            color: textLightGrey,
-          ),
-        ),
-        GestureDetector(
-          onTap: () {
-            if (!getIt<DemoService>().isDemo) {
-              ToastUtils.showLoginToast();
-              return;
-            }
-            openMap(double.parse(latitude), double.parse(longitude));
-          },
-          child: HugeIcon(
-            icon: HugeIcons.strokeRoundedLocation05,
-            color: primaryColor,
-            // size: 20.sp,
+          child: Icon(
+            Icons.navigation_rounded,
+            size: 18.sp,
+            color: Colors.grey[700],
           ),
         ),
-      ],
+      ),
     );
-  }
 
-  // Widget _buildOffer() {
-  //   return Row(
-  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //     children: [
-  //       Expanded(
-  //         flex: 2,
-  //         child: Container(
-  //           padding: EdgeInsets.all(6.w),
-  //           decoration: BoxDecoration(
-  //             color: primaryBlueColor.withValues(alpha: 0.02),
-  //             borderRadius: BorderRadius.circular(8.r),
-  //             border: Border.all(
-  //               color: primaryBlueColor.withValues(alpha: 0.1),
-  //             ),
-  //           ),
-  //           child: Row(
-  //             spacing: 4.w,
-  //             children: [
-  //               HugeIcon(
-  //                 icon: HugeIcons.strokeRoundedDiscount,
-  //                 color: primaryBlueColor,
-  //                 size: 16.sp,
-  //               ),
-  //               // SizedBox(width: 8.w),
-  //               Expanded(
-  //                 child: CustomText(
-  //                   title: offerText,
-  //                   fontSize: 12.sp,
-  //                   color: textLightGrey,
-  //                   maxLines: 1,
-  //                 ),
-  //               ),
-  //               // SizedBox(width: 8.w),
-  //               GestureDetector(
-  //                 onTap: () => AllDialogs().offerDialog(),
-  //                 child: CustomText(
-  //                   title: '...See offer',
-  //                   fontSize: 12.sp,
-  //                   color: primaryColor,
-  //                   fontWeight: FontWeight.w600,
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
+    // Row(
+    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //   children: [
+    //     Container(
+    //       padding: EdgeInsets.symmetric(horizontal: 8.w),
+    //       decoration: BoxDecoration(
+    //         color: lightRed.withValues(alpha: 0.5),
+    //         borderRadius: BorderRadius.circular(6.r),
+    //         border: Border.all(color: lightRed.withValues(alpha: 0.3)),
+    //       ),
+    //       child: CustomText(
+    //         title: category,
+    //         fontSize: 12.sp,
+    //         color: textLightGrey,
+    //       ),
+    //     ),
+    //     GestureDetector(
+    //       onTap: () {
+    //         if (!getIt<DemoService>().isDemo) {
+    //           ToastUtils.showLoginToast();
+    //           return;
+    //         }
+    //         openMap(double.parse(latitude), double.parse(longitude));
+    //       },
+    //       child: HugeIcon(
+    //         icon: HugeIcons.strokeRoundedLocation05,
+    //         color: primaryColor,
+    //         // size: 20.sp,
+    //       ),
+    //     ),
+    //   ],
+    // );
+  }
 
   Widget _buildActionButtons() {
     return Row(
@@ -362,7 +412,6 @@ class CatItemCard extends StatelessWidget {
   }
 }
 
-// Extension for formatting review counts
 extension NumberFormatting on int {
   String formatCount() {
     if (this >= 1000) {
@@ -372,188 +421,387 @@ extension NumberFormatting on int {
   }
 }
 
-// import 'package:businessbuddy/utils/exported_path.dart';
+//
 //
 // class CatItemCard extends StatelessWidget {
-//   const CatItemCard({super.key});
+//   final String name;
+//   final String location;
+//   final String category;
+//   final String rating;
+//   final String reviewCount;
+//   final String offerText;
+//   final String phoneNumber;
+//   final String distance;
+//   final String imagePath;
+//   final String latitude;
+//   final String longitude;
+//   final bool isFollowed;
+//   final bool isSelf;
+//   final List offers;
+//   final VoidCallback? onCall;
+//   final VoidCallback? onFollow;
+//   final VoidCallback? onTap;
+//
+//   const CatItemCard({
+//     super.key,
+//     required this.name,
+//     required this.latitude,
+//     required this.longitude,
+//     required this.offers,
+//     required this.location,
+//     required this.category,
+//     required this.distance,
+//     required this.rating,
+//     required this.reviewCount,
+//     required this.offerText,
+//     required this.isFollowed,
+//     required this.isSelf,
+//     required this.phoneNumber,
+//     this.imagePath = Images.hotelImg,
+//     this.onCall,
+//     this.onFollow,
+//     this.onTap,
+//   });
 //
 //   @override
 //   Widget build(BuildContext context) {
-//     return Container(
-//       padding: EdgeInsets.all(12.w),
-//       decoration: BoxDecoration(
-//         color: lightGrey,
-//         borderRadius: BorderRadius.circular(10.r),
-//       ),
-//       child: Row(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         spacing: 12.w,
-//         children: [_buildImage(), _buildNameNRating()],
+//     return GestureDetector(
+//       onTap: onTap,
+//       child: Container(
+//         margin: EdgeInsets.only(bottom: 12.h),
+//         decoration: BoxDecoration(
+//           color: Colors.white,
+//           borderRadius: BorderRadius.circular(16.r),
+//           border: Border.all(color: Colors.grey[200]!, width: 1.5),
+//           boxShadow: [
+//             BoxShadow(
+//               color: Colors.black.withOpacity(0.04),
+//               blurRadius: 8.r,
+//               offset: const Offset(0, 2),
+//             ),
+//           ],
+//         ),
+//         child: Column(
+//           children: [
+//             // Image with overlay
+//             _buildImageSection(),
+//
+//             // Content
+//             Padding(
+//               padding: EdgeInsets.all(8.w),
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   // Header
+//                   _buildHeader(),
+//                   SizedBox(height: 8.h),
+//
+//                   // Location & Category
+//                   _buildLocationInfo(),
+//                   SizedBox(height: 12.h),
+//
+//                   // Action Buttons
+//                   _buildActionButtons(),
+//                 ],
+//               ),
+//             ),
+//           ],
+//         ),
 //       ),
 //     );
 //   }
 //
-//   Widget _buildImage() {
-//     return FadeInImage(
-//       placeholder: const AssetImage(Images.logo),
-//       image: const AssetImage(Images.hotelImg),
-//       width: 100.w,
-//       height: 100.h,
-//       imageErrorBuilder: (context, error, stackTrace) {
-//         return Image.asset(
-//           Images.logo,
-//           width: 100.w,
-//           height: 100.h,
-//           fit: BoxFit.contain,
-//         );
-//       },
-//       fit: BoxFit.contain,
-//       placeholderFit: BoxFit.contain,
-//       fadeInDuration: const Duration(milliseconds: 300),
+//   Widget _buildImageSection() {
+//     return Stack(
+//       children: [
+//         // Main Image
+//         ClipRRect(
+//           borderRadius: BorderRadius.only(
+//             topLeft: Radius.circular(16.r),
+//             topRight: Radius.circular(16.r),
+//           ),
+//           child: Container(
+//             height: 120.h,
+//             width: double.infinity,
+//             child: FadeInImage(
+//               placeholder: const AssetImage(Images.defaultImage),
+//               image: NetworkImage(imagePath),
+//               fit: BoxFit.cover,
+//               placeholderFit: BoxFit.cover,
+//               fadeInDuration: const Duration(milliseconds: 300),
+//               imageErrorBuilder: (context, error, stackTrace) {
+//                 return Container(
+//                   color: Colors.grey[100],
+//                   child: Center(
+//                     child: Icon(
+//                       Icons.business_rounded,
+//                       size: 40.sp,
+//                       color: Colors.grey[300],
+//                     ),
+//                   ),
+//                 );
+//               },
+//             ),
+//           ),
+//         ),
+//
+//         // Rating Chip
+//         Positioned(
+//           top: 10.w,
+//           right: 10.w,
+//           child: Container(
+//             padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+//             decoration: BoxDecoration(
+//               color: Colors.white,
+//               borderRadius: BorderRadius.circular(20.r),
+//               boxShadow: [
+//                 BoxShadow(
+//                   color: Colors.black.withOpacity(0.1),
+//                   blurRadius: 4.r,
+//                 ),
+//               ],
+//             ),
+//             child: Row(
+//               mainAxisSize: MainAxisSize.min,
+//               children: [
+//                 Icon(Icons.star_rounded, color: Colors.amber[600], size: 14.sp),
+//                 SizedBox(width: 4.w),
+//                 CustomText(
+//                   title: rating,
+//                   fontSize: 13.sp,
+//                   fontWeight: FontWeight.w600,
+//                   color: Colors.black87,
+//                 ),
+//               ],
+//             ),
+//           ),
+//         ),
+//       ],
 //     );
 //   }
 //
-//   Widget _buildNameNRating() {
-//     return Expanded(
-//       child: Column(
-//         spacing: 8,
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         children: [
-//           Row(
+//   Widget _buildHeader() {
+//     return Row(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         Expanded(
+//           child: Column(
 //             crossAxisAlignment: CrossAxisAlignment.start,
 //             children: [
-//               Expanded(
-//                 child: CustomText(
-//                   title: 'Hotel Jyoti Family Restaurant',
-//                   fontSize: 16.sp,
-//                   textAlign: TextAlign.start,
-//                   color: primaryColor,
-//                   maxLines: 2,
-//                   fontWeight: FontWeight.bold,
-//                 ),
+//               CustomText(
+//                 title: name,
+//                 fontSize: 16.sp,
+//                 fontWeight: FontWeight.w700,
+//                 color: Colors.black,
+//                 maxLines: 2,
 //               ),
-//               Column(
+//               SizedBox(height: 2.h),
+//               Row(
 //                 children: [
 //                   Container(
-//                     padding: EdgeInsets.symmetric(horizontal: 6.w),
+//                     padding: EdgeInsets.symmetric(
+//                       horizontal: 8.w,
+//                       vertical: 2.h,
+//                     ),
 //                     decoration: BoxDecoration(
+//                       color: primaryColor.withOpacity(0.08),
+//                       borderRadius: BorderRadius.circular(6.r),
+//                     ),
+//                     child: CustomText(
+//                       title: category,
+//                       fontSize: 11.sp,
 //                       color: primaryColor,
-//                       borderRadius: BorderRadius.circular(8.r),
-//                     ),
-//                     child: Row(
-//                       children: [
-//                         Icon(Icons.star, color: Colors.white, size: 14.sp),
-//                         CustomText(
-//                           title: '4.5',
-//                           fontSize: 12.sp,
-//                           color: Colors.white,
-//                         ),
-//                       ],
+//                       fontWeight: FontWeight.w600,
 //                     ),
 //                   ),
+//                   SizedBox(width: 8.w),
 //                   CustomText(
-//                     title: 'By 630+',
-//                     fontSize: 10.sp,
-//                     color: textLightGrey,
+//                     title: '·',
+//                     fontSize: 12.sp,
+//                     color: Colors.grey[400],
+//                   ),
+//                   SizedBox(width: 8.w),
+//                   CustomText(
+//                     title: '$distance km',
+//                     fontSize: 12.sp,
+//                     color: Colors.grey[600],
 //                   ),
 //                 ],
 //               ),
 //             ],
 //           ),
-//           Row(
-//             children: [
-//               Icon(Icons.location_on, color: textLightGrey, size: 14.sp),
-//               CustomText(
-//                 title: 'Hinjewadi Phase 1',
-//                 fontSize: 14.sp,
-//                 color: textLightGrey,
-//               ),
-//             ],
-//           ),
-//           Container(
-//             padding: EdgeInsets.symmetric(horizontal: 6.w),
+//         ),
+//         // Direction Icon
+//         GestureDetector(
+//           onTap: () {
+//             if (!getIt<DemoService>().isDemo) {
+//               ToastUtils.showLoginToast();
+//               return;
+//             }
+//             openMap(double.parse(latitude), double.parse(longitude));
+//           },
+//           child: Container(
+//             width: 36.w,
+//             height: 36.h,
 //             decoration: BoxDecoration(
-//               color: lightRed,
-//               borderRadius: BorderRadius.circular(8.r),
+//               color: Colors.grey[50],
+//               borderRadius: BorderRadius.circular(10.r),
+//               border: Border.all(color: Colors.grey[200]!),
 //             ),
-//             child: CustomText(
-//               title: 'Restaurant',
-//               fontSize: 12.sp,
-//               color: textLightGrey,
+//             child: Icon(
+//               Icons.navigation_rounded,
+//               size: 18.sp,
+//               color: Colors.grey[700],
 //             ),
 //           ),
-//           Row(
-//             children: [
-//               HugeIcon(
-//                 icon: HugeIcons.strokeRoundedDiscount,
-//                 color: primaryBlueColor,
-//                 size: 14.sp,
-//               ),
-//               Row(
-//                 spacing: 4.w,
-//                 children: [
-//                   CustomText(
-//                     title: 'Flat ₹80 OFF above ₹199',
-//                     fontSize: 12.sp,
-//                     color: textLightGrey,
-//                   ),
-//                   CustomText(
-//                     title: '...See offer',
-//                     fontSize: 12.sp,
-//                     color: primaryColor,
-//                     fontWeight: FontWeight.w500,
-//                   ),
-//                 ],
-//               ),
-//             ],
+//         ),
+//       ],
+//     );
+//   }
+//
+//   Widget _buildLocationInfo() {
+//     return Row(
+//       children: [
+//         Icon(Icons.location_on_outlined, size: 16.sp, color: Colors.grey[500]),
+//         SizedBox(width: 6.w),
+//         Expanded(
+//           child: CustomText(
+//             title: location,
+//             textAlign: TextAlign.start,
+//             fontSize: 13.sp,
+//             color: Colors.grey[700],
+//             maxLines: 1,
 //           ),
-//           Row(
-//             spacing: 8.w,
-//             children: [
-//               Container(
-//                 padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
-//                 decoration: BoxDecoration(
-//                   color: primaryColor,
-//                   borderRadius: BorderRadius.circular(4.r),
-//                 ),
-//                 child: Row(
-//                   mainAxisSize: MainAxisSize.min,
-//                   children: [
-//                     Icon(Icons.call, color: Colors.white, size: 14.sp),
-//                     CustomText(
-//                       title: '+91XXXXXXXXXX',
-//                       fontSize: 12.sp,
-//                       color: Colors.white,
-//                     ),
-//                   ],
-//                 ),
+//         ),
+//       ],
+//     );
+//   }
+//
+//   Widget _buildActionButtons() {
+//     return Row(
+//       children: [
+//         // Call Button (if not self)
+//         if (!isSelf)
+//           Expanded(
+//             child: _buildMinimalButton(
+//               icon: Icons.call_outlined,
+//               label: 'Call',
+//               onPressed: onCall,
+//               color: Colors.green[600]!,
+//             ),
+//           ),
+//         if (!isSelf) SizedBox(width: 8.w),
+//
+//         // Follow/Following Button (if not self)
+//         if (!isSelf)
+//           Expanded(
+//             child: _buildMinimalButton(
+//               icon: isFollowed
+//                   ? Icons.check_circle_outline
+//                   : Icons.person_add_outlined,
+//               label: isFollowed ? 'Following' : 'Follow',
+//               onPressed: onFollow,
+//               color: isFollowed ? Colors.grey[600]! : Colors.blue[600]!,
+//               isActive: isFollowed,
+//             ),
+//           ),
+//         if (!isSelf) SizedBox(width: 4.w),
+//
+//         // Offer Button (Always visible)
+//         Expanded(
+//           flex: 2,
+//           child: Container(
+//             height: 38.h,
+//             decoration: BoxDecoration(
+//               gradient: LinearGradient(
+//                 colors: [primaryColor, primaryColor.withOpacity(0.9)],
+//                 begin: Alignment.centerLeft,
+//                 end: Alignment.centerRight,
 //               ),
-//               Container(
-//                 padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
-//                 decoration: BoxDecoration(
-//                   color: primaryColor,
-//                   borderRadius: BorderRadius.circular(4.r),
-//                 ),
+//               borderRadius: BorderRadius.circular(10.r),
+//             ),
+//             child: Material(
+//               color: Colors.transparent,
+//               borderRadius: BorderRadius.circular(10.r),
+//               child: InkWell(
+//                 onTap: () => AllDialogs().offerDialog(offers),
+//                 borderRadius: BorderRadius.circular(10.r),
 //                 child: Row(
-//                   mainAxisSize: MainAxisSize.min,
+//                   mainAxisAlignment: MainAxisAlignment.center,
 //                   children: [
 //                     Icon(
-//                       Icons.person_add_alt_1_rounded,
+//                       Icons.local_offer_outlined,
+//                       size: 16.sp,
 //                       color: Colors.white,
-//                       size: 14.sp,
 //                     ),
-//                     CustomText(
-//                       title: 'Follow',
-//                       fontSize: 12.sp,
-//                       color: Colors.white,
+//                     SizedBox(width: 6.w),
+//                     Flexible(
+//                       child: CustomText(
+//                         title: offerText,
+//                         fontSize: 13.sp,
+//                         color: Colors.white,
+//                         fontWeight: FontWeight.w600,
+//                         maxLines: 1,
+//                       ),
 //                     ),
 //                   ],
 //                 ),
 //               ),
+//             ),
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+//
+//   Widget _buildMinimalButton({
+//     required IconData icon,
+//     required String label,
+//     required VoidCallback? onPressed,
+//     required Color color,
+//     bool isActive = false,
+//   }) {
+//     return Container(
+//       height: 38.h,
+//       decoration: BoxDecoration(
+//         color: isActive ? color.withOpacity(0.1) : Colors.transparent,
+//         borderRadius: BorderRadius.circular(10.r),
+//         border: Border.all(
+//           color: isActive ? color.withOpacity(0.3) : Colors.grey[300]!,
+//           width: 1.5,
+//         ),
+//       ),
+//       child: Material(
+//         color: Colors.transparent,
+//         borderRadius: BorderRadius.circular(10.r),
+//         child: InkWell(
+//           onTap: onPressed,
+//           borderRadius: BorderRadius.circular(10.r),
+//           child: Row(
+//             mainAxisAlignment: MainAxisAlignment.center,
+//             children: [
+//               Icon(icon, size: 16.sp, color: color),
+//               SizedBox(width: 6.w),
+//               CustomText(
+//                 title: label,
+//                 fontSize: 13.sp,
+//                 color: color,
+//                 fontWeight: FontWeight.w600,
+//               ),
 //             ],
 //           ),
-//         ],
+//         ),
 //       ),
 //     );
+//   }
+// }
+//
+// // Extension for formatting review counts
+// extension NumberFormatting on int {
+//   String formatCount() {
+//     if (this >= 1000) {
+//       return '${(this / 1000).toStringAsFixed(1)}k';
+//     }
+//     return toString();
 //   }
 // }

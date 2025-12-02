@@ -26,6 +26,7 @@ class InboxController extends GetxController {
   final isSingleLoading = true.obs;
   final isSendLoading = false.obs;
   final msgController = TextEditingController();
+
   Future<void> getAllChat({bool showLoading = true}) async {
     if (showLoading) isChatLoading.value = true;
     final userId = await LocalStorage.getString('user_id') ?? '';
@@ -58,8 +59,6 @@ class InboxController extends GetxController {
     }
   }
 
-
-
   Future<void> sendMsg(String chatId, {bool showLoading = true}) async {
     if (showLoading) isSendLoading.value = true;
     final userId = await LocalStorage.getString('user_id') ?? '';
@@ -71,7 +70,8 @@ class InboxController extends GetxController {
       );
 
       if (response['common']['status'] == true) {
-        await getSingleChat(chatId);
+        await getSingleChat(chatId, showLoading: false);
+        msgController.clear();
         // ToastUtils.showSuccessToast(response['common']['message'].toString());
       } else {
         ToastUtils.showErrorToast(response['common']['message'].toString());
@@ -80,6 +80,35 @@ class InboxController extends GetxController {
       showError(e);
     } finally {
       if (showLoading) isSendLoading.value = false;
+    }
+  }
+
+  final initiateLoadingMap = <String, bool>{}.obs;
+
+  Future<void> initiateChat(String reqId) async {
+    initiateLoadingMap[reqId] = true;
+    initiateLoadingMap.refresh();
+    final userId = await LocalStorage.getString('user_id') ?? '';
+    try {
+      final response = await _apiService.initiateChat(userId, reqId);
+
+      if (response['common']['status'] == true) {
+        getIt<NavigationController>().openSubPage(
+          SingleChat(
+            chatId:
+                response['data']['business_requirement_chat_details']['business_requirement_chat_id']
+                    ?.toString() ??
+                '',
+          ),
+        );
+      } else {
+        ToastUtils.showErrorToast(response['common']['message'].toString());
+      }
+    } catch (e) {
+      showError(e);
+    } finally {
+      initiateLoadingMap[reqId] = false;
+      initiateLoadingMap.refresh();
     }
   }
 

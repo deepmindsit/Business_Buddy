@@ -1,5 +1,6 @@
 import 'package:businessbuddy/utils/exported_path.dart';
 
+import '../../../../../utils/like_animation.dart';
 import 'comment_bottomsheet.dart';
 
 class FeedCard extends StatelessWidget {
@@ -9,7 +10,7 @@ class FeedCard extends StatelessWidget {
   FeedCard({super.key, this.data, this.onFollow, required this.onLike});
 
   final navController = getIt<NavigationController>();
-
+  final _homeController = getIt<HomeController>();
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -185,37 +186,71 @@ class FeedCard extends StatelessWidget {
 
   Widget _buildImageSection() {
     final image = data['image'] ?? '';
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: Colors.grey.shade300, width: 0.5),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16.r),
-        child: AspectRatio(
-          aspectRatio: 1.4,
-          child: InstaLikeButton(
-            image: NetworkImage(image),
-            onChanged: onLike,
-            iconSize: 80.r,
-            icon: data['is_liked'] == true ? Icons.favorite : Icons.favorite,
-            iconColor: data['is_liked'] == true ? lightGrey : Colors.red,
-            curve: Curves.fastLinearToSlowEaseIn,
-            duration: const Duration(milliseconds: 500),
-            onImageError: (e, _) {
-              return Center(
-                child: Image.asset(
-                  Images.defaultImage,
-                  width: 150.w,
-                  height: 150.w,
+    // return Image.network(image, fit: BoxFit.contain);
+
+    return Obx(
+      () => GestureDetector(
+        onDoubleTap: () async {
+          _homeController.isLikeAnimating.value = true;
+          onLike();
+        },
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12.r),
+              child: Image.network(image, fit: BoxFit.contain),
+            ),
+            AnimatedOpacity(
+              duration: const Duration(milliseconds: 200),
+              opacity: _homeController.isLikeAnimating.value ? 1 : 0,
+              child: LikeAnimation(
+                isAnimating: _homeController.isLikeAnimating.value,
+                duration: const Duration(milliseconds: 400),
+                onEnd: () {
+                  _homeController.isLikeAnimating.value = false;
+                },
+                child: Icon(
+                  data['is_liked'] == true ? Icons.favorite : Icons.favorite,
+                  color: data['is_liked'] == true ? lightGrey : Colors.red,
+                  size: 40.r,
                 ),
-              );
-            },
-            imageBoxfit: BoxFit.contain,
-          ),
+              ),
+            ),
+          ],
         ),
       ),
     );
+
+    // return Container(
+    //   decoration: BoxDecoration(
+    //     borderRadius: BorderRadius.circular(16.r),
+    //     border: Border.all(color: Colors.grey.shade300, width: 0.5),
+    //   ),
+    //   child: ClipRRect(
+    //     borderRadius: BorderRadius.circular(16.r),
+    //     child: InstaLikeButton(
+    //       image: NetworkImage(image),
+    //       onChanged: onLike,
+    //       width: Get.width,
+    //       iconSize: 80.r,
+    //       icon: data['is_liked'] == true ? Icons.favorite : Icons.favorite,
+    //       iconColor: data['is_liked'] == true ? lightGrey : Colors.red,
+    //       curve: Curves.fastLinearToSlowEaseIn,
+    //       duration: const Duration(milliseconds: 500),
+    //       onImageError: (e, _) {
+    //         return Center(
+    //           child: Image.asset(
+    //             Images.defaultImage,
+    //             width: 150.w,
+    //             height: 150.w,
+    //           ),
+    //         );
+    //       },
+    //       imageBoxfit: BoxFit.contain,
+    //     ),
+    //   ),
+    // );
   }
 
   Widget _buildEngagementSection() {
@@ -315,42 +350,6 @@ class FeedCard extends StatelessWidget {
     );
   }
 
-  // Widget _buildOffersButton() {
-  //   return GestureDetector(
-  //     onTap: () {
-  //       // Handle offers view
-  //     },
-  //     child: Container(
-  //       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-  //       decoration: BoxDecoration(
-  //         color: primaryColor.withValues(alpha: 0.1),
-  //         borderRadius: BorderRadius.circular(8.r),
-  //         border: Border.all(
-  //           color: primaryColor.withValues(alpha: 0.3),
-  //           width: 1,
-  //         ),
-  //       ),
-  //       child: Row(
-  //         mainAxisSize: MainAxisSize.min,
-  //         children: [
-  //           HugeIcon(
-  //             icon: HugeIcons.strokeRoundedDiscount,
-  //             color: primaryColor,
-  //             size: 16.sp,
-  //           ),
-  //           SizedBox(width: 6.w),
-  //           CustomText(
-  //             title: 'View Offers',
-  //             fontSize: 12.sp,
-  //             color: primaryColor,
-  //             fontWeight: FontWeight.w600,
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-
   Widget _buildContentSection() {
     return CustomText(
       title: data['details'] ?? '',
@@ -358,14 +357,6 @@ class FeedCard extends StatelessWidget {
       textAlign: TextAlign.start,
       maxLines: 2,
     );
-
-    //   CustomText(
-    //   title: data['details'] ?? '',
-    //   fontSize: 13.sp,
-    //   color: Colors.grey.shade700,
-    //   maxLines: 2,
-    //   textAlign: TextAlign.start,
-    // );
   }
 
   void _handleComment() {

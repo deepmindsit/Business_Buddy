@@ -17,7 +17,6 @@ class _EditProfileState extends State<EditProfile> {
         controller.setPreselected();
       });
     });
-
     super.initState();
   }
 
@@ -152,6 +151,7 @@ class _EditProfileState extends State<EditProfile> {
           _buildAbout(),
           SizedBox(height: 8.h),
           _buildSubmitButton(),
+          _buildDeleteButton(),
         ],
       ),
     );
@@ -257,6 +257,33 @@ class _EditProfileState extends State<EditProfile> {
                 ),
               ),
             ),
+    );
+  }
+
+
+  Widget _buildDeleteButton() {
+    return GestureDetector(
+      onTap: () {
+        AllDialogs().showConfirmationDialog(
+          'Delete Account',
+          'This will permanently delete your account. Continue?',
+          onConfirm: () {
+            // perform delete
+            Get.back();
+            Get.snackbar('Account Deleted', 'Your account has been removed');
+          },
+        );
+      },
+      child: Container(
+        width: Get.width,
+        padding: EdgeInsets.symmetric(vertical: 14.h),
+        alignment: Alignment.center,
+        child: CustomText(
+          title: 'Delete account',
+          fontSize: 16.sp,
+          color: textLightGrey,
+        ),
+      ),
     );
   }
 }

@@ -14,7 +14,7 @@ class BusinessCard extends StatefulWidget {
 
 class _BusinessCardState extends State<BusinessCard> {
   final controller = getIt<PartnerDataController>();
-
+  final navController = getIt<NavigationController>();
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -153,7 +153,18 @@ class _BusinessCardState extends State<BusinessCard> {
     }
 
     if (widget.data['requested'] == true && widget.data['accepted'] == true) {
-      return _rightWrapper(child: _buildApprovedSection());
+      return Obx(() {
+        final isLoading =
+            getIt<InboxController>().initiateLoadingMap[widget.data['id']
+                .toString()] ==
+            true;
+
+        return _rightWrapper(
+          child: isLoading
+              ? LoadingWidget(color: primaryColor)
+              : _buildApprovedSection(),
+        );
+      });
     }
 
     return const SizedBox();
@@ -209,32 +220,45 @@ class _BusinessCardState extends State<BusinessCard> {
 
   /// APPROVED
   Widget _buildApprovedSection() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        CustomText(
-          title: "Approved",
-          fontSize: 12.sp,
-          color: Colors.green,
-          fontWeight: FontWeight.w600,
-        ),
-        SizedBox(height: 6.h),
-        Divider(),
-        SizedBox(height: 6.h),
-        Container(
-          width: 40.r,
-          height: 40.r,
-          padding: EdgeInsets.all(8.r),
-          decoration: BoxDecoration(
-            color: primaryColor.withValues(alpha: 0.1),
-            shape: BoxShape.circle,
+    return GestureDetector(
+      onTap: () async {
+        if (widget.data['chat_initiated'] == true) {
+          navController.openSubPage(
+            SingleChat(chatId: widget.data['chat_id']?.toString() ?? ''),
+          );
+        } else {
+          await getIt<InboxController>().initiateChat(
+            widget.data['id'].toString(),
+          );
+        }
+      },
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CustomText(
+            title: "Approved",
+            fontSize: 12.sp,
+            color: Colors.green,
+            fontWeight: FontWeight.w600,
           ),
-          child: HugeIcon(
-            icon: HugeIcons.strokeRoundedMessage02,
-            color: primaryColor,
+          SizedBox(height: 6.h),
+          Divider(),
+          SizedBox(height: 6.h),
+          Container(
+            width: 40.r,
+            height: 40.r,
+            padding: EdgeInsets.all(8.r),
+            decoration: BoxDecoration(
+              color: primaryColor.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: HugeIcon(
+              icon: HugeIcons.strokeRoundedMessage02,
+              color: primaryColor,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

@@ -153,7 +153,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CustomText(
-                  title: '50',
+                  title:
+                      controller.profileDetails['followed_businesses_count']
+                          ?.toString() ??
+                      '-',
                   fontSize: 22.sp,
                   fontWeight: FontWeight.bold,
                   color: Colors.grey[900],
@@ -204,7 +207,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _businessCard(),
           const SizedBox(height: 12),
           _buildLogoutButton(),
-          _buildDeleteButton(),
+          // _buildDeleteButton(),
         ],
       ),
     );
@@ -473,29 +476,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildDeleteButton() {
-    return GestureDetector(
-      onTap: () {
-        AllDialogs().showConfirmationDialog(
-          'Delete Account',
-          'This will permanently delete your account. Continue?',
-          onConfirm: () {
-            // perform delete
-            Get.back();
-            Get.snackbar('Account Deleted', 'Your account has been removed');
-          },
-        );
-      },
-      child: Container(
-        width: Get.width,
-        padding: EdgeInsets.symmetric(vertical: 14.h),
-        alignment: Alignment.center,
-        child: CustomText(
-          title: 'Delete account',
-          fontSize: 16.sp,
-          color: textLightGrey,
-        ),
-      ),
-    );
-  }
+  // Widget _buildDeleteButton() {
+  //   return GestureDetector(
+  //     onTap: () {
+  //       AllDialogs().showConfirmationDialog(
+  //         'Delete Account',
+  //         'This will permanently delete your account. Continue?',
+  //         onConfirm: () {
+  //           // perform delete
+  //           Get.back();
+  //           Get.snackbar('Account Deleted', 'Your account has been removed');
+  //         },
+  //       );
+  //     },
+  //     child: Container(
+  //       width: Get.width,
+  //       padding: EdgeInsets.symmetric(vertical: 14.h),
+  //       alignment: Alignment.center,
+  //       child: CustomText(
+  //         title: 'Delete account',
+  //         fontSize: 16.sp,
+  //         color: textLightGrey,
+  //       ),
+  //     ),
+  //   );
+  // }
 }

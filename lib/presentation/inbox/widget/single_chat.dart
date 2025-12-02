@@ -1,5 +1,4 @@
 import 'package:businessbuddy/utils/exported_path.dart';
-import 'package:intl/intl.dart';
 
 class SingleChat extends StatefulWidget {
   const SingleChat({super.key, required this.chatId});
@@ -29,72 +28,89 @@ class _SingleChatState extends State<SingleChat> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Local back + title
-                  Container(
-                    color: Colors.white,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 8.w,
-                      vertical: 4.h,
-                    ),
-                    child: Row(
-                      spacing: 8,
-                      children: [
-                        GestureDetector(
-                          onTap: () => navController.goBack(),
-                          child: const Icon(Icons.arrow_back),
-                        ),
-                        CustomText(
-                          title:
-                              controller
-                                  .singleChat['business_requirement_name'] ??
-                              '',
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ],
-                    ),
-                  ),
+                  _buildHeader(),
                   const Divider(),
                   // Chat messages
                   _buildAllChat(),
 
                   // Text field at bottom
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
-                      border: const Border(top: BorderSide(color: Colors.grey)),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: controller.msgController,
-                            decoration: const InputDecoration(
-                              hintText: "Type a message...",
-                              border: InputBorder.none,
-                            ),
-                            textInputAction: TextInputAction.send,
-                            onSubmitted: (_) {},
-                          ),
-                        ),
-                        Obx(
-                          () => controller.isSendLoading.isTrue
-                              ? LoadingWidget(color: primaryColor)
-                              : IconButton(
-                                  icon: Icon(Icons.send, color: primaryColor),
-                                  onPressed: () async {
-                                    await controller.sendMsg(widget.chatId);
-                                  },
-                                ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  _buildTextField(),
                 ],
               ),
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Container(
+      color: Colors.white,
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+      child: Row(
+        spacing: 8,
+        children: [
+          GestureDetector(
+            onTap: () => navController.goBack(),
+            child: const Icon(Icons.arrow_back),
+          ),
+          CustomText(
+            title: controller.singleChat['business_requirement_name'] ?? '',
+            fontSize: 18.sp,
+            fontWeight: FontWeight.bold,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTextField() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        // color: Colors.grey.shade100,
+        border: const Border(top: BorderSide(color: Colors.grey, width: 0.5)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 14, vertical: 0),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(25.r),
+              ),
+              child: TextField(
+                controller: controller.msgController,
+                decoration: InputDecoration(
+                  hintText: "Type a message...",
+                  hintStyle: TextStyle(color: Colors.grey, fontSize: 14.sp),
+                  border: InputBorder.none,
+                ),
+                textInputAction: TextInputAction.send,
+                onSubmitted: (value) async {
+                  if (value.trim().isNotEmpty) {
+                    await controller.sendMsg(widget.chatId);
+                  }
+                },
+              ),
+            ),
+          ),
+
+          Obx(
+            () => controller.isSendLoading.isTrue
+                ? LoadingWidget(color: primaryColor, size: 20.r)
+                : IconButton(
+                    icon: HugeIcon(
+                      icon: HugeIcons.strokeRoundedSent,
+                      color: primaryColor,
+                    ),
+                    onPressed: () async {
+                      if (controller.msgController.text.isNotEmpty) {
+                        await controller.sendMsg(widget.chatId);
+                      }
+                    },
+                  ),
+          ),
+        ],
       ),
     );
   }
@@ -132,17 +148,23 @@ class _SingleChatState extends State<SingleChat> {
                     child: Column(
                       children: [
                         // if (chat['document'] == 'yes') _buildFileAttachment(),
-                        CustomText(
-                          title: message['message'].toString(),
-                          fontSize: 13.sp,
-                          maxLines: 10,
-                          color: Colors.black87,
-                          textAlign: TextAlign.start,
+                        Align(
+                          alignment: isMe
+                              ? Alignment.centerRight
+                              : Alignment.centerLeft,
+                          child: CustomText(
+                            title: message['message'].toString(),
+                            fontSize: 13.sp,
+                            maxLines: 10,
+                            color: Colors.black87,
+                            textAlign: TextAlign.start,
+                          ),
                         ),
                         Align(
                           alignment: Alignment.centerRight,
                           child: CustomText(
                             title: message['created_at'],
+                            textAlign: TextAlign.start,
                             // DateFormat(
                             //   'hh mm a',
                             // ).format(DateTime.parse(message['created_at'])),
