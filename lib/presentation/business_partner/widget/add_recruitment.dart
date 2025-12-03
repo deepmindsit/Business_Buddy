@@ -32,7 +32,9 @@ class _AddRecruitmentState extends State<AddRecruitment> {
       () => controller.isMainLoading.isTrue
           ? LoadingWidget(color: primaryColor)
           : SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: 12.w).copyWith(bottom: 12.h),
+              padding: EdgeInsets.symmetric(
+                horizontal: 12.w,
+              ).copyWith(bottom: 12.h),
               child: Form(
                 key: controller.partnerKey,
                 child: Column(

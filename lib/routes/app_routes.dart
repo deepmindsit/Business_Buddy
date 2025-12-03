@@ -1,3 +1,4 @@
+import 'package:businessbuddy/common/global_search.dart';
 import 'package:businessbuddy/presentation/home_screen/widget/business/view/my_business_details.dart';
 import 'package:businessbuddy/presentation/home_screen/widget/business/widget/edit_business.dart';
 import 'package:businessbuddy/presentation/home_screen/widget/business/widget/edit_post.dart';
@@ -26,5 +27,6 @@ class AppRoutes {
     GetPage(name: Routes.editBusiness, page: () => EditBusiness()),
     // GetPage(name: Routes.deleteAccount, page: () => DeleteAccount()),
     GetPage(name: Routes.notificationList, page: () => NotificationList()),
+    GetPage(name: Routes.globalSearch, page: () => GlobalSearch()),
   ];
 }

@@ -7,12 +7,18 @@ class BusinessPartner extends StatefulWidget {
   State<BusinessPartner> createState() => _BusinessPartnerState();
 }
 
-class _BusinessPartnerState extends State<BusinessPartner> {
+class _BusinessPartnerState extends State<BusinessPartner>
+    with SingleTickerProviderStateMixin {
   final navController = getIt<NavigationController>();
   final controller = getIt<PartnerDataController>();
 
   @override
   void initState() {
+    controller.resetFilter();
+    controller.tabController = TabController(length: 2, vsync: this);
+    controller.tabController.addListener(() {
+      controller.tabIndex.value = controller.tabController.index;
+    });
     loadAllData();
     super.initState();
   }
@@ -47,75 +53,81 @@ class _BusinessPartnerState extends State<BusinessPartner> {
   }
 
   Widget _buildPartnerList() {
-    return DefaultTabController(
-      length: 2,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12.r),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // --- Tab Bar ---
-            Row(
-              children: [
-                Expanded(
-                  child: TabBar(
-                    dividerColor: Colors.transparent,
-                    indicatorColor: primaryColor,
-                    labelColor: primaryColor,
-                    indicatorSize: TabBarIndicatorSize.tab,
-                    unselectedLabelColor: Colors.grey,
-                    labelStyle: TextStyle(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w600,
+    return Obx(
+      () => DefaultTabController(
+        length: 2,
+        initialIndex: controller.tabIndex.value,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12.r),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // --- Tab Bar ---
+              Row(
+                children: [
+                  Expanded(
+                    child: TabBar(
+                      controller: controller.tabController,
+                      onTap: (index) => controller.changeTab(index),
+                      dividerColor: Colors.transparent,
+                      indicatorColor: primaryColor,
+                      labelColor: primaryColor,
+                      indicatorSize: TabBarIndicatorSize.tab,
+                      unselectedLabelColor: Colors.grey,
+                      labelStyle: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      tabs: const [
+                        Tab(text: 'Business Requirements', height: 35),
+                        Tab(text: 'Requested', height: 35),
+                      ],
                     ),
-                    tabs: const [
-                      Tab(text: 'Business Requirements', height: 35),
-                      Tab(text: 'Requested', height: 35),
-                    ],
                   ),
-                ),
 
-                /// ---- Filter Icon
-                GestureDetector(
-                  onTap: () {
-                    showModalBottomSheet(
-                      isScrollControlled: true,
-                      backgroundColor: Colors.grey.withValues(alpha: 0.05),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(20),
+                  /// ---- Filter Icon
+                  GestureDetector(
+                    onTap: () {
+                      showModalBottomSheet(
+                        isScrollControlled: true,
+                        backgroundColor: Colors.grey.withValues(alpha: 0.05),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(20),
+                          ),
+                        ),
+                        context: context,
+                        builder: (_) => RecruitmentFilter(),
+                      );
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12.w),
+                      child: CircleAvatar(
+                        radius: 18,
+                        backgroundColor: Colors.grey.withValues(alpha: 0.08),
+                        child: HugeIcon(
+                          icon: HugeIcons.strokeRoundedFilter,
+                          size: 18.r,
                         ),
                       ),
-                      context: context,
-                      builder: (_) => FilterSheet(),
-                    );
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 12.w),
-                    child: CircleAvatar(
-                      radius: 18,
-                      backgroundColor: Colors.grey.withValues(alpha: 0.08),
-                      child: HugeIcon(
-                        icon: HugeIcons.strokeRoundedFilter,
-                        size: 18.r,
-                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            Divider(height: 0),
-            // --- Tab Content ---
-            Expanded(
-              child: TabBarView(
-                physics: const NeverScrollableScrollPhysics(), // prevents
-                children: [_buildRequirement(), _buildRequested()],
+                ],
               ),
-            ),
-          ],
+              Divider(height: 0),
+              // --- Tab Content ---
+              Expanded(
+                child: TabBarView(
+                  controller: controller.tabController,
+                  physics: const NeverScrollableScrollPhysics(), // prevents
+                  children: [_buildRequirement(), _buildRequested()],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -239,6 +251,7 @@ class _BusinessPartnerState extends State<BusinessPartner> {
                   ToastUtils.showLoginToast();
                   return;
                 }
+                navController.openSubPage(AddRecruitment());
               },
               text: 'Post Recruitment',
             ),

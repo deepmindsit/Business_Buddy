@@ -1,7 +1,5 @@
 import 'package:businessbuddy/utils/exported_path.dart';
 
-import '../../home_screen/widget/feeds/widget/feed_card_shimmer.dart';
-
 class SpecialOffer extends StatefulWidget {
   const SpecialOffer({super.key});
 
@@ -14,6 +12,7 @@ class _SpecialOfferState extends State<SpecialOffer> {
 
   @override
   void initState() {
+    controller.resetData();
     controller.getSpecialOffer();
     super.initState();
   }
@@ -24,10 +23,9 @@ class _SpecialOfferState extends State<SpecialOffer> {
       backgroundColor: Colors.white,
       body: Obx(
         () => controller.isLoading.isTrue
-            // ? LoadingWidget(color: primaryColor)
             ? ListView.builder(
                 padding: EdgeInsets.symmetric(horizontal: 8.w),
-                itemCount: 5, // shimmer count
+                itemCount: 5,
                 itemBuilder: (_, i) => const FeedShimmer(),
               )
             : controller.offerList.isEmpty
@@ -64,7 +62,6 @@ class _SpecialOfferState extends State<SpecialOffer> {
                       itemCount: controller.offerList.length,
                       itemBuilder: (_, i) {
                         final item = controller.offerList[i];
-
                         return OfferCard(data: item);
                       },
                     ),
@@ -90,7 +87,7 @@ class _SpecialOfferState extends State<SpecialOffer> {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () => _showFilterBottomSheet(context),
+          onTap: () => _showFilterBottomSheet(),
           borderRadius: BorderRadius.circular(12.r),
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
@@ -118,7 +115,7 @@ class _SpecialOfferState extends State<SpecialOffer> {
   }
 
   // Filter Bottom Sheet Method
-  void _showFilterBottomSheet(BuildContext context) {
+  void _showFilterBottomSheet() {
     Get.bottomSheet(
       isDismissible: true,
       isScrollControlled: true,
@@ -127,7 +124,7 @@ class _SpecialOfferState extends State<SpecialOffer> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       // context: context,
-      const FeedSheet(),
+      const FeedSheet(isFrom: 'offer'),
     );
   }
 }

@@ -9,6 +9,7 @@ class PartnerDataController extends GetxController {
   final isAddLoading = false.obs;
   final isSendLoading = false.obs;
   final isMainLoading = true.obs;
+  final isFilterLoading = false.obs;
   final isCompleted = false.obs;
   final recTitle = TextEditingController();
   final location = TextEditingController();
@@ -23,13 +24,37 @@ class PartnerDataController extends GetxController {
   final wulfList = [].obs;
   final capacityList = [].obs;
 
+  late TabController tabController;
+  final tabIndex = 0.obs;
+
+  void changeTab(int index) {
+    tabIndex.value = index;
+    tabController.animateTo(index);
+  }
+
+  resetFilter() {
+    selectedCategory.value = null;
+    selectedExp.value = null;
+    selectedLocation.value = null;
+    lookingFor.value = null;
+    sort.value = "Ascending";
+  }
+
   Future<void> getBusinessRequired({bool showLoading = true}) async {
     if (showLoading) isLoading.value = true;
     final userId = await LocalStorage.getString('user_id') ?? '';
     try {
-      final response = await _apiService.businessReqList(userId);
+      final response = await _apiService.businessReqList(
+        userId,
+        selectedCategory.value,
+        sort.value!.toLowerCase(),
+        lookingFor.value,
+        selectedExp.value,
+      );
 
       if (response['common']['status'] == true) {
+        requirementList.value = response['data'] ?? [];
+      } else {
         requirementList.value = response['data'] ?? [];
       }
     } catch (e) {
@@ -172,12 +197,22 @@ class PartnerDataController extends GetxController {
     await getCapacity(data['what_you_look_for_id'].toString()).then((v) {
       invCapacity.value = data['investment_capacity'] ?? '';
     });
-
-    // invHistory.clear();
-    // iCanInvest.clear();
-    // notes.clear();
-    // invType.value = null;
-    // invCapacity.value = '';
-    // selectedBusiness.clear();
   }
+
+  ////////////////////////////////////////rec filter///////////////////////////////
+  final selectedCategory = RxnString();
+
+  final locations = ["Pune", "Mumbai", "Nagpur", "Delhi", "Bangalore"].obs;
+  final selectedLocation = RxnString();
+
+  // EXPERIENCE
+  final expList = ["0-1 yrs", "1-3 yrs", "3-5 yrs", "5+ yrs"].obs;
+  final selectedExp = RxnString();
+
+  // SORT
+  final sort = RxnString("Ascending");
+
+  // LOOKING FOR
+  final lookingList = ["Investor", "Investment", "Expert"].obs;
+  final lookingFor = RxnString();
 }

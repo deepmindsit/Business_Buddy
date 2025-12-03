@@ -275,7 +275,7 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
   }
 
   Widget _buildHeroContent() {
-    final details = controller.businessDetails;
+    // final details = controller.businessDetails;
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(

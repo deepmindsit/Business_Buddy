@@ -501,7 +501,12 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<dynamic> getFeeds(String? latLong, String? userId) async {
+  Future<dynamic> getFeeds(
+    String? latLong,
+    String? userId,
+    String? categoryId,
+    String? dateRange,
+  ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     queryParameters.removeWhere((k, v) => v == null);
@@ -512,6 +517,12 @@ class _ApiService implements ApiService {
     }
     if (userId != null) {
       _data.fields.add(MapEntry('user_id', userId));
+    }
+    if (categoryId != null) {
+      _data.fields.add(MapEntry('category_id', categoryId));
+    }
+    if (dateRange != null) {
+      _data.fields.add(MapEntry('date_range', dateRange));
     }
     final _options = _setStreamType<dynamic>(
       Options(method: 'POST', headers: _headers, extra: _extra)
@@ -557,7 +568,11 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<dynamic> getSpecialOffer(String? userId) async {
+  Future<dynamic> getSpecialOffer(
+    String? userId,
+    String? categoryId,
+    String? dateRange,
+  ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     queryParameters.removeWhere((k, v) => v == null);
@@ -565,6 +580,12 @@ class _ApiService implements ApiService {
     final _data = FormData();
     if (userId != null) {
       _data.fields.add(MapEntry('user_id', userId));
+    }
+    if (categoryId != null) {
+      _data.fields.add(MapEntry('category_id', categoryId));
+    }
+    if (dateRange != null) {
+      _data.fields.add(MapEntry('date_range', dateRange));
     }
     final _options = _setStreamType<dynamic>(
       Options(method: 'POST', headers: _headers, extra: _extra)
@@ -582,7 +603,13 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<dynamic> businessReqList(String? userId) async {
+  Future<dynamic> businessReqList(
+    String? userId,
+    String? categoryId,
+    String? sortOrder,
+    String? lookingId,
+    String? investmentCapId,
+  ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     queryParameters.removeWhere((k, v) => v == null);
@@ -590,6 +617,18 @@ class _ApiService implements ApiService {
     final _data = FormData();
     if (userId != null) {
       _data.fields.add(MapEntry('user_id', userId));
+    }
+    if (categoryId != null) {
+      _data.fields.add(MapEntry('category_id', categoryId));
+    }
+    if (sortOrder != null) {
+      _data.fields.add(MapEntry('sort_order', sortOrder));
+    }
+    if (lookingId != null) {
+      _data.fields.add(MapEntry('looking_for_id', lookingId));
+    }
+    if (investmentCapId != null) {
+      _data.fields.add(MapEntry('investement_cap_id', investmentCapId));
     }
     final _options = _setStreamType<dynamic>(
       Options(method: 'POST', headers: _headers, extra: _extra)

@@ -12,6 +12,7 @@ class _NewFeedState extends State<NewFeed> {
 
   @override
   void initState() {
+    getIt<SpecialOfferController>().resetData();
     controller.getFeeds();
     super.initState();
   }
@@ -20,10 +21,9 @@ class _NewFeedState extends State<NewFeed> {
   Widget build(BuildContext context) {
     return Obx(
       () => controller.isLoading.isTrue
-          // ? LoadingWidget(color: primaryColor)
           ? ListView.builder(
               padding: EdgeInsets.symmetric(horizontal: 8.w),
-              itemCount: 5, // shimmer count
+              itemCount: 5,
               itemBuilder: (_, i) => const FeedShimmer(),
             )
           : controller.feedList.isEmpty
@@ -163,7 +163,7 @@ class _NewFeedState extends State<NewFeed> {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () => _showFilterBottomSheet(context),
+          onTap: () => _showFilterBottomSheet(),
           borderRadius: BorderRadius.circular(12.r),
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
@@ -191,7 +191,7 @@ class _NewFeedState extends State<NewFeed> {
   }
 
   // Filter Bottom Sheet Method
-  void _showFilterBottomSheet(BuildContext context) {
+  void _showFilterBottomSheet() {
     Get.bottomSheet(
       isDismissible: true,
       isScrollControlled: true,
@@ -199,8 +199,7 @@ class _NewFeedState extends State<NewFeed> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      // context: context,
-      const FeedSheet(),
+      const FeedSheet(isFrom: 'feed'),
     );
   }
 }

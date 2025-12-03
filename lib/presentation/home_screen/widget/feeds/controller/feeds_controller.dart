@@ -20,6 +20,8 @@ class FeedsController extends GetxController {
       final response = await _apiService.getFeeds(
         '${position.latitude},${position.longitude}',
         userId,
+        getIt<SpecialOfferController>().selectedCategory.value,
+        getIt<SpecialOfferController>().selectedDateRange.value,
       );
 
       if (response['common']['status'] == true) {

@@ -120,46 +120,50 @@ class CustomMainHeader2 extends StatelessWidget {
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.only(left: 8.0),
-                        child: SizedBox(
-                          height: 35.h,
-                          child: TextFormField(
-                            controller: searchController,
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Colors.white,
-                              focusedBorder: buildOutlineInputBorder(),
-                              enabledBorder: buildOutlineInputBorder(),
-                              // 👇 MAKE FIELD SMALL HEIGHT
-                              contentPadding: EdgeInsets.all(
-                                15,
-                                // vertical: 12,
-                                // horizontal: 12,
-                              ),
-                              isDense: true,
-                              visualDensity: VisualDensity(
-                                horizontal: -2,
-                                vertical: -2,
-                              ),
-                              suffixIcon: Icon(
-                                Icons.search,
-                                color: Colors.grey,
-                              ),
-                              prefixIconConstraints: BoxConstraints(
-                                maxWidth: Get.width * 0.1,
-                              ),
-                              prefixIcon: Padding(
-                                padding: const EdgeInsets.only(left: 8.0),
-                                child: Image.asset(
-                                  Images.appIcon,
-                                  width: 18,
-                                  height: 18,
+                        child: GestureDetector(
+                          onTap: () => Get.toNamed(Routes.globalSearch),
+                          child: SizedBox(
+                            height: 35.h,
+                            child: TextFormField(
+                              onTap: () => Get.toNamed(Routes.globalSearch),
+                              controller: searchController,
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.white,
+                                focusedBorder: buildOutlineInputBorder(),
+                                enabledBorder: buildOutlineInputBorder(),
+                                // 👇 MAKE FIELD SMALL HEIGHT
+                                contentPadding: EdgeInsets.all(
+                                  15,
+                                  // vertical: 12,
+                                  // horizontal: 12,
                                 ),
-                              ),
+                                isDense: true,
+                                visualDensity: VisualDensity(
+                                  horizontal: -2,
+                                  vertical: -2,
+                                ),
+                                suffixIcon: Icon(
+                                  Icons.search,
+                                  color: Colors.grey,
+                                ),
+                                prefixIconConstraints: BoxConstraints(
+                                  maxWidth: Get.width * 0.1,
+                                ),
+                                prefixIcon: Padding(
+                                  padding: const EdgeInsets.only(left: 8.0),
+                                  child: Image.asset(
+                                    Images.appIcon,
+                                    width: 18,
+                                    height: 18,
+                                  ),
+                                ),
 
-                              hintText: 'Search Offer, Interest, etc.',
-                              hintStyle: TextStyle(
-                                fontSize: 14.sp,
-                                color: Colors.grey.shade500,
+                                hintText: 'Search Offer, Interest, etc.',
+                                hintStyle: TextStyle(
+                                  fontSize: 14.sp,
+                                  color: Colors.grey.shade500,
+                                ),
                               ),
                             ),
                           ),

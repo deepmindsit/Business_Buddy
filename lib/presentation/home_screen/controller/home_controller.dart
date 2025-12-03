@@ -14,7 +14,7 @@ class HomeController extends GetxController {
   @override
   void onReady() async {
     super.onReady();
-    await requestLocationPermission(); // ensure permissions first
+    await requestLocationPermission();
   }
 
   Future<void> requestLocationPermission() async {

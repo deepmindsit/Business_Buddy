@@ -107,6 +107,8 @@ abstract class ApiService {
   Future<dynamic> getFeeds(
     @Part(name: "lat_long") String? latLong,
     @Part(name: "user_id") String? userId,
+    @Part(name: "category_id") String? categoryId,
+    @Part(name: "date_range") String? dateRange,
   );
 
   @POST(AllUrl.getHome)
@@ -116,10 +118,20 @@ abstract class ApiService {
   );
 
   @POST(AllUrl.getSpecialOffer)
-  Future<dynamic> getSpecialOffer(@Part(name: "user_id") String? userId);
+  Future<dynamic> getSpecialOffer(
+    @Part(name: "user_id") String? userId,
+    @Part(name: "category_id") String? categoryId,
+    @Part(name: "date_range") String? dateRange,
+  );
 
   @POST(AllUrl.businessReqList)
-  Future<dynamic> businessReqList(@Part(name: "user_id") String? userId);
+  Future<dynamic> businessReqList(
+    @Part(name: "user_id") String? userId,
+    @Part(name: "category_id") String? categoryId,
+    @Part(name: "sort_order") String? sortOrder,
+    @Part(name: "looking_for_id") String? lookingId,
+    @Part(name: "investement_cap_id") String? investmentCapId,
+  );
 
   @POST(AllUrl.getWulf)
   Future<dynamic> getWulf();
