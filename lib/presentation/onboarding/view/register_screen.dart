@@ -67,7 +67,7 @@ class RegisterScreen extends StatelessWidget {
         SizedBox(height: 12.h),
         CustomText(
           title:
-              'Join Business Buddy and start connecting\nwith local businesses and customers near you.',
+              'Join BizYaari and start connecting\nwith local businesses and customers near you.',
           textAlign: TextAlign.center,
           color: textLightGrey,
           fontSize: 14.sp,

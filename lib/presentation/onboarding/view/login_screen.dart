@@ -102,7 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Column(
       children: [
         CustomText(
-          title: 'Welcome to\nBusiness Buddy',
+          title: 'Welcome to\nBizYaari',
           textAlign: TextAlign.center,
           fontSize: 28.sp,
           maxLines: 2,

@@ -20,6 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _initializeData() async {
     await _homeController.requestLocationPermission();
+    getIt<SearchNewController>().getLiveLocation();
     _homeController.getHomeApi();
   }
 
@@ -172,7 +173,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildSliderLoader() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8),
-      height: Get.height * 0.15.h,
+      height: Get.height * 0.2.h,
       width: Get.width,
       child: Shimmer.fromColors(
         baseColor: Colors.grey.shade300,

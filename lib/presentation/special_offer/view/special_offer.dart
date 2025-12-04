@@ -29,13 +29,7 @@ class _SpecialOfferState extends State<SpecialOffer> {
                 itemBuilder: (_, i) => const FeedShimmer(),
               )
             : controller.offerList.isEmpty
-            ? Center(
-                child: CustomText(
-                  title: 'No Data Found',
-                  fontSize: 20.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-              )
+            ?commonNoDataFound()
             : SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,

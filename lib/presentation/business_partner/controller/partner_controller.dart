@@ -37,12 +37,18 @@ class PartnerDataController extends GetxController {
     selectedExp.value = null;
     selectedLocation.value = null;
     lookingFor.value = null;
-    sort.value = "Ascending";
+    sort.value = "";
   }
 
   Future<void> getBusinessRequired({bool showLoading = true}) async {
     if (showLoading) isLoading.value = true;
     final userId = await LocalStorage.getString('user_id') ?? '';
+
+    print('selectedCategory.value');
+    print(selectedCategory.value);
+    print(sort.value!.toLowerCase());
+    print(lookingFor.value);
+    print(selectedExp.value);
     try {
       final response = await _apiService.businessReqList(
         userId,
@@ -164,6 +170,7 @@ class PartnerDataController extends GetxController {
 
   Future<void> getRequestedBusiness({bool showLoading = true}) async {
     if (showLoading) isLoading.value = true;
+    requestedBusinessList.clear();
     try {
       final userId = await LocalStorage.getString('user_id') ?? '';
       final response = await _apiService.getBusinessRequested(userId);
@@ -210,7 +217,7 @@ class PartnerDataController extends GetxController {
   final selectedExp = RxnString();
 
   // SORT
-  final sort = RxnString("Ascending");
+  final sort = RxnString("");
 
   // LOOKING FOR
   final lookingList = ["Investor", "Investment", "Expert"].obs;

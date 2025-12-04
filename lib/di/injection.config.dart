@@ -10,6 +10,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:businessbuddy/common/check_demo.dart' as _i771;
+import 'package:businessbuddy/common/global_search_controller.dart' as _i812;
 import 'package:businessbuddy/network/api_service.dart' as _i889;
 import 'package:businessbuddy/presentation/business_partner/controller/partner_controller.dart'
     as _i235;
@@ -47,6 +48,9 @@ extension GetItInjectableX on _i174.GetIt {
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     gh.lazySingleton<_i771.DemoService>(() => _i771.DemoService());
+    gh.lazySingleton<_i812.GlobalSearchController>(
+      () => _i812.GlobalSearchController(),
+    );
     gh.lazySingleton<_i235.PartnerDataController>(
       () => _i235.PartnerDataController(),
     );

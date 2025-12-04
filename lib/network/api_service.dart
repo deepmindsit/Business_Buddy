@@ -256,6 +256,9 @@ abstract class ApiService {
     @Part(name: "user_id") String? userId,
     @Part(name: "business_requirement_id") String? chatId,
   );
+
+  @POST(AllUrl.globalSearch)
+  Future<dynamic> globalSearch(@Part(name: "keyword") String? keyword);
 }
 
 //

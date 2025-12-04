@@ -18,6 +18,7 @@ class CatItemCard extends StatelessWidget {
   final VoidCallback? onCall;
   final VoidCallback? onFollow;
   final VoidCallback? onTap;
+  final bool? isSearch;
 
   const CatItemCard({
     super.key,
@@ -38,6 +39,7 @@ class CatItemCard extends StatelessWidget {
     this.onCall,
     this.onFollow,
     this.onTap,
+    this.isSearch = false,
   });
 
   @override
@@ -70,7 +72,7 @@ class CatItemCard extends StatelessWidget {
               ],
             ),
 
-            _buildActionButtons(),
+            if (isSearch != true) _buildActionButtons(),
           ],
         ),
       ),
@@ -184,18 +186,20 @@ class CatItemCard extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  SizedBox(width: 8.w),
-                  CustomText(
-                    title: '·',
-                    fontSize: 12.sp,
-                    color: Colors.grey[400],
-                  ),
-                  SizedBox(width: 8.w),
-                  CustomText(
-                    title: '$distance km',
-                    fontSize: 12.sp,
-                    color: Colors.grey[600],
-                  ),
+                  if (isSearch != true) SizedBox(width: 8.w),
+                  if (isSearch != true)
+                    CustomText(
+                      title: '·',
+                      fontSize: 12.sp,
+                      color: Colors.grey[400],
+                    ),
+                  if (isSearch != true) SizedBox(width: 8.w),
+                  if (isSearch != true)
+                    CustomText(
+                      title: '$distance km',
+                      fontSize: 12.sp,
+                      color: Colors.grey[600],
+                    ),
                 ],
               ),
             ],
@@ -203,7 +207,6 @@ class CatItemCard extends StatelessWidget {
         ),
 
         // Direction Icon
-
       ],
     );
   }
@@ -244,7 +247,7 @@ class CatItemCard extends StatelessWidget {
             ),
           ],
         ),
-        _buildCategory(),
+        if (isSearch != true) _buildCategory(),
       ],
     );
   }

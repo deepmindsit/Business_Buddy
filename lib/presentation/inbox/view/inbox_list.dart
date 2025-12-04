@@ -51,7 +51,7 @@ class _InboxListState extends State<InboxList> {
               // --- Tab Content ---
               Expanded(
                 child: TabBarView(
-                  physics: const NeverScrollableScrollPhysics(), // prevents
+                  physics: const NeverScrollableScrollPhysics(),
                   children: [ChatScreen(), RequestedScreen()],
                 ),
               ),

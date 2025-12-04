@@ -8,27 +8,138 @@ class GlobalSearch extends StatefulWidget {
 }
 
 class _GlobalSearchState extends State<GlobalSearch> {
+  final _controller = getIt<GlobalSearchController>();
+  final _feedController = getIt<FeedsController>();
+  final _navigationController = getIt<NavigationController>();
+
+  @override
+  void initState() {
+    _controller.searchController.clear();
+    _controller.clearAllLists();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller.debouncer.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppbarPlain(title: "Search"),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(15.w),
-        child: Column(children: [_buildSearchField(), _buildCategorySection()]),
+        child: Column(
+          spacing: 16.h,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: _buildSearchField(),
+            ),
+            Obx(() {
+              if (_controller.isLoading.isTrue) {
+                return _buildLoadingIndicator();
+              }
+
+              if (_controller.isAllListEmpty) {
+                return _buildEmptyState();
+              }
+
+              return Column(
+                children: [
+                  _buildCategorySection(),
+                  _buildBusinessSection(),
+                  _buildRequirementsSection(),
+                ],
+              );
+            }),
+            // Obx(
+            //   () => _controller.isLoading.isTrue
+            //       ? _buildLoadingIndicator()
+            //       : Column(
+            //           children: [
+            //             _buildCategorySection(),
+            //             _buildBusinessSection(),
+            //             _buildRequirementsSection(),
+            //           ],
+            //         ),
+            // ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoadingIndicator() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(
+          width: 40.w,
+          height: 40.h,
+          child: LoadingWidget(color: primaryColor),
+        ),
+        SizedBox(height: 16.h),
+        Text(
+          'Searching ...',
+          style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade600),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Padding(
+      padding: EdgeInsets.only(top: 100.h),
+      child: Column(
+        children: [
+          Icon(Icons.search_off, size: 48.r, color: Colors.grey),
+          SizedBox(height: 12.h),
+          Text(
+            "No results found",
+            style: TextStyle(fontSize: 15.sp, color: Colors.grey),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildSearchField() {
     return TextFormField(
-      controller: TextEditingController(),
+      controller: _controller.searchController,
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white,
         focusedBorder: buildOutlineInputBorder(),
         enabledBorder: buildOutlineInputBorder(),
         contentPadding: EdgeInsets.all(15),
-        suffixIcon: Icon(Icons.search, color: Colors.grey),
+        suffixIcon: Obx(
+          () => _controller.searchText.value.isNotEmpty
+              ? GestureDetector(
+                  onTap: () {
+                    _controller.searchController.clear();
+                    _controller.businessList.value = [];
+                    _controller.categoryList.value = [];
+                    _controller.requirementList.value = [];
+                    _controller.isLoading.value = false;
+                  },
+                  child: Container(
+                    margin: EdgeInsets.all(8.w),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade200,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.close,
+                      size: 18,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                )
+              : Icon(Icons.search, color: mainTextGrey),
+        ),
         prefixIconConstraints: BoxConstraints(maxWidth: Get.width * 0.1),
         prefixIcon: Padding(
           padding: const EdgeInsets.only(left: 8.0),
@@ -37,49 +148,216 @@ class _GlobalSearchState extends State<GlobalSearch> {
         hintText: 'Search Offer, Interest, etc.',
         hintStyle: TextStyle(fontSize: 14.sp, color: Colors.grey.shade500),
       ),
+      onChanged: _onSearchChanged,
     );
   }
 
+  void _onSearchChanged(String text) {
+    _controller.updateSearchText(text);
+    if (text.trim().isEmpty) {
+      _clearSearch();
+      return;
+    }
+
+    _controller.debouncer.run(() {
+      _controller.searchData();
+    });
+  }
+
+  void _clearSearch() {
+    _controller.searchController.clear();
+    _controller.clearAllLists();
+  }
+
   Widget _buildCategorySection() {
-    return SectionContainer(
-      title: 'Categories',
-      actionText: 'View More',
-      onActionTap: () {},
-      child: Container(),
-      // Obx(
-      //       () => _homeController.isLoading.isTrue
-      //       ? buildCategoryLoader()
-      //       : GridView.builder(
-      //     padding: EdgeInsets.only(top: 8.h, left: 8.w, right: 8.w),
-      //     shrinkWrap: true,
-      //     physics: const NeverScrollableScrollPhysics(),
-      //     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-      //       crossAxisCount: 4,
-      //       crossAxisSpacing: 12.w,
-      //       mainAxisSpacing: 0.h,
-      //       childAspectRatio: 0.7,
-      //     ),
-      //     itemCount: _homeController.categoryList.length,
-      //     itemBuilder: (context, index) {
-      //       final category = _homeController.categoryList[index];
-      //       return GestureDetector(
-      //         onTap: () {
-      //           _navigationController.openSubPage(
-      //             CategoryList(
-      //               categoryId: category['id'].toString(),
-      //               categoryName: category['name'].toString(),
-      //             ),
-      //           );
-      //         },
-      //         child: CategoryCard(
-      //           image: category['image'].toString(),
-      //           name: category['name'].toString(),
-      //         ),
-      //       );
-      //     },
-      //   ),
-      // ),
+    return Obx(
+      () => _controller.categoryList.isEmpty
+          ? SizedBox()
+          : SectionContainer(
+              title: 'Categories',
+              actionText: 'View More',
+              onActionTap: _handleViewAllCategories,
+              child: Obx(
+                () => _controller.isLoading.isTrue
+                    ? buildCategoryLoader()
+                    : GridView.builder(
+                        padding: EdgeInsets.only(
+                          top: 8.h,
+                          left: 8.w,
+                          right: 8.w,
+                        ),
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 4,
+                          crossAxisSpacing: 12.w,
+                          mainAxisSpacing: 0.h,
+                          childAspectRatio: 0.7,
+                        ),
+                        itemCount: _controller.categoryList.length,
+                        itemBuilder: (context, index) {
+                          final category = _controller.categoryList[index];
+                          return GestureDetector(
+                            onTap: () {
+                              Get.back();
+                              _navigationController.openSubPage(
+                                CategoryList(
+                                  categoryId: category['id'].toString(),
+                                  categoryName: category['name'].toString(),
+                                ),
+                              );
+                            },
+                            child: CategoryCard(
+                              image: category['image'].toString(),
+                              name: category['name'].toString(),
+                            ),
+                          );
+                        },
+                      ),
+              ),
+            ),
     );
+  }
+
+  Widget _buildBusinessSection() {
+    return Obx(
+      () => _controller.businessList.isEmpty
+          ? SizedBox()
+          : SectionContainer(
+              title: 'Business',
+              actionText: 'View More',
+              onActionTap: _handleViewAllFeeds,
+              child: Obx(
+                () => _controller.isLoading.isTrue
+                    ? ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        padding: EdgeInsets.symmetric(horizontal: 8.w),
+                        itemCount: 6, // shimmer items
+                        itemBuilder: (_, i) => CatItemCardShimmer(),
+                      )
+                    : ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8.w,
+                        ).copyWith(top: 12.h),
+                        itemCount: _controller.businessList.length,
+                        itemBuilder: (_, i) {
+                          final item = _controller.businessList[i];
+                          return CatItemCard(
+                            isSearch: true,
+                            offers: item['offers'] ?? [],
+                            latitude: item['latitude'] ?? '',
+                            isFollowed: item['is_followed'] ?? false,
+                            isSelf: item['self_business'] ?? false,
+                            longitude: item['longitude'] ?? '',
+                            distance: item['distance']?.toString() ?? '',
+                            name: item['name'] ?? '',
+                            location: item['address'] ?? '',
+                            category: item['category'] ?? '',
+                            rating: item['total_rating']?.toString() ?? '0',
+                            reviewCount:
+                                item['reviews_count']?.toString() ?? '0',
+                            offerText: '${item['offers_count']} Offers ',
+                            phoneNumber: item['mobile_number'] ?? '',
+                            imagePath: item['image'] ?? '',
+                            onCall: () {
+                              if (!getIt<DemoService>().isDemo) {
+                                ToastUtils.showLoginToast();
+                                return;
+                              }
+                              if (item['mobile_number'] != null) {
+                                makePhoneCall(item['mobile_number']);
+                              }
+                            },
+                            onTap: () {
+                              Get.back();
+                              _navigationController.openSubPage(
+                                CategoryDetailPage(
+                                  title: item['name'] ?? '',
+                                  businessId: item['id']?.toString() ?? '',
+                                ),
+                              );
+                            },
+                            onFollow: () async {
+                              if (!getIt<DemoService>().isDemo) {
+                                ToastUtils.showLoginToast();
+                                return;
+                              }
+                              if (item['is_followed'] == true) {
+                                await _feedController.unfollowBusiness(
+                                  item['follow_id'].toString(),
+                                );
+                              } else {
+                                await _feedController.followBusiness(
+                                  item['id'].toString(),
+                                );
+                              }
+
+                              item['is_followed'] = !item['is_followed'];
+                            },
+                          );
+                        },
+                      ),
+              ),
+            ),
+    );
+  }
+
+  Widget _buildRequirementsSection() {
+    return Obx(
+      () => _controller.requirementList.isEmpty
+          ? SizedBox()
+          : SectionContainer(
+              title: 'Business Requirements',
+              actionText: 'View More',
+              onActionTap: _handleViewAllRequirements,
+              child: Obx(
+                () => _controller.isLoading.isTrue
+                    ? ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        padding: EdgeInsets.all(8),
+                        itemCount: 6,
+                        separatorBuilder: (_, __) => SizedBox(height: 10),
+                        itemBuilder: (context, index) =>
+                            const BusinessCardShimmer(),
+                      )
+                    : ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        padding: const EdgeInsets.all(8),
+                        separatorBuilder: (context, index) =>
+                            Divider(height: 1.h, color: lightGrey),
+                        itemCount: _controller.requirementList.length,
+                        itemBuilder: (context, index) {
+                          final requirement =
+                              _controller.requirementList[index];
+                          return BusinessCard(
+                            data: requirement,
+                            isSearch: true,
+                          );
+                        },
+                      ),
+              ),
+            ),
+    );
+  }
+
+  void _handleViewAllCategories() {
+    Get.back();
+    _navigationController.updateTopTab(0);
+  }
+
+  void _handleViewAllFeeds() {
+    Get.back();
+    _navigationController.updateTopTab(1);
+  }
+
+  void _handleViewAllRequirements() {
+    Get.back();
+    _navigationController.updateBottomIndex(2);
   }
 }
 

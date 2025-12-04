@@ -186,8 +186,7 @@ class FeedCard extends StatelessWidget {
 
   Widget _buildImageSection() {
     final image = data['image'] ?? '';
-    // return Image.network(image, fit: BoxFit.contain);
-
+    _homeController.detectImageRatio(image);
     return Obx(
       () => GestureDetector(
         onDoubleTap: () async {
@@ -199,7 +198,18 @@ class FeedCard extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(12.r),
-              child: Image.network(image, fit: BoxFit.contain),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: 400.h, // ✅ MAX HEIGHT LOCKED
+                  // minHeight: 250.h, // ✅ Optional minimum height
+                  // maxWidth: double.infinity,
+                ),
+                child: Image.network(
+                  image,
+                  fit: BoxFit.contain,
+                  width: Get.width,
+                ),
+              ),
             ),
             AnimatedOpacity(
               duration: const Duration(milliseconds: 200),
@@ -360,6 +370,10 @@ class FeedCard extends StatelessWidget {
   }
 
   void _handleComment() {
+    if (!getIt<DemoService>().isDemo) {
+      ToastUtils.showLoginToast();
+      return;
+    }
     Get.bottomSheet(
       CommentsBottomSheet(postId: data['post_id']?.toString() ?? ''),
       isDismissible: true,

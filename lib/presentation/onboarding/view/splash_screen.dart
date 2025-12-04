@@ -68,7 +68,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Widget _logoRemainder() {
-    return Image.asset(Images.logo, width: Get.width * 0.6.h);
+    return Image.asset(Images.logoVert, width: Get.width * 0.6.h);
     // return Image.network('http://192.168.29.37/flutter_splash/public/uploads/splash/flutter_splash.gif', width: Get.width * 0.9.h);
   }
 }

@@ -4,6 +4,7 @@ import 'package:businessbuddy/utils/exported_path.dart';
 class SpecialOfferController extends GetxController {
   final ApiService _apiService = Get.find();
   final isLoading = false.obs;
+  final isApply = false.obs;
   final offerList = [].obs;
 
   Future<void> getSpecialOffer({bool showLoading = true}) async {
@@ -62,5 +63,6 @@ class SpecialOfferController extends GetxController {
     customStart = null;
     customEnd = null;
     selectedDateRange.value = null;
+    isApply.value = false;
   }
 }

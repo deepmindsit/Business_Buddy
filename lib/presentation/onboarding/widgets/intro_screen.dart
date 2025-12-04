@@ -23,7 +23,7 @@ class IntroScreen extends StatelessWidget {
 
       pages: [
         _buildPage(
-          title: "Welcome to\nBusiness Buddy",
+          title: "Welcome to\nBizYaari",
           body:
               "Discover nearby stores, deals, and essential services — right around you.",
           image: Images.intro_1,

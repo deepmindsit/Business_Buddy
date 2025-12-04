@@ -30,6 +30,7 @@ class InboxController extends GetxController {
   Future<void> getAllChat({bool showLoading = true}) async {
     if (showLoading) isChatLoading.value = true;
     final userId = await LocalStorage.getString('user_id') ?? '';
+    allChats.clear();
     try {
       final response = await _apiService.getChatList(userId);
 
@@ -116,6 +117,7 @@ class InboxController extends GetxController {
 
   Future<void> getReceiveBusinessRequest({bool showLoading = true}) async {
     if (showLoading) isLoading.value = true;
+    receivedRequestList.clear();
     final userId = await LocalStorage.getString('user_id') ?? '';
     try {
       final response = await _apiService.getBusinessReceivedRequest(userId);

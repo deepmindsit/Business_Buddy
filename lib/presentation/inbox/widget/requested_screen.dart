@@ -75,11 +75,9 @@ class _RequestedScreenState extends State<RequestedScreen> {
   Widget _buildSendList() {
     return Obx(
       () => getIt<PartnerDataController>().isLoading.isTrue
-          ? LoadingWidget(color: primaryColor)
+          ? const ChatListShimmer()
           : getIt<PartnerDataController>().requestedBusinessList.isEmpty
-          ? Center(
-              child: CustomText(title: 'No Data Found', fontSize: 14.sp),
-            )
+          ? commonNoDataFound()
           : ListView.separated(
               separatorBuilder: (context, index) =>
                   Divider(height: 5, color: lightGrey),
@@ -173,11 +171,9 @@ class _RequestedScreenState extends State<RequestedScreen> {
   Widget _buildReceivedList() {
     return Obx(
       () => controller.isLoading.isTrue
-          ? LoadingWidget(color: primaryColor)
+          ? const ChatListShimmer()
           : controller.receivedRequestList.isEmpty
-          ? Center(
-              child: CustomText(title: 'No Data Found', fontSize: 14.sp),
-            )
+          ? commonNoDataFound()
           : ListView.separated(
               separatorBuilder: (context, index) =>
                   Divider(height: 5, color: lightGrey),

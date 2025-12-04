@@ -7,6 +7,6 @@ class SearchNewController extends GetxController {
   final addressController = TextEditingController();
 
   void getLiveLocation() async {
-   address.value = await updateUserLocation();
+    address.value = await updateUserLocation();
   }
 }

@@ -281,7 +281,7 @@ class _EditRecruitmentState extends State<EditRecruitment> {
           : GestureDetector(
               onTap: () async {
                 if (controller.partnerKey.currentState!.validate()) {
-                  await controller.addBusinessRequired();
+                  // await controller.addBusinessRequired();
                 }
                 // you can also access highlightPoints here
               },

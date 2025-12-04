@@ -1,5 +1,6 @@
 class Images {
   static const logo = 'assets/images/ic_logo.png';
+  static const logoVert = 'assets/images/ic_logo_vert.png';
   static const noInternet = 'assets/images/no_internet_connection.png';
   static const intro_1 = 'assets/images/ic_intro_1.png';
   static const intro_2 = 'assets/images/ic_intro_2.png';

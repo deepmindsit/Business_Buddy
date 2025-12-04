@@ -7,14 +7,14 @@ class CustomMainHeader2 extends StatelessWidget {
   final VoidCallback? onBackTap;
   final TextEditingController searchController;
 
-  CustomMainHeader2({
+  const CustomMainHeader2({
     super.key,
     this.showBackButton = true,
     this.onBackTap,
     required this.searchController,
   });
 
-  final controller = getIt<NavigationController>();
+  // final controller = getIt<NavigationController>();
 
   @override
   Widget build(BuildContext context) {
@@ -127,11 +127,14 @@ class CustomMainHeader2 extends StatelessWidget {
                             child: TextFormField(
                               onTap: () => Get.toNamed(Routes.globalSearch),
                               controller: searchController,
+                              enabled: false,
+
                               decoration: InputDecoration(
                                 filled: true,
                                 fillColor: Colors.white,
                                 focusedBorder: buildOutlineInputBorder(),
                                 enabledBorder: buildOutlineInputBorder(),
+                                disabledBorder: buildOutlineInputBorder(),
                                 // 👇 MAKE FIELD SMALL HEIGHT
                                 contentPadding: EdgeInsets.all(
                                   15,

@@ -196,9 +196,7 @@ class _BusinessPartnerState extends State<BusinessPartner>
       () => controller.isMainLoading.isTrue
           ? LoadingWidget(color: primaryColor)
           : controller.requestedBusinessList.isEmpty
-          ? Center(
-              child: CustomText(title: 'No Data Found', fontSize: 16.sp),
-            )
+          ? commonNoDataFound()
           : ListView.separated(
               separatorBuilder: (context, index) =>
                   Divider(height: 5, color: lightGrey),

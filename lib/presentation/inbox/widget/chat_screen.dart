@@ -14,11 +14,9 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Obx(
       () => controller.isChatLoading.isTrue
-          ? LoadingWidget(color: primaryColor)
+          ? const ChatListShimmer()
           : controller.allChats.isEmpty
-          ? Center(
-              child: CustomText(title: 'No Data Found', fontSize: 14.sp),
-            )
+          ? commonNoDataFound()
           : ListView.separated(
               separatorBuilder: (context, index) =>
                   Divider(height: 5, color: lightGrey),
@@ -69,6 +67,66 @@ class _ChatScreenState extends State<ChatScreen> {
                 );
               },
             ),
+    );
+  }
+}
+
+class ChatListShimmer extends StatelessWidget {
+  const ChatListShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+      padding: EdgeInsets.zero,
+      itemCount: 8,
+      separatorBuilder: (_, __) => Divider(height: 5, color: lightGrey),
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 12.w),
+          child: Row(
+            children: [
+              Shimmer.fromColors(
+                baseColor: Colors.grey.shade300,
+                highlightColor: Colors.grey.shade100,
+                child: CircleAvatar(radius: 24.r),
+              ),
+              SizedBox(width: 12.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Shimmer.fromColors(
+                      baseColor: Colors.grey.shade300,
+                      highlightColor: Colors.grey.shade100,
+                      child: Container(
+                        height: 14.h,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(6.r),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 8.h),
+                    Shimmer.fromColors(
+                      baseColor: Colors.grey.shade300,
+                      highlightColor: Colors.grey.shade100,
+                      child: Container(
+                        height: 12.h,
+                        width: 120.w,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(6.r),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

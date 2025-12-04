@@ -677,7 +677,10 @@ Future<dynamic> _showOffer(LBOController controller) {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20.w,
+                    vertical: 8.h,
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -806,7 +809,8 @@ Future<dynamic> _showOffer(LBOController controller) {
                                       Images.defaultImage,
                                     ),
                                     image: NetworkImage(
-                                      controller.singleOffer['image'].toString(),
+                                      controller.singleOffer['image']
+                                          .toString(),
                                     ),
                                     imageErrorBuilder:
                                         (context, error, stackTrace) {
@@ -829,7 +833,8 @@ Future<dynamic> _showOffer(LBOController controller) {
 
                             // Business Name
                             Text(
-                              controller.singleOffer['business_name'].toString(),
+                              controller.singleOffer['business_name']
+                                  .toString(),
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w700,
@@ -916,7 +921,8 @@ Future<dynamic> _showOffer(LBOController controller) {
                                   ),
                                   SizedBox(height: 12),
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: controller
                                         .singleOffer['highlight_points']
                                         .map<Widget>(
@@ -937,7 +943,9 @@ Future<dynamic> _showOffer(LBOController controller) {
                                 ),
                                 SizedBox(width: 6),
                                 Text(
-                                  controller.singleOffer['created_at']?.toString() ?? "",
+                                  controller.singleOffer['created_at']
+                                          ?.toString() ??
+                                      "",
                                   style: TextStyle(
                                     fontSize: 12.sp,
                                     color: Colors.grey.shade700,
@@ -1259,7 +1267,8 @@ Widget buildHeadingWithButton({
       Container(
         padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 8),
         decoration: BoxDecoration(
-          color: lightGrey,
+          // color: lightGrey,
+          border: Border.all(color: lightGrey),
           borderRadius: BorderRadius.circular(8.r),
         ),
         child: GestureDetector(
@@ -1267,7 +1276,7 @@ Widget buildHeadingWithButton({
           child: CustomText(
             title: rightText,
             fontSize: 12.sp,
-            color: textDarkGrey,
+            color: Colors.black,
           ),
         ),
       ),
@@ -1387,6 +1396,31 @@ Widget buildDotSeparator() {
         color: Colors.grey.shade500,
         shape: BoxShape.circle,
       ),
+    ),
+  );
+}
+
+Widget commonNoDataFound() {
+  return Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Image.asset(
+          Images.noData,
+          width: 120.w,
+          height: 120.h,
+          fit: BoxFit.contain,
+        ),
+        SizedBox(height: 20),
+        Text(
+          "No data found",
+          style: TextStyle(
+            color: Colors.grey.shade600,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
     ),
   );
 }

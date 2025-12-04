@@ -26,7 +26,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       centerTitle: false,
       title: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0).copyWith(top: 16),
-        child: Image.asset(Images.logo, width: Get.width * 0.5.w),
+        child: Image.asset(Images.logo, width: Get.width * 0.4.w),
       ),
       leading: showBackButton
           ? IconButton(

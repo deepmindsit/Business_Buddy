@@ -1,12 +1,16 @@
 import 'package:businessbuddy/utils/exported_path.dart';
 
-import 'edit_recruitment.dart';
-
 class BusinessCard extends StatefulWidget {
   final dynamic data;
   final bool isRequested;
+  final bool isSearch;
 
-  const BusinessCard({super.key, this.data, this.isRequested = false});
+  const BusinessCard({
+    super.key,
+    this.data,
+    this.isRequested = false,
+    this.isSearch = false,
+  });
 
   @override
   State<BusinessCard> createState() => _BusinessCardState();
@@ -40,14 +44,15 @@ class _BusinessCardState extends State<BusinessCard> {
           children: [
             _buildLeftData(),
 
-            VerticalDivider(
-              color: Colors.grey.shade300,
-              thickness: 1,
-              width: 1,
-            ),
+            if (widget.isSearch != true)
+              VerticalDivider(
+                color: Colors.grey.shade300,
+                thickness: 1,
+                width: 1,
+              ),
 
             /// RIGHT SECTION
-            Expanded(child: _buildRightSection()),
+            if (widget.isSearch != true) Expanded(child: _buildRightSection()),
           ],
         ),
       ),
@@ -222,14 +227,16 @@ class _BusinessCardState extends State<BusinessCard> {
   Widget _buildApprovedSection() {
     return GestureDetector(
       onTap: () async {
-        if (widget.data['chat_initiated'] == true) {
-          navController.openSubPage(
-            SingleChat(chatId: widget.data['chat_id']?.toString() ?? ''),
-          );
-        } else {
-          await getIt<InboxController>().initiateChat(
-            widget.data['id'].toString(),
-          );
+        if (widget.isRequested != true) {
+          if (widget.data['chat_initiated'] == true) {
+            navController.openSubPage(
+              SingleChat(chatId: widget.data['chat_id']?.toString() ?? ''),
+            );
+          } else {
+            await getIt<InboxController>().initiateChat(
+              widget.data['id'].toString(),
+            );
+          }
         }
       },
       child: Column(
@@ -241,22 +248,23 @@ class _BusinessCardState extends State<BusinessCard> {
             color: Colors.green,
             fontWeight: FontWeight.w600,
           ),
-          SizedBox(height: 6.h),
-          Divider(),
-          SizedBox(height: 6.h),
-          Container(
-            width: 40.r,
-            height: 40.r,
-            padding: EdgeInsets.all(8.r),
-            decoration: BoxDecoration(
-              color: primaryColor.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
+          if (widget.isRequested != true) SizedBox(height: 6.h),
+          if (widget.isRequested != true) Divider(),
+          if (widget.isRequested != true)  SizedBox(height: 6.h),
+          if (widget.isRequested != true)
+            Container(
+              width: 40.r,
+              height: 40.r,
+              padding: EdgeInsets.all(8.r),
+              decoration: BoxDecoration(
+                color: primaryColor.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: HugeIcon(
+                icon: HugeIcons.strokeRoundedMessage02,
+                color: primaryColor,
+              ),
             ),
-            child: HugeIcon(
-              icon: HugeIcons.strokeRoundedMessage02,
-              color: primaryColor,
-            ),
-          ),
         ],
       ),
     );

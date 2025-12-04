@@ -496,10 +496,10 @@ class _EditBusinessState extends State<EditBusiness> {
         Expanded(
           child: _buildActionButton(
             icon: Icons.add,
-            text: 'Add',
+            text: 'Update',
             onPressed: () async {
               if (controller.businessKey.currentState!.validate()) {
-                await controller.addNewBusiness();
+                // await controller.addNewBusiness();
               }
             },
             backgroundColor: Colors.transparent,

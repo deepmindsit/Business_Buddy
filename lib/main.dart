@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
             );
             return MediaQuery(data: newMediaQueryData, child: child!);
           },
-          title: 'Business Buddy',
+          title: 'BizYaari',
           // initialRoute: Routes.mainScreen,
           initialRoute: Routes.splash,
           defaultTransition: Transition.fadeIn,

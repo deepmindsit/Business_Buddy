@@ -165,6 +165,7 @@ class _FeedSheetState extends State<FeedSheet> {
                         controller.customStart = null;
                         controller.customEnd = null;
                         controller.selectedDateRange.value = null;
+                        controller.isApply.value = false;
                         Get.back();
                         if (widget.isFrom == 'feed') {
                           await getIt<FeedsController>().getFeeds();
@@ -185,6 +186,7 @@ class _FeedSheetState extends State<FeedSheet> {
                     child: ElevatedButton(
                       onPressed: () async {
                         Get.back();
+                        controller.isApply.value = true;
                         if (widget.isFrom == 'feed') {
                           await getIt<FeedsController>().getFeeds();
                         } else {

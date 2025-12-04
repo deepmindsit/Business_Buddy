@@ -68,13 +68,7 @@ class _BusinessDetailsState extends State<BusinessDetails> {
       () => controller.isDetailsLoading.isTrue
           ? LoadingWidget(color: primaryColor)
           : controller.businessDetails.isEmpty
-          ? Center(
-              child: CustomText(
-                title: 'No Data Found',
-                fontSize: 20.sp,
-                fontWeight: FontWeight.bold,
-              ),
-            )
+          ? commonNoDataFound()
           : SingleChildScrollView(
               padding: EdgeInsets.all(16.w),
               child: Column(

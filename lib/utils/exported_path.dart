@@ -27,6 +27,7 @@ export 'package:businessbuddy/presentation/home_screen/widget/business/widget/ad
 export 'package:businessbuddy/presentation/home_screen/widget/business/view/add_business.dart';
 export 'package:businessbuddy/presentation/inbox/widget/chat_screen.dart';
 export 'package:businessbuddy/presentation/inbox/widget/requested_screen.dart';
+export 'package:businessbuddy/presentation/business_partner/widget/edit_recruitment.dart';
 
 //widget
 export 'package:businessbuddy/utils/color.dart';
@@ -47,6 +48,8 @@ export 'package:businessbuddy/components/documents_preparation.dart';
 export 'package:businessbuddy/utils/location_service.dart';
 export 'package:businessbuddy/presentation/home_screen/widget/feeds/widget/feed_card_shimmer.dart';
 export 'package:businessbuddy/presentation/business_partner/widget/business_card_shimmer.dart';
+export 'package:businessbuddy/components/search_location.dart';
+export 'package:businessbuddy/presentation/home_screen/widget/explorer/widget/category_details_shimmer.dart';
 
 //component
 export 'package:businessbuddy/components/screenutil_config.dart';
@@ -72,6 +75,7 @@ export 'package:businessbuddy/components/appbar_main_2.dart';
 export 'package:businessbuddy/components/custom_carousel_slider.dart';
 export 'package:businessbuddy/common/filter_page.dart';
 export 'package:businessbuddy/presentation/business_partner/widget/rec_filter.dart';
+export 'package:businessbuddy/presentation/home_screen/widget/explorer/widget/cat_item_card_shimmer.dart';
 
 //controller
 export 'package:businessbuddy/presentation/onboarding/controller/splash_controller.dart';
@@ -87,6 +91,7 @@ export 'package:businessbuddy/presentation/inbox/controller/inbox_controller.dar
 export 'package:businessbuddy/common/check_demo.dart';
 export 'package:businessbuddy/presentation/home_screen/controller/search_controller.dart';
 export 'package:businessbuddy/presentation/home_screen/controller/home_controller.dart';
+export 'package:businessbuddy/common/global_search_controller.dart';
 
 //plugins
 export 'package:get/get.dart';

@@ -27,13 +27,7 @@ class _NewFeedState extends State<NewFeed> {
               itemBuilder: (_, i) => const FeedShimmer(),
             )
           : controller.feedList.isEmpty
-          ? Center(
-              child: CustomText(
-                title: 'No Data Found',
-                fontSize: 20.sp,
-                fontWeight: FontWeight.bold,
-              ),
-            )
+          ? commonNoDataFound()
           : SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -102,8 +96,6 @@ class _NewFeedState extends State<NewFeed> {
                                   // Toggle locally
                                   item['is_liked'] = !wasLiked;
                                   await controller.getFeeds(showLoading: false);
-                                } catch (e) {
-                                  print("follow error: $e");
                                 } finally {
                                   controller.isLikeProcessing.value = false;
                                 }
@@ -133,8 +125,6 @@ class _NewFeedState extends State<NewFeed> {
                                   item['is_followed'] = !item['is_followed'];
 
                                   await controller.getFeeds(showLoading: false);
-                                } catch (e) {
-                                  print("follow error: $e");
                                 } finally {
                                   controller.isFollowProcessing.value = false;
                                 }
@@ -150,39 +140,43 @@ class _NewFeedState extends State<NewFeed> {
 
   // Enhanced Filter Button Widget
   Widget _buildFilterButton() {
-    return Container(
-      margin: EdgeInsets.only(right: 4.w),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12.r),
-        color: primaryColor.withValues(alpha: 0.1),
-        border: Border.all(
-          color: primaryColor.withValues(alpha: 0.3),
-          width: 1,
-        ),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () => _showFilterBottomSheet(),
+    return Obx(
+      () => Container(
+        margin: EdgeInsets.only(right: 4.w),
+        decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12.r),
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                HugeIcon(
-                  icon: HugeIcons.strokeRoundedFilter,
-                  size: 16.r,
-                  color: primaryColor,
-                ),
-                SizedBox(width: 2.w),
-                CustomText(
-                  title: 'Filter',
-                  fontSize: 13.sp,
-                  fontWeight: FontWeight.w600,
-                  color: primaryColor,
-                ),
-              ],
+          color: getIt<SpecialOfferController>().isApply.isTrue
+              ? primaryColor.withValues(alpha: 0.1)
+              : Colors.transparent,
+          border: Border.all(
+            color: primaryColor.withValues(alpha: 0.3),
+            width: 1,
+          ),
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () => _showFilterBottomSheet(),
+            borderRadius: BorderRadius.circular(12.r),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  HugeIcon(
+                    icon: HugeIcons.strokeRoundedFilter,
+                    size: 16.r,
+                    color: primaryColor,
+                  ),
+                  SizedBox(width: 2.w),
+                  CustomText(
+                    title: 'Filter',
+                    fontSize: 13.sp,
+                    fontWeight: FontWeight.w600,
+                    color: primaryColor,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
