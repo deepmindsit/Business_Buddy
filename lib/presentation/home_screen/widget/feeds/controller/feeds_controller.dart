@@ -12,13 +12,18 @@ class FeedsController extends GetxController {
   Future<void> getFeeds({bool showLoading = true}) async {
     if (showLoading) isLoading.value = true;
 
-    Position position = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
     final userId = await LocalStorage.getString('user_id') ?? '';
     try {
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      final lat = getIt<LocationController>().latitude.value.toString();
+      final lng = getIt<LocationController>().longitude.value.toString();
+
+      print('latitude feed===============>$lat');
+      print('longitude lng=============>$lng');
       final response = await _apiService.getFeeds(
-        '${position.latitude},${position.longitude}',
+        '$lat,$lng',
         userId,
         getIt<SpecialOfferController>().selectedCategory.value,
         getIt<SpecialOfferController>().selectedDateRange.value,
@@ -95,9 +100,6 @@ class FeedsController extends GetxController {
     likeLoadingMap.refresh();
 
     final userId = await LocalStorage.getString('user_id') ?? '';
-    print('businessId===========>$businessId');
-    print('postId===========>$postId');
-    print('userId===========>$userId');
     try {
       final response = await _apiService.likeBusiness(
         userId,

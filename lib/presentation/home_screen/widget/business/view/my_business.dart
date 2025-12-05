@@ -125,16 +125,26 @@ class _LboScreenState extends State<LboScreen> {
   Widget _buildBusinessList() {
     return SingleChildScrollView(
       child: Obx(
-        () => Column(
-          spacing: 8.h,
-          children: [
-            _buildAddBusinessButton(),
-            _buildBusinessListBody(),
-            if (controller.isBusinessApproved.value == '0') _pendingBusiness(),
-            if (controller.isBusinessApproved.value == '1')
-              _buildPostAndOffers(),
-            SizedBox(height: 12.h),
-          ],
+        () => AnimationLimiter(
+          child: Column(
+            spacing: 12.h,
+            children: AnimationConfiguration.toStaggeredList(
+              duration: const Duration(milliseconds: 500),
+              childAnimationBuilder: (widget) => SlideAnimation(
+                verticalOffset: 50.0,
+                child: FadeInAnimation(child: widget),
+              ),
+              children: [
+                _buildAddBusinessButton(),
+                _buildBusinessListBody(),
+                if (controller.isBusinessApproved.value == '0')
+                  _pendingBusiness(),
+                if (controller.isBusinessApproved.value == '1')
+                  _buildPostAndOffers(),
+                SizedBox(height: 12.h),
+              ],
+            ),
+          ),
         ),
       ),
     );

@@ -1424,3 +1424,29 @@ Widget commonNoDataFound() {
     ),
   );
 }
+
+void expandContent(dynamic data) {
+  // Implement content expansion
+  Get.dialog(
+    AlertDialog(
+      surfaceTintColor: Colors.white,
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
+      content: SingleChildScrollView(
+        child: CustomText(
+          title: data ?? '',
+          fontSize: 14.sp,
+          maxLines: 30,
+          textAlign: TextAlign.start,
+        ),
+      ),
+      actionsPadding: EdgeInsets.zero,
+      actions: [
+        TextButton(
+          onPressed: () => Get.back(),
+          child: Text('Close', style: TextStyle(color: primaryColor)),
+        ),
+      ],
+    ),
+  );
+}

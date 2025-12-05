@@ -101,12 +101,14 @@ class LBOController extends GetxController {
     final userId = await LocalStorage.getString('user_id') ?? '';
     businessDetails.clear();
     try {
+      final lat = getIt<LocationController>().latitude.value.toString();
+      final lng = getIt<LocationController>().longitude.value.toString();
       Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
       final response = await _apiService.myBusinessDetails(
         businessId,
-        '${position.latitude},${position.longitude}',
+        '$lat,$lng',
         userId,
       );
       if (response['common']['status'] == true) {
@@ -150,7 +152,8 @@ class LBOController extends GetxController {
       Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
-
+      final lat = getIt<LocationController>().latitude.value.toString();
+      final lng = getIt<LocationController>().longitude.value.toString();
       final docs = await prepareDocuments(attachments);
 
       final response = await _apiService.addBusiness(
@@ -160,7 +163,7 @@ class LBOController extends GetxController {
         numberCtrl.text.trim(),
         offering.value,
         aboutCtrl.text.trim(),
-        '${position.latitude},${position.longitude}',
+        '$lat,$lng',
         referCode.text.trim(),
         profileImage: profileImage.value,
         attachment: docs,

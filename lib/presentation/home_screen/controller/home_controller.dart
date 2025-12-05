@@ -11,31 +11,6 @@ class HomeController extends GetxController {
   final requirementList = [].obs;
   final sliderList = [].obs;
 
-
-  // ✅ Stores image ratio for each URL
-  RxMap<String, bool> imageRatioMap = <String, bool>{}.obs;
-  // true  = 9:16 (portrait)
-  // false = 1:1  (square)
-
-  void detectImageRatio(String url) {
-    if (imageRatioMap.containsKey(url)) return;
-
-    final Image image = Image.network(url);
-    image.image.resolve(const ImageConfiguration()).addListener(
-      ImageStreamListener((ImageInfo info, _) {
-        final width = info.image.width.toDouble();
-        final height = info.image.height.toDouble();
-          print('width=============>$width');
-          print('height=============>$height');
-        if (height > width) {
-          imageRatioMap[url] = true; // ✅ 9:16
-        } else {
-          imageRatioMap[url] = false; // ✅ 1:1
-        }
-      }),
-    );
-  }
-
   @override
   void onReady() async {
     super.onReady();
@@ -61,15 +36,15 @@ class HomeController extends GetxController {
 
   Future<void> getHomeApi({bool showLoading = true}) async {
     if (showLoading) isLoading.value = true;
-    Position position = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
+    // Position position = await Geolocator.getCurrentPosition(
+    //   desiredAccuracy: LocationAccuracy.high,
+    // );
+    final lat = getIt<LocationController>().latitude.value.toString();
+    final lng = getIt<LocationController>().longitude.value.toString();
+
     final userId = await LocalStorage.getString('user_id') ?? '';
     try {
-      final response = await _apiService.getHome(
-        '${position.latitude},${position.longitude}',
-        userId,
-      );
+      final response = await _apiService.getHome('$lat,$lng', userId);
 
       if (response['common']['status'] == true) {
         final data = response['data'] ?? {};

@@ -21,7 +21,13 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _initializeData() async {
     await _homeController.requestLocationPermission();
     getIt<SearchNewController>().getLiveLocation();
+    location();
     _homeController.getHomeApi();
+  }
+
+  void location() async {
+    final locationController = getIt<LocationController>();
+    await locationController.fetchInitialLocation();
   }
 
   @override
@@ -49,11 +55,22 @@ class _HomeScreenState extends State<HomeScreen> {
     return Obx(
       () => _homeController.isLoading.isTrue
           ? _buildSliderLoader()
-          : CustomCarouselSlider(
-              height: 0.2.h,
-              margin: EdgeInsets.symmetric(horizontal: 8),
-              radius: 16.r,
-              imageList: _homeController.sliderList,
+          : AnimationLimiter(
+              child: AnimationConfiguration.staggeredList(
+                position: 0,
+                duration: const Duration(milliseconds: 500),
+                child: SlideAnimation(
+                  horizontalOffset: 50.0,
+                  child: FadeInAnimation(
+                    child: CustomCarouselSlider(
+                      height: 0.2.h,
+                      margin: EdgeInsets.symmetric(horizontal: 8.w),
+                      radius: 16.r,
+                      imageList: _homeController.sliderList,
+                    ),
+                  ),
+                ),
+              ),
             ),
     );
   }
@@ -66,34 +83,46 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Obx(
         () => _homeController.isLoading.isTrue
             ? buildCategoryLoader()
-            : GridView.builder(
-                padding: EdgeInsets.only(top: 8.h, left: 8.w, right: 8.w),
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 4,
-                  crossAxisSpacing: 12.w,
-                  mainAxisSpacing: 0.h,
-                  childAspectRatio: 0.7,
-                ),
-                itemCount: _homeController.categoryList.length,
-                itemBuilder: (context, index) {
-                  final category = _homeController.categoryList[index];
-                  return GestureDetector(
-                    onTap: () {
-                      _navigationController.openSubPage(
-                        CategoryList(
-                          categoryId: category['id'].toString(),
-                          categoryName: category['name'].toString(),
+            : AnimationLimiter(
+                child: GridView.builder(
+                  padding: EdgeInsets.only(top: 8.h, left: 8.w, right: 8.w),
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 4,
+                    crossAxisSpacing: 12.w,
+                    mainAxisSpacing: 0.h,
+                    childAspectRatio: 0.7,
+                  ),
+                  itemCount: _homeController.categoryList.length,
+                  itemBuilder: (context, index) {
+                    final category = _homeController.categoryList[index];
+                    return AnimationConfiguration.staggeredGrid(
+                      position: index,
+                      duration: const Duration(milliseconds: 375),
+                      columnCount: 4,
+                      child: SlideAnimation(
+                        verticalOffset: 50.0,
+                        child: FadeInAnimation(
+                          child: GestureDetector(
+                            onTap: () {
+                              _navigationController.openSubPage(
+                                CategoryList(
+                                  categoryId: category['id'].toString(),
+                                  categoryName: category['name'].toString(),
+                                ),
+                              );
+                            },
+                            child: CategoryCard(
+                              image: category['image'].toString(),
+                              name: category['name'].toString(),
+                            ),
+                          ),
                         ),
-                      );
-                    },
-                    child: CategoryCard(
-                      image: category['image'].toString(),
-                      name: category['name'].toString(),
-                    ),
-                  );
-                },
+                      ),
+                    );
+                  },
+                ),
               ),
       ),
     );
@@ -113,16 +142,38 @@ class _HomeScreenState extends State<HomeScreen> {
                 itemCount: 5, // shimmer count
                 itemBuilder: (_, i) => const FeedShimmer(),
               )
-            : ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                padding: EdgeInsets.symmetric(horizontal: 8.w),
-                itemCount: _homeController.feedsList.length,
-                itemBuilder: (context, index) {
-                  final feedItem = _homeController.feedsList[index];
-                  return _buildFeedItem(feedItem);
-                },
+            : AnimationLimiter(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  padding: EdgeInsets.symmetric(horizontal: 8.w),
+                  itemCount: _homeController.feedsList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final feedItem = _homeController.feedsList[index];
+                    return AnimationConfiguration.staggeredList(
+                      position: index,
+                      duration: const Duration(milliseconds: 375),
+                      child: SlideAnimation(
+                        verticalOffset: 50.0,
+                        child: FadeInAnimation(child: _buildFeedItem(feedItem)),
+                      ),
+                    );
+                  },
+                ),
               ),
+
+        // AnimationLimiter(
+        //       child: ListView.builder(
+        //           shrinkWrap: true,
+        //           physics: const NeverScrollableScrollPhysics(),
+        //           padding: EdgeInsets.symmetric(horizontal: 8.w),
+        //           itemCount: _homeController.feedsList.length,
+        //           itemBuilder: (context, index) {
+        //             final feedItem = _homeController.feedsList[index];
+        //             return _buildFeedItem(feedItem);
+        //           },
+        //         ),
+        //     ),
       ),
     );
   }

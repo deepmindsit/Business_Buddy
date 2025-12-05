@@ -11,6 +11,8 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:businessbuddy/common/check_demo.dart' as _i771;
 import 'package:businessbuddy/common/global_search_controller.dart' as _i812;
+import 'package:businessbuddy/common/live_location.dart' as _i55;
+import 'package:businessbuddy/common/location_controller.dart' as _i686;
 import 'package:businessbuddy/network/api_service.dart' as _i889;
 import 'package:businessbuddy/presentation/business_partner/controller/partner_controller.dart'
     as _i235;
@@ -51,6 +53,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i812.GlobalSearchController>(
       () => _i812.GlobalSearchController(),
     );
+    gh.lazySingleton<_i55.LocationService>(() => _i55.LocationService());
     gh.lazySingleton<_i235.PartnerDataController>(
       () => _i235.PartnerDataController(),
     );
@@ -76,6 +79,9 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i68.SpecialOfferController(),
     );
     gh.factory<_i889.ApiService>(() => _i889.ApiService(gh<_i361.Dio>()));
+    gh.lazySingleton<_i686.LocationController>(
+      () => _i686.LocationController(gh<_i55.LocationService>()),
+    );
     return this;
   }
 }

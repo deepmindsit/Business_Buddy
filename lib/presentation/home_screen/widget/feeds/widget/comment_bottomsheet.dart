@@ -43,12 +43,11 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      'Comments',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    CustomText(
+                      title: 'Comments',
+                      fontSize: 18.sp,
+                      textAlign: TextAlign.start,
+                      fontWeight: FontWeight.bold,
                     ),
                     IconButton(
                       onPressed: () => Get.back(),
@@ -98,15 +97,19 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.comment_outlined, size: 60, color: Colors.grey),
-          SizedBox(height: 16),
+          HugeIcon(
+            icon: HugeIcons.strokeRoundedMessage02,
+            size: 60.r,
+            color: Colors.grey,
+          ),
+          SizedBox(height: 16.h),
           Text(
             'No comments yet',
-            style: TextStyle(color: Colors.grey, fontSize: 16),
+            style: TextStyle(color: Colors.grey, fontSize: 16.sp),
           ),
           Text(
             'Be the first to comment',
-            style: TextStyle(color: Colors.grey, fontSize: 14),
+            style: TextStyle(color: Colors.grey, fontSize: 14.sp),
           ),
         ],
       ),
@@ -115,108 +118,231 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
 
   Widget _buildCommentItem(Map<String, dynamic> comment) {
     return Container(
-      margin: EdgeInsets.only(bottom: 16),
+      margin: EdgeInsets.only(bottom: 16.h),
+      padding: EdgeInsets.symmetric(horizontal: 4.w),
       child: Row(
-        spacing: 12.h,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Profile Image
-          Container(
-            width: 35.w,
-            height: 35.h,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.grey[200],
-            ),
-            child: ClipOval(
-              child:
-                  comment['user_profile_image']?.toString().isNotEmpty == true
-                  ? Image.network(
-                      comment['user_profile_image'].toString(),
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Center(
-                          child: Text(
-                            comment['user_name']
-                                    ?.toString()
-                                    .substring(0, 1)
-                                    .toUpperCase() ??
-                                '',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        );
-                      },
-                    )
-                  : Center(
-                      child: Text(
-                        comment['user_name']
-                                ?.toString()
-                                .substring(0, 1)
-                                .toUpperCase() ??
-                            '',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                    ),
-            ),
-          ),
+          // Profile Avatar
+          _buildUserAvatar(comment),
+
+          SizedBox(width: 8.w),
 
           // Comment Content
-          Expanded(
-            child: Column(
-              spacing: 4.h,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CustomText(
-                        title: comment['user_name']?.toString() ?? '',
-                        fontWeight: FontWeight.w600,
-                        fontSize: 13.sp,
-                        textAlign: TextAlign.start,
-                      ),
-                      SizedBox(height: 2),
-                      CustomText(
-                        title: comment['comment']?.toString() ?? '',
-                        fontSize: 13.sp,
-                        textAlign: TextAlign.start,
-                        maxLines: 2,
-                      ),
-                    ],
-                  ),
-                ),
-
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
-                  child: Text(
-                    comment['created_at']?.toString() ?? '',
-                    style: TextStyle(
-                      color: Colors.grey.shade600,
-                      fontSize: 10.sp,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          Expanded(child: _buildCommentContent(comment)),
         ],
       ),
     );
   }
+
+  Widget _buildUserAvatar(Map<String, dynamic> comment) {
+    final String? profileImage = comment['user_profile_image']?.toString();
+    final String userName = comment['user_name']?.toString() ?? '';
+    final String initials = userName.isNotEmpty
+        ? userName.substring(0, 1).toUpperCase()
+        : '';
+
+    return Container(
+      width: 24.w,
+      height: 24.h,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.grey.shade100,
+        border: Border.all(color: Colors.grey.shade300, width: 1),
+      ),
+      child: ClipOval(
+        child: profileImage != null && profileImage.isNotEmpty
+            ? CachedNetworkImage(
+                imageUrl: profileImage,
+                fit: BoxFit.cover,
+                placeholder: (context, url) =>
+                    _buildAvatarPlaceholder(initials),
+                errorWidget: (context, url, error) =>
+                    _buildAvatarPlaceholder(initials),
+              )
+            : _buildAvatarPlaceholder(initials),
+      ),
+    );
+  }
+
+  Widget _buildAvatarPlaceholder(String initials) {
+    return Center(
+      child: Text(
+        initials,
+        style: TextStyle(
+          fontSize: 16.sp,
+          fontWeight: FontWeight.w600,
+          color: Colors.grey.shade700,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCommentContent(Map<String, dynamic> comment) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        // Comment Bubble
+        Flexible(
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade50,
+              borderRadius: BorderRadius.only(
+                topRight: Radius.circular(16.r),
+                bottomLeft: Radius.circular(16.r),
+                bottomRight: Radius.circular(16.r),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // User Name
+                CustomText(
+                  maxLines: 1,
+                  title: comment['user_name']?.toString() ?? '',
+                  fontSize: 12.sp,
+                  textAlign: TextAlign.start,
+                ),
+
+                Text(
+                  comment['comment']?.toString() ?? '',
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey.shade700,
+                    height: 1.4,
+                  ),
+                  softWrap: true,
+                  maxLines: 5,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        ),
+        SizedBox(height: 4.h),
+        Padding(
+          padding: EdgeInsets.only(left: 4.w),
+          child: Text(
+            TimestampFormatter.format(comment['created_at']?.toString()),
+            style: TextStyle(
+              fontSize: 11.sp,
+              fontWeight: FontWeight.w400,
+              color: Colors.grey.shade500,
+              letterSpacing: 0.2,
+            ),
+          ),
+        ),
+        // Timestamp
+      ],
+    );
+  }
+
+  // Widget _buildCommentItem(Map<String, dynamic> comment) {
+  //   return Container(
+  //     margin: EdgeInsets.only(bottom: 16.h),
+  //     child: Row(
+  //       spacing: 12.h,
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         // Profile Image
+  //         Container(
+  //           width: 35.w,
+  //           height: 35.h,
+  //           decoration: BoxDecoration(
+  //             shape: BoxShape.circle,
+  //             color: Colors.grey[200],
+  //           ),
+  //           child: ClipOval(
+  //             child:
+  //                 comment['user_profile_image']?.toString().isNotEmpty == true
+  //                 ? Image.network(
+  //                     comment['user_profile_image'].toString(),
+  //                     fit: BoxFit.cover,
+  //                     errorBuilder: (context, error, stackTrace) {
+  //                       return Center(
+  //                         child: Text(
+  //                           comment['user_name']
+  //                                   ?.toString()
+  //                                   .substring(0, 1)
+  //                                   .toUpperCase() ??
+  //                               '',
+  //                           style: TextStyle(
+  //                             fontSize: 16,
+  //                             fontWeight: FontWeight.bold,
+  //                             color: Colors.grey[600],
+  //                           ),
+  //                         ),
+  //                       );
+  //                     },
+  //                   )
+  //                 : Center(
+  //                     child: Text(
+  //                       comment['user_name']
+  //                               ?.toString()
+  //                               .substring(0, 1)
+  //                               .toUpperCase() ??
+  //                           '',
+  //                       style: TextStyle(
+  //                         fontSize: 16,
+  //                         fontWeight: FontWeight.bold,
+  //                         color: Colors.grey[600],
+  //                       ),
+  //                     ),
+  //                   ),
+  //           ),
+  //         ),
+  //
+  //         // Comment Content
+  //         Expanded(
+  //           child: Column(
+  //             spacing: 4.h,
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             children: [
+  //               Container(
+  //                 padding: EdgeInsets.all(8),
+  //                 decoration: BoxDecoration(
+  //                   color: Colors.grey[100],
+  //                   borderRadius: BorderRadius.circular(12),
+  //                 ),
+  //                 child: Column(
+  //                   crossAxisAlignment: CrossAxisAlignment.start,
+  //                   children: [
+  //                     CustomText(
+  //                       title: comment['user_name']?.toString() ?? '',
+  //                       fontWeight: FontWeight.w600,
+  //                       fontSize: 13.sp,
+  //                       textAlign: TextAlign.start,
+  //                     ),
+  //                     SizedBox(height: 2),
+  //                     CustomText(
+  //                       title: comment['comment']?.toString() ?? '',
+  //                       fontSize: 13.sp,
+  //                       textAlign: TextAlign.start,
+  //                       maxLines: 2,
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ),
+  //
+  //               Padding(
+  //                 padding: const EdgeInsets.only(left: 8.0),
+  //                 child: Text(
+  //                   comment['created_at']?.toString() ?? '',
+  //                   style: TextStyle(
+  //                     color: Colors.grey.shade600,
+  //                     fontSize: 10.sp,
+  //                   ),
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildAddCommentSection() {
     return Container(

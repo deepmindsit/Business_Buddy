@@ -29,7 +29,7 @@ class _SpecialOfferState extends State<SpecialOffer> {
                 itemBuilder: (_, i) => const FeedShimmer(),
               )
             : controller.offerList.isEmpty
-            ?commonNoDataFound()
+            ? commonNoDataFound()
             : SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -49,15 +49,26 @@ class _SpecialOfferState extends State<SpecialOffer> {
                         ],
                       ),
                     ),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      padding: EdgeInsets.symmetric(horizontal: 8.w),
-                      itemCount: controller.offerList.length,
-                      itemBuilder: (_, i) {
-                        final item = controller.offerList[i];
-                        return OfferCard(data: item);
-                      },
+                    AnimationLimiter(
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        padding: EdgeInsets.symmetric(horizontal: 8.w),
+                        itemCount: controller.offerList.length,
+                        itemBuilder: (_, i) {
+                          final item = controller.offerList[i];
+                          return AnimationConfiguration.staggeredList(
+                            position: i,
+                            duration: const Duration(milliseconds: 375),
+                            child: SlideAnimation(
+                              verticalOffset: 50.0,
+                              child: FadeInAnimation(
+                                child: OfferCard(data: item),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ],
                 ),

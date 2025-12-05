@@ -46,11 +46,9 @@ class ExplorerController extends GetxController {
       Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
-      final response = await _apiService.explore(
-        catId,
-        '${position.latitude},${position.longitude}',
-        userId,
-      );
+      final lat = getIt<LocationController>().latitude.value.toString();
+      final lng = getIt<LocationController>().longitude.value.toString();
+      final response = await _apiService.explore(catId, '$lat,$lng', userId);
       if (response['common']['status'] == true) {
         businessList.value = response['data']['businesses'] ?? [];
       }
@@ -78,9 +76,11 @@ class ExplorerController extends GetxController {
       Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
+      final lat = getIt<LocationController>().latitude.value.toString();
+      final lng = getIt<LocationController>().longitude.value.toString();
       final response = await _apiService.businessDetails(
         businessId,
-        '${position.latitude},${position.longitude}',
+        '$lat,$lng',
         userId,
       );
       if (response['common']['status'] == true) {

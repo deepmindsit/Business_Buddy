@@ -55,36 +55,48 @@ class _ExplorerState extends State<Explorer> {
                         fontWeight: FontWeight.bold,
                       ),
                     )
-                  : GridView.builder(
-                      padding: EdgeInsets.only(
-                        top: 8.h,
-                      ).copyWith(right: 8.w, left: 8.w),
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 4,
-                        crossAxisSpacing: 12.w,
-                        mainAxisSpacing: 8.h,
-                        childAspectRatio: 0.7,
-                      ),
-                      itemCount: controller.categories.length,
-                      itemBuilder: (context, index) {
-                        final cat = controller.categories[index];
-                        return GestureDetector(
-                          onTap: () {
-                            navController.openSubPage(
-                              CategoryList(
-                                categoryId: cat['id'].toString(),
-                                categoryName: cat['name'].toString(),
+                  : AnimationLimiter(
+                      child: GridView.builder(
+                        padding: EdgeInsets.only(
+                          top: 8.h,
+                        ).copyWith(right: 8.w, left: 8.w),
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 4,
+                          crossAxisSpacing: 12.w,
+                          mainAxisSpacing: 8.h,
+                          childAspectRatio: 0.7,
+                        ),
+                        itemCount: controller.categories.length,
+                        itemBuilder: (context, index) {
+                          final cat = controller.categories[index];
+                          return AnimationConfiguration.staggeredGrid(
+                            position: index,
+                            duration: const Duration(milliseconds: 375),
+                            columnCount: 4,
+                            child: SlideAnimation(
+                              verticalOffset: 50.0,
+                              child: FadeInAnimation(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    navController.openSubPage(
+                                      CategoryList(
+                                        categoryId: cat['id'].toString(),
+                                        categoryName: cat['name'].toString(),
+                                      ),
+                                    );
+                                  },
+                                  child: CategoryCard(
+                                    image: cat['image'].toString(),
+                                    name: cat['name'].toString(),
+                                  ),
+                                ),
                               ),
-                            );
-                          },
-                          child: CategoryCard(
-                            image: cat['image'].toString(),
-                            name: cat['name'].toString(),
-                          ),
-                        );
-                      },
+                            ),
+                          );
+                        },
+                      ),
                     ),
             ),
           ),

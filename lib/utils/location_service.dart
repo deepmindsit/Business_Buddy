@@ -55,8 +55,6 @@ Future<List<Map<String, dynamic>>> getPlaces(String search) async {
 
       // ✅ fetch structured details
       final details = await getPlaceDetails(placeId);
-      print('details=========>$details');
-      print(details);
       results.add({
         "place_id": placeId,
         "description": description,

@@ -34,32 +34,34 @@ class _SearchLocationState extends State<SearchLocation> {
           topRight: Radius.circular(20.r),
         ),
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Draggable handle
-          _buildHandle(),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Draggable handle
+            _buildHandle(),
 
-          // Header
-          _buildHeader(),
+            // Header
+            _buildHeader(),
 
-          // Search field
-          _buildSearchField(),
+            // Search field
+            _buildSearchField(),
 
-          // Current location button
-          _buildCurrentLocation(context),
+            // Current location button
+            _buildCurrentLocation(context),
 
-          SizedBox(height: 16.h),
+            SizedBox(height: 16.h),
 
-          // Results section
-          Obx(
-            () => _isLoading.value
-                ? _buildLoadingIndicator()
-                : controller.addressList.isNotEmpty
-                ? _buildResultsList()
-                : _buildEmptyState(),
-          ),
-        ],
+            // Results section
+            Obx(
+              () => _isLoading.value
+                  ? _buildLoadingIndicator()
+                  : controller.addressList.isNotEmpty
+                  ? _buildResultsList()
+                  : _buildEmptyState(),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -386,7 +388,10 @@ class _SearchLocationState extends State<SearchLocation> {
   void _onLocationSelected(Map<String, dynamic> searchPlace) {
     controller.addressController.text = searchPlace['description'] ?? '';
     controller.address.value = searchPlace['description'] ?? '';
-
+    getIt<LocationController>().updateLocation(
+      lat: searchPlace['lat'],
+      lng: searchPlace['lng'],
+    );
     // Uncomment and use these as needed
     // Get.find<HomeControllerC>().area.value = searchPlace['area'];
     // Get.find<HomeControllerC>().city.value = searchPlace['city'];

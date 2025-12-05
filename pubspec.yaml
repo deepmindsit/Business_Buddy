@@ -63,9 +63,8 @@ dependencies:
   widget_zoom: ^0.0.4
   flutter_rating_bar: ^4.0.1
   shimmer: ^3.0.0
-  insta_like_button: ^0.1.1
   carousel_slider: ^5.1.1
-  animations: ^2.1.1
+  flutter_staggered_animations: ^1.1.1
 
 dev_dependencies:
   flutter_test:

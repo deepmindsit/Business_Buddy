@@ -154,11 +154,22 @@ class _BusinessPartnerState extends State<BusinessPartner>
         return _buildEmptyPartner(); // Clear & Perfect UI
       }
 
-      return ListView.separated(
-        padding: const EdgeInsets.all(8),
-        separatorBuilder: (_, __) => Divider(height: 5.h, color: lightGrey),
-        itemCount: filteredList.length,
-        itemBuilder: (_, index) => BusinessCard(data: filteredList[index]),
+      return AnimationLimiter(
+        child: ListView.separated(
+          padding: const EdgeInsets.all(8),
+          separatorBuilder: (_, __) => Divider(height: 5.h, color: lightGrey),
+          itemCount: filteredList.length,
+          itemBuilder: (_, index) => AnimationConfiguration.staggeredList(
+            position: index,
+            duration: const Duration(milliseconds: 375),
+            child: SlideAnimation(
+              verticalOffset: 50.0,
+              child: FadeInAnimation(
+                child: BusinessCard(data: filteredList[index]),
+              ),
+            ),
+          ),
+        ),
       );
     });
   }
@@ -197,15 +208,28 @@ class _BusinessPartnerState extends State<BusinessPartner>
           ? LoadingWidget(color: primaryColor)
           : controller.requestedBusinessList.isEmpty
           ? commonNoDataFound()
-          : ListView.separated(
-              separatorBuilder: (context, index) =>
-                  Divider(height: 5, color: lightGrey),
-              padding: const EdgeInsets.all(8),
-              itemCount: controller.requestedBusinessList.length,
-              itemBuilder: (context, index) {
-                final data = controller.requestedBusinessList[index];
-                return BusinessCard(data: data, isRequested: true);
-              },
+          : AnimationLimiter(
+              child: ListView.separated(
+                separatorBuilder: (context, index) =>
+                    Divider(height: 5, color: lightGrey),
+                padding: const EdgeInsets.all(8),
+                itemCount: controller.requestedBusinessList.length,
+                itemBuilder: (context, index) {
+                  final data = controller.requestedBusinessList[index];
+
+                  return AnimationConfiguration.staggeredList(
+                    position: index,
+                    duration: const Duration(milliseconds: 375),
+                    child: SlideAnimation(
+                      verticalOffset: 50.0,
+                      child: FadeInAnimation(
+                        child: BusinessCard(data: data, isRequested: true),
+                      ),
+                    ),
+                  );
+                  // return BusinessCard(data: data, isRequested: true);
+                },
+              ),
             ),
     );
   }

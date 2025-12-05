@@ -14,8 +14,10 @@ class _NavigationScreenState extends State<NavigationScreen> {
   @override
   void initState() {
     super.initState();
+    // location();
     searchController.getLiveLocation();
   }
+
 
   @override
   Widget build(BuildContext context) {

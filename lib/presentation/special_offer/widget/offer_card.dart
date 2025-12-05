@@ -74,6 +74,7 @@ class OfferCard extends StatelessWidget {
               );
             },
             child: Column(
+              spacing: 4.h,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CustomText(
@@ -90,20 +91,43 @@ class OfferCard extends StatelessWidget {
                     color: Colors.black87,
                   ),
                 ),
-                CustomText(
-                  title: data['category'] ?? '',
-                  fontSize: 10.sp,
-                  textAlign: TextAlign.start,
-                  color: Colors.grey.shade600,
-                  maxLines: 1,
-                  style: TextStyle(
-                    // height: 1,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 10.sp,
-                    color: Colors.grey.shade600,
-                  ),
+                Row(
+                  children: [
+                    CustomText(
+                      title: data['category'] ?? '',
+                      fontSize: 10.sp,
+                      textAlign: TextAlign.start,
+                      color: Colors.grey.shade600,
+                      maxLines: 1,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 6.w),
+                      child: Container(
+                        width: 3.r,
+                        height: 3.r,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.grey.shade400,
+                        ),
+                      ),
+                    ),
+                    _buildTimeDisplay(),
+                  ],
                 ),
-                _buildTimeDisplay(),
+                // CustomText(
+                //   title: data['category'] ?? '',
+                //   fontSize: 10.sp,
+                //   textAlign: TextAlign.start,
+                //   color: Colors.grey.shade600,
+                //   maxLines: 1,
+                //   style: TextStyle(
+                //     // height: 1,
+                //     fontWeight: FontWeight.w500,
+                //     fontSize: 10.sp,
+                //     color: Colors.grey.shade600,
+                //   ),
+                // ),
+                // _buildTimeDisplay(),
               ],
             ),
           ),
@@ -144,7 +168,7 @@ class OfferCard extends StatelessWidget {
                 .toString()] ==
             true;
       }
-
+      final isFollowing = data['is_followed'] == true;
       return isLoading
           ? LoadingWidget(color: primaryColor)
           : GestureDetector(
@@ -173,25 +197,39 @@ class OfferCard extends StatelessWidget {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [primaryColor, primaryColor.withValues(alpha: 0.8)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                  gradient: isFollowing
+                      ? null
+                      : LinearGradient(
+                          colors: [
+                            primaryColor,
+                            primaryColor.withValues(alpha: 0.8),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
                   borderRadius: BorderRadius.circular(8.r),
-                  boxShadow: [
-                    BoxShadow(
-                      color: primaryColor.withValues(alpha: 0.3),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
+                  border: Border.all(
+                    color: isFollowing
+                        ? Colors.grey.shade300
+                        : Colors.transparent,
+                    width: 1,
+                  ),
+                ),
+                child: Row(
+                  spacing: 4.w,
+                  children: [
+                    Icon(
+                      isFollowing ? Icons.check : Icons.add,
+                      size: 14.sp,
+                      color: isFollowing ? Colors.grey.shade600 : Colors.white,
+                    ),
+                    CustomText(
+                      title: isFollowing ? 'Following' : 'Follow',
+                      fontSize: 12.sp,
+                      color: isFollowing ? Colors.grey.shade700 : Colors.white,
+                      fontWeight: FontWeight.w600,
                     ),
                   ],
-                ),
-                child: CustomText(
-                  title: data['is_followed'] == true ? 'Following' : 'Follow',
-                  fontSize: 12.sp,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
                 ),
               ),
             );
@@ -236,25 +274,30 @@ class OfferCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.grey.shade300, width: 0.5),
+        // border: Border.all(color: Colors.grey.shade300, width: 0.5),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12.r),
-        child: FadeInImage(
-          placeholder: const AssetImage(Images.defaultImage),
-          image: NetworkImage(image),
-          width: double.infinity,
-          fit: BoxFit.contain,
-          imageErrorBuilder: (context, error, stackTrace) {
-            return Center(
-              child: Image.asset(
-                Images.defaultImage,
-                width: 150.w,
-                height: 150.w,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: 380.h),
+          child:
+              // Image.network(image, fit: BoxFit.contain, width: Get.width),
+              FadeInImage(
+                placeholder: const AssetImage(Images.defaultImage),
+                image: NetworkImage(image),
+                width: double.infinity,
+                fit: BoxFit.contain,
+                imageErrorBuilder: (context, error, stackTrace) {
+                  return Center(
+                    child: Image.asset(
+                      Images.defaultImage,
+                      width: 150.w,
+                      height: 150.w,
+                    ),
+                  );
+                },
+                fadeInDuration: const Duration(milliseconds: 500),
               ),
-            );
-          },
-          fadeInDuration: const Duration(milliseconds: 500),
         ),
       ),
     );
@@ -274,13 +317,7 @@ class OfferCard extends StatelessWidget {
           maxLines: 2,
         ),
         // SizedBox(height: 8.h),
-        CustomText(
-          title: data['details'] ?? '',
-          fontSize: 14.sp,
-          color: Colors.black,
-          textAlign: TextAlign.start,
-          maxLines: 2,
-        ),
+        _offerDetails(),
         SizedBox(height: 8.h),
         // Date Section
         Row(
@@ -321,5 +358,46 @@ class OfferCard extends StatelessWidget {
         // ),
       ],
     );
+  }
+
+  Widget _offerDetails() {
+    final content = data['details'] ?? '';
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CustomText(
+          title: content,
+          fontSize: 14.sp,
+          textAlign: TextAlign.start,
+          style: TextStyle(fontSize: 14.sp, height: 1.5),
+          maxLines: 2,
+        ),
+
+        // Read more button for long content
+        if (content.length > 150)
+          Padding(
+            padding: EdgeInsets.only(top: 4.h),
+            child: GestureDetector(
+              onTap: () => expandContent(content),
+              child: Text(
+                'Read more',
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: primaryColor,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+
+    // return CustomText(
+    //     title: data['details'] ?? '',
+    //     fontSize: 14.sp,
+    //     color: Colors.black,
+    //     textAlign: TextAlign.start,
+    //     maxLines: 2,
+    //   );
   }
 }

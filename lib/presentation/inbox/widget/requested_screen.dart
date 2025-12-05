@@ -78,92 +78,109 @@ class _RequestedScreenState extends State<RequestedScreen> {
           ? const ChatListShimmer()
           : getIt<PartnerDataController>().requestedBusinessList.isEmpty
           ? commonNoDataFound()
-          : ListView.separated(
-              separatorBuilder: (context, index) =>
-                  Divider(height: 5, color: lightGrey),
-              padding: const EdgeInsets.all(8),
-              itemCount:
-                  getIt<PartnerDataController>().requestedBusinessList.length,
-              itemBuilder: (context, index) {
-                final data =
-                    getIt<PartnerDataController>().requestedBusinessList[index];
-                return ListTile(
-                  dense: true,
-                  leading: CircleAvatar(
-                    radius: 22.r,
-                    backgroundColor: Colors.grey.shade300,
-                    child: ClipOval(
-                      child: FadeInImage(
-                        placeholder: const AssetImage(Images.defaultImage),
-                        image: NetworkImage(
-                          data['requiement_user_profile_image'],
+          : AnimationLimiter(
+              child: ListView.separated(
+                separatorBuilder: (context, index) =>
+                    Divider(height: 5, color: lightGrey),
+                padding: const EdgeInsets.all(8),
+                itemCount:
+                    getIt<PartnerDataController>().requestedBusinessList.length,
+                itemBuilder: (context, index) {
+                  final data = getIt<PartnerDataController>()
+                      .requestedBusinessList[index];
+                  return AnimationConfiguration.staggeredList(
+                    position: index,
+                    duration: const Duration(milliseconds: 375),
+                    child: SlideAnimation(
+                      verticalOffset: 50.0,
+                      child: FadeInAnimation(
+                        child: ListTile(
+                          dense: true,
+                          leading: CircleAvatar(
+                            radius: 22.r,
+                            backgroundColor: Colors.grey.shade300,
+                            child: ClipOval(
+                              child: FadeInImage(
+                                placeholder: const AssetImage(
+                                  Images.defaultImage,
+                                ),
+                                image: NetworkImage(
+                                  data['requiement_user_profile_image'],
+                                ),
+                                imageErrorBuilder:
+                                    (context, error, stackTrace) {
+                                      return Image.asset(
+                                        Images.defaultImage,
+                                        width: 100.w,
+                                        height: 100.h,
+                                        fit: BoxFit.contain,
+                                      );
+                                    },
+                                width: 100.w,
+                                height: 100.h,
+                                fit: BoxFit.cover,
+                                placeholderFit: BoxFit.contain,
+                                fadeInDuration: const Duration(
+                                  milliseconds: 300,
+                                ),
+                              ),
+                            ),
+                            // backgroundImage: AssetImage(Images.hotelImg),
+                          ),
+                          title: CustomText(
+                            title: data['requirement_user_name'] ?? '',
+                            fontSize: 14.sp,
+                            textAlign: TextAlign.start,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          subtitle: CustomText(
+                            title: data['requirement_name'] ?? '',
+                            fontSize: 12.sp,
+                            maxLines: 2,
+                            textAlign: TextAlign.start,
+                          ),
+                          onTap: () {},
+                          trailing:
+                              data['requested'] == true &&
+                                  data['accepted'] == false
+                              ? Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 4.w,
+                                    vertical: 2.h,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: primaryColor),
+                                    borderRadius: BorderRadius.circular(8.r),
+                                  ),
+                                  child: CustomText(
+                                    title: 'Requested',
+                                    fontSize: 12.sp,
+                                    color: primaryColor,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                )
+                              : Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 4.w,
+                                    vertical: 2.h,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.green),
+                                    borderRadius: BorderRadius.circular(8.r),
+                                  ),
+                                  child: CustomText(
+                                    title: 'Accepted',
+                                    fontSize: 12.sp,
+                                    color: Colors.green,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                         ),
-                        imageErrorBuilder: (context, error, stackTrace) {
-                          return Image.asset(
-                            Images.defaultImage,
-                            width: 100.w,
-                            height: 100.h,
-                            fit: BoxFit.contain,
-                          );
-                        },
-                        width: 100.w,
-                        height: 100.h,
-                        fit: BoxFit.cover,
-                        placeholderFit: BoxFit.contain,
-                        fadeInDuration: const Duration(milliseconds: 300),
                       ),
                     ),
-                    // backgroundImage: AssetImage(Images.hotelImg),
-                  ),
-                  title: CustomText(
-                    title: data['requirement_user_name'] ?? '',
-                    fontSize: 14.sp,
-                    textAlign: TextAlign.start,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  subtitle: CustomText(
-                    title: data['requirement_name'] ?? '',
-                    fontSize: 12.sp,
-                    maxLines: 2,
-                    textAlign: TextAlign.start,
-                  ),
-                  onTap: () {},
-                  trailing:
-                      data['requested'] == true && data['accepted'] == false
-                      ? Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 4.w,
-                            vertical: 2.h,
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: primaryColor),
-                            borderRadius: BorderRadius.circular(8.r),
-                          ),
-                          child: CustomText(
-                            title: 'Requested',
-                            fontSize: 12.sp,
-                            color: primaryColor,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        )
-                      : Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 4.w,
-                            vertical: 2.h,
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.green),
-                            borderRadius: BorderRadius.circular(8.r),
-                          ),
-                          child: CustomText(
-                            title: 'Accepted',
-                            fontSize: 12.sp,
-                            color: Colors.green,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                );
-              },
+                  );
+                },
+              ),
             ),
     );
   }
@@ -174,32 +191,45 @@ class _RequestedScreenState extends State<RequestedScreen> {
           ? const ChatListShimmer()
           : controller.receivedRequestList.isEmpty
           ? commonNoDataFound()
-          : ListView.separated(
-              separatorBuilder: (context, index) =>
-                  Divider(height: 5, color: lightGrey),
-              padding: const EdgeInsets.all(8),
-              itemCount: controller.receivedRequestList.length,
-              itemBuilder: (context, index) {
-                final data = controller.receivedRequestList[index];
-                return buildRequestCard(
-                  name: data['requesting_user_name'] ?? '',
-                  title: 'Requirement Title: ${data['requirement_name'] ?? ''}',
-                  message: 'You’ve received a new collaboration request.',
-                  date: data['requested_at'] ?? '',
-                  buttonText: data['accepted'] == true
-                      ? 'Accepted'
-                      : 'Accept Request',
+          : AnimationLimiter(
+              child: ListView.separated(
+                separatorBuilder: (context, index) =>
+                    Divider(height: 5, color: lightGrey),
+                padding: const EdgeInsets.all(8),
+                itemCount: controller.receivedRequestList.length,
+                itemBuilder: (context, index) {
+                  final data = controller.receivedRequestList[index];
+                  return AnimationConfiguration.staggeredList(
+                    position: index,
+                    duration: const Duration(milliseconds: 375),
+                    child: SlideAnimation(
+                      verticalOffset: 50.0,
+                      child: FadeInAnimation(
+                        child: buildRequestCard(
+                          name: data['requesting_user_name'] ?? '',
+                          title:
+                              'Requirement Title: ${data['requirement_name'] ?? ''}',
+                          message:
+                              'You’ve received a new collaboration request.',
+                          date: data['requested_at'] ?? '',
+                          buttonText: data['accepted'] == true
+                              ? 'Accepted'
+                              : 'Accept Request',
 
-                  image: data['requesting_user_profile_image'] ?? '',
-                  onPressed: () async {
-                    if (data['accepted'] == false) {
-                      await controller.acceptRequest(
-                        data['request_id']?.toString() ?? '',
-                      );
-                    }
-                  },
-                );
-              },
+                          image: data['requesting_user_profile_image'] ?? '',
+                          onPressed: () async {
+                            if (data['accepted'] == false) {
+                              await controller.acceptRequest(
+                                data['request_id']?.toString() ?? '',
+                              );
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
     );
   }
