@@ -1400,7 +1400,7 @@ Widget buildDotSeparator() {
   );
 }
 
-Widget commonNoDataFound() {
+Widget commonNoDataFound({bool isHome = false}) {
   return Center(
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -1420,6 +1420,28 @@ Widget commonNoDataFound() {
             fontWeight: FontWeight.w500,
           ),
         ),
+        if (isHome)
+          GestureDetector(
+            onTap: () async {
+              getIt<SpecialOfferController>().resetData();
+              await getIt<FeedsController>().getFeeds();
+            },
+            child: Container(
+              width: Get.width * 0.5.w,
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+              margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
+              decoration: BoxDecoration(
+                color: primaryColor,
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              child: CustomText(
+                title: 'Reset Filter',
+                fontSize: 16.sp,
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
       ],
     ),
   );

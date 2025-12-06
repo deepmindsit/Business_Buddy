@@ -12,6 +12,21 @@ class _HomeScreenState extends State<HomeScreen> {
   final _feedController = getIt<FeedsController>();
   final _navigationController = getIt<NavigationController>();
 
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _initializeData();
+  // }
+  //
+  // Future<void> _initializeData() async {
+  //   print('in 1 home screen');
+  //    getIt<SearchNewController>().getLiveLocation();
+  //   print('in 2 home screen');
+  //   // await _homeController.requestLocationPermission();
+  //   location();
+  //   _homeController.getHomeApi();
+  // }
+
   @override
   void initState() {
     super.initState();
@@ -19,15 +34,13 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _initializeData() async {
-    await _homeController.requestLocationPermission();
-    getIt<SearchNewController>().getLiveLocation();
-    location();
-    _homeController.getHomeApi();
-  }
-
-  void location() async {
     final locationController = getIt<LocationController>();
     await locationController.fetchInitialLocation();
+
+    final searchController = getIt<SearchNewController>();
+    searchController.getLiveLocation();
+
+    _homeController.getHomeApi();
   }
 
   @override

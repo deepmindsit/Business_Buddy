@@ -21,42 +21,40 @@ class _InboxListState extends State<InboxList> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: DefaultTabController(
-        length: 2,
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12.r),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // --- Tab Bar ---
-              TabBar(
-                indicatorColor: primaryColor,
-                labelColor: primaryColor,
-                indicatorSize: TabBarIndicatorSize.tab,
-                unselectedLabelColor: Colors.grey,
-                labelStyle: TextStyle(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w600,
-                ),
-                tabs: [
-                  Tab(text: 'Chat', height: 35),
-                  Tab(text: 'Request', height: 35),
-                ],
+    return DefaultTabController(
+      length: 2,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12.r),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // --- Tab Bar ---
+            TabBar(
+              indicatorColor: primaryColor,
+              labelColor: primaryColor,
+              indicatorSize: TabBarIndicatorSize.tab,
+              unselectedLabelColor: Colors.grey,
+              labelStyle: TextStyle(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w600,
               ),
+              tabs: [
+                Tab(text: 'Chat', height: 35),
+                Tab(text: 'Request', height: 35),
+              ],
+            ),
 
-              // --- Tab Content ---
-              Expanded(
-                child: TabBarView(
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: [ChatScreen(), RequestedScreen()],
-                ),
+            // --- Tab Content ---
+            Expanded(
+              child: TabBarView(
+                physics: const NeverScrollableScrollPhysics(),
+                children: [ChatScreen(), RequestedScreen()],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

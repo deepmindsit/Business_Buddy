@@ -27,7 +27,7 @@ class _NewFeedState extends State<NewFeed> {
               itemBuilder: (_, i) => const FeedShimmer(),
             )
           : controller.feedList.isEmpty
-          ? commonNoDataFound()
+          ? commonNoDataFound(isHome: true)
           : SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,

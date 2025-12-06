@@ -19,6 +19,7 @@ class BusinessCard extends StatefulWidget {
 class _BusinessCardState extends State<BusinessCard> {
   final controller = getIt<PartnerDataController>();
   final navController = getIt<NavigationController>();
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -112,16 +113,7 @@ class _BusinessCardState extends State<BusinessCard> {
       );
     }
     if (widget.data['self'] == true) {
-      return _rightWrapper(
-        child: GestureDetector(
-          onTap: () {
-            getIt<NavigationController>().openSubPage(
-              EditRecruitment(recruitmentData: widget.data),
-            );
-          },
-          child: _buildActionItem(icon: Icons.edit, text: "Edit"),
-        ),
-      );
+      return _rightWrapper(child: _buildSelf());
     }
 
     if (widget.data['requested'] == true &&
@@ -175,6 +167,40 @@ class _BusinessCardState extends State<BusinessCard> {
     return const SizedBox();
   }
 
+  Widget _buildSelf() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey[100],
+        borderRadius: BorderRadius.circular(12.r),
+      ),
+      child: PopupMenuButton<String>(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        elevation: 0,
+        popUpAnimationStyle: AnimationStyle(curve: Curves.easeInOut),
+        padding: EdgeInsets.zero,
+        surfaceTintColor: Colors.white,
+        icon: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: primaryColor.withValues(alpha: 0.1),
+          ),
+          child: Icon(Icons.more_vert, color: primaryColor),
+        ),
+        onSelected: (value) {
+          _handleMenuSelection(value);
+        },
+        itemBuilder: (context) => [
+          _buildMenuItem('edit', Icons.edit, 'Edit', Colors.blue),
+          _buildMenuItem('delete', Icons.delete, 'Delete', Colors.grey),
+        ],
+      ),
+    );
+  }
+
   /// Wrapper → Ensures all right widgets fit inside Expanded properly
   Widget _rightWrapper({required Widget child}) {
     return Container(
@@ -207,9 +233,38 @@ class _BusinessCardState extends State<BusinessCard> {
           fontWeight: FontWeight.w500,
           textAlign: TextAlign.center,
         ),
+
+        // if (text == 'Edit') _buildReqStatus(),
       ],
     );
   }
+
+  // Widget _buildReqStatus() {
+  //   return Obx(
+  //     () => Switch(
+  //       activeTrackColor: primaryColor.withValues(alpha: 0.1),
+  //       inactiveThumbColor: primaryColor,
+  //       activeThumbColor: primaryColor,
+  //       inactiveTrackColor: lightGrey,
+  //       onChanged: (newValue) {
+  //         controller.isCompleted.value = newValue;
+  //       },
+  //       value: controller.isCompleted.value,
+  //       trackOutlineColor: WidgetStateProperty.resolveWith<Color?>((states) {
+  //         if (states.contains(WidgetState.selected)) {
+  //           return primaryColor;
+  //         }
+  //         return Colors.grey;
+  //       }),
+  //       trackOutlineWidth: WidgetStateProperty.resolveWith<double?>((states) {
+  //         if (states.contains(WidgetState.selected)) {
+  //           return 0; // No border when switch is ON
+  //         }
+  //         return 0.5; // Border when OFF
+  //       }),
+  //     ),
+  //   );
+  // }
 
   /// PENDING
   Widget _buildTextOnly(String text) {
@@ -250,7 +305,7 @@ class _BusinessCardState extends State<BusinessCard> {
           ),
           if (widget.isRequested != true) SizedBox(height: 6.h),
           if (widget.isRequested != true) Divider(),
-          if (widget.isRequested != true)  SizedBox(height: 6.h),
+          if (widget.isRequested != true) SizedBox(height: 6.h),
           if (widget.isRequested != true)
             Container(
               width: 40.r,
@@ -296,6 +351,51 @@ class _BusinessCardState extends State<BusinessCard> {
         ),
       ),
     );
+  }
+
+  PopupMenuItem<String> _buildMenuItem(
+    String value,
+    IconData icon,
+    String text,
+    Color color,
+  ) {
+    return PopupMenuItem<String>(
+      value: value,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          Icon(icon, color: color),
+          const SizedBox(width: 12),
+          Text(text),
+        ],
+      ),
+    );
+  }
+
+  void _handleMenuSelection(String value) {
+    // Handle different menu selections
+    switch (value) {
+      case 'edit':
+        getIt<NavigationController>().openSubPage(
+          EditRecruitment(recruitmentData: widget.data),
+        );
+        break;
+      case 'delete':
+        AllDialogs().showConfirmationDialog(
+          'Delete Recruitment',
+          'Are you sure you want to delete this recruitment?',
+          onConfirm: () {
+            Get.back();
+            Get.snackbar(
+              'Deleted',
+              'Recruitment has been deleted successfully',
+              backgroundColor: Colors.green,
+              colorText: Colors.white,
+            );
+          },
+        );
+        break;
+    }
   }
 }
 

@@ -1,3 +1,4 @@
+import 'package:businessbuddy/components/custom_appbar.dart';
 import 'package:businessbuddy/utils/exported_path.dart';
 
 class NavigationScreen extends StatefulWidget {
@@ -9,15 +10,6 @@ class NavigationScreen extends StatefulWidget {
 
 class _NavigationScreenState extends State<NavigationScreen> {
   final controller = getIt<NavigationController>();
-  final searchController = getIt<SearchNewController>();
-
-  @override
-  void initState() {
-    super.initState();
-    // location();
-    searchController.getLiveLocation();
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -28,22 +20,38 @@ class _NavigationScreenState extends State<NavigationScreen> {
         canPop: false,
         child: Scaffold(
           backgroundColor: Colors.white,
-          body: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            transitionBuilder: (child, animation) {
-              return FadeTransition(opacity: animation, child: child);
+          body: NestedScrollView(
+            headerSliverBuilder: (context, innerBoxIsScrolled) {
+              return [CustomSliverAppBar(isCollapsed: innerBoxIsScrolled)];
             },
-            child: Column(
-              children: [
-                CustomMainHeader2(searchController: TextEditingController()),
-                Expanded(child: Obx(() => controller.pageStack.last)),
-                // Expanded(
-                //   child: NavigationController
-                //       .widgetOptions[controller.currentIndex.value],
-                // ),
-              ],
+
+            /// ✅ Only body is animated
+            body: AnimatedSwitcher(
+              transitionBuilder: (child, animation) {
+                return FadeTransition(opacity: animation, child: child);
+              },
+              duration: const Duration(milliseconds: 300),
+              child: Obx(() => controller.pageStack.last),
             ),
           ),
+
+          // AnimatedSwitcher(
+          //   duration: const Duration(milliseconds: 300),
+          //   transitionBuilder: (child, animation) {
+          //     return FadeTransition(opacity: animation, child: child);
+          //   },
+          //   child: Column(
+          //     children: [
+          //       // CustomMainHeader2(searchController: TextEditingController()),
+          //       CustomSliverAppBar(),
+          //       Expanded(child: Obx(() => controller.pageStack.last)),
+          //       // Expanded(
+          //       //   child: NavigationController
+          //       //       .widgetOptions[controller.currentIndex.value],
+          //       // ),
+          //     ],
+          //   ),
+          // ),
           bottomNavigationBar: Container(
             decoration: BoxDecoration(
               color: primaryColor,

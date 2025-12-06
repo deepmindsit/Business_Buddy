@@ -155,6 +155,8 @@ class FeedCard extends StatelessWidget {
       final isFollowing = data['is_followed'] == true;
       return isLoading
           ? LoadingWidget(color: primaryColor, size: 20.r)
+          : isFollowing
+          ? SizedBox()
           : GestureDetector(
               onTap: onFollow,
               child: Container(

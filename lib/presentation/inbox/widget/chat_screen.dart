@@ -17,9 +17,17 @@ class _ChatScreenState extends State<ChatScreen> {
       () => controller.isChatLoading.isTrue
           ? const ChatListShimmer()
           : controller.allChats.isEmpty
-          ? commonNoDataFound()
+          ? ListView(
+              physics: const AlwaysScrollableScrollPhysics(), // ✅ IMPORTANT
+              children: [
+                SizedBox(height: Get.height * 0.25), // ✅ Push content to center
+                commonNoDataFound(),
+              ],
+            )
           : AnimationLimiter(
               child: ListView.separated(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: EdgeInsets.zero,
                 separatorBuilder: (context, index) =>
                     Divider(height: 5, color: lightGrey),
                 itemCount: controller.allChats.length,

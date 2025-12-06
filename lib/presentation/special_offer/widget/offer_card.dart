@@ -9,28 +9,65 @@ class OfferCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      surfaceTintColor: Colors.white,
-      color: Colors.white,
-      elevation: 2,
-      margin: EdgeInsets.all(8.w),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
-      child: Padding(
-        padding: EdgeInsets.all(12.w),
-        child: Column(
-          spacing: 8,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header Section
-            _buildHeader(),
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Card(
+          surfaceTintColor: Colors.white,
+          color: Colors.white,
+          clipBehavior: Clip.none,
+          elevation: 2,
+          margin: EdgeInsets.all(8.w),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.r),
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(12.w),
+            child: Column(
+              spacing: 8,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header Section
+                _buildHeader(),
 
-            // Image Section
-            _buildImageSection(),
+                // Image Section
+                _buildImageSection(),
 
-            // Content Section
-            _buildContentSection(),
-          ],
+                // Content Section
+                _buildContentSection(),
+              ],
+            ),
+          ),
         ),
+      ],
+    );
+  }
+
+  Widget _buildTypeBadge() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(8.r),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          HugeIcon(
+            icon: HugeIcons.strokeRoundedDiscountTag02,
+            size: 12.sp,
+            color: Colors.red,
+          ),
+          SizedBox(width: 4.w),
+          Text(
+            'Special Offer',
+            style: TextStyle(
+              fontSize: 10.sp,
+              color: Colors.red,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -101,7 +138,7 @@ class OfferCard extends StatelessWidget {
                       maxLines: 1,
                     ),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 6.w),
+                      padding: EdgeInsets.symmetric(horizontal: 4.w),
                       child: Container(
                         width: 3.r,
                         height: 3.r,
@@ -112,22 +149,20 @@ class OfferCard extends StatelessWidget {
                       ),
                     ),
                     _buildTimeDisplay(),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 4.w),
+                      child: Container(
+                        width: 3.r,
+                        height: 3.r,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.grey.shade400,
+                        ),
+                      ),
+                    ),
+                    ClipRect(child: _buildTypeBadge()),
                   ],
                 ),
-                // CustomText(
-                //   title: data['category'] ?? '',
-                //   fontSize: 10.sp,
-                //   textAlign: TextAlign.start,
-                //   color: Colors.grey.shade600,
-                //   maxLines: 1,
-                //   style: TextStyle(
-                //     // height: 1,
-                //     fontWeight: FontWeight.w500,
-                //     fontSize: 10.sp,
-                //     color: Colors.grey.shade600,
-                //   ),
-                // ),
-                // _buildTimeDisplay(),
               ],
             ),
           ),
@@ -171,6 +206,8 @@ class OfferCard extends StatelessWidget {
       final isFollowing = data['is_followed'] == true;
       return isLoading
           ? LoadingWidget(color: primaryColor)
+          : isFollowing
+          ? SizedBox()
           : GestureDetector(
               onTap: () async {
                 if (getIt<DemoService>().isDemo == false) {

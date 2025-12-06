@@ -10,7 +10,7 @@ class PartnerDataController extends GetxController {
   final isSendLoading = false.obs;
   final isMainLoading = true.obs;
   final isFilterLoading = false.obs;
-  final isCompleted = false.obs;
+  final isCompleted = true.obs;
   final recTitle = TextEditingController();
   final location = TextEditingController();
   final invHistory = TextEditingController();

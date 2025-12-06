@@ -12,7 +12,7 @@ Future<http.Client> getHttpClient() async {
 const googleMapsApi = 'AIzaSyAvg-gpAbB2_lKgSIJ9tG6JqjGJFaVeXNc';
 
 class AllUrl {
-  // static const String baseUrl = "http://192.168.29.41/bizyaari/api/user/v1";
+  // static const String baseUrl = "http://192.168.29.37/bizyaari/api/user/v1";
   static const String baseUrl =
       "https://businessbuddy.deepmindsit.com/api/user/v1";
 
@@ -41,10 +41,14 @@ class AllUrl {
   static const String getFollowList = '$baseUrl/get_business_following_list';
   static const String getUserProfile = '$baseUrl/user_profile_details';
   static const String updateProfile = '$baseUrl/update_profile';
-  static const String sendBusinessRequest = '$baseUrl/send_business_requirement_request';
-  static const String getBusinessRequested = '$baseUrl/my_requested_business_requirements';
-  static const String getBusinessReceived = '$baseUrl/my_received_business_requirement_requests';
-  static const String acceptBusinessRequest = '$baseUrl/accept_business_requirement_request';
+  static const String sendBusinessRequest =
+      '$baseUrl/send_business_requirement_request';
+  static const String getBusinessRequested =
+      '$baseUrl/my_requested_business_requirements';
+  static const String getBusinessReceived =
+      '$baseUrl/my_received_business_requirement_requests';
+  static const String acceptBusinessRequest =
+      '$baseUrl/accept_business_requirement_request';
   static const String followBusiness = '$baseUrl/follow_business';
   static const String unfollowBusiness = '$baseUrl/unfollow_business';
   static const String likeBusiness = '$baseUrl/like_business_post';

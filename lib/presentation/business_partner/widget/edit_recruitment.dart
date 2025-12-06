@@ -54,23 +54,23 @@ class _EditRecruitmentState extends State<EditRecruitment> {
                     }),
                     _buildHistory(),
                     _buildNote(),
-                    Obx(
-                      () => Center(
-                        child: SwitchListTile(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.r),
-                            side: BorderSide(color: Colors.grey, width: 0.2),
-                          ),
-                          title: Text('Is this requirement completed?'),
-                          value: controller.isCompleted.value,
-                          onChanged: (newValue) {
-                            controller.isCompleted.value = newValue;
-                          },
-                          activeThumbColor: primaryColor,
-                          inactiveThumbColor: lightGrey,
-                        ),
-                      ),
-                    ),
+                    // Obx(
+                    //   () => Center(
+                    //     child: SwitchListTile(
+                    //       shape: RoundedRectangleBorder(
+                    //         borderRadius: BorderRadius.circular(12.r),
+                    //         side: BorderSide(color: Colors.grey, width: 0.2),
+                    //       ),
+                    //       title: Text('Is this requirement completed?'),
+                    //       value: controller.isCompleted.value,
+                    //       onChanged: (newValue) {
+                    //         controller.isCompleted.value = newValue;
+                    //       },
+                    //       activeThumbColor: primaryColor,
+                    //       inactiveThumbColor: lightGrey,
+                    //     ),
+                    //   ),
+                    // ),
                     SizedBox(height: 12.h),
                     _buildPostButton(),
                   ],
@@ -85,17 +85,50 @@ class _EditRecruitmentState extends State<EditRecruitment> {
       color: Colors.white,
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
       child: Row(
-        spacing: 8,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          GestureDetector(
-            onTap: () => navController.goBack(),
-            child: const Icon(Icons.arrow_back),
+          Row(
+            spacing: 8,
+            children: [
+              GestureDetector(
+                onTap: () => navController.goBack(),
+                child: const Icon(Icons.arrow_back),
+              ),
+              CustomText(
+                title: 'Edit Post Recruitment',
+                fontSize: 18.sp,
+                fontWeight: FontWeight.bold,
+              ),
+            ],
           ),
-          CustomText(
-            title: 'Edit Post Recruitment',
-            fontSize: 18.sp,
-            fontWeight: FontWeight.bold,
-          ),
+          // Obx(
+          //   () => Switch(
+          //     activeTrackColor: primaryColor.withValues(alpha: 0.1),
+          //     inactiveThumbColor: primaryColor,
+          //     activeThumbColor: primaryColor,
+          //     inactiveTrackColor: lightGrey,
+          //     onChanged: (newValue) {
+          //       controller.isCompleted.value = newValue;
+          //     },
+          //     value: controller.isCompleted.value,
+          //     trackOutlineColor: WidgetStateProperty.resolveWith<Color?>((
+          //       states,
+          //     ) {
+          //       if (states.contains(WidgetState.selected)) {
+          //         return primaryColor;
+          //       }
+          //       return Colors.grey;
+          //     }),
+          //     trackOutlineWidth: WidgetStateProperty.resolveWith<double?>((
+          //       states,
+          //     ) {
+          //       if (states.contains(WidgetState.selected)) {
+          //         return 0; // No border when switch is ON
+          //       }
+          //       return 0.5; // Border when OFF
+          //     }),
+          //   ),
+          // ),
         ],
       ),
     );
