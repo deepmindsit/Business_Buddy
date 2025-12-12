@@ -17,33 +17,69 @@ class _ChatScreenState extends State<ChatScreen> {
       () => controller.isChatLoading.isTrue
           ? const ChatListShimmer()
           : controller.allChats.isEmpty
-          ? ListView(
-              physics: const AlwaysScrollableScrollPhysics(), // ✅ IMPORTANT
-              children: [
-                SizedBox(height: Get.height * 0.25), // ✅ Push content to center
-                commonNoDataFound(),
-              ],
-            )
-          : AnimationLimiter(
-              child: ListView.separated(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: EdgeInsets.zero,
-                separatorBuilder: (context, index) =>
-                    Divider(height: 5, color: lightGrey),
-                itemCount: controller.allChats.length,
-                itemBuilder: (context, index) {
-                  final chat = controller.allChats[index];
-                  return AnimationConfiguration.staggeredList(
-                    position: index,
-                    duration: const Duration(milliseconds: 375),
-                    child: SlideAnimation(
-                      verticalOffset: 50.0,
-                      child: FadeInAnimation(child: _chatTile(chat)),
-                    ),
-                  );
-                },
-              ),
-            ),
+          ? _buildEmptyState()
+          : _buildChatList(),
+
+      // ? SingleChildScrollView(
+      //     child: Column(
+      //       children: [
+      //         SizedBox(
+      //           height: Get.height * 0.25,
+      //         ), // ✅ Push content to center
+      //         commonNoDataFound(),
+      //       ],
+      //     ),
+      //   )
+      // : AnimationLimiter(
+      //     child: ListView.separated(
+      //       physics: const AlwaysScrollableScrollPhysics(),
+      //       padding: EdgeInsets.zero,
+      //       separatorBuilder: (context, index) =>
+      //           Divider(height: 5, color: lightGrey),
+      //       itemCount: controller.allChats.length,
+      //       itemBuilder: (context, index) {
+      //         final chat = controller.allChats[index];
+      //         return AnimationConfiguration.staggeredList(
+      //           position: index,
+      //           duration: const Duration(milliseconds: 375),
+      //           child: SlideAnimation(
+      //             verticalOffset: 50.0,
+      //             child: FadeInAnimation(child: _chatTile(chat)),
+      //           ),
+      //         );
+      //       },
+      //     ),
+      //   ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return CustomScrollView(
+      physics: NeverScrollableScrollPhysics(),
+      slivers: [SliverFillRemaining(child: commonNoDataFound())],
+    );
+  }
+
+  Widget _buildChatList() {
+    return CustomScrollView(
+      slivers: [
+        SliverPadding(
+          padding: EdgeInsets.zero,
+          sliver: SliverList(
+            delegate: SliverChildBuilderDelegate((context, index) {
+              final chat = controller.allChats[index];
+              return AnimationConfiguration.staggeredList(
+                position: index,
+                duration: const Duration(milliseconds: 375),
+                child: SlideAnimation(
+                  verticalOffset: 50.0,
+                  child: FadeInAnimation(child: _chatTile(chat)),
+                ),
+              );
+            }, childCount: controller.allChats.length),
+          ),
+        ),
+      ],
     );
   }
 

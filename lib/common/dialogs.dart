@@ -280,13 +280,16 @@ class OfferTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Image Section
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8.r),
-            child: Image.network(
-              imageUrl,
-              height: 60.h,
-              width: 60.h,
-              fit: BoxFit.cover,
+          WidgetZoom(
+            heroAnimationTag: 'Tag $imageUrl',
+            zoomWidget: ClipRRect(
+              borderRadius: BorderRadius.circular(8.r),
+              child: Image.network(
+                imageUrl,
+                height: 60.h,
+                width: 60.h,
+                fit: BoxFit.contain,
+              ),
             ),
           ),
           SizedBox(width: 10.w),
@@ -370,6 +373,3 @@ Widget buildBulletPoint({required String text}) {
     ],
   );
 }
-
-
-

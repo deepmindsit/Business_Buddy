@@ -34,13 +34,15 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _initializeData() async {
+    _homeController.isMainLoading.value = true;
     final locationController = getIt<LocationController>();
     await locationController.fetchInitialLocation();
 
     final searchController = getIt<SearchNewController>();
     searchController.getLiveLocation();
 
-    _homeController.getHomeApi();
+    await _homeController.getHomeApi();
+    _homeController.isMainLoading.value = false;
   }
 
   @override
@@ -66,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildSlider() {
     return Obx(
-      () => _homeController.isLoading.isTrue
+      () => _homeController.isMainLoading.isTrue
           ? _buildSliderLoader()
           : AnimationLimiter(
               child: AnimationConfiguration.staggeredList(
@@ -89,14 +91,14 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildCategorySection() {
-    return SectionContainer(
-      title: 'Categories',
-      actionText: 'View More',
-      onActionTap: _handleViewAllCategories,
-      child: Obx(
-        () => _homeController.isLoading.isTrue
-            ? buildCategoryLoader()
-            : AnimationLimiter(
+    return Obx(
+      () => _homeController.isMainLoading.isTrue
+          ? buildCategoryLoader()
+          : SectionContainer(
+              title: 'Categories',
+              actionText: 'View More',
+              onActionTap: _handleViewAllCategories,
+              child: AnimationLimiter(
                 child: GridView.builder(
                   padding: EdgeInsets.only(top: 8.h, left: 8.w, right: 8.w),
                   shrinkWrap: true,
@@ -137,25 +139,25 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
               ),
-      ),
+            ),
     );
   }
 
   Widget _buildFeedsSection() {
-    return SectionContainer(
-      title: 'Feeds',
-      actionText: 'View More',
-      onActionTap: _handleViewAllFeeds,
-      child: Obx(
-        () => _homeController.isLoading.isTrue
-            ? ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                padding: EdgeInsets.symmetric(horizontal: 8.w),
-                itemCount: 5, // shimmer count
-                itemBuilder: (_, i) => const FeedShimmer(),
-              )
-            : AnimationLimiter(
+    return Obx(
+      () => _homeController.isMainLoading.isTrue
+          ? ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              padding: EdgeInsets.symmetric(horizontal: 8.w),
+              itemCount: 5, // shimmer count
+              itemBuilder: (_, i) => const FeedShimmer(),
+            )
+          : SectionContainer(
+              title: 'Feeds',
+              actionText: 'View More',
+              onActionTap: _handleViewAllFeeds,
+              child: AnimationLimiter(
                 child: ListView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
@@ -174,20 +176,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
               ),
-
-        // AnimationLimiter(
-        //       child: ListView.builder(
-        //           shrinkWrap: true,
-        //           physics: const NeverScrollableScrollPhysics(),
-        //           padding: EdgeInsets.symmetric(horizontal: 8.w),
-        //           itemCount: _homeController.feedsList.length,
-        //           itemBuilder: (context, index) {
-        //             final feedItem = _homeController.feedsList[index];
-        //             return _buildFeedItem(feedItem);
-        //           },
-        //         ),
-        //     ),
-      ),
+            ),
     );
   }
 
@@ -204,21 +193,21 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildRequirementsSection() {
-    return SectionContainer(
-      title: 'Business Requirements',
-      actionText: 'View More',
-      onActionTap: _handleViewAllRequirements,
-      child: Obx(
-        () => _homeController.isLoading.isTrue
-            ? ListView.separated(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                padding: EdgeInsets.all(8),
-                itemCount: 6,
-                separatorBuilder: (_, __) => SizedBox(height: 10),
-                itemBuilder: (context, index) => const BusinessCardShimmer(),
-              )
-            : ListView.separated(
+    return Obx(
+      () => _homeController.isMainLoading.isTrue
+          ? ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              padding: EdgeInsets.all(8),
+              itemCount: 6,
+              separatorBuilder: (_, __) => SizedBox(height: 10),
+              itemBuilder: (context, index) => const BusinessCardShimmer(),
+            )
+          : SectionContainer(
+              title: 'Business Requirements',
+              actionText: 'View More',
+              onActionTap: _handleViewAllRequirements,
+              child: ListView.separated(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 padding: const EdgeInsets.all(8),
@@ -230,7 +219,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   return BusinessCard(data: requirement);
                 },
               ),
-      ),
+            ),
     );
   }
 
@@ -300,6 +289,7 @@ class _HomeScreenState extends State<HomeScreen> {
       }
 
       item['is_liked'] = !wasLiked;
+      await _homeController.getHomeApi(showLoading: false);
     } catch (e) {
       _handleError('Like error: $e');
       // Consider showing an error toast to the user
@@ -330,6 +320,7 @@ class _HomeScreenState extends State<HomeScreen> {
       }
 
       item['is_followed'] = !wasFollowed;
+      await _homeController.getHomeApi(showLoading: false);
     } catch (e) {
       _handleError('Follow error: $e');
       // Consider showing an error toast to the user

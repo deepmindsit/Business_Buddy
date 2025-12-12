@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart';
 class HomeController extends GetxController {
   final ApiService _apiService = Get.find();
   final isLoading = false.obs;
+  final isMainLoading = false.obs;
   final isLikeAnimating = false.obs;
   final feedsList = [].obs;
   final categoryList = [].obs;
@@ -35,13 +36,12 @@ class HomeController extends GetxController {
   }
 
   Future<void> getHomeApi({bool showLoading = true}) async {
-    if (showLoading) isLoading.value = true;
     // Position position = await Geolocator.getCurrentPosition(
     //   desiredAccuracy: LocationAccuracy.high,
     // );
     final lat = getIt<LocationController>().latitude.value.toString();
     final lng = getIt<LocationController>().longitude.value.toString();
-
+    if (showLoading) isLoading.value = true;
     final userId = await LocalStorage.getString('user_id') ?? '';
     try {
       final response = await _apiService.getHome('$lat,$lng', userId);

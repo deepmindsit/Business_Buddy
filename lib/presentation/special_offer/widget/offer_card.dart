@@ -45,7 +45,7 @@ class OfferCard extends StatelessWidget {
 
   Widget _buildTypeBadge() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+      padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
         color: Colors.grey.shade100,
         borderRadius: BorderRadius.circular(8.r),
@@ -75,9 +75,10 @@ class OfferCard extends StatelessWidget {
   Widget _buildHeader() {
     final image = data['business_profile_image'] ?? '';
     return Row(
+      spacing: 4.w,
       children: [
         CircleAvatar(
-          radius: 20.r,
+          radius: 18.r,
           backgroundColor: Colors.grey.shade100,
           child: ClipOval(
             child: FadeInImage(
@@ -99,7 +100,6 @@ class OfferCard extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(width: 12.w),
         Expanded(
           child: GestureDetector(
             onTap: () {
@@ -167,7 +167,6 @@ class OfferCard extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(width: 8.w),
         _buildFollowButton(),
       ],
     );
@@ -232,7 +231,7 @@ class OfferCard extends StatelessWidget {
                 // Handle follow action
               },
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                padding: EdgeInsets.all(8.w),
                 decoration: BoxDecoration(
                   gradient: isFollowing
                       ? null

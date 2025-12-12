@@ -285,7 +285,9 @@ class _BusinessCardState extends State<BusinessCard> {
         if (widget.isRequested != true) {
           if (widget.data['chat_initiated'] == true) {
             navController.openSubPage(
-              SingleChat(chatId: widget.data['chat_id']?.toString() ?? ''),
+              SingleChat(
+                chatId: widget.data['chat_id']?.toString() ?? '',
+              ),
             );
           } else {
             await getIt<InboxController>().initiateChat(

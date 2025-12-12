@@ -83,11 +83,14 @@ class ProfileController extends GetxController {
     }
   }
 
-  Future<void> getFollowList({bool showLoading = true}) async {
+  Future<void> getFollowList({
+    String? user = '',
+    bool showLoading = true,
+  }) async {
     if (showLoading) isFollowLoading.value = true;
-    final userId = await LocalStorage.getString('user_id') ?? '';
+    final userId = await LocalStorage.getString('user_id');
     try {
-      final response = await _apiService.getFollowList(userId);
+      final response = await _apiService.getFollowList(user ?? userId);
 
       if (response['common']['status'] == true) {
         followList.value = response['data']['businesses'] ?? [];

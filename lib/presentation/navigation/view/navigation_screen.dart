@@ -1,4 +1,4 @@
-import 'package:businessbuddy/components/custom_appbar.dart';
+// import 'package:businessbuddy/components/custom_appbar.dart';
 import 'package:businessbuddy/utils/exported_path.dart';
 
 class NavigationScreen extends StatefulWidget {
@@ -18,40 +18,53 @@ class _NavigationScreenState extends State<NavigationScreen> {
     return Obx(
       () => PopScope(
         canPop: false,
+        // onPopInvokedWithResult: (didPop, result) {
+        //   if (!didPop) {
+        //     if (Get.key.currentState?.canPop() == true) {
+        //       Get.back(result: result);
+        //     }
+        //   }
+        // },
         child: Scaffold(
           backgroundColor: Colors.white,
-          body: NestedScrollView(
-            headerSliverBuilder: (context, innerBoxIsScrolled) {
-              return [CustomSliverAppBar(isCollapsed: innerBoxIsScrolled)];
-            },
-
-            /// ✅ Only body is animated
-            body: AnimatedSwitcher(
-              transitionBuilder: (child, animation) {
-                return FadeTransition(opacity: animation, child: child);
-              },
-              duration: const Duration(milliseconds: 300),
-              child: Obx(() => controller.pageStack.last),
-            ),
-          ),
-
-          // AnimatedSwitcher(
-          //   duration: const Duration(milliseconds: 300),
-          //   transitionBuilder: (child, animation) {
-          //     return FadeTransition(opacity: animation, child: child);
-          //   },
-          //   child: Column(
-          //     children: [
-          //       // CustomMainHeader2(searchController: TextEditingController()),
-          //       CustomSliverAppBar(),
-          //       Expanded(child: Obx(() => controller.pageStack.last)),
-          //       // Expanded(
-          //       //   child: NavigationController
-          //       //       .widgetOptions[controller.currentIndex.value],
-          //       // ),
-          //     ],
-          //   ),
-          // ),
+          body:
+              // controller.currentIndex.value == 0
+              //     ? NestedScrollView(
+              //         headerSliverBuilder: (context, innerBoxIsScrolled) {
+              //           return [
+              //             CustomSliverAppBar(isCollapsed: innerBoxIsScrolled),
+              //           ];
+              //         },
+              //
+              //         /// ✅ Only body is animated
+              //         body: AnimatedSwitcher(
+              //           transitionBuilder: (child, animation) {
+              //             return FadeTransition(opacity: animation, child: child);
+              //           },
+              //           duration: const Duration(milliseconds: 300),
+              //           child: Obx(() => controller.pageStack.last),
+              //         ),
+              //       )
+              //     :
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                transitionBuilder: (child, animation) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
+                child: Column(
+                  children: [
+                    CustomMainHeader2(
+                      searchController: TextEditingController(),
+                    ),
+                    // CustomSliverAppBar(),
+                    Expanded(child: Obx(() => controller.pageStack.last)),
+                    // Expanded(
+                    //   child: NavigationController
+                    //       .widgetOptions[controller.currentIndex.value],
+                    // ),
+                  ],
+                ),
+              ),
           bottomNavigationBar: Container(
             decoration: BoxDecoration(
               color: primaryColor,

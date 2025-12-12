@@ -12,12 +12,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   void initState() {
-    checkIsMe();
     super.initState();
+    checkIsMe();
   }
 
   void checkIsMe() async {
-    final isMe = Get.arguments['user_id'] ?? '';
+    final isMe = Get.arguments['user_id'] ?? 'self';
     if (isMe == 'self') {
       controller.isMe.value = true;
       await controller.getProfile();
@@ -32,17 +32,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: _buildAppBar(),
-      body: Obx(
-        () => controller.isLoading.isTrue
-            ? LoadingWidget(color: primaryColor)
-            : SingleChildScrollView(
-                child: Column(
-                  children: [_buildProfileHeader(), _buildProfileDetails()],
-                ),
-              ),
-      ),
+      body: Obx(() {
+        if (controller.isLoading.isTrue) {
+          return LoadingWidget(color: primaryColor);
+        }
+
+        return SingleChildScrollView(
+          child: Column(
+            children: [_buildProfileHeader(), _buildProfileDetails()],
+          ),
+        );
+      }),
     );
   }
+
+  // ✅---------------- APP BAR ----------------✅
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
@@ -62,33 +66,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
       ),
-      title: CustomText(
-        title: "My Account",
-        fontSize: 22.sp,
-        fontWeight: FontWeight.bold,
+      title: Obx(
+        () => CustomText(
+          title: controller.isMe.isTrue ? "My Account" : 'Profile',
+          fontSize: 22.sp,
+          fontWeight: FontWeight.bold,
+        ),
       ),
       actions: [
-        controller.isMe.isTrue
-            ? IconButton(
-                onPressed: () => Get.toNamed(Routes.editProfile),
-                icon: HugeIcon(
-                  icon: HugeIcons.strokeRoundedPencilEdit02,
-                  color: Colors.grey,
-                ),
-              )
-            : IconButton(
-                onPressed: () {},
-                icon: HugeIcon(
-                  icon: HugeIcons.strokeRoundedMessage02,
-                  color: primaryColor,
-                ),
-              ),
+        Obx(
+          () => IconButton(
+            onPressed: controller.isMe.isTrue
+                ? () => Get.toNamed(Routes.editProfile)
+                : () {},
+            icon: HugeIcon(
+              icon: controller.isMe.isTrue
+                  ? HugeIcons.strokeRoundedPencilEdit02
+                  : HugeIcons.strokeRoundedMessage02,
+              color: controller.isMe.isTrue ? Colors.grey : primaryColor,
+            ),
+          ),
+        ),
       ],
     );
   }
 
+  // ✅---------------- PROFILE HEADER ----------------✅
   Widget _buildProfileHeader() {
     final image = controller.profileDetails['profile_image'] ?? '';
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.only(bottom: 12),
@@ -112,10 +118,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: CachedNetworkImage(
                 imageUrl: image,
                 fit: BoxFit.cover,
-                placeholder: (context, url) =>
-                    Image.asset(Images.defaultImage, fit: BoxFit.contain),
-                errorWidget: (context, url, error) =>
-                    Image.asset(Images.defaultImage, fit: BoxFit.contain),
+                placeholder: (_, __) => Image.asset(Images.defaultImage),
+                errorWidget: (_, __, ___) => Image.asset(Images.defaultImage),
               ),
             ),
           ),
@@ -147,7 +151,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           const SizedBox(height: 8),
           // Name
           GestureDetector(
-            onTap: () => Get.toNamed(Routes.followingList),
+            onTap: () => Get.toNamed(
+              Routes.followingList,
+              arguments: {
+                'user_id': controller.profileDetails['id']?.toString() ?? '',
+              },
+            ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -182,32 +191,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  // ✅---------------- PROFILE DETAILS ----------------✅
   Widget _buildProfileDetails() {
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Column(
+        spacing: 8.h,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (controller.profileDetails['about'] != null)
+          if (controller.profileDetails['about'] != null) ...[
             _buildSectionTitle('About Me'),
-          if (controller.profileDetails['about'] != null)
-            const SizedBox(height: 12),
-          if (controller.profileDetails['about'] != null)
             _buildAboutMeSection(),
-          if (controller.profileDetails['about'] != null)
-            const SizedBox(height: 24),
+          ],
+
           _buildSectionTitle('Professional Details'),
-          const SizedBox(height: 12),
+
           _buildCategorySection(),
-          const SizedBox(height: 24),
-          _buildSectionTitle('Contact Information'),
-          const SizedBox(height: 12),
-          _buildContactSection(),
-          const SizedBox(height: 24),
+          if (controller.isMe.isTrue) ...[
+            _buildSectionTitle('Contact Information'),
+
+            _buildContactSection(),
+          ],
           _businessCard(),
-          const SizedBox(height: 12),
-          _buildLogoutButton(),
-          // _buildDeleteButton(),
+          if (controller.isMe.isTrue) ...[_buildLogoutButton()],
         ],
       ),
     );
@@ -217,7 +223,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Text(
       title,
       style: TextStyle(
-        fontSize: 18,
+        fontSize: 18.sp,
         fontWeight: FontWeight.w600,
         color: Colors.grey[800],
         letterSpacing: -0.5,
@@ -227,17 +233,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildAboutMeSection() {
     final about = controller.profileDetails['about'] ?? '';
-    if (about == null) return SizedBox();
+    // if (about == null) return SizedBox();
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 2)),
-        ],
-      ),
+      decoration: _boxDecoration(),
       child: CustomText(
         title: about,
         maxLines: 10,
@@ -252,15 +252,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 2)),
-        ],
-      ),
+      decoration: _boxDecoration(),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        // crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildCategoryItem(
             'Specialization',
@@ -283,30 +277,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildCategoryItem(String title, String value) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      // crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          flex: 2,
-          child: Text(
-            title,
-            style: TextStyle(
-              fontWeight: FontWeight.w500,
-              color: Colors.grey[600],
-              fontSize: 14,
-            ),
-          ),
-        ),
-        Expanded(
-          flex: 3,
-          child: Text(
-            value,
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              color: Colors.grey[800],
-              fontSize: 14,
-            ),
-          ),
-        ),
+        Expanded(flex: 2, child: Text(title, style: _labelStyle())),
+        Expanded(flex: 3, child: Text(value, style: _valueStyle())),
       ],
     );
   }
@@ -315,20 +289,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 2)),
-        ],
-      ),
+      decoration: _boxDecoration(),
       child: Column(
+        spacing: 12.h,
         children: [
           _buildContactItem(
             HugeIcons.strokeRoundedMail01,
             controller.profileDetails['email_id'] ?? '-',
           ),
-          const SizedBox(height: 12),
           _buildContactItem(
             HugeIcons.strokeRoundedCall02,
             controller.profileDetails['mobile_number'] ?? '-',
@@ -340,22 +308,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildContactItem(var icon, String text) {
     return Row(
+      spacing: 12.w,
       children: [
-        HugeIcon(icon: icon, size: 20, color: primaryColor),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Text(
-            text,
-            style: TextStyle(color: Colors.grey[700], fontSize: 14),
-          ),
-        ),
+        HugeIcon(icon: icon, size: 20.r, color: primaryColor),
+        Expanded(child: Text(text, style: _valueStyle())),
       ],
     );
   }
 
+  // ✅---------------- BUSINESS CARD ----------------✅
   Widget _businessCard() {
     final businesses = controller.profileDetails['businesses'] ?? [];
-    if (businesses.length == 0) return SizedBox();
+    if (businesses.length == 0) return const SizedBox();
     return Column(
       spacing: 8.h,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -365,76 +329,66 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: businesses.map<Widget>((business) {
             return Container(
               margin: EdgeInsets.only(bottom: 10.h),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(
-                  color: Colors.grey.withValues(alpha: 0.3),
-                  width: 1,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withValues(alpha: 0.08),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Padding(
-                padding: EdgeInsets.all(10.w),
-                child: Row(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8.r),
-                      child: Image.network(
-                        business['image']?.toString() ?? '',
+              padding: EdgeInsets.all(10.w),
+              decoration: _boxDecoration(),
+              child: Row(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8.r),
+                    child: Image.network(
+                      business['image']?.toString() ?? '',
+                      width: 50.w,
+                      height: 50.h,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Image.asset(
+                        Images.defaultImage,
                         width: 50.w,
                         height: 50.h,
-                        fit: BoxFit.cover,
                       ),
                     ),
-                    SizedBox(width: 12.w),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CustomText(
-                            title: business['name']?.toString() ?? '',
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w600,
-                            textAlign: TextAlign.start,
+                  ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CustomText(
+                          title: business['name']?.toString() ?? '',
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                          textAlign: TextAlign.start,
+                        ),
+                        Text(
+                          business['category']?.toString() ?? '',
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: Colors.grey[600],
                           ),
-                          Text(
-                            business['category']?.toString() ?? '',
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              color: Colors.grey[600],
+                        ),
+                        SizedBox(height: 6.h),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.people_alt_outlined,
+                              size: 14.sp,
+                              color: Colors.grey,
                             ),
-                          ),
-                          SizedBox(height: 6.h),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.people_alt_outlined,
-                                size: 14.sp,
-                                color: Colors.grey,
+                            SizedBox(width: 4.w),
+                            Text(
+                              '${business['followers']?.toString() ?? '0'} Followers',
+                              style: TextStyle(
+                                fontSize: 11.sp,
+                                color: Colors.grey[600],
                               ),
-                              SizedBox(width: 4.w),
-                              Text(
-                                '${business['followers']?.toString() ?? '0'} Followers',
-                                style: TextStyle(
-                                  fontSize: 11.sp,
-                                  color: Colors.grey[600],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
+                  ),
+                  if (controller.isMe.isTrue)
                     HugeIcon(icon: HugeIcons.strokeRoundedPencilEdit02),
-                  ],
-                ),
+                ],
               ),
             );
           }).toList(),
@@ -443,6 +397,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  // ✅---------------- LOGOUT ----------------✅
   Widget _buildLogoutButton() {
     return GestureDetector(
       onTap: () {
@@ -473,6 +428,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
           fontWeight: FontWeight.w600,
         ),
       ),
+    );
+  }
+
+  // ✅---------------- COMMON STYLES ----------------✅
+  BoxDecoration _boxDecoration() {
+    return BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(12),
+      boxShadow: [
+        BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 2)),
+      ],
+    );
+  }
+
+  TextStyle _labelStyle() {
+    return TextStyle(
+      fontWeight: FontWeight.w500,
+      color: Colors.grey[600],
+      fontSize: 14.sp,
+    );
+  }
+
+  TextStyle _valueStyle() {
+    return TextStyle(
+      fontWeight: FontWeight.w600,
+      color: Colors.grey[800],
+      fontSize: 14.sp,
     );
   }
 

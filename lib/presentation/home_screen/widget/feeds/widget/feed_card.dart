@@ -283,9 +283,11 @@ class FeedCard extends StatelessWidget {
                         .toString()] ==
                     true;
               }
-              return isLoading
-                  ? LoadingWidget(color: primaryColor, size: 20.r)
-                  : _buildEngagementButton(
+              return
+                // isLoading
+                //   ? LoadingWidget(color: primaryColor, size: 20.r)
+                //   :
+              _buildEngagementButton(
                       icon: Icons.favorite_border,
                       activeIcon: Icons.favorite,
                       isActive: data['is_liked'] == true,

@@ -44,23 +44,172 @@ class _SingleChatState extends State<SingleChat> {
   Widget _buildHeader() {
     return Container(
       color: Colors.white,
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+      padding: EdgeInsets.symmetric(horizontal: 12.w),
       child: Row(
-        spacing: 8,
+        spacing: 8.w,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          GestureDetector(
+          // ✅ BACK BUTTON CENTERED
+          InkWell(
             onTap: () => navController.goBack(),
-            child: const Icon(Icons.arrow_back),
+            borderRadius: BorderRadius.circular(50),
+            child: Padding(
+              padding: EdgeInsets.all(6.w),
+              child: Icon(Icons.arrow_back, size: 22.sp),
+            ),
           ),
-          CustomText(
-            title: controller.singleChat['business_requirement_name'] ?? '',
-            fontSize: 18.sp,
-            fontWeight: FontWeight.bold,
+
+          // ✅ PROFILE TILE CENTERED
+          Expanded(
+            child: GestureDetector(
+              onTap: () => Get.toNamed(
+                Routes.profile,
+                arguments: {
+                  'user_id':
+                      controller.singleChat['other_user_id']?.toString() ?? '',
+                },
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center, // ✅ IMPORTANT
+                children: [
+                  // ✅ PROFILE IMAGE
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(100),
+                    child: FadeInImage(
+                      placeholder: const AssetImage(Images.defaultImage),
+                      image:
+                          (controller.singleChat['other_user_profile'] ?? '')
+                              .toString()
+                              .isNotEmpty
+                          ? NetworkImage(
+                              controller.singleChat['other_user_profile'],
+                            )
+                          : const AssetImage(Images.defaultImage)
+                                as ImageProvider,
+                      imageErrorBuilder: (context, error, stackTrace) {
+                        return Image.asset(
+                          Images.defaultImage,
+                          fit: BoxFit.cover,
+                          width: 36.w,
+                          height: 36.h,
+                        );
+                      },
+                      fit: BoxFit.cover,
+                      width: 36.w,
+                      height: 36.h,
+                      fadeInDuration: const Duration(milliseconds: 300),
+                    ),
+                  ),
+
+                  SizedBox(width: 10.w),
+
+                  // ✅ NAME + SUBTITLE CENTERED
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment:
+                          MainAxisAlignment.center, // ✅ VERTICAL CENTER
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CustomText(
+                          title: controller.singleChat['other_user'] ?? '',
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                          textAlign: TextAlign.start,
+                          maxLines: 1,
+                        ),
+                        SizedBox(height: 2.h),
+                        CustomText(
+                          title:
+                              controller
+                                  .singleChat['business_requirement_name'] ??
+                              '',
+                          fontSize: 12.sp,
+                          textAlign: TextAlign.start,
+                          maxLines: 1,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
     );
   }
+
+  // Widget _buildHeader() {
+  //   return Container(
+  //     height: 40.h, // ✅ Proper AppBar height
+  //     color: Colors.white,
+  //     padding: EdgeInsets.symmetric(horizontal: 8.w),
+  //     child: Row(
+  //       crossAxisAlignment: CrossAxisAlignment.center, // ✅ CENTER ALIGN
+  //       spacing: 8,
+  //       children: [
+  //         GestureDetector(
+  //           onTap: () => navController.goBack(),
+  //           child: const Icon(Icons.arrow_back),
+  //         ),
+  //         Expanded(
+  //           child: ListTile(
+  //             dense: true,
+  //             onTap: () => Get.toNamed(
+  //               Routes.profile,
+  //               arguments: {
+  //                 'user_id':
+  //                     controller.singleChat['other_user_id']?.toString() ?? '',
+  //               },
+  //             ),
+  //             visualDensity: VisualDensity(vertical: -4),
+  //             contentPadding: EdgeInsets.zero,
+  //             minVerticalPadding: 0,
+  //             minLeadingWidth: 0,
+  //             horizontalTitleGap: 8,
+  //             leading: ClipRRect(
+  //               borderRadius: BorderRadius.circular(100),
+  //               child: FadeInImage(
+  //                 placeholder: AssetImage(Images.defaultImage),
+  //                 image:
+  //                     (controller.singleChat['other_user_profile'] ?? '')
+  //                         .isNotEmpty
+  //                     ? NetworkImage(
+  //                         controller.singleChat['other_user_profile'],
+  //                       )
+  //                     : const AssetImage(Images.defaultImage) as ImageProvider,
+  //                 imageErrorBuilder: (context, error, stackTrace) {
+  //                   return Image.asset(
+  //                     Images.defaultImage,
+  //                     fit: BoxFit.contain,
+  //                     width: 30.w,
+  //                     height: 30.h,
+  //                   );
+  //                 },
+  //                 fit: BoxFit.cover,
+  //                 width: 30.w,
+  //                 height: 30.h,
+  //                 placeholderFit: BoxFit.cover,
+  //                 fadeInDuration: Duration(milliseconds: 300),
+  //               ),
+  //             ),
+  //             title: CustomText(
+  //               textAlign: TextAlign.start,
+  //               title: controller.singleChat['other_user'] ?? '',
+  //               fontSize: 14.sp,
+  //               fontWeight: FontWeight.w600,
+  //             ),
+  //             subtitle: CustomText(
+  //               textAlign: TextAlign.start,
+  //               title: controller.singleChat['business_requirement_name'] ?? '',
+  //               fontSize: 12.sp,
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildTextField() {
     return Container(

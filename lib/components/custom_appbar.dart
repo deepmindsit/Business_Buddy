@@ -9,7 +9,9 @@ class CustomSliverAppBar extends StatelessWidget {
     return SliverAppBar(
       expandedHeight: Get.height * 0.2.h,
       pinned: true,
-      toolbarHeight: isCollapsed ? 100.h : 0.h,
+      floating: true,
+      snap: true,
+      toolbarHeight: isCollapsed ? 100.h : kToolbarHeight,
       elevation: isCollapsed ? 6 : 0,
       surfaceTintColor: Colors.transparent,
       backgroundColor: Colors.white,
@@ -20,6 +22,7 @@ class CustomSliverAppBar extends StatelessWidget {
             )
           : const SizedBox(),
       flexibleSpace: FlexibleSpaceBar(
+        collapseMode: CollapseMode.parallax,
         background: Column(
           children: [
             Container(

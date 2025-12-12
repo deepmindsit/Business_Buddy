@@ -9,24 +9,10 @@ class FollowingList extends StatefulWidget {
 
 class _FollowingListState extends State<FollowingList> {
   final controller = getIt<ProfileController>();
-  final businesses = [
-    {
-      'image': Images.hotelImg,
-      'title': 'Hotel Jyoti Family....',
-      'subtitle': 'Restaurant',
-      'followers': '1200+ Followers',
-    },
-    {
-      'image': Images.defaultImage,
-      'title': 'Deepminds Infotech....',
-      'subtitle': 'Information technology',
-      'followers': '1200+ Followers',
-    },
-  ];
 
   @override
   void initState() {
-    controller.getFollowList();
+    controller.getFollowList(user: Get.arguments['user_id']?.toString() ?? '');
     super.initState();
   }
 
@@ -46,13 +32,13 @@ class _FollowingListState extends State<FollowingList> {
                       child: CustomText(title: 'No Following', fontSize: 14.sp),
                     )
                   : ListView.separated(
-                      padding: EdgeInsets.all(16.w),
                       separatorBuilder: (_, __) => SizedBox(height: 12.h),
                       itemCount: controller.followList.length,
                       itemBuilder: (_, index) {
                         final business = controller.followList[index];
                         return Container(
-                          margin: EdgeInsets.only(bottom: 10.h),
+                          margin: EdgeInsets.symmetric(horizontal: 16.w),
+                          // margin: EdgeInsets.only(bottom: 10.h),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(12.r),

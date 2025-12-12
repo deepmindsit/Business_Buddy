@@ -953,6 +953,7 @@ Future<dynamic> _showOffer(LBOController controller) {
                                 ),
                               ],
                             ),
+                            SizedBox(height: 20.h),
                           ],
                         ),
                       ),

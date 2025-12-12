@@ -117,7 +117,10 @@ class CatItemCard extends StatelessWidget {
       child: Column(
         spacing: 8.h,
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [_buildHeader(), _buildLocation(), _buildRating()],
+        children: [
+          _buildHeader(), _buildLocation(),
+          // _buildRating()
+        ],
       ),
     );
   }
@@ -266,6 +269,7 @@ class CatItemCard extends StatelessWidget {
             maxLines: 2,
           ),
         ),
+        if (isSearch != true) _buildCategory(),
       ],
     );
   }

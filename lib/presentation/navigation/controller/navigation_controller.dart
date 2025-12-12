@@ -13,8 +13,7 @@ class NavigationController extends GetxController {
   // 🔹 Public getter
   List<Widget> get pageStack => _pageStack;
 
-  // 🔹 Current visible widget
-  Widget get homeContent => _pageStack.last;
+
 
   static final List<Widget> widgetOptions = <Widget>[
     const HomeScreen(),

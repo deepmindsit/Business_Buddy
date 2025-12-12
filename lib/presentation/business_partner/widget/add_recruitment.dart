@@ -214,8 +214,12 @@ class _AddRecruitmentState extends State<AddRecruitment> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildLabel('I can Invest'),
+        _buildLabel('I can Invest (%)'),
         buildTextField(
+          inputFormatters: [
+            FilteringTextInputFormatter.digitsOnly,
+            // LengthLimitingTextInputFormatter(10),
+          ],
           controller: controller.iCanInvest,
           hintText: 'Enter your i can Invest',
           validator: (value) =>
@@ -231,16 +235,16 @@ class _AddRecruitmentState extends State<AddRecruitment> {
 
       switch (controller.invType.value) {
         case '1':
-          title = 'Investment Capacity(Lacks)';
+          title = 'Investment Capacity(In Lakhs)';
           break;
         case '2':
-          title = 'Investment Requirement(Lacks)';
+          title = 'Investment Requirement(In Lakhs)';
           break;
         case '3':
           title = 'Experience(Years)';
           break;
         default:
-          title = 'Investment Capacity(Lacks)';
+          title = 'Investment Capacity(In Lakhs)';
       }
 
       return controller.isLoading.isTrue
@@ -261,30 +265,40 @@ class _AddRecruitmentState extends State<AddRecruitment> {
   }
 
   Widget _buildHistory() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildLabel('Investment History'),
-        buildTextField(
-          controller: controller.invHistory,
-          hintText: 'Enter Investment History ',
-          validator: (value) =>
-              value!.trim().isEmpty ? 'Please enter Investment History ' : null,
-        ),
-      ],
-    );
+    return Obx(() {
+      if (controller.invType.value == "3") {
+        return SizedBox();
+      }
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildLabel('Investment History'),
+          buildTextField(
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z ]')),
+              // LengthLimitingTextInputFormatter(10),
+            ],
+            controller: controller.invHistory,
+            hintText: 'Enter Investment History ',
+            validator: (value) => value!.trim().isEmpty
+                ? 'Please enter Investment History '
+                : null,
+          ),
+        ],
+      );
+    });
   }
 
   Widget _buildNote() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildLabel('Note'),
+        _buildLabel('Special Notes'),
         buildTextField(
           controller: controller.notes,
-          hintText: 'Enter Note ',
+          hintText: 'Enter Special Notes',
           validator: (value) =>
-              value!.trim().isEmpty ? 'Please enter Note' : null,
+              value!.trim().isEmpty ? 'Please enter Special Notes' : null,
         ),
       ],
     );
