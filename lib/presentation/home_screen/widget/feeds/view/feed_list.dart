@@ -62,58 +62,73 @@ class _NewFeedState extends State<NewFeed> {
                             verticalOffset: 50.0,
                             child: FadeInAnimation(
                               child: item['type'] == 'offer'
-                                  ? OfferCard(data: item)
+                                  ? OfferCard(
+                                      data: item,
+                                      onLike: () => handleOfferLike(
+                                        item,
+                                        () async => await controller.getFeeds(
+                                          showLoading: false,
+                                        ),
+                                      ),
+                                    )
                                   : FeedCard(
-                                      onLike: () async {
-                                        if (controller
-                                            .isLikeProcessing
-                                            .isTrue) {
-                                          return; // <<< stops multiple taps
-                                        }
-                                        controller.isLikeProcessing.value =
-                                            true;
+                                      onLike: () => handleFeedLike(
+                                        item,
+                                        () => controller.getFeeds(
+                                          showLoading: false,
+                                        ),
+                                      ),
 
-                                        if (!getIt<DemoService>().isDemo) {
-                                          ToastUtils.showLoginToast();
-                                          controller.isLikeProcessing.value =
-                                              false;
-                                          return;
-                                        }
-                                        try {
-                                          bool wasLiked = item['is_liked'];
-                                          int likeCount =
-                                              int.tryParse(
-                                                item['likes_count'].toString(),
-                                              ) ??
-                                              0;
-
-                                          if (wasLiked) {
-                                            await controller.unLikeBusiness(
-                                              item['liked_id'].toString(),
-                                            );
-                                            item['likes_count'] =
-                                                (likeCount - 1).clamp(
-                                                  0,
-                                                  999999,
-                                                );
-                                          } else {
-                                            await controller.likeBusiness(
-                                              item['business_id'].toString(),
-                                              item['post_id'].toString(),
-                                            );
-                                            item['likes_count'] = likeCount + 1;
-                                          }
-
-                                          // Toggle locally
-                                          item['is_liked'] = !wasLiked;
-                                          await controller.getFeeds(
-                                            showLoading: false,
-                                          );
-                                        } finally {
-                                          controller.isLikeProcessing.value =
-                                              false;
-                                        }
-                                      },
+                                      // () async {
+                                      //   if (controller
+                                      //       .isLikeProcessing
+                                      //       .isTrue) {
+                                      //     return; // <<< stops multiple taps
+                                      //   }
+                                      //   controller.isLikeProcessing.value =
+                                      //       true;
+                                      //
+                                      //   if (!getIt<DemoService>().isDemo) {
+                                      //     ToastUtils.showLoginToast();
+                                      //     controller.isLikeProcessing.value =
+                                      //         false;
+                                      //     return;
+                                      //   }
+                                      //   try {
+                                      //     bool wasLiked = item['is_liked'];
+                                      //     int likeCount =
+                                      //         int.tryParse(
+                                      //           item['likes_count'].toString(),
+                                      //         ) ??
+                                      //         0;
+                                      //
+                                      //     if (wasLiked) {
+                                      //       await controller.unLikeBusiness(
+                                      //         item['liked_id'].toString(),
+                                      //       );
+                                      //       item['likes_count'] =
+                                      //           (likeCount - 1).clamp(
+                                      //             0,
+                                      //             999999,
+                                      //           );
+                                      //     } else {
+                                      //       await controller.likeBusiness(
+                                      //         item['business_id'].toString(),
+                                      //         item['post_id'].toString(),
+                                      //       );
+                                      //       item['likes_count'] = likeCount + 1;
+                                      //     }
+                                      //
+                                      //     // Toggle locally
+                                      //     item['is_liked'] = !wasLiked;
+                                      //     await controller.getFeeds(
+                                      //       showLoading: false,
+                                      //     );
+                                      //   } finally {
+                                      //     controller.isLikeProcessing.value =
+                                      //         false;
+                                      //   }
+                                      // },
                                       data: item,
                                       onFollow: () async {
                                         if (controller

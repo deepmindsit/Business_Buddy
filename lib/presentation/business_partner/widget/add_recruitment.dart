@@ -197,7 +197,7 @@ class _AddRecruitmentState extends State<AddRecruitment> {
   Widget _buildInvestmentType() {
     return AppDropdownField(
       isDynamic: true,
-      title: 'What are u looking for',
+      title: 'I am looking for',
       value: controller.invType.value,
       items: controller.wulfList,
       hintText: 'Select your Investment',

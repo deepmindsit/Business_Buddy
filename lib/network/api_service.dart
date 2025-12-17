@@ -219,6 +219,19 @@ abstract class ApiService {
     @Part(name: "liked_id") String? likeId,
   );
 
+  @POST(AllUrl.likeOffer)
+  Future<dynamic> likeOffer(
+    @Part(name: "user_id") String? userId,
+    @Part(name: "business_id") String? businessId,
+    @Part(name: "business_offer_id") String? offerId,
+  );
+
+  @POST(AllUrl.unlikeOffer)
+  Future<dynamic> unlikeOffer(
+    @Part(name: "user_id") String? userId,
+    @Part(name: "offer_liked_id") String? likeId,
+  );
+
   @POST(AllUrl.addReview)
   Future<dynamic> addReview(
     @Part(name: "user_id") String? userId,
@@ -234,6 +247,15 @@ abstract class ApiService {
     @Part(name: "business_post_id") String? postId,
     @Part(name: "comment") String? comment,
   );
+
+  @POST(AllUrl.addOfferComment)
+  Future<dynamic> addOfferComment(
+      @Part(name: "user_id") String? userId,
+      @Part(name: "business_id") String? businessId,
+      @Part(name: "business_offer_id") String? offerId,
+      @Part(name: "comment") String? comment,
+      );
+
 
   @POST(AllUrl.chatList)
   Future<dynamic> getChatList(@Part(name: "user_id") String? userId);

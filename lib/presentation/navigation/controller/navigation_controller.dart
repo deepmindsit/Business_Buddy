@@ -13,8 +13,6 @@ class NavigationController extends GetxController {
   // 🔹 Public getter
   List<Widget> get pageStack => _pageStack;
 
-
-
   static final List<Widget> widgetOptions = <Widget>[
     const HomeScreen(),
     const InboxList(),

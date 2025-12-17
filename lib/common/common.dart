@@ -1473,3 +1473,64 @@ void expandContent(dynamic data) {
     ),
   );
 }
+
+Widget buildEngagementButton({
+  required dynamic icon,
+  required IconData activeIcon,
+  required bool isActive,
+  required String count,
+  required VoidCallback onTap,
+  Color? activeColor,
+  bool isComment = false,
+}) {
+  final color = isActive ? (activeColor ?? primaryColor) : Colors.grey.shade600;
+
+  return GestureDetector(
+    onTap: onTap,
+    child: Container(
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+      decoration: BoxDecoration(
+        color: isActive ? color.withValues(alpha: 0.1) : Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(12.r),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 200),
+            child: isComment
+                ? HugeIcon(icon: icon, color: Colors.grey.shade700, size: 18.sp)
+                : Icon(
+                    isActive ? activeIcon : icon,
+                    key: ValueKey(isActive),
+                    size: 18.sp,
+                    color: color,
+                  ),
+          ),
+          if (count.isNotEmpty) ...[
+            SizedBox(width: 6.w),
+            Text(
+              formatCount(int.tryParse(count) ?? 0),
+              style: TextStyle(
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w600,
+                color: color,
+              ),
+            ),
+          ],
+        ],
+      ),
+    ),
+  );
+}
+
+String formatCount(int count) {
+  if (count >= 1000000) {
+    return '${(count / 1000000).toStringAsFixed(1)}M';
+  } else if (count >= 1000) {
+    return '${(count / 1000).toStringAsFixed(1)}K';
+  }
+  return count.toString();
+}
+
+

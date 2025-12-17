@@ -2,8 +2,13 @@ import '../../../../../utils/exported_path.dart';
 
 class CommentsBottomSheet extends StatefulWidget {
   final String postId;
+  final bool isPost;
 
-  const CommentsBottomSheet({super.key, required this.postId});
+  const CommentsBottomSheet({
+    super.key,
+    required this.postId,
+    this.isPost = true,
+  });
 
   @override
   State<CommentsBottomSheet> createState() => _CommentsBottomSheetState();
@@ -11,11 +16,15 @@ class CommentsBottomSheet extends StatefulWidget {
 
 class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
   final commentController = getIt<FeedsController>();
-
+  final controller = getIt<LBOController>();
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      commentController.getSinglePost(widget.postId);
+      if (widget.isPost == true) {
+        commentController.getSinglePost(widget.postId);
+      } else {
+        controller.getSingleOffer(widget.postId);
+      }
     });
     super.initState();
   }
@@ -62,26 +71,47 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
               Divider(height: 1, color: Colors.blueGrey),
 
               // Comments List
-              Expanded(
-                child: Obx(() {
-                  if (commentController.isCommentLoading.value) {
-                    return LoadingWidget(color: primaryColor);
-                  }
+              widget.isPost == true
+                  ? Expanded(
+                      child: Obx(() {
+                        if (commentController.isCommentLoading.value) {
+                          return LoadingWidget(color: primaryColor);
+                        }
 
-                  if (commentController.comments.isEmpty) {
-                    return _buildEmptyComment();
-                  }
+                        if (commentController.comments.isEmpty) {
+                          return _buildEmptyComment();
+                        }
 
-                  return ListView.builder(
-                    padding: EdgeInsets.all(16),
-                    itemCount: commentController.comments.length,
-                    itemBuilder: (context, index) {
-                      final comment = commentController.comments[index];
-                      return _buildCommentItem(comment);
-                    },
-                  );
-                }),
-              ),
+                        return ListView.builder(
+                          padding: EdgeInsets.all(16),
+                          itemCount: commentController.comments.length,
+                          itemBuilder: (context, index) {
+                            final comment = commentController.comments[index];
+                            return _buildCommentItem(comment);
+                          },
+                        );
+                      }),
+                    )
+                  : Expanded(
+                      child: Obx(() {
+                        if (controller.isSingleOfferLoading.value) {
+                          return LoadingWidget(color: primaryColor);
+                        }
+
+                        if (controller.comments.isEmpty) {
+                          return _buildEmptyComment();
+                        }
+
+                        return ListView.builder(
+                          padding: EdgeInsets.all(16),
+                          itemCount: controller.comments.length,
+                          itemBuilder: (context, index) {
+                            final comment = controller.comments[index];
+                            return _buildCommentItem(comment);
+                          },
+                        );
+                      }),
+                    ),
 
               // Add Comment Section
               _buildAddCommentSection(),
@@ -393,45 +423,110 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                       textInputAction: TextInputAction.send,
                       onSubmitted: (value) async {
                         if (value.trim().isNotEmpty) {
-                          await commentController.addPostComment();
+                          widget.isPost
+                              ? await commentController.addPostComment()
+                              : await controller
+                                    .addOfferComment(value.trim())
+                                    .then((v) {
+                                      commentController.commentTextController
+                                          .clear();
+                                      commentController.newComment.value = '';
+                                    });
                         }
                       },
                     ),
                   ),
 
                   // Send Button
-                  Obx(
-                    () => commentController.isAddCommentLoading.isTrue
-                        ? Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: LoadingWidget(
-                              color: primaryColor,
-                              size: 16.w,
-                            ),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
-                            child: IconButton(
-                              onPressed:
-                                  commentController.newComment.value
-                                      .trim()
-                                      .isNotEmpty
-                                  ? () async =>
-                                        await commentController.addPostComment()
-                                  : null,
-                              icon: Icon(Icons.send),
-                              color:
-                                  commentController.newComment.value
-                                      .trim()
-                                      .isNotEmpty
-                                  ? primaryColor
-                                  : Colors.grey,
-                              iconSize: 24,
-                              padding: EdgeInsets.zero,
-                              constraints: BoxConstraints(),
-                            ),
-                          ),
-                  ),
+                  // Obx(
+                  //   () => widget.isPost
+                  //       ? commentController.isAddCommentLoading.isTrue
+                  //       : controller.isOfferCommentLoading.isTrue
+                  //       ? Padding(
+                  //           padding: const EdgeInsets.all(8.0),
+                  //           child: LoadingWidget(
+                  //             color: primaryColor,
+                  //             size: 16.w,
+                  //           ),
+                  //         )
+                  //       : Padding(
+                  //           padding: const EdgeInsets.only(right: 8.0),
+                  //           child: IconButton(
+                  //             onPressed:
+                  //                 commentController.newComment.value
+                  //                     .trim()
+                  //                     .isNotEmpty
+                  //                 ? () async => widget.isPost
+                  //                       ? await commentController
+                  //                             .addPostComment()
+                  //                       : await controller.addOfferComment(
+                  //                           commentController
+                  //                               .commentTextController
+                  //                               .text
+                  //                               .trim(),
+                  //                         )
+                  //                 // await commentController.addPostComment()
+                  //                 : null,
+                  //             icon: Icon(Icons.send),
+                  //             color:
+                  //                 commentController.newComment.value
+                  //                     .trim()
+                  //                     .isNotEmpty
+                  //                 ? primaryColor
+                  //                 : Colors.grey,
+                  //             iconSize: 24,
+                  //             padding: EdgeInsets.zero,
+                  //             constraints: BoxConstraints(),
+                  //           ),
+                  //         ),
+                  // ),
+                  Obx(() {
+                    final isLoading = widget.isPost
+                        ? commentController.isAddCommentLoading.isTrue
+                        : controller.isOfferCommentLoading.isTrue;
+
+                    if (isLoading) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: LoadingWidget(color: primaryColor, size: 16.w),
+                      );
+                    }
+
+                    final hasText = commentController.newComment.value
+                        .trim()
+                        .isNotEmpty;
+
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: IconButton(
+                        onPressed: hasText
+                            ? () async {
+                                if (widget.isPost) {
+                                  await commentController.addPostComment();
+                                } else {
+                                  await controller
+                                      .addOfferComment(
+                                        commentController
+                                            .commentTextController
+                                            .text
+                                            .trim(),
+                                      )
+                                      .then((v) {
+                                        commentController.commentTextController
+                                            .clear();
+                                        commentController.newComment.value = '';
+                                      });
+                                }
+                              }
+                            : null,
+                        icon: const Icon(Icons.send),
+                        color: hasText ? primaryColor : Colors.grey,
+                        iconSize: 24,
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                      ),
+                    );
+                  }),
                 ],
               ),
             ),

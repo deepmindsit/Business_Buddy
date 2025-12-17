@@ -323,20 +323,52 @@ class LBOController extends GetxController {
   /// ------------------------
   final singleOffer = <String, dynamic>{}.obs;
   final isSingleOfferLoading = false.obs;
+  final comments = [].obs;
 
   Future<void> getSingleOffer(String offerId, {bool showLoading = true}) async {
     if (showLoading) isSingleOfferLoading.value = true;
-
+    comments.clear();
     try {
       final response = await _apiService.offerDetails(offerId);
 
       if (response['common']['status'] == true) {
         singleOffer.value = response['data'] ?? {};
+        comments.value = response['data']['comments'] ?? [];
       }
     } catch (e) {
       showError(e);
     } finally {
       if (showLoading) isSingleOfferLoading.value = false;
+    }
+  }
+
+  final isOfferCommentLoading = false.obs;
+
+  Future<void> addOfferComment(
+    String comment, {
+    bool showLoading = true,
+  }) async {
+    if (showLoading) isOfferCommentLoading.value = true;
+
+    final userId = await LocalStorage.getString('user_id') ?? '';
+    try {
+      final response = await _apiService.addOfferComment(
+        userId,
+        singleOffer['business_id'].toString(),
+        singleOffer['id'].toString(),
+        comment,
+      );
+
+      if (response['common']['status'] == true) {
+        await getSingleOffer(singleOffer['id'].toString(), showLoading: false);
+        ToastUtils.showSuccessToast(response['common']['message']);
+      } else {
+        ToastUtils.showWarningToast(response['common']['message']);
+      }
+    } catch (e) {
+      showError(e);
+    } finally {
+      if (showLoading) isOfferCommentLoading.value = false;
     }
   }
 

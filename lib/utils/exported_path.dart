@@ -51,6 +51,9 @@ export 'package:businessbuddy/presentation/business_partner/widget/business_card
 export 'package:businessbuddy/components/search_location.dart';
 export 'package:businessbuddy/presentation/home_screen/widget/explorer/widget/category_details_shimmer.dart';
 export 'package:businessbuddy/components/time_converter.dart';
+export 'package:businessbuddy/presentation/home_screen/widget/feeds/widget/comment_bottomsheet.dart';
+export 'package:businessbuddy/common/helper.dart';
+export 'package:businessbuddy/utils/like_animation.dart';
 
 //component
 export 'package:businessbuddy/components/screenutil_config.dart';
@@ -117,4 +120,6 @@ export 'package:flutter_rating_bar/flutter_rating_bar.dart';
 export 'package:shimmer/shimmer.dart';
 export 'package:carousel_slider/carousel_slider.dart';
 export 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+
+
 

@@ -12,8 +12,6 @@ class CustomMainHeader2 extends StatelessWidget {
     required this.searchController,
   });
 
-  // final controller = getIt<NavigationController>();
-
   @override
   Widget build(BuildContext context) {
     return Column(

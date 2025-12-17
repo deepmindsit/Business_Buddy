@@ -9,14 +9,14 @@ class CategoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
-      spacing: 4.h,
+      // spacing: 4.h,
       children: [
         Container(
           padding: EdgeInsets.all(22.w),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12.r),
-            border: Border.all(width: 0.5.w, color: lightGrey),
+            // border: Border.all(width: 0.5.w, color: lightGrey),
           ),
           child: FadeInImage(
             placeholder: AssetImage(Images.defaultImage),

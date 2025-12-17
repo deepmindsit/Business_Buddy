@@ -90,6 +90,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
             child: ClipRRect(
               borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
               child: BottomNavigationBar(
+                type: BottomNavigationBarType.fixed,
                 backgroundColor: mainGrey,
                 selectedItemColor: Colors.red,
                 showUnselectedLabels: true,

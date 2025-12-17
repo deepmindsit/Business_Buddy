@@ -2,8 +2,8 @@ import 'package:businessbuddy/utils/exported_path.dart';
 
 class OfferCard extends StatelessWidget {
   final dynamic data;
-
-  OfferCard({super.key, this.data});
+  final void Function() onLike;
+  OfferCard({super.key, this.data, required this.onLike});
 
   final navController = getIt<NavigationController>();
 
@@ -205,17 +205,12 @@ class OfferCard extends StatelessWidget {
       final isFollowing = data['is_followed'] == true;
       return isLoading
           ? LoadingWidget(color: primaryColor)
-          : isFollowing
-          ? SizedBox()
           : GestureDetector(
               onTap: () async {
                 if (getIt<DemoService>().isDemo == false) {
                   ToastUtils.showLoginToast();
                   return;
                 }
-
-                print('before');
-                print(data['is_followed']);
                 if (data['is_followed'] == true) {
                   await getIt<FeedsController>().unfollowBusiness(
                     data['follow_id'].toString(),
@@ -385,13 +380,7 @@ class OfferCard extends StatelessWidget {
             return buildBulletPoint(text: v);
           }).toList(),
         ),
-        // CustomText(
-        //   title: getTimeAgo(data['created_at'] ?? ''),
-        //   fontSize: 10.sp,
-        //   textAlign: TextAlign.start,
-        //   color: Colors.grey.shade600,
-        //   maxLines: 1,
-        // ),
+        _buildEngagementSection(),
       ],
     );
   }
@@ -427,13 +416,58 @@ class OfferCard extends StatelessWidget {
           ),
       ],
     );
+  }
 
-    // return CustomText(
-    //     title: data['details'] ?? '',
-    //     fontSize: 14.sp,
-    //     color: Colors.black,
-    //     textAlign: TextAlign.start,
-    //     maxLines: 2,
-    //   );
+  Widget _buildEngagementSection() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        // Likes and Comments
+        Row(
+          children: [
+            buildEngagementButton(
+              icon: Icons.favorite_border,
+              activeIcon: Icons.favorite,
+              isActive: data['is_offer_liked'] == true,
+              count: data['offer_likes_count']?.toString() ?? '0',
+              onTap: onLike,
+              activeColor: Colors.red,
+            ),
+
+            SizedBox(width: 16.w),
+
+            buildEngagementButton(
+              icon: HugeIcons.strokeRoundedMessage02,
+              activeIcon: Icons.comment,
+              isActive: false,
+              count: data['offer_comments_count']?.toString() ?? '0',
+              onTap: _handleComment,
+              isComment: true,
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  void _handleComment() {
+    if (!getIt<DemoService>().isDemo) {
+      ToastUtils.showLoginToast();
+      return;
+    }
+    Get.bottomSheet(
+      CommentsBottomSheet(postId: data['id']?.toString() ?? '', isPost: false),
+      isDismissible: true,
+      isScrollControlled: true,
+      backgroundColor: Colors.grey.withValues(alpha: 0.05),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20.r),
+          topRight: Radius.circular(20.r),
+        ),
+      ),
+      ignoreSafeArea: false,
+    );
+    // Implement comment functionality
   }
 }

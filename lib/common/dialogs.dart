@@ -32,6 +32,7 @@ class AllDialogs {
                   if (Get.isDialogOpen ?? false) Get.back();
                   // await checkMaintenance();
                 } else {
+                  Get.offAllNamed(Routes.splash);
                   // Optionally show a toast/snackbar
                 }
               },

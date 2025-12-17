@@ -47,7 +47,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   // ✅---------------- APP BAR ----------------✅
-
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
       surfaceTintColor: Colors.white,
@@ -213,6 +212,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             _buildContactSection(),
           ],
           _businessCard(),
+          _businessRequirement(),
           if (controller.isMe.isTrue) ...[_buildLogoutButton()],
         ],
       ),
@@ -391,6 +391,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
             );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
+  // ✅---------------- Business Requirement CARD ----------------✅
+  Widget _businessRequirement() {
+    final businesses = controller.profileDetails['business_requirements'] ?? [];
+    if (businesses.length == 0) return const SizedBox();
+    return Column(
+      spacing: 8.h,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionTitle('Business Requirements'),
+        Column(
+          children: businesses.map<Widget>((business) {
+            return BusinessCard(data: business);
           }).toList(),
         ),
       ],

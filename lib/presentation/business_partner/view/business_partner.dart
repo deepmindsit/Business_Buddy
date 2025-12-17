@@ -137,17 +137,16 @@ class _BusinessPartnerState extends State<BusinessPartner>
     return Obx(() {
       if (controller.isMainLoading.isTrue) {
         return ListView.separated(
-          padding: EdgeInsets.all(8),
+          padding: EdgeInsets.all(8.w),
           itemCount: 6,
-          separatorBuilder: (_, __) => SizedBox(height: 10),
+          separatorBuilder: (_, __) => SizedBox(height: 10.h),
           itemBuilder: (_, index) => const BusinessCardShimmer(),
         );
       }
 
       /// Filter list → remove cards where owner is same user
       final filteredList = controller.requirementList.where((item) {
-        if (item['self'] == true) return true; // always show mine
-        return item['is_approved'].toString() == "1"; // others only if approved
+        return item['self'] == false;
       }).toList();
 
       if (filteredList.isEmpty) {

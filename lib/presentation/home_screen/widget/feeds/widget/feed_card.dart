@@ -1,8 +1,5 @@
 import 'package:businessbuddy/utils/exported_path.dart';
 
-import '../../../../../utils/like_animation.dart';
-import 'comment_bottomsheet.dart';
-
 class FeedCard extends StatelessWidget {
   final dynamic data;
   final void Function()? onFollow;
@@ -284,22 +281,22 @@ class FeedCard extends StatelessWidget {
                     true;
               }
               return
-                // isLoading
-                //   ? LoadingWidget(color: primaryColor, size: 20.r)
-                //   :
-              _buildEngagementButton(
-                      icon: Icons.favorite_border,
-                      activeIcon: Icons.favorite,
-                      isActive: data['is_liked'] == true,
-                      count: data['likes_count']?.toString() ?? '0',
-                      onTap: onLike,
-                      activeColor: Colors.red,
-                    );
+              // isLoading
+              //   ? LoadingWidget(color: primaryColor, size: 20.r)
+              //   :
+              buildEngagementButton(
+                icon: Icons.favorite_border,
+                activeIcon: Icons.favorite,
+                isActive: data['is_liked'] == true,
+                count: data['likes_count']?.toString() ?? '0',
+                onTap: onLike,
+                activeColor: Colors.red,
+              );
             }),
 
             SizedBox(width: 16.w),
 
-            _buildEngagementButton(
+            buildEngagementButton(
               icon: HugeIcons.strokeRoundedMessage02,
               activeIcon: Icons.comment,
               isActive: false,
@@ -345,71 +342,6 @@ class FeedCard extends StatelessWidget {
         // _buildOffersButton(),
       ],
     );
-  }
-
-  Widget _buildEngagementButton({
-    required dynamic icon,
-    required IconData activeIcon,
-    required bool isActive,
-    required String count,
-    required VoidCallback onTap,
-    Color? activeColor,
-    bool isComment = false,
-  }) {
-    final color = isActive
-        ? (activeColor ?? primaryColor)
-        : Colors.grey.shade600;
-
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-        decoration: BoxDecoration(
-          color: isActive ? color.withValues(alpha: 0.1) : Colors.grey.shade50,
-          borderRadius: BorderRadius.circular(12.r),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            AnimatedSwitcher(
-              duration: const Duration(milliseconds: 200),
-              child: isComment
-                  ? HugeIcon(
-                      icon: icon,
-                      color: Colors.grey.shade700,
-                      size: 18.sp,
-                    )
-                  : Icon(
-                      isActive ? activeIcon : icon,
-                      key: ValueKey(isActive),
-                      size: 18.sp,
-                      color: color,
-                    ),
-            ),
-            if (count.isNotEmpty) ...[
-              SizedBox(width: 6.w),
-              Text(
-                _formatCount(int.tryParse(count) ?? 0),
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w600,
-                  color: color,
-                ),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-
-  String _formatCount(int count) {
-    if (count >= 1000000) {
-      return '${(count / 1000000).toStringAsFixed(1)}M';
-    } else if (count >= 1000) {
-      return '${(count / 1000).toStringAsFixed(1)}K';
-    }
-    return count.toString();
   }
 
   // Widget _buildEngagementItem({

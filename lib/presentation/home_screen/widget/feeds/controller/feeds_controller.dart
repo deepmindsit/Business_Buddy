@@ -1,5 +1,4 @@
 import 'package:businessbuddy/utils/exported_path.dart' hide Position;
-import 'package:geolocator/geolocator.dart';
 
 @lazySingleton
 class FeedsController extends GetxController {
@@ -14,9 +13,9 @@ class FeedsController extends GetxController {
 
     final userId = await LocalStorage.getString('user_id') ?? '';
     try {
-      final position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
+      // final position = await Geolocator.getCurrentPosition(
+      //   desiredAccuracy: LocationAccuracy.high,
+      // );
       final lat = getIt<LocationController>().latitude.value.toString();
       final lng = getIt<LocationController>().longitude.value.toString();
 
@@ -141,11 +140,65 @@ class FeedsController extends GetxController {
     }
   }
 
+  /////////////////////////////////////////////offer Like//////////////////////////////////////
+  final offerLikeLoadingMap = <String, bool>{}.obs;
+
+  Future<void> offerLikeBusiness(
+    String businessId,
+    String offerId, {
+    bool showLoading = true,
+  }) async {
+    offerLikeLoadingMap[offerId] = true;
+    offerLikeLoadingMap.refresh();
+    print('like businessId=========>$businessId');
+    print('like offerId=========>$offerId');
+    final userId = await LocalStorage.getString('user_id') ?? '';
+    try {
+      final response = await _apiService.likeOffer(userId, businessId, offerId);
+      print('like response=========>$response');
+      if (response['common']['status'] == true) {
+        ToastUtils.showSuccessToast(response['common']['message']);
+      } else {
+        ToastUtils.showWarningToast(response['common']['message']);
+      }
+    } catch (e) {
+      showError(e);
+    } finally {
+      offerLikeLoadingMap[offerId] = false;
+      offerLikeLoadingMap.refresh();
+    }
+  }
+
+  Future<void> offerUnLikeBusiness(
+    String likeId, {
+    bool showLoading = true,
+  }) async {
+    offerLikeLoadingMap[likeId] = true;
+    offerLikeLoadingMap.refresh();
+
+    final userId = await LocalStorage.getString('user_id') ?? '';
+    try {
+      final response = await _apiService.unlikeOffer(userId, likeId);
+
+      if (response['common']['status'] == true) {
+        ToastUtils.showSuccessToast(response['common']['message']);
+      } else {
+        ToastUtils.showWarningToast(response['common']['message']);
+      }
+    } catch (e) {
+      showError(e);
+    } finally {
+      offerLikeLoadingMap[likeId] = false;
+      offerLikeLoadingMap.refresh();
+    }
+  }
+
   ///////////////////////////////////////comment////////////////////////////////
   final comments = [].obs;
   final postData = {}.obs;
   final isCommentLoading = false.obs;
   final isAddCommentLoading = false.obs;
+
   final newComment = ''.obs;
   final commentTextController = TextEditingController();
 
@@ -200,4 +253,6 @@ class FeedsController extends GetxController {
       if (showLoading) isAddCommentLoading.value = false;
     }
   }
+
+
 }

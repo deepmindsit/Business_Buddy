@@ -60,8 +60,8 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         _buildSlider(),
         _buildCategorySection(),
-        _buildFeedsSection(),
         _buildRequirementsSection(),
+        _buildFeedsSection(),
       ],
     );
   }
@@ -105,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   physics: const NeverScrollableScrollPhysics(),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 4,
-                    crossAxisSpacing: 12.w,
+                    crossAxisSpacing: 20.w,
                     mainAxisSpacing: 0.h,
                     childAspectRatio: 0.7,
                   ),
@@ -182,12 +182,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildFeedItem(Map<String, dynamic> item) {
     if (item['type'] == 'offer') {
-      return OfferCard(data: item);
+      return OfferCard(
+        data: item,
+        onLike: () => handleOfferLike(
+          item,
+          () => _homeController.getHomeApi(showLoading: false),
+        ),
+      );
     }
 
     return FeedCard(
       data: item,
-      onLike: () => _handleFeedLike(item),
+      onLike: () => handleFeedLike(item, () => _homeController.getHomeApi()),
       onFollow: () => _handleFeedFollow(item),
     );
   }
@@ -259,47 +265,10 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Future<void> _handleFeedLike(Map<String, dynamic> item) async {
-    if (_feedController.isLikeProcessing.value) return;
-
-    if (!_isUserAuthenticated()) {
-      ToastUtils.showLoginToast();
-      return;
-    }
-
-    await _feedController.isLikeProcessing.runWithLoader(() async {
-      await _toggleFeedLike(item);
-    });
-  }
-
-  Future<void> _toggleFeedLike(Map<String, dynamic> item) async {
-    final bool wasLiked = item['is_liked'] ?? false;
-    final int likeCount = int.tryParse(item['likes_count'].toString()) ?? 0;
-
-    try {
-      if (wasLiked) {
-        await _feedController.unLikeBusiness(item['liked_id'].toString());
-        item['likes_count'] = (likeCount - 1).clamp(0, 999999);
-      } else {
-        await _feedController.likeBusiness(
-          item['business_id'].toString(),
-          item['post_id'].toString(),
-        );
-        item['likes_count'] = likeCount + 1;
-      }
-
-      item['is_liked'] = !wasLiked;
-      await _homeController.getHomeApi(showLoading: false);
-    } catch (e) {
-      _handleError('Like error: $e');
-      // Consider showing an error toast to the user
-    }
-  }
-
   Future<void> _handleFeedFollow(Map<String, dynamic> item) async {
     if (_feedController.isFollowProcessing.value) return;
 
-    if (!_isUserAuthenticated()) {
+    if (!isUserAuthenticated()) {
       ToastUtils.showLoginToast();
       return;
     }
@@ -322,20 +291,30 @@ class _HomeScreenState extends State<HomeScreen> {
       item['is_followed'] = !wasFollowed;
       await _homeController.getHomeApi(showLoading: false);
     } catch (e) {
-      _handleError('Follow error: $e');
+      handleError('Follow error: $e');
       // Consider showing an error toast to the user
     }
   }
 
-  bool _isUserAuthenticated() {
-    return getIt<DemoService>().isDemo;
-  }
+  // Future<void> _handleOfferLike(Map<String, dynamic> item) async {
+  //   if (_feedController.isLikeProcessing.value) return;
+  //
+  //   if (!_isUserAuthenticated()) {
+  //     ToastUtils.showLoginToast();
+  //     return;
+  //   }
+  //
+  //   await _feedController.isLikeProcessing.runWithLoader(() async {
+  //     await toggleOfferLike(
+  //       item,
+  //       () => _homeController.getHomeApi(showLoading: false),
+  //     );
+  //   });
+  // }
 
-  void _handleError(String error) {
-    // Use proper logging in production
-    debugPrint(error);
-    // Consider integrating with a crash analytics service
-  }
+  // bool _isUserAuthenticated() {
+  //   return getIt<DemoService>().isDemo;
+  // }
 
   void _handleViewAllCategories() {
     _navigationController.updateTopTab(0);
