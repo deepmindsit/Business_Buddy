@@ -105,7 +105,9 @@ class _EditPostState extends State<EditPost> {
           ? LoadingWidget(color: primaryColor)
           : GestureDetector(
               onTap: () async {
-                await controller.addNewPost();
+                await controller.editPost(
+                  Get.arguments['postData']['id'].toString(),
+                );
               },
               child: Container(
                 width: Get.width,

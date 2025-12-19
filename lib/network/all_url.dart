@@ -27,7 +27,9 @@ class AllUrl {
   static const String myBusiness = '$baseUrl/my_businesses';
   static const String addBusiness = '$baseUrl/register_business';
   static const String addPost = '$baseUrl/add_business_post';
+  static const String editPost = '$baseUrl/update_business_post';
   static const String addOffer = '$baseUrl/add_business_offer';
+  static const String editOffer = '$baseUrl/update_business_offer';
   static const String postDetails = '$baseUrl/get_post_details';
   static const String offerDetails = '$baseUrl/get_offer_details';
   static const String getFeeds = '$baseUrl/get_feeds';

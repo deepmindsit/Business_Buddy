@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'package:businessbuddy/utils/exported_path.dart' hide Position;
-import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 
 @lazySingleton
 class LBOController extends GetxController {
   final ApiService _apiService = Get.find();
-  final NavigationController navController = getIt<NavigationController>();
+  final navController = getIt<NavigationController>();
 
   final currentPostsList = [].obs;
   final currentIndex = 0.obs;
@@ -103,9 +103,9 @@ class LBOController extends GetxController {
     try {
       final lat = getIt<LocationController>().latitude.value.toString();
       final lng = getIt<LocationController>().longitude.value.toString();
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
+      // Position position = await Geolocator.getCurrentPosition(
+      //   desiredAccuracy: LocationAccuracy.high,
+      // );
       final response = await _apiService.myBusinessDetails(
         businessId,
         '$lat,$lng',
@@ -149,9 +149,9 @@ class LBOController extends GetxController {
     final userId = await LocalStorage.getString('user_id') ?? '';
 
     try {
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
+      // Position position = await Geolocator.getCurrentPosition(
+      //   desiredAccuracy: LocationAccuracy.high,
+      // );
       final lat = getIt<LocationController>().latitude.value.toString();
       final lng = getIt<LocationController>().longitude.value.toString();
       final docs = await prepareDocuments(attachments);
@@ -203,7 +203,7 @@ class LBOController extends GetxController {
   }
 
   /// ------------------------
-  /// ADD NEW POST
+  /// ADD  NEW POST &&& EDIT POST
   /// ------------------------
   final postImage = Rx<File?>(null);
   final postAbout = TextEditingController();
@@ -234,8 +234,31 @@ class LBOController extends GetxController {
     }
   }
 
+  Future<void> editPost(String postId) async {
+    isPostLoading.value = true;
+
+    try {
+      final response = await _apiService.editPost(
+        postId,
+        postAbout.text.trim(),
+        profileImage: postImage.value,
+      );
+
+      if (response['common']['status'] == true) {
+        Get.offAllNamed(Routes.mainScreen);
+        ToastUtils.showSuccessToast(response['common']['message'].toString());
+      } else {
+        ToastUtils.showErrorToast(response['common']['message'].toString());
+      }
+    } catch (e) {
+      showError(e);
+    } finally {
+      isPostLoading.value = false;
+    }
+  }
+
   /// ------------------------
-  /// ADD NEW OFFER
+  /// ADD NEW OFFER &&& EDIT OFFER
   /// ------------------------
   final offerImage = Rx<File?>(null);
   final titleCtrl = TextEditingController();
@@ -277,6 +300,61 @@ class LBOController extends GetxController {
       isOfferLoading.value = false;
     }
   }
+
+  Future<void> editOffer(String offerId) async {
+    isOfferLoading.value = true;
+    print('startDateCtrl.text');
+    print(startDateCtrl.text);
+    print(endDateCtrl.text);
+
+    final startDate = formatDate(startDateCtrl.text.trim());
+    final endDate = formatDate(endDateCtrl.text.trim());
+
+    try {
+      final response = await _apiService.editOffer(
+        offerId,
+        titleCtrl.text.trim(),
+        descriptionCtrl.text.trim(),
+        startDate,
+        endDate,
+        points,
+        profileImage: offerImage.value,
+      );
+
+      if (response['common']['status'] == true) {
+        clearOfferData();
+        Get.offAllNamed(Routes.mainScreen);
+        ToastUtils.showSuccessToast(response['common']['message'].toString());
+      } else {
+        ToastUtils.showErrorToast(response['common']['message'].toString());
+      }
+    } catch (e) {
+      showError(e);
+    } finally {
+      isOfferLoading.value = false;
+    }
+  }
+
+  String formatDate(String date) {
+    if (date.isEmpty || date.contains('-0001')) return '';
+
+    try {
+      // Case 1: ISO format → 2025-12-10
+      if (RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(date)) {
+        return DateFormat('yyyy-MM-dd')
+            .format(DateTime.parse(date));
+      }
+
+      // Case 2: Readable format → Dec 31, 2025
+      final parsed = DateFormat('MMM dd, yyyy').parse(date);
+      return DateFormat('yyyy-MM-dd').format(parsed);
+
+    } catch (e) {
+      debugPrint('Date parse error: $e');
+      return '';
+    }
+  }
+
 
   void clearOfferData() {
     offerImage.value = null;

@@ -286,7 +286,10 @@ class _EditOfferState extends State<EditOffer> {
           : GestureDetector(
               onTap: () async {
                 if (controller.offerKey.currentState!.validate()) {
-                  await controller.addNewOffer();
+                  await controller.editOffer(
+                    Get.arguments['offerData']['id'].toString(),
+                  );
+                  // Get.back();
                 }
               },
               child: Container(
@@ -298,7 +301,7 @@ class _EditOfferState extends State<EditOffer> {
                 ),
                 alignment: Alignment.center,
                 child: CustomText(
-                  title: 'Post',
+                  title: 'Update Offer',
                   fontSize: 16.sp,
                   color: Colors.white,
                   fontWeight: FontWeight.w600,

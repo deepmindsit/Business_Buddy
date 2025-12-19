@@ -81,11 +81,31 @@ abstract class ApiService {
     @Part(name: 'image') File? profileImage,
   });
 
+  @POST(AllUrl.editPost)
+  @MultiPart()
+  Future<dynamic> editPost(
+    @Part(name: "post_id") String postId,
+    @Part(name: "details") String details, {
+    @Part(name: 'image') File? profileImage,
+  });
+
   @POST(AllUrl.addOffer)
   @MultiPart()
   Future<dynamic> addOffer(
     @Part(name: "user_id") String userId,
     @Part(name: "business_id") String businessId,
+    @Part(name: "name") String name,
+    @Part(name: "details") String details,
+    @Part(name: "start_date") String startDate,
+    @Part(name: "end_date") String endDate,
+    @Part(name: "highlight_points[]") List<String> highlightPoints, {
+    @Part(name: 'image') File? profileImage,
+  });
+
+  @POST(AllUrl.editOffer)
+  @MultiPart()
+  Future<dynamic> editOffer(
+    @Part(name: "offer_id") String offerId,
     @Part(name: "name") String name,
     @Part(name: "details") String details,
     @Part(name: "start_date") String startDate,
@@ -250,12 +270,11 @@ abstract class ApiService {
 
   @POST(AllUrl.addOfferComment)
   Future<dynamic> addOfferComment(
-      @Part(name: "user_id") String? userId,
-      @Part(name: "business_id") String? businessId,
-      @Part(name: "business_offer_id") String? offerId,
-      @Part(name: "comment") String? comment,
-      );
-
+    @Part(name: "user_id") String? userId,
+    @Part(name: "business_id") String? businessId,
+    @Part(name: "business_offer_id") String? offerId,
+    @Part(name: "comment") String? comment,
+  );
 
   @POST(AllUrl.chatList)
   Future<dynamic> getChatList(@Part(name: "user_id") String? userId);

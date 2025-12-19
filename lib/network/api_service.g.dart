@@ -390,6 +390,52 @@ class _ApiService implements ApiService {
   }
 
   @override
+  Future<dynamic> editPost(
+    String postId,
+    String details, {
+    File? profileImage,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    _data.fields.add(MapEntry('post_id', postId));
+    _data.fields.add(MapEntry('details', details));
+    if (profileImage != null) {
+      if (profileImage != null) {
+        _data.files.add(
+          MapEntry(
+            'image',
+            MultipartFile.fromFileSync(
+              profileImage.path,
+              filename: profileImage.path.split(Platform.pathSeparator).last,
+            ),
+          ),
+        );
+      }
+    }
+    final _options = _setStreamType<dynamic>(
+      Options(
+            method: 'POST',
+            headers: _headers,
+            extra: _extra,
+            contentType: 'multipart/form-data',
+          )
+          .compose(
+            _dio.options,
+            'http://192.168.29.37/bizyaari/api/user/v1/update_business_post',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch(_options);
+    final _value = _result.data;
+    return _value;
+  }
+
+  @override
   Future<dynamic> addOffer(
     String userId,
     String businessId,
@@ -437,6 +483,62 @@ class _ApiService implements ApiService {
           .compose(
             _dio.options,
             'http://192.168.29.37/bizyaari/api/user/v1/add_business_offer',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch(_options);
+    final _value = _result.data;
+    return _value;
+  }
+
+  @override
+  Future<dynamic> editOffer(
+    String offerId,
+    String name,
+    String details,
+    String startDate,
+    String endDate,
+    List<String> highlightPoints, {
+    File? profileImage,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    _data.fields.add(MapEntry('offer_id', offerId));
+    _data.fields.add(MapEntry('name', name));
+    _data.fields.add(MapEntry('details', details));
+    _data.fields.add(MapEntry('start_date', startDate));
+    _data.fields.add(MapEntry('end_date', endDate));
+    highlightPoints.forEach((i) {
+      _data.fields.add(MapEntry('highlight_points[]', i));
+    });
+    if (profileImage != null) {
+      if (profileImage != null) {
+        _data.files.add(
+          MapEntry(
+            'image',
+            MultipartFile.fromFileSync(
+              profileImage.path,
+              filename: profileImage.path.split(Platform.pathSeparator).last,
+            ),
+          ),
+        );
+      }
+    }
+    final _options = _setStreamType<dynamic>(
+      Options(
+            method: 'POST',
+            headers: _headers,
+            extra: _extra,
+            contentType: 'multipart/form-data',
+          )
+          .compose(
+            _dio.options,
+            'http://192.168.29.37/bizyaari/api/user/v1/update_business_offer',
             queryParameters: queryParameters,
             data: _data,
           )
