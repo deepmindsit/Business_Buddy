@@ -387,7 +387,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   if (controller.isMe.isTrue)
-                    HugeIcon(icon: HugeIcons.strokeRoundedPencilEdit02),
+                    GestureDetector(
+                      onTap: () => Get.toNamed(
+                        Routes.editBusiness,
+                        arguments: {'data': business},
+                      ),
+                      child: HugeIcon(
+                        icon: HugeIcons.strokeRoundedPencilEdit02,
+                      ),
+                    ),
                 ],
               ),
             );

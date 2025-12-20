@@ -48,7 +48,7 @@ class _AddRecruitmentState extends State<AddRecruitment> {
                     _buildInvestmentType(),
                     _buildCapacity(),
                     Obx(() {
-                      if (controller.invType.value == '2') {
+                      if (controller.invType.value == '1') {
                         return _buildCanInvest();
                       }
                       return SizedBox();
@@ -237,10 +237,10 @@ class _AddRecruitmentState extends State<AddRecruitment> {
         case '1':
           title = 'Investment Capacity(In Lakhs)';
           break;
+        // case '2':
+        //   title = 'Investment Requirement(In Lakhs)';
+        //   break;
         case '2':
-          title = 'Investment Requirement(In Lakhs)';
-          break;
-        case '3':
           title = 'Experience(Years)';
           break;
         default:
@@ -266,7 +266,7 @@ class _AddRecruitmentState extends State<AddRecruitment> {
 
   Widget _buildHistory() {
     return Obx(() {
-      if (controller.invType.value == "3") {
+      if (controller.invType.value == "2") {
         return SizedBox();
       }
       return Column(

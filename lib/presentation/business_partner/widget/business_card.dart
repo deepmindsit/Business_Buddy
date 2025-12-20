@@ -378,6 +378,7 @@ class _BusinessCardState extends State<BusinessCard> {
     // Handle different menu selections
     switch (value) {
       case 'edit':
+        Get.back();
         getIt<NavigationController>().openSubPage(
           EditRecruitment(recruitmentData: widget.data),
         );

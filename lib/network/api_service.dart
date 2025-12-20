@@ -45,6 +45,21 @@ abstract class ApiService {
     @Part(name: "attachments[]") List<MultipartFile>? attachment,
   });
 
+  @POST(AllUrl.editBusiness)
+  @MultiPart()
+  Future<dynamic> editBusiness(
+    @Part(name: "business_id") String? businessId,
+    @Part(name: "name") String? name,
+    @Part(name: "address") String? address,
+    @Part(name: "mobile_number") String? mobileNumber,
+    @Part(name: "category_id") String? categoryId,
+    @Part(name: "about_business") String? aboutBusiness,
+    @Part(name: "lat_long") String? latLong,
+    @Part(name: "old_attachments[]") List<String> oldAttachment, {
+    @Part(name: 'image') File? profileImage,
+    @Part(name: "attachments[]") List<MultipartFile>? attachment,
+  });
+
   @POST(AllUrl.categories)
   Future<dynamic> getCategories();
 

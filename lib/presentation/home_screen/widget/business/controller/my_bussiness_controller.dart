@@ -140,6 +140,7 @@ class LBOController extends GetxController {
   final aboutCtrl = TextEditingController();
   final offering = RxnString();
   final attachments = <File>[].obs;
+  final oldAttachments = [].obs;
   final selectedBusiness = RxnInt();
   final isAddBusinessLoading = false.obs;
 
@@ -183,13 +184,47 @@ class LBOController extends GetxController {
     }
   }
 
+  Future<void> editBusiness(String businessId) async {
+    isAddBusinessLoading.value = true;
+    try {
+      final lat = getIt<LocationController>().latitude.value.toString();
+      final lng = getIt<LocationController>().longitude.value.toString();
+      final docs = await prepareDocuments(attachments);
+
+      final response = await _apiService.editBusiness(
+        businessId,
+        shopName.text.trim(),
+        address.text.trim(),
+        numberCtrl.text.trim(),
+        offering.value,
+        aboutCtrl.text.trim(),
+        '$lat,$lng',
+        List<String>.from(oldAttachments),
+        profileImage: profileImage.value,
+        attachment: docs,
+      );
+
+      if (response['common']['status'] == true) {
+        Get.offAllNamed(Routes.mainScreen);
+        clearData();
+        ToastUtils.showSuccessToast(response['common']['message'].toString());
+      } else {
+        ToastUtils.showErrorToast(response['common']['message'].toString());
+      }
+    } catch (e) {
+      showError(e);
+    } finally {
+      isAddBusinessLoading.value = false;
+    }
+  }
+
   void clearData() {
     shopName.clear();
     address.clear();
     numberCtrl.clear();
     aboutCtrl.clear();
     referCode.clear();
-    offering.value = '';
+    offering.value = null;
     profileImage.value = null;
     attachments.clear();
   }
@@ -200,6 +235,7 @@ class LBOController extends GetxController {
     numberCtrl.text = businessDetails['mobile_number'] ?? '';
     offering.value = businessDetails['category_id']?.toString() ?? null;
     aboutCtrl.text = businessDetails['about_business'] ?? '';
+    oldAttachments.value = businessDetails['attachments'] ?? [];
   }
 
   /// ------------------------
@@ -303,10 +339,6 @@ class LBOController extends GetxController {
 
   Future<void> editOffer(String offerId) async {
     isOfferLoading.value = true;
-    print('startDateCtrl.text');
-    print(startDateCtrl.text);
-    print(endDateCtrl.text);
-
     final startDate = formatDate(startDateCtrl.text.trim());
     final endDate = formatDate(endDateCtrl.text.trim());
 
@@ -341,20 +373,17 @@ class LBOController extends GetxController {
     try {
       // Case 1: ISO format → 2025-12-10
       if (RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(date)) {
-        return DateFormat('yyyy-MM-dd')
-            .format(DateTime.parse(date));
+        return DateFormat('yyyy-MM-dd').format(DateTime.parse(date));
       }
 
       // Case 2: Readable format → Dec 31, 2025
       final parsed = DateFormat('MMM dd, yyyy').parse(date);
       return DateFormat('yyyy-MM-dd').format(parsed);
-
     } catch (e) {
       debugPrint('Date parse error: $e');
       return '';
     }
   }
-
 
   void clearOfferData() {
     offerImage.value = null;

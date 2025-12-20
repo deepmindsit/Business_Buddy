@@ -316,8 +316,8 @@ class _LboScreenState extends State<LboScreen> {
               child: TabBarView(
                 physics: const NeverScrollableScrollPhysics(), // prevents
                 children: [
-                  buildGridImages(controller.postList, 'post'),
-                  buildGridImages(controller.offerList, 'offer'),
+                  buildGridImages(controller.postList, 'post', isEdit: true),
+                  buildGridImages(controller.offerList, 'offer', isEdit: true),
                 ],
               ),
             ),

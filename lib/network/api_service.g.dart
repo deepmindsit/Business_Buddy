@@ -191,6 +191,84 @@ class _ApiService implements ApiService {
   }
 
   @override
+  Future<dynamic> editBusiness(
+    String? businessId,
+    String? name,
+    String? address,
+    String? mobileNumber,
+    String? categoryId,
+    String? aboutBusiness,
+    String? latLong,
+    List<String> oldAttachment, {
+    File? profileImage,
+    List<MultipartFile>? attachment,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    if (businessId != null) {
+      _data.fields.add(MapEntry('business_id', businessId));
+    }
+    if (name != null) {
+      _data.fields.add(MapEntry('name', name));
+    }
+    if (address != null) {
+      _data.fields.add(MapEntry('address', address));
+    }
+    if (mobileNumber != null) {
+      _data.fields.add(MapEntry('mobile_number', mobileNumber));
+    }
+    if (categoryId != null) {
+      _data.fields.add(MapEntry('category_id', categoryId));
+    }
+    if (aboutBusiness != null) {
+      _data.fields.add(MapEntry('about_business', aboutBusiness));
+    }
+    if (latLong != null) {
+      _data.fields.add(MapEntry('lat_long', latLong));
+    }
+    oldAttachment.forEach((i) {
+      _data.fields.add(MapEntry('old_attachments[]', i));
+    });
+    if (profileImage != null) {
+      if (profileImage != null) {
+        _data.files.add(
+          MapEntry(
+            'image',
+            MultipartFile.fromFileSync(
+              profileImage.path,
+              filename: profileImage.path.split(Platform.pathSeparator).last,
+            ),
+          ),
+        );
+      }
+    }
+    if (attachment != null) {
+      _data.files.addAll(attachment.map((i) => MapEntry('attachments[]', i)));
+    }
+    final _options = _setStreamType<dynamic>(
+      Options(
+            method: 'POST',
+            headers: _headers,
+            extra: _extra,
+            contentType: 'multipart/form-data',
+          )
+          .compose(
+            _dio.options,
+            'http://192.168.29.37/bizyaari/api/user/v1/update_business',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch(_options);
+    final _value = _result.data;
+    return _value;
+  }
+
+  @override
   Future<dynamic> getCategories() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};

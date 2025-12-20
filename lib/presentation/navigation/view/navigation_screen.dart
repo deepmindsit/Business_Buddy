@@ -17,14 +17,13 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
     return Obx(
       () => PopScope(
-        canPop: false,
-        // onPopInvokedWithResult: (didPop, result) {
-        //   if (!didPop) {
-        //     if (Get.key.currentState?.canPop() == true) {
-        //       Get.back(result: result);
-        //     }
-        //   }
-        // },
+        canPop: controller.pageStack.length <= 1,
+        onPopInvokedWithResult: (didPop, result) {
+          if (!didPop) {
+            // 🔥 nested page back
+            controller.goBack();
+          }
+        },
         child: Scaffold(
           backgroundColor: Colors.white,
           body:

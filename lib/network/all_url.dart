@@ -26,6 +26,7 @@ class AllUrl {
   static const String myBusinessDetails = '$baseUrl/my_business_details';
   static const String myBusiness = '$baseUrl/my_businesses';
   static const String addBusiness = '$baseUrl/register_business';
+  static const String editBusiness = '$baseUrl/update_business';
   static const String addPost = '$baseUrl/add_business_post';
   static const String editPost = '$baseUrl/update_business_post';
   static const String addOffer = '$baseUrl/add_business_offer';

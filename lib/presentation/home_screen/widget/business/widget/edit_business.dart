@@ -113,9 +113,10 @@ class _EditBusinessState extends State<EditBusiness> {
               ],
             ),
             _buildImageGallery(),
-            // _buildUploadDocuments(),
             _buildSelectedFilesWrap(),
-            _buildPostAndOffersSection(),
+
+            // _buildUploadDocuments(),
+            // _buildPostAndOffersSection(),
             Obx(
               () => controller.isAddBusinessLoading.isTrue
                   ? LoadingWidget(color: primaryColor)
@@ -268,23 +269,24 @@ class _EditBusinessState extends State<EditBusiness> {
   }
 
   Widget _buildImageGallery() {
-    final images = controller.businessDetails['attachments'] ?? [];
-    if (images.length == 0) return Container();
-    return SizedBox(
-      height: 80.h,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: images.length,
-        separatorBuilder: (_, __) => SizedBox(width: 12.w),
-        itemBuilder: (context, index) {
-          final attach = images[index];
-          return _buildGalleryImage(attach);
-        },
-      ),
-    );
+    return Obx(() {
+      if (controller.oldAttachments.isEmpty) return Container();
+      return SizedBox(
+        height: 80.h,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          itemCount: controller.oldAttachments.length,
+          separatorBuilder: (_, __) => SizedBox(width: 12.w),
+          itemBuilder: (context, index) {
+            final attach = controller.oldAttachments[index];
+            return _buildGalleryImage(attach, index);
+          },
+        ),
+      );
+    });
   }
 
-  Widget _buildGalleryImage(dynamic attach) {
+  Widget _buildGalleryImage(dynamic attach, int i) {
     return Container(
       width: 80.w,
       height: 80.h,
@@ -292,23 +294,55 @@ class _EditBusinessState extends State<EditBusiness> {
         border: Border.all(color: Colors.grey.shade200),
         borderRadius: BorderRadius.circular(12.r),
       ),
-      child: WidgetZoom(
-        heroAnimationTag: 'tag $attach',
-        zoomWidget: ClipRRect(
-          borderRadius: BorderRadius.circular(12.r),
-          child: FadeInImage(
-            placeholder: const AssetImage(Images.defaultImage),
-            image: NetworkImage(attach),
-            fit: BoxFit.contain,
-            imageErrorBuilder: (context, error, stackTrace) {
-              return Container(
-                padding: EdgeInsets.all(20.w),
-                child: Image.asset(Images.defaultImage, fit: BoxFit.contain),
-              );
-            },
-            fadeInDuration: const Duration(milliseconds: 300),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            width: Get.width * 0.25.w,
+            height: Get.width * 0.25.w,
+            padding: EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(10.r),
+            ),
+            child: WidgetZoom(
+              heroAnimationTag: 'tag $attach',
+              zoomWidget: ClipRRect(
+                borderRadius: BorderRadius.circular(12.r),
+                child: FadeInImage(
+                  placeholder: const AssetImage(Images.defaultImage),
+                  image: NetworkImage(attach),
+                  fit: BoxFit.contain,
+                  imageErrorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      padding: EdgeInsets.all(20.w),
+                      child: Image.asset(
+                        Images.defaultImage,
+                        fit: BoxFit.contain,
+                      ),
+                    );
+                  },
+                  fadeInDuration: const Duration(milliseconds: 300),
+                ),
+              ),
+            ),
           ),
-        ),
+
+          Positioned(
+            top: -10,
+            right: -10,
+            child: InkWell(
+              onTap: () {
+                controller.oldAttachments.removeAt(i);
+              },
+              child: CircleAvatar(
+                radius: 10.r,
+                backgroundColor: Colors.red,
+                child: Icon(Icons.close, size: 12.sp, color: Colors.white),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -359,52 +393,119 @@ class _EditBusinessState extends State<EditBusiness> {
 
   Widget _buildSelectedFilesWrap() {
     return Obx(
-      () => Wrap(
-        spacing: 16,
-        runSpacing: 8,
-        children: controller.attachments.map((file) {
-          final isImage =
-              file.path.endsWith('.jpg') || file.path.endsWith('.png');
-
-          return Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Container(
-                width: Get.width * 0.25.w,
-                height: Get.width * 0.25.w,
-                padding: EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: isImage
-                    ? Image.file(file, fit: BoxFit.cover)
-                    : Center(
-                        child: HugeIcon(
-                          icon: HugeIcons.strokeRoundedDocumentAttachment,
-                          size: 40.sp,
-                          color: Colors.grey,
+      () => controller.attachments.isEmpty
+          ? SizedBox()
+          : SizedBox(
+              height: 80.h,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: controller.attachments.length,
+                separatorBuilder: (_, __) => SizedBox(width: 12.w),
+                itemBuilder: (context, index) {
+                  final attach = controller.attachments[index];
+                  final isImage =
+                      attach.path.endsWith('.jpg') ||
+                      attach.path.endsWith('.png');
+                  return Container(
+                    width: 80.w,
+                    height: 80.h,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade200),
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Container(
+                          width: Get.width * 0.25.w,
+                          height: Get.width * 0.25.w,
+                          padding: EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(10.r),
+                          ),
+                          child: isImage
+                              ? Image.file(attach, fit: BoxFit.contain)
+                              : Center(
+                                  child: HugeIcon(
+                                    icon: HugeIcons
+                                        .strokeRoundedDocumentAttachment,
+                                    size: 40.sp,
+                                    color: Colors.grey,
+                                  ),
+                                ),
                         ),
-                      ),
+                        Positioned(
+                          top: -6,
+                          right: -10,
+                          child: InkWell(
+                            onTap: () {
+                              controller.attachments.removeAt(index);
+                            },
+                            child: CircleAvatar(
+                              radius: 10.r,
+                              backgroundColor: Colors.red,
+                              child: Icon(
+                                Icons.close,
+                                size: 12.sp,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
               ),
-              Positioned(
-                top: -10,
-                right: -10,
-                child: InkWell(
-                  onTap: () {
-                    controller.attachments.remove(file);
-                  },
-                  child: CircleAvatar(
-                    radius: 10.r,
-                    backgroundColor: Colors.red,
-                    child: Icon(Icons.close, size: 12.sp, color: Colors.white),
-                  ),
-                ),
-              ),
-            ],
-          );
-        }).toList(),
-      ),
+            ),
+
+      //     Wrap(
+      //   spacing: 16,
+      //   runSpacing: 8,
+      //   children: controller.attachments.map((file) {
+      //     final isImage =
+      //         file.path.endsWith('.jpg') || file.path.endsWith('.png');
+      //
+      //     return Stack(
+      //       clipBehavior: Clip.none,
+      //       children: [
+      //         Container(
+      //           width: Get.width * 0.25.w,
+      //           height: Get.width * 0.25.w,
+      //           padding: EdgeInsets.all(6),
+      //           decoration: BoxDecoration(
+      //             border: Border.all(color: Colors.grey),
+      //             borderRadius: BorderRadius.circular(10),
+      //           ),
+      //           child: isImage
+      //               ? Image.file(file, fit: BoxFit.cover)
+      //               : Center(
+      //                   child: HugeIcon(
+      //                     icon: HugeIcons.strokeRoundedDocumentAttachment,
+      //                     size: 40.sp,
+      //                     color: Colors.grey,
+      //                   ),
+      //                 ),
+      //         ),
+      //         Positioned(
+      //           top: -10,
+      //           right: -10,
+      //           child: InkWell(
+      //             onTap: () {
+      //               controller.attachments.remove(file);
+      //             },
+      //             child: CircleAvatar(
+      //               radius: 10.r,
+      //               backgroundColor: Colors.red,
+      //               child: Icon(Icons.close, size: 12.sp, color: Colors.white),
+      //             ),
+      //           ),
+      //         ),
+      //       ],
+      //     );
+      //   }).toList(),
+      // ),
     );
   }
 
@@ -487,7 +588,7 @@ class _EditBusinessState extends State<EditBusiness> {
           child: _buildActionButton(
             icon: Icons.close,
             text: 'Close',
-            onPressed: () {},
+            onPressed: () => Get.back(),
             backgroundColor: primaryColor,
             isPrimary: false,
           ),
@@ -499,7 +600,9 @@ class _EditBusinessState extends State<EditBusiness> {
             text: 'Update',
             onPressed: () async {
               if (controller.businessKey.currentState!.validate()) {
-                // await controller.addNewBusiness();
+                await controller.editBusiness(
+                  controller.businessDetails['id']?.toString() ?? '',
+                );
               }
             },
             backgroundColor: Colors.transparent,
