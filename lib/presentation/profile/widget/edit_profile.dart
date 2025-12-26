@@ -260,17 +260,17 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
-
   Widget _buildDeleteButton() {
     return GestureDetector(
       onTap: () {
         AllDialogs().showConfirmationDialog(
           'Delete Account',
           'This will permanently delete your account. Continue?',
-          onConfirm: () {
+          onConfirm: () async {
+            await controller.deleteProfile();
             // perform delete
             Get.back();
-            Get.snackbar('Account Deleted', 'Your account has been removed');
+            // Get.snackbar('Account Deleted', 'Your account has been removed');
           },
         );
       },

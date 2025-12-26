@@ -73,33 +73,40 @@ class OfferCard extends StatelessWidget {
   }
 
   Widget _buildHeader() {
-    final image = data['business_profile_image'] ?? '';
+    final String image = data['business_profile_image'] ?? '';
+
     return Row(
-      spacing: 4.w,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        /// PROFILE IMAGE
         CircleAvatar(
           radius: 18.r,
           backgroundColor: Colors.grey.shade100,
           child: ClipOval(
             child: FadeInImage(
               placeholder: const AssetImage(Images.defaultImage),
-              image: NetworkImage(image),
-              width: double.infinity,
-              height: 100.w,
+              image: image.isNotEmpty
+                  ? NetworkImage(image)
+                  : const AssetImage(Images.defaultImage) as ImageProvider,
+              width: 36.w,
+              height: 36.w,
               fit: BoxFit.cover,
-              imageErrorBuilder: (context, error, stackTrace) {
-                return Center(
-                  child: Image.asset(
-                    Images.defaultImage,
-                    width: 100.w,
-                    height: 100.w,
-                  ),
+              imageErrorBuilder: (_, __, ___) {
+                return Image.asset(
+                  Images.defaultImage,
+                  width: 36.w,
+                  height: 36.w,
+                  fit: BoxFit.cover,
                 );
               },
-              fadeInDuration: const Duration(milliseconds: 500),
+              fadeInDuration: const Duration(milliseconds: 400),
             ),
           ),
         ),
+
+        SizedBox(width: 8.w),
+
+        /// BUSINESS INFO
         Expanded(
           child: GestureDetector(
             onTap: () {
@@ -111,55 +118,43 @@ class OfferCard extends StatelessWidget {
               );
             },
             child: Column(
-              spacing: 4.h,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                /// BUSINESS NAME
                 CustomText(
                   title: data['business_name'] ?? '',
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w700,
-                  textAlign: TextAlign.start,
                   color: Colors.black87,
                   maxLines: 1,
-                  style: TextStyle(
-                    height: 1,
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.black87,
-                  ),
                 ),
+
+                SizedBox(height: 4.h),
+
+                /// META INFO (CATEGORY • TIME • TYPE)
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    CustomText(
-                      title: data['category'] ?? '',
-                      fontSize: 10.sp,
-                      textAlign: TextAlign.start,
-                      color: Colors.grey.shade600,
-                      maxLines: 1,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 4.w),
-                      child: Container(
-                        width: 3.r,
-                        height: 3.r,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.grey.shade400,
-                        ),
+                    /// CATEGORY (FIXED)
+                    Flexible(
+                      child: CustomText(
+                        title: data['category'] ?? '',
+                        fontSize: 10.sp,
+                        color: Colors.grey.shade600,
+                        maxLines: 1,
                       ),
                     ),
+
+                    SizedBox(width: 6.w),
+                    _dot(),
+
+                    SizedBox(width: 6.w),
                     _buildTimeDisplay(),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 4.w),
-                      child: Container(
-                        width: 3.r,
-                        height: 3.r,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.grey.shade400,
-                        ),
-                      ),
-                    ),
+
+                    SizedBox(width: 6.w),
+                    _dot(),
+
+                    SizedBox(width: 6.w),
                     ClipRect(child: _buildTypeBadge()),
                   ],
                 ),
@@ -167,12 +162,129 @@ class OfferCard extends StatelessWidget {
             ),
           ),
         ),
+
+        SizedBox(width: 8.w),
+
+        /// FOLLOW BUTTON
         _buildFollowButton(),
       ],
     );
   }
 
-  Widget _buildTimeDisplay() {
+  // Widget _buildHeader() {
+  //   final image = data['business_profile_image'] ?? '';
+  //   return Row(
+  //     spacing: 4.w,
+  //     children: [
+  //       CircleAvatar(
+  //         radius: 18.r,
+  //         backgroundColor: Colors.grey.shade100,
+  //         child: ClipOval(
+  //           child: FadeInImage(
+  //             placeholder: const AssetImage(Images.defaultImage),
+  //             image: NetworkImage(image),
+  //             width: double.infinity,
+  //             height: 100.w,
+  //             fit: BoxFit.cover,
+  //             imageErrorBuilder: (context, error, stackTrace) {
+  //               return Center(
+  //                 child: Image.asset(
+  //                   Images.defaultImage,
+  //                   width: 100.w,
+  //                   height: 100.w,
+  //                 ),
+  //               );
+  //             },
+  //             fadeInDuration: const Duration(milliseconds: 500),
+  //           ),
+  //         ),
+  //       ),
+  //       Expanded(
+  //         child: GestureDetector(
+  //           onTap: () {
+  //             navController.openSubPage(
+  //               CategoryDetailPage(
+  //                 title: data['business_name'] ?? '',
+  //                 businessId: data['business_id']?.toString() ?? '',
+  //               ),
+  //             );
+  //           },
+  //           child: Column(
+  //             spacing: 4.h,
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             children: [
+  //               CustomText(
+  //                 title: data['business_name'] ?? '',
+  //                 fontSize: 14.sp,
+  //                 fontWeight: FontWeight.w700,
+  //                 textAlign: TextAlign.start,
+  //                 color: Colors.black87,
+  //                 maxLines: 1,
+  //                 style: TextStyle(
+  //                   height: 1,
+  //                   fontSize: 14.sp,
+  //                   fontWeight: FontWeight.w700,
+  //                   color: Colors.black87,
+  //                 ),
+  //               ),
+  //               Row(
+  //                 children: [
+  //                   CustomText(
+  //                     title: data['category'] ?? '',
+  //                     fontSize: 10.sp,
+  //                     textAlign: TextAlign.start,
+  //                     color: Colors.grey.shade600,
+  //                     maxLines: 1,
+  //                   ),
+  //                   Padding(
+  //                     padding: EdgeInsets.symmetric(horizontal: 4.w),
+  //                     child: Container(
+  //                       width: 3.r,
+  //                       height: 3.r,
+  //                       decoration: BoxDecoration(
+  //                         shape: BoxShape.circle,
+  //                         color: Colors.grey.shade400,
+  //                       ),
+  //                     ),
+  //                   ),
+  //                   _buildTimeDisplay(),
+  //                   Padding(
+  //                     padding: EdgeInsets.symmetric(horizontal: 4.w),
+  //                     child: Container(
+  //                       width: 3.r,
+  //                       height: 3.r,
+  //                       decoration: BoxDecoration(
+  //                         shape: BoxShape.circle,
+  //                         color: Colors.grey.shade400,
+  //                       ),
+  //                     ),
+  //                   ),
+  //                   ClipRect(child: _buildTypeBadge()),
+  //                 ],
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       ),
+  //       _buildFollowButton(),
+  //     ],
+  //   );
+  // }
+
+
+  Widget _dot() {
+    return Container(
+      width: 3.r,
+      height: 3.r,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.grey.shade400,
+      ),
+    );
+  }
+
+
+    Widget _buildTimeDisplay() {
     final createdAt = data['created_at'] ?? '';
     if (createdAt == null || createdAt.toString().isEmpty) {
       return SizedBox();

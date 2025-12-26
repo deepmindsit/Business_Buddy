@@ -269,11 +269,12 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<dynamic> getCategories() async {
+  Future<dynamic> getCategories(String pageNo) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
+    final _data = FormData();
+    _data.fields.add(MapEntry('page_number', pageNo));
     final _options = _setStreamType<dynamic>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
@@ -294,6 +295,7 @@ class _ApiService implements ApiService {
     String? catId,
     String? latLong,
     String? userId,
+    String pageNo,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -309,6 +311,7 @@ class _ApiService implements ApiService {
     if (userId != null) {
       _data.fields.add(MapEntry('user_id', userId));
     }
+    _data.fields.add(MapEntry('page_number', pageNo));
     final _options = _setStreamType<dynamic>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
@@ -686,6 +689,8 @@ class _ApiService implements ApiService {
     String? userId,
     String? categoryId,
     String? dateRange,
+    String? location,
+    String pageNo,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -704,6 +709,10 @@ class _ApiService implements ApiService {
     if (dateRange != null) {
       _data.fields.add(MapEntry('date_range', dateRange));
     }
+    if (location != null) {
+      _data.fields.add(MapEntry('location', location));
+    }
+    _data.fields.add(MapEntry('page_number', pageNo));
     final _options = _setStreamType<dynamic>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
@@ -752,6 +761,8 @@ class _ApiService implements ApiService {
     String? userId,
     String? categoryId,
     String? dateRange,
+    String latLng,
+    String? location,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -766,6 +777,10 @@ class _ApiService implements ApiService {
     }
     if (dateRange != null) {
       _data.fields.add(MapEntry('date_range', dateRange));
+    }
+    _data.fields.add(MapEntry('lat_long', latLng));
+    if (location != null) {
+      _data.fields.add(MapEntry('location', location));
     }
     final _options = _setStreamType<dynamic>(
       Options(method: 'POST', headers: _headers, extra: _extra)
@@ -789,6 +804,8 @@ class _ApiService implements ApiService {
     String? sortOrder,
     String? lookingId,
     String? investmentCapId,
+    String latLng,
+    String pageNo,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -810,6 +827,8 @@ class _ApiService implements ApiService {
     if (investmentCapId != null) {
       _data.fields.add(MapEntry('investement_cap_id', investmentCapId));
     }
+    _data.fields.add(MapEntry('lat_long', latLng));
+    _data.fields.add(MapEntry('page_number', pageNo));
     final _options = _setStreamType<dynamic>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
@@ -872,6 +891,31 @@ class _ApiService implements ApiService {
   }
 
   @override
+  Future<dynamic> deleteBusinessReq(String? requirementId) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    if (requirementId != null) {
+      _data.fields.add(MapEntry('requirement_id', requirementId));
+    }
+    final _options = _setStreamType<dynamic>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'http://192.168.29.37/bizyaari/api/user/v1/delete_business_requirement',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch(_options);
+    final _value = _result.data;
+    return _value;
+  }
+
+  @override
   Future<dynamic> addBusinessReq(
     String userId,
     String name,
@@ -905,6 +949,50 @@ class _ApiService implements ApiService {
           .compose(
             _dio.options,
             'http://192.168.29.37/bizyaari/api/user/v1/add_business_requirement',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch(_options);
+    final _value = _result.data;
+    return _value;
+  }
+
+  @override
+  Future<dynamic> editBusinessReq(
+    String reqId,
+    String name,
+    String location,
+    String latLng,
+    String wulfId,
+    String capacityId,
+    String history,
+    String note,
+    String canInvest,
+    List<String> catIds,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    _data.fields.add(MapEntry('requirement_id', reqId));
+    _data.fields.add(MapEntry('name', name));
+    _data.fields.add(MapEntry('location', location));
+    _data.fields.add(MapEntry('lat_long', latLng));
+    _data.fields.add(MapEntry('wulf_id', wulfId));
+    _data.fields.add(MapEntry('investment_cap_id', capacityId));
+    _data.fields.add(MapEntry('history', history));
+    _data.fields.add(MapEntry('note', note));
+    _data.fields.add(MapEntry('can_invest', canInvest));
+    catIds.forEach((i) {
+      _data.fields.add(MapEntry('category_ids[]', i));
+    });
+    final _options = _setStreamType<dynamic>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'http://192.168.29.37/bizyaari/api/user/v1/update_business_requirement',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1453,7 +1541,7 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<dynamic> getChatList(String? userId) async {
+  Future<dynamic> getChatList(String? userId, String pageNo) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     queryParameters.removeWhere((k, v) => v == null);
@@ -1462,6 +1550,7 @@ class _ApiService implements ApiService {
     if (userId != null) {
       _data.fields.add(MapEntry('user_id', userId));
     }
+    _data.fields.add(MapEntry('page_number', pageNo));
     final _options = _setStreamType<dynamic>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
@@ -1478,7 +1567,11 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<dynamic> getSingleChat(String? userId, String? chatId) async {
+  Future<dynamic> getSingleChat(
+    String? userId,
+    String? chatId,
+    String pageNo,
+  ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     queryParameters.removeWhere((k, v) => v == null);
@@ -1490,6 +1583,7 @@ class _ApiService implements ApiService {
     if (chatId != null) {
       _data.fields.add(MapEntry('chat_id', chatId));
     }
+    _data.fields.add(MapEntry('page_number', pageNo));
     final _options = _setStreamType<dynamic>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
@@ -1583,6 +1677,77 @@ class _ApiService implements ApiService {
           .compose(
             _dio.options,
             'http://192.168.29.37/bizyaari/api/user/v1/global_search',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch(_options);
+    final _value = _result.data;
+    return _value;
+  }
+
+  @override
+  Future<dynamic> legalPageList() async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<dynamic>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'http://192.168.29.37/bizyaari/api/user/v1/get_page_list',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch(_options);
+    final _value = _result.data;
+    return _value;
+  }
+
+  @override
+  Future<dynamic> legalPageDetails(String? slug) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    if (slug != null) {
+      _data.fields.add(MapEntry('slug', slug));
+    }
+    final _options = _setStreamType<dynamic>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'http://192.168.29.37/bizyaari/api/user/v1/get_page_details',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch(_options);
+    final _value = _result.data;
+    return _value;
+  }
+
+  @override
+  Future<dynamic> deleteAccount(String? userId) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    if (userId != null) {
+      _data.fields.add(MapEntry('user_id', userId));
+    }
+    final _options = _setStreamType<dynamic>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'http://192.168.29.37/bizyaari/api/user/v1/delete_account',
             queryParameters: queryParameters,
             data: _data,
           )

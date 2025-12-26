@@ -65,79 +65,8 @@ class _InboxListState extends State<InboxList> {
           ),
         ],
       ),
-
-      // Container(
-      //   decoration: BoxDecoration(
-      //     color: Colors.white,
-      //     borderRadius: BorderRadius.circular(12.r),
-      //   ),
-      //   child: Column(
-      //     mainAxisSize: MainAxisSize.min,
-      //     children: [
-      //       // --- Tab Bar ---
-      //       TabBar(
-      //         indicatorColor: primaryColor,
-      //         labelColor: primaryColor,
-      //         indicatorSize: TabBarIndicatorSize.tab,
-      //         unselectedLabelColor: Colors.grey,
-      //         labelStyle: TextStyle(
-      //           fontSize: 14.sp,
-      //           fontWeight: FontWeight.w600,
-      //         ),
-      //         tabs: [
-      //           Tab(text: 'Chat', height: 35),
-      //           Tab(text: 'Request', height: 35),
-      //         ],
-      //       ),
-      //
-      //       // --- Tab Content ---
-      //       Expanded(
-      //         child: TabBarView(
-      //           physics: const NeverScrollableScrollPhysics(),
-      //           children: [ChatScreen(), RequestedScreen()],
-      //         ),
-      //       ),
-      //     ],
-      //   ),
-      // ),
     );
   }
-
-  // Widget _buildChatList() {
-  //   return ListView.separated(
-  //     separatorBuilder: (context, index) =>
-  //         Divider(height: 5, color: lightGrey),
-  //     padding: const EdgeInsets.all(0),
-  //     itemCount: 10,
-  //     itemBuilder: (context, index) {
-  //       return ListTile(
-  //         dense: true,
-  //         leading: CircleAvatar(backgroundImage: AssetImage(Images.hotelImg)),
-  //         title: CustomText(
-  //           title: 'PizzaPoint',
-  //           fontSize: 14.sp,
-  //           textAlign: TextAlign.start,
-  //           fontWeight: FontWeight.bold,
-  //         ),
-  //         subtitle: CustomText(
-  //           title: 'Hi Gaurav — Today only: 30% off on all la.....',
-  //           fontSize: 12.sp,
-  //           textAlign: TextAlign.start,
-  //           // maxLines: 1,
-  //         ),
-  //         onTap: () {
-  //           // Push a subpage within Inbox
-  //           navController.openSubPage(SingleChat());
-  //         },
-  //         trailing: CustomText(
-  //           title: '2h ago',
-  //           fontSize: 12.sp,
-  //           textAlign: TextAlign.start,
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
 
   Widget _buildRequestedList() {
     return ListView.separated(

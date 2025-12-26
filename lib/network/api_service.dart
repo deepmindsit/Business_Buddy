@@ -61,13 +61,14 @@ abstract class ApiService {
   });
 
   @POST(AllUrl.categories)
-  Future<dynamic> getCategories();
+  Future<dynamic> getCategories(   @Part(name: "page_number") String pageNo,);
 
   @POST(AllUrl.explore)
   Future<dynamic> explore(
     @Part(name: "category_id") String? catId,
     @Part(name: "lat_long") String? latLong,
     @Part(name: "user_id") String? userId,
+    @Part(name: "page_number") String pageNo,
   );
 
   @POST(AllUrl.businessDetails)
@@ -75,6 +76,7 @@ abstract class ApiService {
     @Part(name: "business_id") String? catId,
     @Part(name: "lat_long") String? latLong,
     @Part(name: "user_id") String? userId,
+
   );
 
   @POST(AllUrl.myBusinessDetails)
@@ -144,6 +146,8 @@ abstract class ApiService {
     @Part(name: "user_id") String? userId,
     @Part(name: "category_id") String? categoryId,
     @Part(name: "date_range") String? dateRange,
+    @Part(name: "location") String? location,
+    @Part(name: "page_number") String pageNo,
   );
 
   @POST(AllUrl.getHome)
@@ -157,6 +161,8 @@ abstract class ApiService {
     @Part(name: "user_id") String? userId,
     @Part(name: "category_id") String? categoryId,
     @Part(name: "date_range") String? dateRange,
+    @Part(name: "lat_long") String latLng,
+    @Part(name: "location") String? location,
   );
 
   @POST(AllUrl.businessReqList)
@@ -166,6 +172,8 @@ abstract class ApiService {
     @Part(name: "sort_order") String? sortOrder,
     @Part(name: "looking_for_id") String? lookingId,
     @Part(name: "investement_cap_id") String? investmentCapId,
+    @Part(name: "lat_long") String latLng,
+    @Part(name: "page_number") String pageNo,
   );
 
   @POST(AllUrl.getWulf)
@@ -174,9 +182,28 @@ abstract class ApiService {
   @POST(AllUrl.getCapacity)
   Future<dynamic> getCapacity(@Part(name: "wulf_id") String? wulfId);
 
+  @POST(AllUrl.deleteBusinessReq)
+  Future<dynamic> deleteBusinessReq(
+    @Part(name: "requirement_id") String? requirementId,
+  );
+
   @POST(AllUrl.addBusinessReq)
   Future<dynamic> addBusinessReq(
     @Part(name: "user_id") String userId,
+    @Part(name: "name") String name,
+    @Part(name: "location") String location,
+    @Part(name: "lat_long") String latLng,
+    @Part(name: "wulf_id") String wulfId,
+    @Part(name: "investment_cap_id") String capacityId,
+    @Part(name: "history") String history,
+    @Part(name: "note") String note,
+    @Part(name: "can_invest") String canInvest,
+    @Part(name: "category_ids[]") List<String> catIds,
+  );
+
+  @POST(AllUrl.editBusinessReq)
+  Future<dynamic> editBusinessReq(
+    @Part(name: "requirement_id") String reqId,
     @Part(name: "name") String name,
     @Part(name: "location") String location,
     @Part(name: "lat_long") String latLng,
@@ -292,12 +319,16 @@ abstract class ApiService {
   );
 
   @POST(AllUrl.chatList)
-  Future<dynamic> getChatList(@Part(name: "user_id") String? userId);
+  Future<dynamic> getChatList(
+      @Part(name: "user_id") String? userId,
+      @Part(name: "page_number") String pageNo,
+      );
 
   @POST(AllUrl.getSingleChat)
   Future<dynamic> getSingleChat(
     @Part(name: "user_id") String? userId,
     @Part(name: "chat_id") String? chatId,
+    @Part(name: "page_number") String pageNo,
   );
 
   @POST(AllUrl.sendMsg)
@@ -315,6 +346,15 @@ abstract class ApiService {
 
   @POST(AllUrl.globalSearch)
   Future<dynamic> globalSearch(@Part(name: "keyword") String? keyword);
+
+  @POST(AllUrl.legalPageList)
+  Future<dynamic> legalPageList();
+
+  @POST(AllUrl.legalPageDetails)
+  Future<dynamic> legalPageDetails(@Part(name: "slug") String? slug);
+
+  @POST(AllUrl.deleteAccount)
+  Future<dynamic> deleteAccount(@Part(name: "user_id") String? userId);
 }
 
 //

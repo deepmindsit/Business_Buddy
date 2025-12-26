@@ -7,34 +7,77 @@ class FeedsController extends GetxController {
   final isFollowProcessing = false.obs;
   final isLikeProcessing = false.obs;
   final feedList = [].obs;
+  final isLoadMore = false.obs;
 
-  Future<void> getFeeds({bool showLoading = true}) async {
-    if (showLoading) isLoading.value = true;
+  int currentPage = 1;
+  int totalPages = 1;
+  int perPage = 10;
+  bool hasMore = true;
+
+  Future<void> getFeeds({
+    bool showLoading = true,
+    bool isRefresh = false,
+  }) async {
+    if (isRefresh) {
+      currentPage = 1;
+      totalPages = 1;
+      hasMore = true;
+      feedList.clear();
+    }
+    // if (!hasMore) return;
+
+    currentPage == 1 ? isLoading.value = showLoading : isLoadMore.value = true;
 
     final userId = await LocalStorage.getString('user_id') ?? '';
     try {
-      // final position = await Geolocator.getCurrentPosition(
-      //   desiredAccuracy: LocationAccuracy.high,
-      // );
       final lat = getIt<LocationController>().latitude.value.toString();
       final lng = getIt<LocationController>().longitude.value.toString();
 
-      print('latitude feed===============>$lat');
-      print('longitude lng=============>$lng');
+      final String location =
+          getIt<SpecialOfferController>().lat.value.isNotEmpty &&
+              getIt<SpecialOfferController>().lng.value.isNotEmpty
+          ? '${getIt<SpecialOfferController>().lat.value},${getIt<SpecialOfferController>().lng.value}'
+          : '';
+      print('location search======>$location');
+      print('pre location ======>$lat,$lng');
+
       final response = await _apiService.getFeeds(
         '$lat,$lng',
         userId,
         getIt<SpecialOfferController>().selectedCategory.value,
         getIt<SpecialOfferController>().selectedDateRange.value,
+        location,
+        currentPage.toString(),
       );
-
+      print('response feed===============>$response');
       if (response['common']['status'] == true) {
-        feedList.value = response['data'] ?? [];
+        final data = response['data'];
+
+        final List list = data['feeds'] ?? [];
+
+        perPage = data['per_page'] ?? perPage;
+        totalPages = data['total_pages'] ?? totalPages;
+
+        /// 🔹 IMPORTANT
+        if (isRefresh || currentPage == 1) {
+          feedList.assignAll(list); // 🔥 replaces list
+        } else {
+          feedList.addAll(list); // pagination
+        }
+
+        /// 👇 backend-accurate pagination check
+        hasMore = currentPage < totalPages;
+
+        if (hasMore) currentPage++;
+
+        // {
+        //   feedList.value = response['data'] ?? [];
       }
     } catch (e) {
       showError(e);
     } finally {
       if (showLoading) isLoading.value = false;
+      isLoadMore.value = false;
     }
   }
 
@@ -253,6 +296,4 @@ class FeedsController extends GetxController {
       if (showLoading) isAddCommentLoading.value = false;
     }
   }
-
-
 }

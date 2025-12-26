@@ -13,44 +13,71 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () => controller.isChatLoading.isTrue
-          ? const ChatListShimmer()
-          : controller.allChats.isEmpty
-          ? _buildEmptyState()
-          : _buildChatList(),
+    return Obx(() {
+      /// 🔹 Initial Loading (Shimmer)
+      if (controller.isChatLoading.isTrue) {
+        return const ChatListShimmer();
+      }
 
-      // ? SingleChildScrollView(
-      //     child: Column(
-      //       children: [
-      //         SizedBox(
-      //           height: Get.height * 0.25,
-      //         ), // ✅ Push content to center
-      //         commonNoDataFound(),
-      //       ],
-      //     ),
-      //   )
-      // : AnimationLimiter(
-      //     child: ListView.separated(
-      //       physics: const AlwaysScrollableScrollPhysics(),
-      //       padding: EdgeInsets.zero,
-      //       separatorBuilder: (context, index) =>
-      //           Divider(height: 5, color: lightGrey),
-      //       itemCount: controller.allChats.length,
-      //       itemBuilder: (context, index) {
-      //         final chat = controller.allChats[index];
-      //         return AnimationConfiguration.staggeredList(
-      //           position: index,
-      //           duration: const Duration(milliseconds: 375),
-      //           child: SlideAnimation(
-      //             verticalOffset: 50.0,
-      //             child: FadeInAnimation(child: _chatTile(chat)),
-      //           ),
-      //         );
-      //       },
-      //     ),
-      //   ),
-    );
+      /// 🔹 Empty State
+      if (controller.allChats.isEmpty) {
+        return _buildEmptyState();
+      }
+
+      /// 🔹 Feeds + Pagination
+      return NotificationListener<ScrollNotification>(
+        onNotification: (scroll) {
+          if (scroll is ScrollEndNotification &&
+              scroll.metrics.pixels >= scroll.metrics.maxScrollExtent - 50 &&
+              controller.hasMore &&
+              !controller.isLoadMore.value &&
+              !controller.isLoading.value) {
+            controller.getAllChat(showLoading: false);
+          }
+          return false;
+        },
+        child: _buildChatList(),
+      );
+    });
+
+    //   Obx(
+    //   () => controller.isChatLoading.isTrue
+    //       ? const ChatListShimmer()
+    //       : controller.allChats.isEmpty
+    //       ? _buildEmptyState()
+    //       : _buildChatList(),
+    //
+    //   // ? SingleChildScrollView(
+    //   //     child: Column(
+    //   //       children: [
+    //   //         SizedBox(
+    //   //           height: Get.height * 0.25,
+    //   //         ), // ✅ Push content to center
+    //   //         commonNoDataFound(),
+    //   //       ],
+    //   //     ),
+    //   //   )
+    //   // : AnimationLimiter(
+    //   //     child: ListView.separated(
+    //   //       physics: const AlwaysScrollableScrollPhysics(),
+    //   //       padding: EdgeInsets.zero,
+    //   //       separatorBuilder: (context, index) =>
+    //   //           Divider(height: 5, color: lightGrey),
+    //   //       itemCount: controller.allChats.length,
+    //   //       itemBuilder: (context, index) {
+    //   //         final chat = controller.allChats[index];
+    //   //         return AnimationConfiguration.staggeredList(
+    //   //           position: index,
+    //   //           duration: const Duration(milliseconds: 375),
+    //   //           child: SlideAnimation(
+    //   //             verticalOffset: 50.0,
+    //   //             child: FadeInAnimation(child: _chatTile(chat)),
+    //   //           ),
+    //   //         );
+    //   //       },
+    //   //     ),
+    //   //   ),
+    // );
   }
 
   Widget _buildEmptyState() {
@@ -78,6 +105,14 @@ class _ChatScreenState extends State<ChatScreen> {
               );
             }, childCount: controller.allChats.length),
           ),
+        ),
+        Obx(
+          () => controller.isLoadMore.value
+              ? SliverPadding(
+                  padding: EdgeInsets.symmetric(vertical: 16.h),
+                  sliver: LoadingWidget(color: primaryColor),
+                )
+              : SliverToBoxAdapter(child: const SizedBox()),
         ),
       ],
     );

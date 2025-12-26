@@ -40,6 +40,9 @@ class AllUrl {
   static const String getWulf = '$baseUrl/get_wulf_list';
   static const String getCapacity = '$baseUrl/get_investment_capacity_list';
   static const String addBusinessReq = '$baseUrl/add_business_requirement';
+  static const String editBusinessReq = '$baseUrl/update_business_requirement';
+  static const String deleteBusinessReq =
+      '$baseUrl/delete_business_requirement';
   static const String getMyProfile = '$baseUrl/my_profile_details';
   static const String getFollowList = '$baseUrl/get_business_following_list';
   static const String getUserProfile = '$baseUrl/user_profile_details';
@@ -67,4 +70,7 @@ class AllUrl {
   static const String sendMsg = '$baseUrl/send_message';
   static const String initiateChat = '$baseUrl/initiate_chat';
   static const String globalSearch = '$baseUrl/global_search';
+  static const String legalPageList = '$baseUrl/get_page_list';
+  static const String legalPageDetails = '$baseUrl/get_page_details';
+  static const String deleteAccount = '$baseUrl/delete_account';
 }

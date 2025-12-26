@@ -26,6 +26,7 @@ class PartnerDataController extends GetxController {
 
   late TabController tabController;
   final tabIndex = 0.obs;
+  final pageNo = 1.obs;
 
   void changeTab(int index) {
     tabIndex.value = index;
@@ -49,6 +50,11 @@ class PartnerDataController extends GetxController {
     print(sort.value!.toLowerCase());
     print(lookingFor.value);
     print(selectedExp.value);
+    print(userId);
+
+    final lat = getIt<LocationController>().latitude.value.toString();
+    final lng = getIt<LocationController>().longitude.value.toString();
+    print('lat.value=======>$lat,$lng');
     try {
       final response = await _apiService.businessReqList(
         userId,
@@ -56,12 +62,15 @@ class PartnerDataController extends GetxController {
         sort.value!.toLowerCase(),
         lookingFor.value,
         selectedExp.value,
+        '$lat,$lng',
+        pageNo.value.toString(),
       );
-
+      print('getBusinessRequired');
+      print(response);
       if (response['common']['status'] == true) {
-        requirementList.value = response['data'] ?? [];
+        requirementList.value = response['data']['business_requirements'] ?? [];
       } else {
-        requirementList.value = response['data'] ?? [];
+        requirementList.value = response['data']['business_requirements'] ?? [];
       }
     } catch (e) {
       showError(e);
@@ -93,6 +102,26 @@ class PartnerDataController extends GetxController {
 
       if (response['common']['status'] == true) {
         capacityList.value = response['data'] ?? [];
+      }
+    } catch (e) {
+      showError(e);
+    } finally {
+      if (showLoading) isLoading.value = false;
+    }
+  }
+
+  Future<void> deleteBusinessRequirement(
+    String businessId, {
+    bool showLoading = true,
+  }) async {
+    if (showLoading) isLoading.value = true;
+    try {
+      final response = await _apiService.deleteBusinessReq(businessId);
+
+      if (response['common']['status'] == true) {
+        ToastUtils.showSuccessToast(response['common']['message']);
+      } else {
+        ToastUtils.showWarningToast(response['common']['message']);
       }
     } catch (e) {
       showError(e);
@@ -134,6 +163,54 @@ class PartnerDataController extends GetxController {
     } finally {
       if (showLoading) isAddLoading.value = false;
     }
+  }
+
+  Future<void> editBusinessRequired(
+    String businessId, {
+    bool showLoading = true,
+  }) async {
+    if (showLoading) isAddLoading.value = true;
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      final response = await _apiService.editBusinessReq(
+        businessId,
+        recTitle.text.trim(),
+        location.text.trim(),
+        '${position.latitude},${position.longitude}',
+        invType.value!,
+        invCapacity.value!,
+        invHistory.text.trim(),
+        notes.text.trim(),
+        iCanInvest.text.trim(),
+        getIdsByNames(selectedBusiness),
+      );
+      if (response['common']['status'] == true) {
+        resetField();
+        getIt<NavigationController>().goBack();
+        ToastUtils.showSuccessToast(response['common']['message']);
+      } else {
+        ToastUtils.showWarningToast(response['common']['message']);
+      }
+    } catch (e) {
+      showError(e);
+    } finally {
+      if (showLoading) isAddLoading.value = false;
+    }
+  }
+
+  List<String> getIdsByNames(List<String> names) {
+    return names
+        .map((name) {
+          final item = getIt<ExplorerController>().categories.firstWhere(
+            (e) => e['name'] == name,
+            orElse: () => null,
+          );
+          return item?['id'].toString() ?? '';
+        })
+        .where((id) => id.isNotEmpty)
+        .toList();
   }
 
   final businessLoadingMap = <String, bool>{}.obs;
@@ -199,11 +276,13 @@ class PartnerDataController extends GetxController {
   void preselectedRecruitment(dynamic data) async {
     recTitle.text = data['name'] ?? '';
     location.text = data['location'] ?? '';
+    invHistory.text = data['history'] ?? '';
+    notes.text = data['note'] ?? '';
+    iCanInvest.text = data['can_invest'] ?? '';
     invType.value = data['what_you_look_for_id'].toString();
     selectedBusiness.value = List<String>.from(data['category_names'] ?? []);
-    await getCapacity(data['what_you_look_for_id'].toString()).then((v) {
-      invCapacity.value = data['investment_capacity'] ?? '';
-    });
+    invCapacity.value = data['investment_capacity_id']?.toString() ?? '';
+    await getCapacity(data['what_you_look_for_id'].toString()).then((v) {});
   }
 
   ////////////////////////////////////////rec filter///////////////////////////////
@@ -213,7 +292,6 @@ class PartnerDataController extends GetxController {
   final selectedLocation = RxnString();
 
   // EXPERIENCE
-  final expList = ["0-1 yrs", "1-3 yrs", "3-5 yrs", "5+ yrs"].obs;
   final selectedExp = RxnString();
 
   // SORT

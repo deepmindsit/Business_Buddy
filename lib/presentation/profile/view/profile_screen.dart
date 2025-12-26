@@ -1,3 +1,4 @@
+import '../../../common/policy_data.dart';
 import '../../../utils/exported_path.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -21,6 +22,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (isMe == 'self') {
       controller.isMe.value = true;
       await controller.getProfile();
+      await controller.legalPageListApi();
     } else {
       controller.isMe.value = false;
       await controller.getUserProfile(isMe);
@@ -214,6 +216,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _businessCard(),
           _businessRequirement(),
           if (controller.isMe.isTrue) ...[_buildLogoutButton()],
+          if (controller.legalPageList.isNotEmpty)
+            Divider(
+              color: Colors.grey.shade300,
+              indent: Get.width * 0.04,
+              endIndent: Get.width * 0.04,
+            ),
+          Column(
+            children: List.generate(controller.legalPageList.length, (index) {
+              final v = controller.legalPageList[index];
+              return Column(
+                children: [
+                  ListTile(
+                    visualDensity: VisualDensity(vertical: -4),
+                    dense: true,
+                    onTap: () {
+                      Get.to(() => PolicyData(slug: v['slug'] ?? ''));
+                    },
+                    title: CustomText(
+                      title: v['name'] ?? '',
+                      fontSize: 16.sp,
+                      textAlign: TextAlign.start,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    trailing: Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      size: 16.r,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  if (index != controller.legalPageList.length - 1)
+                    Divider(
+                      color: Colors.grey.shade300,
+                      indent: Get.width * 0.04,
+                      endIndent: Get.width * 0.04,
+                    ),
+                ],
+              );
+            }),
+          ),
         ],
       ),
     );
@@ -416,7 +457,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _buildSectionTitle('Business Requirements'),
         Column(
           children: businesses.map<Widget>((business) {
-            return BusinessCard(data: business);
+            return BusinessCard(
+              data: business,
+              onDelete: () {
+                AllDialogs().showConfirmationDialog(
+                  'Delete Recruitment',
+                  'Are you sure you want to delete this recruitment?',
+                  onConfirm: () async {
+                    await getIt<PartnerDataController>()
+                        .deleteBusinessRequirement(
+                          business['id']?.toString() ?? '',
+                        );
+                    Get.back();
+                    await controller.getProfile();
+                  },
+                );
+              },
+            );
           }).toList(),
         ),
       ],

@@ -4,12 +4,14 @@ class BusinessCard extends StatefulWidget {
   final dynamic data;
   final bool isRequested;
   final bool isSearch;
+  final VoidCallback? onDelete;
 
   const BusinessCard({
     super.key,
     this.data,
     this.isRequested = false,
     this.isSearch = false,
+    this.onDelete,
   });
 
   @override
@@ -194,7 +196,7 @@ class _BusinessCardState extends State<BusinessCard> {
           _handleMenuSelection(value);
         },
         itemBuilder: (context) => [
-          _buildMenuItem('edit', Icons.edit, 'Edit', Colors.blue),
+          _buildMenuItem('edit', Icons.edit, 'Edit', primaryColor),
           _buildMenuItem('delete', Icons.delete, 'Delete', Colors.grey),
         ],
       ),
@@ -285,9 +287,7 @@ class _BusinessCardState extends State<BusinessCard> {
         if (widget.isRequested != true) {
           if (widget.data['chat_initiated'] == true) {
             navController.openSubPage(
-              SingleChat(
-                chatId: widget.data['chat_id']?.toString() ?? '',
-              ),
+              SingleChat(chatId: widget.data['chat_id']?.toString() ?? ''),
             );
           } else {
             await getIt<InboxController>().initiateChat(
@@ -384,19 +384,7 @@ class _BusinessCardState extends State<BusinessCard> {
         );
         break;
       case 'delete':
-        AllDialogs().showConfirmationDialog(
-          'Delete Recruitment',
-          'Are you sure you want to delete this recruitment?',
-          onConfirm: () {
-            Get.back();
-            Get.snackbar(
-              'Deleted',
-              'Recruitment has been deleted successfully',
-              backgroundColor: Colors.green,
-              colorText: Colors.white,
-            );
-          },
-        );
+        widget.onDelete!();
         break;
     }
   }

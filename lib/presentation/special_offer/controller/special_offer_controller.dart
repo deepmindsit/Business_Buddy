@@ -6,15 +6,27 @@ class SpecialOfferController extends GetxController {
   final isLoading = false.obs;
   final isApply = false.obs;
   final offerList = [].obs;
+  final address = ''.obs;
+  final addressList = [].obs;
+  final addressController = TextEditingController();
+  final lat = ''.obs;
+  final lng = ''.obs;
 
   Future<void> getSpecialOffer({bool showLoading = true}) async {
     if (showLoading) isLoading.value = true;
     final userId = await LocalStorage.getString('user_id') ?? '';
+    final latitude = getIt<LocationController>().latitude.value.toString();
+    final longitude = getIt<LocationController>().longitude.value.toString();
+    final String location = lat.value.isNotEmpty && lng.value.isNotEmpty
+        ? '${lat.value},${lng.value}'
+        : '';
     try {
       final response = await _apiService.getSpecialOffer(
         userId,
         selectedCategory.value,
         selectedDateRange.value,
+        '$latitude,$longitude',
+        location,
       );
 
       if (response['common']['status'] == true) {
@@ -64,5 +76,10 @@ class SpecialOfferController extends GetxController {
     customEnd = null;
     selectedDateRange.value = null;
     isApply.value = false;
+    lat.value = '';
+    lng.value = '';
+    address.value = '';
+    addressList.clear();
+    addressController.clear();
   }
 }

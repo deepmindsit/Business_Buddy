@@ -3,55 +3,129 @@ import 'package:businessbuddy/utils/exported_path.dart';
 @lazySingleton
 class InboxController extends GetxController {
   final ApiService _apiService = Get.find();
-
-  final messages = [
-    {'text': 'Hi there! 👋', 'isMe': false},
-    {'text': 'Hey! How are you?', 'isMe': true},
-    {
-      'text': 'I’m good, just working on a new Flutter project 😄',
-      'isMe': false,
-    },
-    {'text': 'Nice! Flutter makes UI so easy to build.', 'isMe': true},
-    {'text': 'Totally agree with you! 🚀', 'isMe': false},
-  ].obs;
-
   final isLoading = true.obs;
-
   final receivedRequestList = [].obs;
 
   ///////////////////////////////////////chat////////////////////////////////
   final allChats = [].obs;
   final singleChat = {}.obs;
+  final allMessages = [].obs;
   final isChatLoading = true.obs;
   final isSingleLoading = true.obs;
   final isSendLoading = false.obs;
   final msgController = TextEditingController();
 
-  Future<void> getAllChat({bool showLoading = true}) async {
-    if (showLoading) isChatLoading.value = true;
+  final isLoadMore = false.obs;
+  int currentPage = 1;
+  int totalPages = 1;
+  int perPage = 10;
+  bool hasMore = true;
+
+  Future<void> getAllChat({
+    bool showLoading = true,
+    bool isRefresh = false,
+  }) async {
+    if (isRefresh) {
+      currentPage = 1;
+      totalPages = 1;
+      hasMore = true;
+      allChats.clear();
+    }
+
+    currentPage == 1
+        ? isChatLoading.value = showLoading
+        : isLoadMore.value = true;
+
+    // if (showLoading) isChatLoading.value = true;
     final userId = await LocalStorage.getString('user_id') ?? '';
     allChats.clear();
     try {
-      final response = await _apiService.getChatList(userId);
+      final response = await _apiService.getChatList(
+        userId,
+        currentPage.toString(),
+      );
 
       if (response['common']['status'] == true) {
-        allChats.value = response['data'] ?? [];
+        final data = response['data'];
+
+        final List list = data['chats'] ?? [];
+
+        perPage = data['per_page'] ?? perPage;
+        totalPages = data['total_pages'] ?? totalPages;
+
+        /// 🔹 IMPORTANT
+        if (isRefresh || currentPage == 1) {
+          allChats.assignAll(list); // 🔥 replaces list
+        } else {
+          allChats.addAll(list); // pagination
+        }
+
+        /// 👇 backend-accurate pagination check
+        hasMore = currentPage < totalPages;
+
+        if (hasMore) currentPage++;
       }
     } catch (e) {
       showError(e);
     } finally {
       if (showLoading) isChatLoading.value = false;
+      isLoadMore.value = false;
     }
   }
 
-  Future<void> getSingleChat(String chatId, {bool showLoading = true}) async {
-    if (showLoading) isSingleLoading.value = true;
+  final isSingleLoadMore = false.obs;
+  int currentSinglePage = 1;
+  int totalSinglePages = 1;
+  int perSinglePage = 10;
+  bool hasSingleMore = true;
+
+  Future<void> getSingleChat(
+    String chatId, {
+    bool showLoading = true,
+    bool isRefresh = false,
+  }) async {
+    if (isRefresh) {
+      currentSinglePage = 1;
+      totalSinglePages = 1;
+      hasSingleMore = true;
+      singleChat.clear();
+      allMessages.clear();
+    }
+
+    currentSinglePage == 1
+        ? isSingleLoading.value = showLoading
+        : isSingleLoadMore.value = true;
+
+    // if (showLoading) isSingleLoading.value = true;
     final userId = await LocalStorage.getString('user_id') ?? '';
     try {
-      final response = await _apiService.getSingleChat(userId, chatId);
+      final response = await _apiService.getSingleChat(
+        userId,
+        chatId,
+        currentSinglePage.toString(),
+      );
 
       if (response['common']['status'] == true) {
+        final data = response['data'];
         singleChat.value = response['data'] ?? {};
+        final List list = data['messages'] ?? [];
+
+        perSinglePage = data['per_page'] ?? perSinglePage;
+        totalSinglePages = data['total_pages'] ?? totalSinglePages;
+
+        /// 🔹 IMPORTANT
+        if (isRefresh || currentSinglePage == 1) {
+          allMessages.assignAll(list); // 🔥 replaces list
+        } else {
+          allMessages.addAll(list); // pagination
+        }
+
+        /// 👇 backend-accurate pagination check
+        hasSingleMore = currentSinglePage < totalPages;
+
+        if (hasSingleMore) currentSinglePage++;
+
+        // singleChat.value = response['data'] ?? {};
       }
     } catch (e) {
       showError(e);

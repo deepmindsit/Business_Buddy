@@ -12,173 +12,307 @@ class _NewFeedState extends State<NewFeed> {
 
   @override
   void initState() {
+    super.initState();
     getIt<SpecialOfferController>().resetData();
     controller.getFeeds();
-    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () => controller.isLoading.isTrue
-          ? ListView.builder(
-              padding: EdgeInsets.symmetric(horizontal: 8.w),
-              itemCount: 5,
-              itemBuilder: (_, i) => const FeedShimmer(),
-            )
-          : controller.feedList.isEmpty
-          ? commonNoDataFound(isHome: true)
-          : SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        CustomText(
-                          title: 'Feeds',
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        _buildFilterButton(),
-                      ],
+    return Obx(() {
+      /// 🔹 Initial Loading (Shimmer)
+      if (controller.isLoading.isTrue) {
+        return ListView.builder(
+          padding: EdgeInsets.symmetric(horizontal: 8.w),
+          itemCount: 5,
+          itemBuilder: (_, i) => const FeedShimmer(),
+        );
+      }
+
+      /// 🔹 Empty State
+      if (controller.feedList.isEmpty) {
+        return commonNoDataFound(isHome: true);
+      }
+
+      /// 🔹 Feeds + Pagination
+      return NotificationListener<ScrollNotification>(
+        onNotification: (scroll) {
+          if (scroll is ScrollEndNotification &&
+              scroll.metrics.pixels >= scroll.metrics.maxScrollExtent - 50 &&
+              controller.hasMore &&
+              !controller.isLoadMore.value &&
+              !controller.isLoading.value) {
+            controller.getFeeds(showLoading: false);
+          }
+          return false;
+        },
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              /// 🔹 Header
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CustomText(
+                      title: 'Feeds',
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.bold,
                     ),
-                  ),
-                  AnimationLimiter(
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      padding: EdgeInsets.symmetric(horizontal: 8.w),
-                      itemCount: controller.feedList.length,
-                      itemBuilder: (_, i) {
-                        final item = controller.feedList[i];
-                        return AnimationConfiguration.staggeredList(
-                          position: i,
-                          duration: const Duration(milliseconds: 375),
-                          child: SlideAnimation(
-                            verticalOffset: 50.0,
-                            child: FadeInAnimation(
-                              child: item['type'] == 'offer'
-                                  ? OfferCard(
-                                      data: item,
-                                      onLike: () => handleOfferLike(
-                                        item,
-                                        () async => await controller.getFeeds(
-                                          showLoading: false,
-                                        ),
-                                      ),
-                                    )
-                                  : FeedCard(
-                                      onLike: () => handleFeedLike(
-                                        item,
-                                        () => controller.getFeeds(
-                                          showLoading: false,
-                                        ),
-                                      ),
-
-                                      // () async {
-                                      //   if (controller
-                                      //       .isLikeProcessing
-                                      //       .isTrue) {
-                                      //     return; // <<< stops multiple taps
-                                      //   }
-                                      //   controller.isLikeProcessing.value =
-                                      //       true;
-                                      //
-                                      //   if (!getIt<DemoService>().isDemo) {
-                                      //     ToastUtils.showLoginToast();
-                                      //     controller.isLikeProcessing.value =
-                                      //         false;
-                                      //     return;
-                                      //   }
-                                      //   try {
-                                      //     bool wasLiked = item['is_liked'];
-                                      //     int likeCount =
-                                      //         int.tryParse(
-                                      //           item['likes_count'].toString(),
-                                      //         ) ??
-                                      //         0;
-                                      //
-                                      //     if (wasLiked) {
-                                      //       await controller.unLikeBusiness(
-                                      //         item['liked_id'].toString(),
-                                      //       );
-                                      //       item['likes_count'] =
-                                      //           (likeCount - 1).clamp(
-                                      //             0,
-                                      //             999999,
-                                      //           );
-                                      //     } else {
-                                      //       await controller.likeBusiness(
-                                      //         item['business_id'].toString(),
-                                      //         item['post_id'].toString(),
-                                      //       );
-                                      //       item['likes_count'] = likeCount + 1;
-                                      //     }
-                                      //
-                                      //     // Toggle locally
-                                      //     item['is_liked'] = !wasLiked;
-                                      //     await controller.getFeeds(
-                                      //       showLoading: false,
-                                      //     );
-                                      //   } finally {
-                                      //     controller.isLikeProcessing.value =
-                                      //         false;
-                                      //   }
-                                      // },
-                                      data: item,
-                                      onFollow: () async {
-                                        if (controller
-                                            .isFollowProcessing
-                                            .isTrue) {
-                                          return; // <<< stops multiple taps
-                                        }
-                                        controller.isFollowProcessing.value =
-                                            true;
-                                        if (getIt<DemoService>().isDemo ==
-                                            false) {
-                                          ToastUtils.showLoginToast();
-                                          controller.isFollowProcessing.value =
-                                              false;
-                                          return;
-                                        }
-                                        try {
-                                          if (item['is_followed'] == true) {
-                                            await controller.unfollowBusiness(
-                                              item['follow_id'].toString(),
-                                            );
-                                          } else {
-                                            await controller.followBusiness(
-                                              item['business_id'].toString(),
-                                            );
-                                          }
-
-                                          item['is_followed'] =
-                                              !item['is_followed'];
-
-                                          await controller.getFeeds(
-                                            showLoading: false,
-                                          );
-                                        } finally {
-                                          controller.isFollowProcessing.value =
-                                              false;
-                                        }
-                                      },
-                                    ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
+                    _buildFilterButton(),
+                  ],
+                ),
               ),
-            ),
-    );
+
+              /// 🔹 Feed List
+              AnimationLimiter(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  padding: EdgeInsets.symmetric(horizontal: 8.w),
+                  itemCount: controller.feedList.length,
+                  itemBuilder: (_, i) {
+                    final item = controller.feedList[i];
+
+                    return AnimationConfiguration.staggeredList(
+                      position: i,
+                      duration: const Duration(milliseconds: 375),
+                      child: SlideAnimation(
+                        verticalOffset: 50,
+                        child: FadeInAnimation(
+                          child: item['type'] == 'offer'
+                              ? OfferCard(
+                                  data: item,
+                                  onLike: () => handleOfferLike(
+                                    item,
+                                    () => controller.getFeeds(
+                                      showLoading: false,
+                                      isRefresh: true,
+                                    ),
+                                  ),
+                                )
+                              : FeedCard(
+                                  data: item,
+                                  onLike: () => handleFeedLike(
+                                    item,
+                                    () => controller.getFeeds(
+                                      showLoading: false,
+                                      isRefresh: true,
+                                    ),
+                                  ),
+                                  onFollow: () async {
+                                    if (controller.isFollowProcessing.isTrue)
+                                      return;
+
+                                    controller.isFollowProcessing.value = true;
+                                    try {
+                                      if (item['is_followed'] == true) {
+                                        await controller.unfollowBusiness(
+                                          item['follow_id'].toString(),
+                                        );
+                                      } else {
+                                        await controller.followBusiness(
+                                          item['business_id'].toString(),
+                                        );
+                                      }
+
+                                      item['is_followed'] =
+                                          !item['is_followed'];
+
+                                      controller.feedList.refresh();
+                                    } finally {
+                                      controller.isFollowProcessing.value =
+                                          false;
+                                    }
+                                  },
+                                ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+
+              /// 🔹 Pagination Loader
+              Obx(
+                () => controller.isLoadMore.value
+                    ? Padding(
+                        padding: EdgeInsets.symmetric(vertical: 16.h),
+                        child: LoadingWidget(color: primaryColor),
+                      )
+                    : const SizedBox(),
+              ),
+            ],
+          ),
+        ),
+      );
+    });
   }
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Obx(
+  //     () => controller.isLoading.isTrue
+  //         ? ListView.builder(
+  //             padding: EdgeInsets.symmetric(horizontal: 8.w),
+  //             itemCount: 5,
+  //             itemBuilder: (_, i) => const FeedShimmer(),
+  //           )
+  //         : controller.feedList.isEmpty
+  //         ? commonNoDataFound(isHome: true)
+  //         : SingleChildScrollView(
+  //             child: Column(
+  //               crossAxisAlignment: CrossAxisAlignment.end,
+  //               mainAxisAlignment: MainAxisAlignment.end,
+  //               children: [
+  //                 Padding(
+  //                   padding: EdgeInsets.symmetric(horizontal: 16.w),
+  //                   child: Row(
+  //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                     children: [
+  //                       CustomText(
+  //                         title: 'Feeds',
+  //                         fontSize: 18.sp,
+  //                         fontWeight: FontWeight.bold,
+  //                       ),
+  //                       _buildFilterButton(),
+  //                     ],
+  //                   ),
+  //                 ),
+  //                 AnimationLimiter(
+  //                   child: ListView.builder(
+  //                     shrinkWrap: true,
+  //                     physics: NeverScrollableScrollPhysics(),
+  //                     padding: EdgeInsets.symmetric(horizontal: 8.w),
+  //                     itemCount: controller.feedList.length,
+  //                     itemBuilder: (_, i) {
+  //                       final item = controller.feedList[i];
+  //                       return AnimationConfiguration.staggeredList(
+  //                         position: i,
+  //                         duration: const Duration(milliseconds: 375),
+  //                         child: SlideAnimation(
+  //                           verticalOffset: 50,
+  //                           child: FadeInAnimation(
+  //                             child: item['type'] == 'offer'
+  //                                 ? OfferCard(
+  //                                     data: item,
+  //                                     onLike: () => handleOfferLike(
+  //                                       item,
+  //                                       () async => await controller.getFeeds(
+  //                                         showLoading: false,
+  //                                       ),
+  //                                     ),
+  //                                   )
+  //                                 : FeedCard(
+  //                                     onLike: () => handleFeedLike(
+  //                                       item,
+  //                                       () => controller.getFeeds(
+  //                                         showLoading: false,
+  //                                       ),
+  //                                     ),
+  //
+  //                                     // () async {
+  //                                     //   if (controller
+  //                                     //       .isLikeProcessing
+  //                                     //       .isTrue) {
+  //                                     //     return; // <<< stops multiple taps
+  //                                     //   }
+  //                                     //   controller.isLikeProcessing.value =
+  //                                     //       true;
+  //                                     //
+  //                                     //   if (!getIt<DemoService>().isDemo) {
+  //                                     //     ToastUtils.showLoginToast();
+  //                                     //     controller.isLikeProcessing.value =
+  //                                     //         false;
+  //                                     //     return;
+  //                                     //   }
+  //                                     //   try {
+  //                                     //     bool wasLiked = item['is_liked'];
+  //                                     //     int likeCount =
+  //                                     //         int.tryParse(
+  //                                     //           item['likes_count'].toString(),
+  //                                     //         ) ??
+  //                                     //         0;
+  //                                     //
+  //                                     //     if (wasLiked) {
+  //                                     //       await controller.unLikeBusiness(
+  //                                     //         item['liked_id'].toString(),
+  //                                     //       );
+  //                                     //       item['likes_count'] =
+  //                                     //           (likeCount - 1).clamp(
+  //                                     //             0,
+  //                                     //             999999,
+  //                                     //           );
+  //                                     //     } else {
+  //                                     //       await controller.likeBusiness(
+  //                                     //         item['business_id'].toString(),
+  //                                     //         item['post_id'].toString(),
+  //                                     //       );
+  //                                     //       item['likes_count'] = likeCount + 1;
+  //                                     //     }
+  //                                     //
+  //                                     //     // Toggle locally
+  //                                     //     item['is_liked'] = !wasLiked;
+  //                                     //     await controller.getFeeds(
+  //                                     //       showLoading: false,
+  //                                     //     );
+  //                                     //   } finally {
+  //                                     //     controller.isLikeProcessing.value =
+  //                                     //         false;
+  //                                     //   }
+  //                                     // },
+  //                                     data: item,
+  //                                     onFollow: () async {
+  //                                       if (controller
+  //                                           .isFollowProcessing
+  //                                           .isTrue) {
+  //                                         return; // <<< stops multiple taps
+  //                                       }
+  //                                       controller.isFollowProcessing.value =
+  //                                           true;
+  //                                       if (getIt<DemoService>().isDemo ==
+  //                                           false) {
+  //                                         ToastUtils.showLoginToast();
+  //                                         controller.isFollowProcessing.value =
+  //                                             false;
+  //                                         return;
+  //                                       }
+  //                                       try {
+  //                                         if (item['is_followed'] == true) {
+  //                                           await controller.unfollowBusiness(
+  //                                             item['follow_id'].toString(),
+  //                                           );
+  //                                         } else {
+  //                                           await controller.followBusiness(
+  //                                             item['business_id'].toString(),
+  //                                           );
+  //                                         }
+  //
+  //                                         item['is_followed'] =
+  //                                             !item['is_followed'];
+  //
+  //                                         await controller.getFeeds(
+  //                                           showLoading: false,
+  //                                         );
+  //                                       } finally {
+  //                                         controller.isFollowProcessing.value =
+  //                                             false;
+  //                                       }
+  //                                     },
+  //                                   ),
+  //                           ),
+  //                         ),
+  //                       );
+  //                     },
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //   );
+  // }
 
   // Enhanced Filter Button Widget
   Widget _buildFilterButton() {

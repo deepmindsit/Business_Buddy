@@ -189,7 +189,7 @@ class _EditRecruitmentState extends State<EditRecruitment> {
             constraints: const BoxConstraints(maxHeight: 300),
           ),
           onChanged: (List<String> selectedItems) {
-            controller.selectedBusiness.assignAll(getIdsByNames(selectedItems));
+            controller.selectedBusiness.value = selectedItems;
           },
         ),
       ],
@@ -265,7 +265,7 @@ class _EditRecruitmentState extends State<EditRecruitment> {
           : AppDropdownField(
               isDynamic: true,
               title: title,
-              // value: controller.invCapacity.value,
+              value: controller.invCapacity.value,
               items: controller.capacityList,
               hintText: title,
               validator: (value) =>
@@ -314,20 +314,22 @@ class _EditRecruitmentState extends State<EditRecruitment> {
           : GestureDetector(
               onTap: () async {
                 if (controller.partnerKey.currentState!.validate()) {
-                  // await controller.addBusinessRequired();
+                  await controller.editBusinessRequired(
+                    widget.recruitmentData['id']?.toString() ?? '',
+                  );
                 }
-                // you can also access highlightPoints here
               },
               child: Container(
                 width: Get.width,
                 padding: EdgeInsets.symmetric(vertical: 14.h),
+                margin: EdgeInsets.only(bottom: 14.h),
                 decoration: BoxDecoration(
                   color: primaryColor,
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 alignment: Alignment.center,
                 child: CustomText(
-                  title: 'Post',
+                  title: 'Update',
                   fontSize: 16.sp,
                   color: Colors.white,
                   fontWeight: FontWeight.w600,
