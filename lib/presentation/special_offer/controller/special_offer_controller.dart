@@ -11,9 +11,25 @@ class SpecialOfferController extends GetxController {
   final addressController = TextEditingController();
   final lat = ''.obs;
   final lng = ''.obs;
+  final isLoadMore = false.obs;
+  int currentPage = 1;
+  int totalPages = 1;
+  int perPage = 10;
+  bool hasMore = true;
 
-  Future<void> getSpecialOffer({bool showLoading = true}) async {
-    if (showLoading) isLoading.value = true;
+  Future<void> getSpecialOffer({
+    bool showLoading = true,
+    bool isRefresh = false,
+  }) async {
+    if (isRefresh) {
+      currentPage = 1;
+      totalPages = 1;
+      hasMore = true;
+      offerList.clear();
+    }
+
+    currentPage == 1 ? isLoading.value = showLoading : isLoadMore.value = true;
+
     final userId = await LocalStorage.getString('user_id') ?? '';
     final latitude = getIt<LocationController>().latitude.value.toString();
     final longitude = getIt<LocationController>().longitude.value.toString();
@@ -27,11 +43,34 @@ class SpecialOfferController extends GetxController {
         selectedDateRange.value,
         '$latitude,$longitude',
         location,
+        currentPage.toString(),
       );
-
       if (response['common']['status'] == true) {
-        offerList.value = response['data'] ?? [];
+        final data = response['data'];
+
+        final List list = data['special_offers'] ?? [];
+
+        perPage = data['per_page'] ?? perPage;
+        totalPages = data['total_pages'] ?? totalPages;
+
+        /// 🔹 IMPORTANT
+        if (isRefresh || currentPage == 1) {
+          offerList.assignAll(list); // 🔥 replaces list
+        } else {
+          offerList.addAll(list); // pagination
+        }
+
+        /// 👇 backend-accurate pagination check
+        hasMore = currentPage < totalPages;
+
+        if (hasMore) currentPage++;
+
+        // {
+        //   feedList.value = response['data'] ?? [];
       }
+      // if (response['common']['status'] == true) {
+      //   offerList.value = response['data'] ?? [];
+      // }
     } catch (e) {
       showError(e);
     } finally {

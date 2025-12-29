@@ -229,7 +229,8 @@ class LBOController extends GetxController {
     attachments.clear();
   }
 
-  void preselectedBusiness() {
+  void preselectedBusiness({dynamic data}) {
+    businessDetails.value = data ?? businessDetails;
     shopName.text = businessDetails['name'] ?? '';
     address.text = businessDetails['address'] ?? '';
     numberCtrl.text = businessDetails['mobile_number'] ?? '';

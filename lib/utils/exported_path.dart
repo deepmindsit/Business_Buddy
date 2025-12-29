@@ -79,6 +79,8 @@ export 'package:businessbuddy/components/custom_carousel_slider.dart';
 export 'package:businessbuddy/common/filter_page.dart';
 export 'package:businessbuddy/presentation/business_partner/widget/rec_filter.dart';
 export 'package:businessbuddy/presentation/home_screen/widget/explorer/widget/cat_item_card_shimmer.dart';
+export 'package:businessbuddy/common/app_under_maintainance.dart';
+export 'package:businessbuddy/common/check_internet.dart';
 
 //controller
 export 'package:businessbuddy/presentation/onboarding/controller/splash_controller.dart';
@@ -96,6 +98,7 @@ export 'package:businessbuddy/presentation/home_screen/controller/search_control
 export 'package:businessbuddy/presentation/home_screen/controller/home_controller.dart';
 export 'package:businessbuddy/common/global_search_controller.dart';
 export 'package:businessbuddy/common/location_controller.dart';
+export 'package:businessbuddy/common/update_app.dart';
 
 //plugins
 export 'package:get/get.dart';

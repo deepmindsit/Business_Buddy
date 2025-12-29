@@ -92,7 +92,7 @@ class ExplorerController extends GetxController {
         ? isBusinessLoading.value = showLoading
         : isBusinessLoadMore.value = true;
 
-    if (showLoading) isBusinessLoading.value = true;
+    // if (showLoading) isBusinessLoading.value = true;
     final userId = await LocalStorage.getString('user_id') ?? '';
 
     try {

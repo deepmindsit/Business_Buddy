@@ -763,6 +763,7 @@ class _ApiService implements ApiService {
     String? dateRange,
     String latLng,
     String? location,
+    String pageNo,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -782,6 +783,7 @@ class _ApiService implements ApiService {
     if (location != null) {
       _data.fields.add(MapEntry('location', location));
     }
+    _data.fields.add(MapEntry('page_number', pageNo));
     final _options = _setStreamType<dynamic>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
@@ -1029,7 +1031,7 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<dynamic> getFollowList(String? userId) async {
+  Future<dynamic> getFollowList(String? userId, String pageNo) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     queryParameters.removeWhere((k, v) => v == null);
@@ -1038,6 +1040,7 @@ class _ApiService implements ApiService {
     if (userId != null) {
       _data.fields.add(MapEntry('user_id', userId));
     }
+    _data.fields.add(MapEntry('page_number', pageNo));
     final _options = _setStreamType<dynamic>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
@@ -1164,7 +1167,7 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<dynamic> getBusinessRequested(String? userId) async {
+  Future<dynamic> getBusinessRequested(String? userId, String pageNo) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     queryParameters.removeWhere((k, v) => v == null);
@@ -1173,6 +1176,7 @@ class _ApiService implements ApiService {
     if (userId != null) {
       _data.fields.add(MapEntry('user_id', userId));
     }
+    _data.fields.add(MapEntry('page_number', pageNo));
     final _options = _setStreamType<dynamic>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
@@ -1189,7 +1193,10 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<dynamic> getBusinessReceivedRequest(String? userId) async {
+  Future<dynamic> getBusinessReceivedRequest(
+    String? userId,
+    String pageNo,
+  ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     queryParameters.removeWhere((k, v) => v == null);
@@ -1198,6 +1205,7 @@ class _ApiService implements ApiService {
     if (userId != null) {
       _data.fields.add(MapEntry('user_id', userId));
     }
+    _data.fields.add(MapEntry('page_number', pageNo));
     final _options = _setStreamType<dynamic>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(

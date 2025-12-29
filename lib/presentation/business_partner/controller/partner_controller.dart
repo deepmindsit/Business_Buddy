@@ -26,7 +26,6 @@ class PartnerDataController extends GetxController {
 
   late TabController tabController;
   final tabIndex = 0.obs;
-  final pageNo = 1.obs;
 
   void changeTab(int index) {
     tabIndex.value = index;
@@ -41,8 +40,26 @@ class PartnerDataController extends GetxController {
     sort.value = "";
   }
 
-  Future<void> getBusinessRequired({bool showLoading = true}) async {
-    if (showLoading) isLoading.value = true;
+  int currentBusinessPage = 1;
+  int totalBusinessPages = 1;
+  int pertBusinessPage = 10;
+  bool hastBusinessMore = true;
+  final isBusinessLoadMore = false.obs;
+
+  Future<void> getBusinessRequired({
+    bool showLoading = true,
+    bool isRefresh = false,
+  }) async {
+    if (isRefresh) {
+      currentBusinessPage = 1;
+      totalBusinessPages = 1;
+      hastBusinessMore = true;
+      requirementList.clear();
+    }
+    currentBusinessPage == 1
+        ? isLoading.value = showLoading
+        : isBusinessLoadMore.value = true;
+    // if (showLoading) isLoading.value = true;
     final userId = await LocalStorage.getString('user_id') ?? '';
 
     print('selectedCategory.value');
@@ -63,15 +80,36 @@ class PartnerDataController extends GetxController {
         lookingFor.value,
         selectedExp.value,
         '$lat,$lng',
-        pageNo.value.toString(),
+        currentBusinessPage.toString(),
       );
       print('getBusinessRequired');
       print(response);
       if (response['common']['status'] == true) {
-        requirementList.value = response['data']['business_requirements'] ?? [];
-      } else {
-        requirementList.value = response['data']['business_requirements'] ?? [];
+        final data = response['data'];
+
+        final List list = data['business_requirements'] ?? [];
+
+        pertBusinessPage = data['per_page'] ?? pertBusinessPage;
+        totalBusinessPages = data['total_pages'] ?? totalBusinessPages;
+
+        /// 🔹 IMPORTANT
+        if (isRefresh || currentBusinessPage == 1) {
+          requirementList.assignAll(list); // 🔥 replaces list
+        } else {
+          requirementList.addAll(list); // pagination
+        }
+
+        /// 👇 backend-accurate pagination check
+        hastBusinessMore = currentBusinessPage < totalBusinessPages;
+
+        if (hastBusinessMore) currentBusinessPage++;
       }
+
+      // if (response['common']['status'] == true) {
+      //   requirementList.value = response['data']['business_requirements'] ?? [];
+      // } else {
+      //   requirementList.value = response['data']['business_requirements'] ?? [];
+      // }
     } catch (e) {
       showError(e);
     } finally {
@@ -244,21 +282,60 @@ class PartnerDataController extends GetxController {
   }
 
   final requestedBusinessList = [].obs;
+  final isLoadMore = false.obs;
 
-  Future<void> getRequestedBusiness({bool showLoading = true}) async {
-    if (showLoading) isLoading.value = true;
-    requestedBusinessList.clear();
+  int currentPage = 1;
+  int totalPages = 1;
+  int perPage = 10;
+  bool hasMore = true;
+
+  Future<void> getRequestedBusiness({
+    bool showLoading = true,
+    bool isRefresh = false,
+  }) async {
+    if (isRefresh) {
+      currentPage = 1;
+      totalPages = 1;
+      hasMore = true;
+      requestedBusinessList.clear();
+    }
+
+    currentPage == 1 ? isLoading.value = showLoading : isLoadMore.value = true;
     try {
       final userId = await LocalStorage.getString('user_id') ?? '';
-      final response = await _apiService.getBusinessRequested(userId);
-
+      final response = await _apiService.getBusinessRequested(
+        userId,
+        currentPage.toString(),
+      );
       if (response['common']['status'] == true) {
-        requestedBusinessList.value = response['data'] ?? [];
+        final data = response['data'];
+
+        final List list = data['business_requirements'] ?? [];
+
+        perPage = data['per_page'] ?? perPage;
+        totalPages = data['total_pages'] ?? totalPages;
+
+        /// 🔹 IMPORTANT
+        if (isRefresh || currentPage == 1) {
+          requestedBusinessList.assignAll(list); // 🔥 replaces list
+        } else {
+          requestedBusinessList.addAll(list); // pagination
+        }
+
+        /// 👇 backend-accurate pagination check
+        hasMore = currentPage < totalPages;
+
+        if (hasMore) currentPage++;
       }
+
+      // if (response['common']['status'] == true) {
+      //   requestedBusinessList.value = response['data'] ?? [];
+      // }
     } catch (e) {
       showError(e);
     } finally {
       if (showLoading) isLoading.value = false;
+      isLoadMore.value = false;
     }
   }
 

@@ -22,4 +22,5 @@ class Images {
   static const hotelImgLarge = 'assets/images/hotel_img_large.png';
   static const offerImage = 'assets/images/offer_image.png';
   static const appIcon = 'assets/images/app_icon.png';
+  static const appMaintenance = 'assets/images/app_maintenance.png';
 }

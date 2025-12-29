@@ -7,8 +7,8 @@ class FeedsController extends GetxController {
   final isFollowProcessing = false.obs;
   final isLikeProcessing = false.obs;
   final feedList = [].obs;
-  final isLoadMore = false.obs;
 
+  final isLoadMore = false.obs;
   int currentPage = 1;
   int totalPages = 1;
   int perPage = 10;
@@ -38,8 +38,6 @@ class FeedsController extends GetxController {
               getIt<SpecialOfferController>().lng.value.isNotEmpty
           ? '${getIt<SpecialOfferController>().lat.value},${getIt<SpecialOfferController>().lng.value}'
           : '';
-      print('location search======>$location');
-      print('pre location ======>$lat,$lng');
 
       final response = await _apiService.getFeeds(
         '$lat,$lng',

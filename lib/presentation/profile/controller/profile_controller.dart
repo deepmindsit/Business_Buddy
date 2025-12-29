@@ -83,18 +83,56 @@ class ProfileController extends GetxController {
     }
   }
 
+  final isLoadMore = false.obs;
+  int currentPage = 1;
+  int totalPages = 1;
+  int perPage = 10;
+  bool hasMore = true;
+
   Future<void> getFollowList({
     String? user = '',
     bool showLoading = true,
+    bool isRefresh = false,
   }) async {
-    if (showLoading) isFollowLoading.value = true;
+    if (isRefresh) {
+      currentPage = 1;
+      totalPages = 1;
+      hasMore = true;
+      followList.clear();
+    }
+
+    currentPage == 1
+        ? isFollowLoading.value = showLoading
+        : isLoadMore.value = true;
     final userId = await LocalStorage.getString('user_id');
     try {
-      final response = await _apiService.getFollowList(user ?? userId);
-
+      final response = await _apiService.getFollowList(
+        user ?? userId,
+        currentPage.toString(),
+      );
       if (response['common']['status'] == true) {
-        followList.value = response['data']['businesses'] ?? [];
+        final data = response['data'];
+
+        final List list = data['businesses'] ?? [];
+
+        perPage = data['per_page'] ?? perPage;
+        totalPages = data['total_pages'] ?? totalPages;
+
+        /// 🔹 IMPORTANT
+        if (isRefresh || currentPage == 1) {
+          followList.assignAll(list); // 🔥 replaces list
+        } else {
+          followList.addAll(list); // pagination
+        }
+
+        /// 👇 backend-accurate pagination check
+        hasMore = currentPage < totalPages;
+
+        if (hasMore) currentPage++;
       }
+      // if (response['common']['status'] == true) {
+      //   followList.value = response['data']['businesses'] ?? [];
+      // }
     } catch (e) {
       showError(e);
     } finally {

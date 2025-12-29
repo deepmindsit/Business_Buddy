@@ -14,19 +14,23 @@ class _BusinessPartnerState extends State<BusinessPartner>
 
   @override
   void initState() {
+    super.initState();
     controller.resetFilter();
     controller.tabController = TabController(length: 2, vsync: this);
     controller.tabController.addListener(() {
       controller.tabIndex.value = controller.tabController.index;
     });
-    loadAllData();
-    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkInternetAndShowPopup();
+      loadAllData();
+    });
   }
 
   Future<void> loadAllData() async {
     controller.isMainLoading.value = true;
     await Future.wait([
-      controller.getBusinessRequired(),
+      controller.getBusinessRequired(isRefresh: true),
       controller.getRequestedBusiness(),
     ]);
     controller.isMainLoading.value = false;
@@ -135,6 +139,7 @@ class _BusinessPartnerState extends State<BusinessPartner>
 
   Widget _buildRequirement() {
     return Obx(() {
+      /// 🔹 Initial Loading (Shimmer)
       if (controller.isMainLoading.isTrue) {
         return ListView.separated(
           padding: EdgeInsets.all(8.w),
@@ -149,28 +154,104 @@ class _BusinessPartnerState extends State<BusinessPartner>
         return item['self'] == false;
       }).toList();
 
+      /// 🔹 Empty State
       if (filteredList.isEmpty) {
-        return _buildEmptyPartner(); // Clear & Perfect UI
+        return _buildEmptyPartner();
       }
 
-      return AnimationLimiter(
-        child: ListView.separated(
-          padding: const EdgeInsets.all(8),
-          separatorBuilder: (_, __) => Divider(height: 5.h, color: lightGrey),
-          itemCount: filteredList.length,
-          itemBuilder: (_, index) => AnimationConfiguration.staggeredList(
-            position: index,
-            duration: const Duration(milliseconds: 375),
-            child: SlideAnimation(
-              verticalOffset: 50.0,
-              child: FadeInAnimation(
-                child: BusinessCard(data: filteredList[index]),
+      /// 🔹 Feeds + Pagination
+      return NotificationListener<ScrollNotification>(
+        onNotification: (scroll) {
+          if (scroll is ScrollEndNotification &&
+              scroll.metrics.pixels >= scroll.metrics.maxScrollExtent - 50 &&
+              controller.hastBusinessMore &&
+              !controller.isBusinessLoadMore.value &&
+              !controller.isLoading.value) {
+            controller.getBusinessRequired(showLoading: false);
+          }
+          return false;
+        },
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              /// 🔹 Header
+
+              /// 🔹 Category List
+              AnimationLimiter(
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.all(8),
+                  separatorBuilder: (_, __) =>
+                      Divider(height: 5.h, color: lightGrey),
+                  itemCount: filteredList.length,
+                  itemBuilder: (_, index) =>
+                      AnimationConfiguration.staggeredList(
+                        position: index,
+                        duration: const Duration(milliseconds: 375),
+                        child: SlideAnimation(
+                          verticalOffset: 50.0,
+                          child: FadeInAnimation(
+                            child: BusinessCard(data: filteredList[index]),
+                          ),
+                        ),
+                      ),
+                ),
               ),
-            ),
+
+              /// 🔹 Pagination Loader
+              Obx(
+                () => controller.isBusinessLoadMore.value
+                    ? Padding(
+                        padding: EdgeInsets.symmetric(vertical: 16.h),
+                        child: LoadingWidget(color: primaryColor),
+                      )
+                    : const SizedBox(),
+              ),
+            ],
           ),
         ),
       );
     });
+
+    // Obx(() {
+    //   if (controller.isMainLoading.isTrue) {
+    //     return ListView.separated(
+    //       padding: EdgeInsets.all(8.w),
+    //       itemCount: 6,
+    //       separatorBuilder: (_, __) => SizedBox(height: 10.h),
+    //       itemBuilder: (_, index) => const BusinessCardShimmer(),
+    //     );
+    //   }
+    //
+    //   /// Filter list → remove cards where owner is same user
+    //   final filteredList = controller.requirementList.where((item) {
+    //     return item['self'] == false;
+    //   }).toList();
+    //
+    //   if (filteredList.isEmpty) {
+    //     return _buildEmptyPartner(); // Clear & Perfect UI
+    //   }
+    //
+    //   return AnimationLimiter(
+    //     child: ListView.separated(
+    //       padding: const EdgeInsets.all(8),
+    //       separatorBuilder: (_, __) => Divider(height: 5.h, color: lightGrey),
+    //       itemCount: filteredList.length,
+    //       itemBuilder: (_, index) => AnimationConfiguration.staggeredList(
+    //         position: index,
+    //         duration: const Duration(milliseconds: 375),
+    //         child: SlideAnimation(
+    //           verticalOffset: 50.0,
+    //           child: FadeInAnimation(
+    //             child: BusinessCard(data: filteredList[index]),
+    //           ),
+    //         ),
+    //       ),
+    //     ),
+    //   );
+    // });
   }
 
   // Widget _buildRequirement() {
@@ -202,35 +283,103 @@ class _BusinessPartnerState extends State<BusinessPartner>
   // }
 
   Widget _buildRequested() {
-    return Obx(
-      () => controller.isMainLoading.isTrue
-          ? LoadingWidget(color: primaryColor)
-          : controller.requestedBusinessList.isEmpty
-          ? commonNoDataFound()
-          : AnimationLimiter(
-              child: ListView.separated(
-                separatorBuilder: (context, index) =>
-                    Divider(height: 5, color: lightGrey),
-                padding: const EdgeInsets.all(8),
-                itemCount: controller.requestedBusinessList.length,
-                itemBuilder: (context, index) {
-                  final data = controller.requestedBusinessList[index];
+    return Obx(() {
+      /// 🔹 Initial Loading (Shimmer)
+      if (controller.isMainLoading.isTrue) {
+        return LoadingWidget(color: primaryColor);
+      }
 
-                  return AnimationConfiguration.staggeredList(
-                    position: index,
-                    duration: const Duration(milliseconds: 375),
-                    child: SlideAnimation(
-                      verticalOffset: 50.0,
-                      child: FadeInAnimation(
-                        child: BusinessCard(data: data, isRequested: true),
+      /// 🔹 Empty State
+      if (controller.requestedBusinessList.isEmpty) {
+        return commonNoDataFound();
+      }
+
+      /// 🔹 Feeds + Pagination
+      return NotificationListener<ScrollNotification>(
+        onNotification: (scroll) {
+          if (scroll is ScrollEndNotification &&
+              scroll.metrics.pixels >= scroll.metrics.maxScrollExtent - 50 &&
+              controller.hasMore &&
+              !controller.isLoadMore.value &&
+              !controller.isLoading.value) {
+            controller.getRequestedBusiness(showLoading: false);
+          }
+          return false;
+        },
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              /// 🔹 Feed List
+              AnimationLimiter(
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  separatorBuilder: (context, index) =>
+                      Divider(height: 5, color: lightGrey),
+                  padding: const EdgeInsets.all(8),
+                  itemCount: controller.requestedBusinessList.length,
+                  itemBuilder: (context, index) {
+                    final data = controller.requestedBusinessList[index];
+
+                    return AnimationConfiguration.staggeredList(
+                      position: index,
+                      duration: const Duration(milliseconds: 375),
+                      child: SlideAnimation(
+                        verticalOffset: 50.0,
+                        child: FadeInAnimation(
+                          child: BusinessCard(data: data, isRequested: true),
+                        ),
                       ),
-                    ),
-                  );
-                  // return BusinessCard(data: data, isRequested: true);
-                },
+                    );
+                    // return BusinessCard(data: data, isRequested: true);
+                  },
+                ),
               ),
-            ),
-    );
+
+              /// 🔹 Pagination Loader
+              Obx(
+                () => controller.isLoadMore.value
+                    ? Padding(
+                        padding: EdgeInsets.symmetric(vertical: 16.h),
+                        child: LoadingWidget(color: primaryColor),
+                      )
+                    : const SizedBox(),
+              ),
+            ],
+          ),
+        ),
+      );
+    });
+
+    // Obx(
+    //   () => controller.isMainLoading.isTrue
+    //       ? LoadingWidget(color: primaryColor)
+    //       : controller.requestedBusinessList.isEmpty
+    //       ? commonNoDataFound()
+    //       : AnimationLimiter(
+    //           child: ListView.separated(
+    //             separatorBuilder: (context, index) =>
+    //                 Divider(height: 5, color: lightGrey),
+    //             padding: const EdgeInsets.all(8),
+    //             itemCount: controller.requestedBusinessList.length,
+    //             itemBuilder: (context, index) {
+    //               final data = controller.requestedBusinessList[index];
+    //
+    //               return AnimationConfiguration.staggeredList(
+    //                 position: index,
+    //                 duration: const Duration(milliseconds: 375),
+    //                 child: SlideAnimation(
+    //                   verticalOffset: 50.0,
+    //                   child: FadeInAnimation(
+    //                     child: BusinessCard(data: data, isRequested: true),
+    //                   ),
+    //                 ),
+    //               );
+    //               // return BusinessCard(data: data, isRequested: true);
+    //             },
+    //           ),
+    //         ),
+    // );
   }
 
   Widget _buildEmptyPartner() {

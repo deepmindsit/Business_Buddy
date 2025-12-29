@@ -163,6 +163,7 @@ abstract class ApiService {
     @Part(name: "date_range") String? dateRange,
     @Part(name: "lat_long") String latLng,
     @Part(name: "location") String? location,
+    @Part(name: "page_number") String pageNo,
   );
 
   @POST(AllUrl.businessReqList)
@@ -219,7 +220,11 @@ abstract class ApiService {
   Future<dynamic> getMyProfile(@Part(name: "user_id") String? userId);
 
   @POST(AllUrl.getFollowList)
-  Future<dynamic> getFollowList(@Part(name: "user_id") String? userId);
+  Future<dynamic> getFollowList(
+      @Part(name: "user_id") String? userId,
+      @Part(name: "page_number") String pageNo,
+
+      );
 
   @POST(AllUrl.getUserProfile)
   Future<dynamic> getUserProfile(@Part(name: "user_id") String? userId);
@@ -243,11 +248,15 @@ abstract class ApiService {
   );
 
   @POST(AllUrl.getBusinessRequested)
-  Future<dynamic> getBusinessRequested(@Part(name: "user_id") String? userId);
+  Future<dynamic> getBusinessRequested(
+      @Part(name: "user_id") String? userId,
+      @Part(name: "page_number") String pageNo,
+      );
 
   @POST(AllUrl.getBusinessReceived)
   Future<dynamic> getBusinessReceivedRequest(
     @Part(name: "user_id") String? userId,
+    @Part(name: "page_number") String pageNo,
   );
 
   @POST(AllUrl.acceptBusinessRequest)

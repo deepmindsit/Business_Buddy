@@ -14,8 +14,10 @@ class _EditBusinessState extends State<EditBusiness> {
 
   @override
   void initState() {
+    print('Get.arguments');
+    print(Get.arguments['data']);
     expController.getCategories();
-    controller.preselectedBusiness();
+    controller.preselectedBusiness(data: Get.arguments['data']);
     super.initState();
   }
 

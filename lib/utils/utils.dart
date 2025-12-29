@@ -30,10 +30,13 @@ Future<bool> isDemo() async {
   return isDemo;
 }
 
-
 double calcHeight(List items) {
   int count = items.length;
-  int rows = (count / 3).ceil();   // assuming 3 columns
-  double height = rows * 120;      // item height
+  int rows = (count / 3).ceil(); // assuming 3 columns
+  double height = rows * 120; // item height
   return height.toDouble();
+}
+
+launchURL(String url) async {
+  launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
 }

@@ -30,7 +30,11 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _initializeData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkInternetAndShowPopup();
+      _initializeData();
+      getIt<UpdateController>().checkForUpdate();
+    });
   }
 
   Future<void> _initializeData() async {

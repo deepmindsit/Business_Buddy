@@ -73,6 +73,8 @@ class InboxController extends GetxController {
     }
   }
 
+  ////////////////////////////////////////////Single Chat///////////////////////////////
+
   final isSingleLoadMore = false.obs;
   int currentSinglePage = 1;
   int totalSinglePages = 1;
@@ -121,7 +123,7 @@ class InboxController extends GetxController {
         }
 
         /// 👇 backend-accurate pagination check
-        hasSingleMore = currentSinglePage < totalPages;
+        hasSingleMore = currentSinglePage < totalSinglePages;
 
         if (hasSingleMore) currentSinglePage++;
 
@@ -131,8 +133,11 @@ class InboxController extends GetxController {
       showError(e);
     } finally {
       if (showLoading) isSingleLoading.value = false;
+      isSingleLoadMore.value = false;
     }
   }
+
+  /////////////////////////////////////////////send msg////////////////////////
 
   Future<void> sendMsg(String chatId, {bool showLoading = true}) async {
     if (showLoading) isSendLoading.value = true;
@@ -189,20 +194,64 @@ class InboxController extends GetxController {
 
   ///////////////////////////////////////request////////////////////////////////
 
-  Future<void> getReceiveBusinessRequest({bool showLoading = true}) async {
-    if (showLoading) isLoading.value = true;
-    receivedRequestList.clear();
+  final isRecLoadMore = false.obs;
+  int currentRecPage = 1;
+  int totalRecPages = 1;
+  int perRecPage = 10;
+  bool hasRecMore = true;
+
+  Future<void> getReceiveBusinessRequest({
+    bool showLoading = true,
+    bool isRefresh = false,
+  }) async {
+    if (isRefresh) {
+      currentRecPage = 1;
+      totalRecPages = 1;
+      hasRecMore = true;
+      receivedRequestList.clear();
+    }
+    currentRecPage == 1
+        ? isLoading.value = showLoading
+        : isRecLoadMore.value = true;
+
+    // if (showLoading) isLoading.value = true;
+    // receivedRequestList.clear();
     final userId = await LocalStorage.getString('user_id') ?? '';
     try {
-      final response = await _apiService.getBusinessReceivedRequest(userId);
-
+      final response = await _apiService.getBusinessReceivedRequest(
+        userId,
+        currentRecPage.toString(),
+      );
       if (response['common']['status'] == true) {
-        receivedRequestList.value = response['data'] ?? [];
+        final data = response['data'];
+
+        final List list = data['received_requests'] ?? [];
+
+        perRecPage = data['per_page'] ?? perRecPage;
+        totalRecPages = data['total_pages'] ?? totalRecPages;
+
+        /// 🔹 IMPORTANT
+        if (isRefresh || currentRecPage == 1) {
+          receivedRequestList.assignAll(list);
+        } else {
+          receivedRequestList.addAll(list);
+        }
+
+        /// 👇 backend-accurate pagination check
+        hasRecMore = currentRecPage < totalRecPages;
+
+        if (hasRecMore) currentRecPage++;
+
+        // singleChat.value = response['data'] ?? {};
       }
+      // if (response['common']['status'] == true) {
+      //   receivedRequestList.value = response['data'] ?? [];
+      // }
     } catch (e) {
       showError(e);
     } finally {
       if (showLoading) isLoading.value = false;
+      isRecLoadMore.value = false;
     }
   }
 

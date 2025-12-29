@@ -14,7 +14,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    checkIsMe();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkInternetAndShowPopup();
+      checkIsMe();
+    });
+
   }
 
   void checkIsMe() async {

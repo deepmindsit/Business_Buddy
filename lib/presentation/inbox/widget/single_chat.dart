@@ -74,7 +74,7 @@ class _SingleChatState extends State<SingleChat> {
                 children: [
                   // ✅ PROFILE IMAGE
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(100),
+                    borderRadius: BorderRadius.circular(100.r),
                     child: FadeInImage(
                       placeholder: const AssetImage(Images.defaultImage),
                       image:
@@ -264,71 +264,152 @@ class _SingleChatState extends State<SingleChat> {
     );
   }
 
-  Widget _buildAllChat() {
-    final chatList = controller.singleChat['messages'] ?? [];
-    return Expanded(
-      child: ListView.builder(
-        reverse: true,
-        padding: const EdgeInsets.all(12),
-        itemCount: chatList.length,
-        itemBuilder: (context, index) {
-          final message = chatList[index];
-          final isMe = message['self'] == true;
+  // Widget _buildAllChat() {
+  //   final chatList = controller.singleChat['messages'] ?? [];
+  //   return Expanded(
+  //     child: ListView.builder(
+  //       reverse: true,
+  //       padding: const EdgeInsets.all(12),
+  //       itemCount: chatList.length,
+  //       itemBuilder: (context, index) {
+  //         final message = chatList[index];
+  //         final isMe = message['self'] == true;
+  //
+  //         return Align(
+  //           alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+  //           child: ConstrainedBox(
+  //             constraints: BoxConstraints(maxWidth: Get.width * 0.75.w),
+  //             child: IntrinsicWidth(
+  //               child: Card(
+  //                 elevation: 0,
+  //                 shape: RoundedRectangleBorder(
+  //                   borderRadius: BorderRadius.circular(8.r),
+  //                 ),
+  //                 color: !isMe
+  //                     ? primaryColor.withValues(alpha: 0.05)
+  //                     : Colors.grey.shade200,
+  //                 surfaceTintColor: Colors.white,
+  //                 child: Padding(
+  //                   padding: const EdgeInsets.symmetric(
+  //                     horizontal: 14,
+  //                     vertical: 10,
+  //                   ),
+  //                   child: Column(
+  //                     children: [
+  //                       // if (chat['document'] == 'yes') _buildFileAttachment(),
+  //                       Align(
+  //                         alignment: isMe
+  //                             ? Alignment.centerRight
+  //                             : Alignment.centerLeft,
+  //                         child: CustomText(
+  //                           title: message['message'].toString(),
+  //                           fontSize: 13.sp,
+  //                           maxLines: 10,
+  //                           color: Colors.black87,
+  //                           textAlign: TextAlign.start,
+  //                         ),
+  //                       ),
+  //                       Align(
+  //                         alignment: Alignment.centerRight,
+  //                         child: CustomText(
+  //                           title: message['created_at'],
+  //                           textAlign: TextAlign.start,
+  //                           // DateFormat(
+  //                           //   'hh mm a',
+  //                           // ).format(DateTime.parse(message['created_at'])),
+  //                           fontSize: 10,
+  //                           color: Colors.grey,
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ),
+  //               ),
+  //             ),
+  //           ),
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
 
-          return Align(
-            alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: Get.width * 0.75.w),
-              child: IntrinsicWidth(
-                child: Card(
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  color: !isMe
-                      ? primaryColor.withValues(alpha: 0.05)
-                      : Colors.grey.shade200,
-                  surfaceTintColor: Colors.white,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 10,
-                    ),
-                    child: Column(
-                      children: [
-                        // if (chat['document'] == 'yes') _buildFileAttachment(),
-                        Align(
-                          alignment: isMe
-                              ? Alignment.centerRight
-                              : Alignment.centerLeft,
-                          child: CustomText(
-                            title: message['message'].toString(),
-                            fontSize: 13.sp,
-                            maxLines: 10,
-                            color: Colors.black87,
-                            textAlign: TextAlign.start,
-                          ),
+  Widget _buildAllChat() {
+    return Expanded(
+      child: NotificationListener<ScrollNotification>(
+        onNotification: (scrollInfo) {
+          // 🔥 reverse list → load more when reaching TOP
+          if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent &&
+              controller.hasSingleMore &&
+              !controller.isSingleLoadMore.value) {
+            controller.getSingleChat(widget.chatId, showLoading: false);
+          }
+          return false;
+        },
+        child: Obx(
+          () => ListView.builder(
+            reverse: true,
+            padding: const EdgeInsets.all(12),
+            itemCount:
+                controller.allMessages.length +
+                (controller.isSingleLoadMore.value ? 1 : 0),
+            itemBuilder: (context, index) {
+              // 🔄 loader at top
+              if (index == controller.allMessages.length) {
+                return Padding(
+                  padding: EdgeInsets.all(8),
+                  child: Center(child: LoadingWidget(color: primaryColor)),
+                );
+              }
+
+              final message = controller.allMessages[index];
+              final isMe = message['self'] == true;
+
+              return Align(
+                alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: Get.width * 0.75),
+                  child: IntrinsicWidth(
+                    child: Card(
+                      elevation: 0,
+                      color: isMe
+                          ? Colors.grey.shade200
+                          : primaryColor.withValues(alpha: 0.05),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 10,
                         ),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: CustomText(
-                            title: message['created_at'],
-                            textAlign: TextAlign.start,
-                            // DateFormat(
-                            //   'hh mm a',
-                            // ).format(DateTime.parse(message['created_at'])),
-                            fontSize: 10,
-                            color: Colors.grey,
-                          ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Align(
+                              alignment: isMe
+                                  ? Alignment.centerRight
+                                  : Alignment.centerLeft,
+                              child: CustomText(
+                                title: message['message'] ?? '',
+                                fontSize: 13,
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            CustomText(
+                              title: message['created_at'] ?? '',
+                              fontSize: 10,
+                              color: Colors.grey,
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
-          );
-        },
+              );
+            },
+          ),
+        ),
       ),
     );
   }
