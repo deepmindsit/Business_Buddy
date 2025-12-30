@@ -8,7 +8,6 @@ class InboxList extends StatefulWidget {
 }
 
 class _InboxListState extends State<InboxList> {
-  final navController = getIt<NavigationController>();
   final controller = getIt<InboxController>();
 
   @override

@@ -13,7 +13,7 @@ class _SingleChatState extends State<SingleChat> {
 
   @override
   void initState() {
-    controller.getSingleChat(widget.chatId);
+    controller.getSingleChat(widget.chatId, isRefresh: true);
     super.initState();
   }
 
