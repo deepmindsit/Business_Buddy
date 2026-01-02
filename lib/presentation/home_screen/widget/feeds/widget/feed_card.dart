@@ -200,64 +200,129 @@ class FeedCard extends StatelessWidget {
 
   Widget _buildImageSection() {
     final image = data['image'] ?? '';
-    // _homeController.detectImageRatio(image);
-    return Obx(
-      () => GestureDetector(
-        onDoubleTap: () async {
-          _homeController.isLikeAnimating.value = true;
-          onLike();
-        },
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12.r),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(maxHeight: 380.h),
-                child: FadeInImage(
-                  placeholder: const AssetImage(Images.defaultImage),
-                  image: NetworkImage(image),
-                  width: Get.width,
-                  fit: BoxFit.contain,
-                  imageErrorBuilder: (context, error, stackTrace) {
-                    return Center(
-                      child: Image.asset(
-                        Images.defaultImage,
-                        width: 150.w,
-                        height: 150.h,
-                      ),
-                    );
-                  },
-                  fadeInDuration: const Duration(milliseconds: 500),
-                ),
 
-                // Image.network(
-                //   image,
-                //   fit: BoxFit.contain,
-                //   width: Get.width,
-                // ),
-              ),
-            ),
-            AnimatedOpacity(
-              duration: const Duration(milliseconds: 200),
-              opacity: _homeController.isLikeAnimating.value ? 1 : 0,
-              child: LikeAnimation(
-                isAnimating: _homeController.isLikeAnimating.value,
-                duration: const Duration(milliseconds: 400),
-                onEnd: () {
-                  _homeController.isLikeAnimating.value = false;
+    return GestureDetector(
+      // onDoubleTap: () async {
+      //   _homeController.isLikeAnimating.value = true;
+      //   onLike();
+      // },
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12.r),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: 380.h),
+          child:
+              // InstagramVideoPlayer(
+              //   url: 'https://youtu.be/sEID7kTP_hE?si=AOx4r_nIOAkWL19P',
+              // ),
+              //
+              FadeInImage(
+                placeholder: const AssetImage(Images.defaultImage),
+                image: NetworkImage(image),
+                width: Get.width,
+                fit: BoxFit.contain,
+                imageErrorBuilder: (context, error, stackTrace) {
+                  return Center(
+                    child: Image.asset(
+                      Images.defaultImage,
+                      width: 150.w,
+                      height: 150.h,
+                    ),
+                  );
                 },
-                child: Icon(
-                  data['is_liked'] == true ? Icons.favorite : Icons.favorite,
-                  color: data['is_liked'] == true ? lightGrey : Colors.red,
-                  size: 40.r,
-                ),
+                fadeInDuration: const Duration(milliseconds: 500),
               ),
-            ),
-          ],
+
+          // Image.network(
+          //   image,
+          //   fit: BoxFit.contain,
+          //   width: Get.width,
+          // ),
         ),
       ),
+      // Stack(
+      //   alignment: Alignment.center,
+      //   children: [
+      //
+      //     AnimatedOpacity(
+      //       duration: const Duration(milliseconds: 200),
+      //       opacity: _homeController.isLikeAnimating.value ? 1 : 0,
+      //       child: LikeAnimation(
+      //         isAnimating: _homeController.isLikeAnimating.value,
+      //         duration: const Duration(milliseconds: 400),
+      //         onEnd: () {
+      //           _homeController.isLikeAnimating.value = false;
+      //         },
+      //         child: Icon(
+      //           data['is_liked'] == true ? Icons.favorite : Icons.favorite,
+      //           color: data['is_liked'] == true ? lightGrey : Colors.red,
+      //           size: 40.r,
+      //         ),
+      //       ),
+      //     ),
+      //   ],
+      // ),
     );
+    //   Obx(
+    //   () => GestureDetector(
+    //     onDoubleTap: () async {
+    //       _homeController.isLikeAnimating.value = true;
+    //       onLike();
+    //     },
+    //     child: ClipRRect(
+    //       borderRadius: BorderRadius.circular(12.r),
+    //       child: ConstrainedBox(
+    //         constraints: BoxConstraints(maxHeight: 380.h),
+    //         child: InstagramVideoPlayer(
+    //           url: 'https://youtu.be/sEID7kTP_hE?si=AOx4r_nIOAkWL19P',
+    //         ),
+    //         // FadeInImage(
+    //         //   placeholder: const AssetImage(Images.defaultImage),
+    //         //   image: NetworkImage(image),
+    //         //   width: Get.width,
+    //         //   fit: BoxFit.contain,
+    //         //   imageErrorBuilder: (context, error, stackTrace) {
+    //         //     return Center(
+    //         //       child: Image.asset(
+    //         //         Images.defaultImage,
+    //         //         width: 150.w,
+    //         //         height: 150.h,
+    //         //       ),
+    //         //     );
+    //         //   },
+    //         //   fadeInDuration: const Duration(milliseconds: 500),
+    //         // ),
+    //
+    //         // Image.network(
+    //         //   image,
+    //         //   fit: BoxFit.contain,
+    //         //   width: Get.width,
+    //         // ),
+    //       ),
+    //     ),
+    //     // Stack(
+    //     //   alignment: Alignment.center,
+    //     //   children: [
+    //     //
+    //     //     AnimatedOpacity(
+    //     //       duration: const Duration(milliseconds: 200),
+    //     //       opacity: _homeController.isLikeAnimating.value ? 1 : 0,
+    //     //       child: LikeAnimation(
+    //     //         isAnimating: _homeController.isLikeAnimating.value,
+    //     //         duration: const Duration(milliseconds: 400),
+    //     //         onEnd: () {
+    //     //           _homeController.isLikeAnimating.value = false;
+    //     //         },
+    //     //         child: Icon(
+    //     //           data['is_liked'] == true ? Icons.favorite : Icons.favorite,
+    //     //           color: data['is_liked'] == true ? lightGrey : Colors.red,
+    //     //           size: 40.r,
+    //     //         ),
+    //     //       ),
+    //     //     ),
+    //     //   ],
+    //     // ),
+    //   ),
+    // );
   }
 
   Widget _buildEngagementSection() {

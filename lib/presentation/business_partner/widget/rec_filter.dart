@@ -9,6 +9,8 @@ class RecruitmentFilter extends StatefulWidget {
 
 class _RecruitmentFilterState extends State<RecruitmentFilter> {
   final controller = getIt<PartnerDataController>();
+  final RxBool _isSearchingLocation = false.obs;
+  final _debouncer = Debouncer(milliseconds: 500);
 
   @override
   void initState() {
@@ -28,7 +30,7 @@ class _RecruitmentFilterState extends State<RecruitmentFilter> {
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
-      initialChildSize: 0.75,
+      initialChildSize: 0.85,
       maxChildSize: 0.85,
       minChildSize: 0.50,
       builder: (_, scroll) {
@@ -64,65 +66,64 @@ class _RecruitmentFilterState extends State<RecruitmentFilter> {
                 child: Obx(
                   () => controller.isFilterLoading.isTrue
                       ? LoadingWidget(color: primaryColor)
-                      : SingleChildScrollView(
-                          controller: scroll,
-                          child: Column(
-                            spacing: 16.h,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              /// CATEGORY
-                              dropList(
-                                getIt<ExplorerController>().categories,
-                                controller.selectedCategory.value,
-                                (v) {
-                                  controller.selectedCategory.value = v;
-                                },
-                                "Category",
-                                true,
-                              ),
+                      : Padding(
+                          padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).viewInsets.bottom,
+                          ),
+                          child: SingleChildScrollView(
+                            controller: scroll,
+                            keyboardDismissBehavior:
+                                ScrollViewKeyboardDismissBehavior.onDrag,
+                            child: Column(
+                              spacing: 16.h,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                /// CATEGORY
+                                dropList(
+                                  getIt<ExplorerController>().categories,
+                                  controller.selectedCategory.value,
+                                  (v) {
+                                    controller.selectedCategory.value = v;
+                                  },
+                                  "Category",
+                                  true,
+                                ),
 
-                              /// LOOKING FOR
-                              dropList(
-                                controller.wulfList,
-                                controller.lookingFor.value,
-                                (v) async {
-                                  controller.lookingFor.value = v;
-                                  controller.selectedExp.value = null;
-                                  await controller.getCapacity(v);
-                                },
-                                "Looking For",
-                                true,
-                              ),
+                                /// LOOKING FOR
+                                dropList(
+                                  controller.wulfList,
+                                  controller.lookingFor.value,
+                                  (v) async {
+                                    controller.lookingFor.value = v;
+                                    controller.selectedExp.value = null;
+                                    await controller.getCapacity(v);
+                                  },
+                                  "Looking For",
+                                  true,
+                                ),
 
-                              _buildCapacity(),
+                                _buildCapacity(),
 
-                              /// LOCATION
-                              dropList(
-                                controller.locations,
-                                controller.selectedLocation.value,
-                                (v) {
-                                  controller.selectedLocation.value;
-                                },
-                                "Location",
-                                false,
-                              ),
+                                /// LOCATION
+                                _buildLocationSearch(),
 
-                              /// SORT ORDER
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("Sort Order", style: title),
-                                  Row(
-                                    children: [
-                                      radioTile("Ascending"),
-                                      radioTile("Descending"),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                                /// SORT ORDER
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("Sort Order", style: title),
+                                    Row(
+                                      children: [
+                                        radioTile("Ascending"),
+                                        radioTile("Descending"),
+                                      ],
+                                    ),
+                                  ],
+                                ),
 
-                              SizedBox(height: 35),
-                            ],
+                                // SizedBox(height: 35),
+                              ],
+                            ),
                           ),
                         ),
                 ),
@@ -134,11 +135,8 @@ class _RecruitmentFilterState extends State<RecruitmentFilter> {
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () {
-                        controller.selectedCategory.value = null;
-                        controller.selectedExp.value = null;
-                        controller.selectedLocation.value = null;
-                        controller.lookingFor.value = null;
-                        controller.sort.value = "Ascending";
+                        Get.back();
+                        controller.resetFilter();
                       },
                       style: OutlinedButton.styleFrom(
                         side: BorderSide(color: Colors.red),
@@ -153,14 +151,6 @@ class _RecruitmentFilterState extends State<RecruitmentFilter> {
                     child: ElevatedButton(
                       onPressed: () async {
                         Navigator.pop(context);
-                        // final body = {
-                        //   "category": controller.selectedCategory.value,
-                        //   "experience": controller.selectedExp.value,
-                        //   "location": controller.selectedLocation.value,
-                        //   "sort": controller.sort.value!.toLowerCase(),
-                        //   "looking_for": controller.lookingFor.value,
-                        // };
-
                         controller.changeTab(0);
                         await controller.getBusinessRequired();
                       },
@@ -250,6 +240,251 @@ class _RecruitmentFilterState extends State<RecruitmentFilter> {
               },
             );
     });
+  }
+
+  Widget _buildLocationSearch() {
+    return Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.only(left: 8.0),
+          child: buildLabel("Location"),
+        ),
+        _buildSearchField(),
+        Obx(
+          () => _isSearchingLocation.value
+              ? _buildLoadingIndicator()
+              : controller.addressList.isNotEmpty
+              ? _buildResultsList()
+              : SizedBox(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSearchField() {
+    return TextFormField(
+      minLines: 1,
+      maxLines: 3,
+      keyboardType: TextInputType.text,
+      controller: controller.addressController,
+      style: TextStyle(color: Colors.black, fontSize: 16.sp),
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: Colors.white,
+        suffixIcon: controller.addressController.text.isNotEmpty
+            ? GestureDetector(
+                onTap: () {
+                  controller.addressController.clear();
+                  controller.addressList.value = [];
+                  _isSearchingLocation.value = false;
+                  setState(() {});
+                },
+                child: Container(
+                  margin: EdgeInsets.all(8.w),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade200,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.close,
+                    size: 18,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+              )
+            : Icon(Icons.search, color: mainTextGrey),
+
+        // prefixIcon: Icon(Icons.search, color: primaryColor, size: 22),
+        hintText: 'Enter your location...',
+        hintStyle: TextStyle(color: mainTextGrey, fontSize: 14.sp),
+        contentPadding: EdgeInsets.all(16.w),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.r),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.r),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.r),
+          borderSide: BorderSide(color: primaryColor, width: 1.5),
+        ),
+      ),
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      validator: (value) =>
+          value!.isEmpty ? 'Please search your location' : null,
+      onChanged: (str) {
+        if (str.trim().isEmpty) {
+          controller.addressList.value = [];
+          _isSearchingLocation.value = false;
+          return;
+        }
+
+        _isSearchingLocation.value = true;
+        _debouncer.run(() {
+          getPlaces(str.trim())
+              .then((data) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  controller.addressList.value = data;
+                  _isSearchingLocation.value = false;
+                });
+              })
+              .catchError((error) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  _isSearchingLocation.value = false;
+                  controller.addressList.value = [];
+                });
+              });
+        });
+      },
+    );
+  }
+
+  Widget _buildLoadingIndicator() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(
+          width: 40.w,
+          height: 40.h,
+          child: LoadingWidget(color: primaryColor),
+        ),
+        SizedBox(height: 16.h),
+        Text(
+          'Searching locations...',
+          style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade600),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildResultsList() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20.r),
+          topRight: Radius.circular(20.r),
+        ),
+      ),
+      child: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.all(16.w),
+            child: Row(
+              children: [
+                Text(
+                  'Search Results',
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+                SizedBox(width: 8.w),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                  decoration: BoxDecoration(
+                    color: primaryColor.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
+                  child: Text(
+                    '${controller.addressList.length}',
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w600,
+                      color: primaryColor,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          ListView.separated(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            padding: EdgeInsets.only(bottom: 16.h),
+            separatorBuilder: (_, index) => Divider(
+              height: 1,
+              indent: 56.w,
+              endIndent: 16.w,
+              color: Colors.grey.shade200,
+            ),
+            itemCount: controller.addressList.length,
+            itemBuilder: (context, index) {
+              return Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () {
+                    _onLocationSelected(controller.addressList[index]);
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 12.h,
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 36.w,
+                          height: 36.h,
+                          decoration: BoxDecoration(
+                            color: primaryColor.withValues(alpha: 0.1),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.place_outlined,
+                            color: primaryColor,
+                            size: 18,
+                          ),
+                        ),
+                        SizedBox(width: 12.w),
+                        Expanded(
+                          child: CustomText(
+                            title:
+                                controller.addressList[index]['description'] ??
+                                '',
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black87,
+                            maxLines: 10,
+                            textAlign: TextAlign.start,
+                            // overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _onLocationSelected(Map<String, dynamic> searchPlace) {
+    controller.addressController.text = searchPlace['description'] ?? '';
+    controller.lat.value = searchPlace['lat'] ?? '';
+    controller.lng.value = searchPlace['lng'] ?? '';
+
+    // Uncomment and use these as needed
+    // Get.find<HomeControllerC>().area.value = searchPlace['area'];
+    // Get.find<HomeControllerC>().city.value = searchPlace['city'];
+    // Get.find<HomeControllerC>().state.value = searchPlace['state'];
+    // Get.find<HomeControllerC>().country.value = searchPlace['country'];
+    // controller.lat.value = searchPlace['lat'];
+    // controller.lng.value = searchPlace['lng'];
+
+    debugPrint('Selected location: ${searchPlace['description']}');
+    debugPrint('Latitude: ${searchPlace['lat']}');
+    debugPrint('Longitude: ${searchPlace['lng']}');
+
+    controller.addressList.value = [];
+    _isSearchingLocation.value = false;
+    // Get.back();
   }
 
   TextStyle get title => TextStyle(fontSize: 15, fontWeight: FontWeight.w600);

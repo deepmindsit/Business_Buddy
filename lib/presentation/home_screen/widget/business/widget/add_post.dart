@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:businessbuddy/utils/exported_path.dart';
+
+import '../../../../../components/video_preview.dart';
 
 class AddPost extends StatefulWidget {
   const AddPost({super.key});
@@ -49,10 +53,23 @@ class _AddPostState extends State<AddPost> {
         clipBehavior: Clip.none,
         children: [
           Obx(() {
-            final imageFile = controller.postImage.value;
-            final ImageProvider<Object> imageProvider = imageFile != null
-                ? FileImage(imageFile)
+            final file = controller.postImage.value;
+
+            if (file != null && _isVideo(file)) {
+              return ClipRRect(
+                borderRadius: BorderRadius.circular(12.r),
+                child: SizedBox(
+                  width: Get.width * 0.7.w,
+                  height: Get.height * 0.3.h,
+                  child: VideoPreview(file: file),
+                ),
+              );
+            }
+
+            final ImageProvider imageProvider = file != null
+                ? FileImage(file)
                 : const AssetImage(Images.defaultImage);
+
             return ClipRRect(
               borderRadius: BorderRadius.circular(12.r),
               child: FadeInImage(
@@ -60,20 +77,37 @@ class _AddPostState extends State<AddPost> {
                 height: Get.height * 0.3.h,
                 placeholder: const AssetImage(Images.logo),
                 image: imageProvider,
-                imageErrorBuilder: (context, error, stackTrace) {
-                  return Image.asset(
-                    Images.defaultImage,
-                    width: Get.width * 0.7.w,
-                    height: Get.height * 0.3.h,
-                    fit: BoxFit.cover,
-                  );
-                },
                 fit: BoxFit.cover,
-                placeholderFit: BoxFit.contain,
-                fadeInDuration: const Duration(milliseconds: 300),
               ),
             );
           }),
+
+          // Obx(() {
+          //   final imageFile = controller.postImage.value;
+          //   final ImageProvider<Object> imageProvider = imageFile != null
+          //       ? FileImage(imageFile)
+          //       : const AssetImage(Images.defaultImage);
+          //   return ClipRRect(
+          //     borderRadius: BorderRadius.circular(12.r),
+          //     child: FadeInImage(
+          //       width: Get.width * 0.7.w,
+          //       height: Get.height * 0.3.h,
+          //       placeholder: const AssetImage(Images.logo),
+          //       image: imageProvider,
+          //       imageErrorBuilder: (context, error, stackTrace) {
+          //         return Image.asset(
+          //           Images.defaultImage,
+          //           width: Get.width * 0.7.w,
+          //           height: Get.height * 0.3.h,
+          //           fit: BoxFit.cover,
+          //         );
+          //       },
+          //       fit: BoxFit.cover,
+          //       placeholderFit: BoxFit.contain,
+          //       fadeInDuration: const Duration(milliseconds: 300),
+          //     ),
+          //   );
+          // }),
           Positioned(
             bottom: 0,
             right: -10,
@@ -121,6 +155,31 @@ class _AddPostState extends State<AddPost> {
                 ),
               ),
             ),
+    );
+  }
+
+  bool _isVideo(File file) {
+    final ext = file.path.toLowerCase();
+    return ext.endsWith('.mp4') ||
+        ext.endsWith('.mov') ||
+        ext.endsWith('.avi') ||
+        ext.endsWith('.mkv');
+  }
+
+  Widget _videoPreview(File file) {
+    final controller = VideoPlayerController.file(file);
+    return FutureBuilder(
+      future: controller.initialize(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        final controller = snapshot.data as VideoPlayerController;
+        return AspectRatio(
+          aspectRatio: controller.value.aspectRatio,
+          child: VideoPlayer(controller),
+        );
+      },
     );
   }
 }

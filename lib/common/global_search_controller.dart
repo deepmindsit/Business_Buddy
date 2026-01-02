@@ -9,6 +9,7 @@ class GlobalSearchController extends GetxController {
   final businessList = [].obs;
   final categoryList = [].obs;
   final requirementList = [].obs;
+  final expertList = [].obs;
 
   final debouncer = Debouncer(milliseconds: 500);
 
@@ -17,7 +18,10 @@ class GlobalSearchController extends GetxController {
   }
 
   bool get isAllListEmpty =>
-      categoryList.isEmpty && businessList.isEmpty && requirementList.isEmpty;
+      categoryList.isEmpty &&
+      businessList.isEmpty &&
+      requirementList.isEmpty &&
+      expertList.isEmpty;
 
   void clearAllLists() {
     isLoading.value = false;
@@ -25,6 +29,7 @@ class GlobalSearchController extends GetxController {
     categoryList.clear();
     businessList.clear();
     requirementList.clear();
+    expertList.clear();
   }
 
   Future<void> searchData({bool showLoading = true}) async {
@@ -39,6 +44,7 @@ class GlobalSearchController extends GetxController {
         businessList.value = data['businesses'] ?? [];
         categoryList.value = data['categories'] ?? [];
         requirementList.value = data['business_requirements'] ?? [];
+        expertList.value = data['expert_users'] ?? [];
       }
     } catch (e) {
       showError(e);

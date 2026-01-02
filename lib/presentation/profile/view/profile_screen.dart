@@ -18,7 +18,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       checkInternetAndShowPopup();
       checkIsMe();
     });
-
   }
 
   void checkIsMe() async {
@@ -79,19 +78,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       ),
       actions: [
-        Obx(
-          () => IconButton(
-            onPressed: controller.isMe.isTrue
-                ? () => Get.toNamed(Routes.editProfile)
-                : () {},
+        Obx(() {
+          if (controller.isMe.isFalse) return SizedBox();
+          return IconButton(
+            onPressed: () => Get.toNamed(Routes.editProfile),
             icon: HugeIcon(
-              icon: controller.isMe.isTrue
-                  ? HugeIcons.strokeRoundedPencilEdit02
-                  : HugeIcons.strokeRoundedMessage02,
-              color: controller.isMe.isTrue ? Colors.grey : primaryColor,
+              icon: HugeIcons.strokeRoundedPencilEdit02,
+              color: Colors.grey,
             ),
-          ),
-        ),
+          );
+        }),
       ],
     );
   }

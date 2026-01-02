@@ -1,4 +1,5 @@
 import 'package:businessbuddy/common/global_search.dart';
+import 'package:businessbuddy/components/video_player.dart';
 import 'package:businessbuddy/presentation/home_screen/widget/business/view/my_business_details.dart';
 import 'package:businessbuddy/presentation/home_screen/widget/business/widget/edit_business.dart';
 import 'package:businessbuddy/presentation/home_screen/widget/business/widget/edit_post.dart';
@@ -11,6 +12,7 @@ import '../utils/exported_path.dart';
 class AppRoutes {
   static final routes = [
     GetPage(name: Routes.splash, page: () => SplashScreen()),
+
     GetPage(name: Routes.onboarding, page: () => IntroScreen()),
     GetPage(name: Routes.login, page: () => LoginScreen()),
     GetPage(name: Routes.verify, page: () => VerifyOtpScreen()),

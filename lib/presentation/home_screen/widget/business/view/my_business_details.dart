@@ -169,10 +169,7 @@ class _BusinessDetailsState extends State<BusinessDetails> {
 
   Widget _buildEditButton() {
     return GestureDetector(
-      onTap: () => Get.toNamed(
-        Routes.editBusiness,
-        arguments: {'data': controller.businessDetails},
-      ),
+      onTap: () => Get.toNamed(Routes.editBusiness, arguments: {'data': {}}),
       child: Container(
         padding: EdgeInsets.all(6.w),
         decoration: BoxDecoration(

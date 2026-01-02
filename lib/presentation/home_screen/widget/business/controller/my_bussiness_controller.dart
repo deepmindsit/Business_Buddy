@@ -99,7 +99,7 @@ class LBOController extends GetxController {
   }) async {
     if (showLoading) isDetailsLoading.value = true;
     final userId = await LocalStorage.getString('user_id') ?? '';
-    businessDetails.clear();
+    // businessDetails.clear();
     try {
       final lat = getIt<LocationController>().latitude.value.toString();
       final lng = getIt<LocationController>().longitude.value.toString();
@@ -113,6 +113,7 @@ class LBOController extends GetxController {
       );
       if (response['common']['status'] == true) {
         businessDetails.value = response['data'] ?? {};
+        setBusinessDetails(response['data']);
       }
     } catch (e) {
       ToastUtils.showToast(
@@ -229,15 +230,30 @@ class LBOController extends GetxController {
     attachments.clear();
   }
 
-  void preselectedBusiness({dynamic data}) {
-    businessDetails.value = data ?? businessDetails;
-    shopName.text = businessDetails['name'] ?? '';
-    address.text = businessDetails['address'] ?? '';
-    numberCtrl.text = businessDetails['mobile_number'] ?? '';
-    offering.value = businessDetails['category_id']?.toString() ?? null;
-    aboutCtrl.text = businessDetails['about_business'] ?? '';
-    oldAttachments.value = businessDetails['attachments'] ?? [];
+  void setBusinessDetails(Map<String, dynamic> data) {
+    businessDetails.value = data;
+
+    shopName.text = data['name'] ?? '';
+    address.text = data['address'] ?? '';
+    numberCtrl.text = data['mobile_number'] ?? '';
+    offering.value = data['category_id']?.toString();
+    aboutCtrl.text = data['about_business'] ?? '';
+    oldAttachments.value = data['attachments'] ?? [];
   }
+
+  // void preselectedBusiness({dynamic data}) {
+  //   print('businessDetails.data==========>${data}');
+  //   print('businessDetails.before==========>${businessDetails}');
+  //
+  //   businessDetails.value = data ?? businessDetails;
+  //   print('businessDetails.after==========>${businessDetails}');
+  //   shopName.text = businessDetails['name'] ?? '';
+  //   address.text = businessDetails['address'] ?? '';
+  //   numberCtrl.text = businessDetails['mobile_number'] ?? '';
+  //   offering.value = businessDetails['category_id']?.toString() ?? null;
+  //   aboutCtrl.text = businessDetails['about_business'] ?? '';
+  //   oldAttachments.value = businessDetails['attachments'] ?? [];
+  // }
 
   /// ------------------------
   /// ADD  NEW POST &&& EDIT POST

@@ -14,8 +14,15 @@ class _AddBusinessState extends State<AddBusiness> {
 
   @override
   void initState() {
+    controller.clearData();
     expController.getCategories();
+    getUserNumber();
     super.initState();
+  }
+
+  void getUserNumber() async {
+    controller.numberCtrl.text =
+        await LocalStorage.getString('mobile_no') ?? '';
   }
 
   @override
@@ -195,6 +202,7 @@ class _AddBusinessState extends State<AddBusiness> {
           child: buildLabel('Mobile Number'),
         ),
         buildTextField(
+          enabled: false,
           controller: controller.numberCtrl,
           hintText: 'Enter your mobile number',
           keyboardType: TextInputType.number,

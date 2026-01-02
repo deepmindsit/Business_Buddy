@@ -39,6 +39,7 @@ import 'package:businessbuddy/presentation/profile/controller/profile_controller
     as _i634;
 import 'package:businessbuddy/presentation/special_offer/controller/special_offer_controller.dart'
     as _i68;
+import 'package:businessbuddy/utils/video_player_controller.dart' as _i557;
 import 'package:dio/dio.dart' as _i361;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
@@ -83,6 +84,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i889.ApiService>(() => _i889.ApiService(gh<_i361.Dio>()));
     gh.lazySingleton<_i686.LocationController>(
       () => _i686.LocationController(gh<_i55.LocationService>()),
+    );
+    gh.lazySingleton<_i557.VideoPlayerControllerX>(
+      () => _i557.VideoPlayerControllerX(gh<String>()),
     );
     return this;
   }

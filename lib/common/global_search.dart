@@ -52,20 +52,11 @@ class _GlobalSearchState extends State<GlobalSearch> {
                   _buildCategorySection(),
                   _buildBusinessSection(),
                   _buildRequirementsSection(),
+                  _buildExpertSection(),
+                  SizedBox(height: 20.h),
                 ],
               );
             }),
-            // Obx(
-            //   () => _controller.isLoading.isTrue
-            //       ? _buildLoadingIndicator()
-            //       : Column(
-            //           children: [
-            //             _buildCategorySection(),
-            //             _buildBusinessSection(),
-            //             _buildRequirementsSection(),
-            //           ],
-            //         ),
-            // ),
           ],
         ),
       ),
@@ -224,7 +215,7 @@ class _GlobalSearchState extends State<GlobalSearch> {
       () => _controller.businessList.isEmpty
           ? SizedBox()
           : SectionContainer(
-              title: 'Business',
+              title: 'Results',
               actionText: 'View More',
               onActionTap: _handleViewAllFeeds,
               child: Obx(
@@ -345,6 +336,109 @@ class _GlobalSearchState extends State<GlobalSearch> {
     );
   }
 
+  Widget _buildExpertSection() {
+    return Obx(
+      () => _controller.expertList.isEmpty
+          ? SizedBox()
+          : SectionContainer(
+              title: 'Expert',
+              isMore: false,
+              actionText: 'View More',
+              onActionTap: _handleViewAllRequirements,
+              child: Obx(
+                () => _controller.isLoading.isTrue
+                    ? ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        padding: EdgeInsets.all(8),
+                        itemCount: 6,
+                        separatorBuilder: (_, __) => SizedBox(height: 10),
+                        itemBuilder: (context, index) =>
+                            const BusinessCardShimmer(),
+                      )
+                    : Column(
+                        children: _controller.expertList.map<Widget>((expert) {
+                          return GestureDetector(
+                            onTap: () => Get.toNamed(
+                              Routes.profile,
+                              arguments: {
+                                'user_id': expert['user_id']?.toString() ?? '',
+                              },
+                            ),
+                            child: Container(
+                              margin: EdgeInsets.symmetric(
+                                horizontal: 12.w,
+                                vertical: 8.h,
+                              ),
+                              padding: EdgeInsets.all(10.w),
+                              decoration: _boxDecoration(),
+                              child: Row(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(8.r),
+                                    child: Image.network(
+                                      expert['profile_image']?.toString() ?? '',
+                                      width: 50.w,
+                                      height: 50.h,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (_, __, ___) => Image.asset(
+                                        Images.defaultImage,
+                                        width: 50.w,
+                                        height: 50.h,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 12.w),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        CustomText(
+                                          title:
+                                              expert['name']?.toString() ?? '',
+                                          fontSize: 14.sp,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start,
+                                        ),
+                                        Text(
+                                          expert['specialization']
+                                                  ?.toString() ??
+                                              '',
+                                          style: TextStyle(
+                                            fontSize: 12.sp,
+                                            color: Colors.grey[600],
+                                          ),
+                                        ),
+                                        if (expert['experience'] != null)
+                                          Text(
+                                            '${expert['experience']?.toString() ?? '0'} Years',
+                                            style: TextStyle(
+                                              fontSize: 12.sp,
+                                              color: Colors.grey[600],
+                                            ),
+                                          ),
+                                        SizedBox(height: 6.h),
+                                      ],
+                                    ),
+                                  ),
+                                  // if (controller.isMe.isTrue)
+                                  GestureDetector(
+                                    child: HugeIcon(
+                                      icon: HugeIcons.strokeRoundedArrowRight01,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+              ),
+            ),
+    );
+  }
+
   void _handleViewAllCategories() {
     Get.back();
     _navigationController.updateTopTab(0);
@@ -359,6 +453,16 @@ class _GlobalSearchState extends State<GlobalSearch> {
     Get.back();
     _navigationController.updateBottomIndex(2);
   }
+
+  BoxDecoration _boxDecoration() {
+    return BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(12),
+      boxShadow: [
+        BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 2)),
+      ],
+    );
+  }
 }
 
 class SectionContainer extends StatelessWidget {
@@ -366,6 +470,7 @@ class SectionContainer extends StatelessWidget {
   final String actionText;
   final VoidCallback onActionTap;
   final Widget child;
+  final bool? isMore;
 
   const SectionContainer({
     super.key,
@@ -373,6 +478,7 @@ class SectionContainer extends StatelessWidget {
     required this.actionText,
     required this.onActionTap,
     required this.child,
+    this.isMore = true,
   });
 
   @override
@@ -383,6 +489,7 @@ class SectionContainer extends StatelessWidget {
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           child: buildHeadingWithButton(
+            isMore: isMore!,
             title: title,
             rightText: actionText,
             onTap: onActionTap,

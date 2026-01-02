@@ -81,6 +81,8 @@ export 'package:businessbuddy/presentation/business_partner/widget/rec_filter.da
 export 'package:businessbuddy/presentation/home_screen/widget/explorer/widget/cat_item_card_shimmer.dart';
 export 'package:businessbuddy/common/app_under_maintainance.dart';
 export 'package:businessbuddy/common/check_internet.dart';
+export 'package:businessbuddy/components/notification_service.dart';
+export 'package:businessbuddy/components/video_player.dart';
 
 //controller
 export 'package:businessbuddy/presentation/onboarding/controller/splash_controller.dart';
@@ -99,6 +101,7 @@ export 'package:businessbuddy/presentation/home_screen/controller/home_controlle
 export 'package:businessbuddy/common/global_search_controller.dart';
 export 'package:businessbuddy/common/location_controller.dart';
 export 'package:businessbuddy/common/update_app.dart';
+export 'package:businessbuddy/utils/video_player_controller.dart';
 
 //plugins
 export 'package:get/get.dart';
@@ -122,7 +125,9 @@ export 'package:flutter_rating_bar/flutter_rating_bar.dart';
 export 'package:shimmer/shimmer.dart';
 export 'package:carousel_slider/carousel_slider.dart';
 export 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-
-
-
-
+export 'package:firebase_core/firebase_core.dart';
+export 'package:firebase_messaging/firebase_messaging.dart';
+export 'package:flutter_local_notifications/flutter_local_notifications.dart';
+export 'package:chewie/chewie.dart';
+export 'package:video_player/video_player.dart';
+export 'package:youtube_player_flutter/youtube_player_flutter.dart';

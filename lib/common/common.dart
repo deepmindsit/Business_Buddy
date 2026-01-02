@@ -1260,27 +1260,28 @@ Widget buildHeadingWithButton({
   required String title,
   required String rightText,
   required var onTap,
+  bool isMore = true,
 }) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
       CustomText(title: title, fontSize: 18.sp, fontWeight: FontWeight.bold),
-      Container(
-        padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 8),
-        decoration: BoxDecoration(
-          // color: lightGrey,
-          border: Border.all(color: lightGrey),
-          borderRadius: BorderRadius.circular(8.r),
-        ),
-        child: GestureDetector(
-          onTap: onTap,
-          child: CustomText(
-            title: rightText,
-            fontSize: 12.sp,
-            color: Colors.black,
+      if (isMore)
+        Container(
+          padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 8),
+          decoration: BoxDecoration(
+            border: Border.all(color: lightGrey),
+            borderRadius: BorderRadius.circular(8.r),
+          ),
+          child: GestureDetector(
+            onTap: onTap,
+            child: CustomText(
+              title: rightText,
+              fontSize: 12.sp,
+              color: Colors.black,
+            ),
           ),
         ),
-      ),
     ],
   );
 }
@@ -1532,5 +1533,3 @@ String formatCount(int count) {
   }
   return count.toString();
 }
-
-

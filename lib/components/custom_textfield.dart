@@ -8,12 +8,14 @@ Widget buildTextField({
   Widget? prefixIcon,
   Widget? suffixIcon,
   bool? obscureText = false,
+  bool? enabled = true,
   int? maxLines = 1,
   Color? fillColor = Colors.white,
   TextInputType? keyboardType = TextInputType.text,
   List<TextInputFormatter>? inputFormatters,
 }) {
   return TextFormField(
+    enabled: enabled,
     maxLines: maxLines,
     style: TextStyle(fontSize: 14.sp, color: primaryBlack),
     controller: controller,

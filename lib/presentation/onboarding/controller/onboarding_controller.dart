@@ -82,6 +82,10 @@ class OnboardingController extends GetxController {
           'user_id',
           response['data']['user_details']['user_id'].toString(),
         );
+        await LocalStorage.setString(
+          'mobile_no',
+          response['data']['user_details']['mobile_number'].toString(),
+        );
         numberController.clear();
         otpController.clear();
         Get.offAllNamed(Routes.mainScreen);
@@ -119,6 +123,10 @@ class OnboardingController extends GetxController {
         await LocalStorage.setString(
           'auth_key',
           response['data']['user_details']['auth_key']?.toString() ?? 'demo',
+        );
+        await LocalStorage.setString(
+          'mobile_no',
+          response['data']['user_details']['mobile_number'].toString(),
         );
         await LocalStorage.setString(
           'user_id',

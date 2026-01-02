@@ -808,6 +808,7 @@ class _ApiService implements ApiService {
     String? investmentCapId,
     String latLng,
     String pageNo,
+    String location,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -831,6 +832,7 @@ class _ApiService implements ApiService {
     }
     _data.fields.add(MapEntry('lat_long', latLng));
     _data.fields.add(MapEntry('page_number', pageNo));
+    _data.fields.add(MapEntry('location', location));
     final _options = _setStreamType<dynamic>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(

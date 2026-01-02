@@ -1,28 +1,38 @@
 import 'package:businessbuddy/utils/exported_path.dart' hide Position;
-import 'package:geolocator/geolocator.dart';
 
 @lazySingleton
 class PartnerDataController extends GetxController {
   final ApiService _apiService = Get.find();
 
+  /* -------------------- UI STATE -------------------- */
   final isLoading = true.obs;
   final isAddLoading = false.obs;
   final isSendLoading = false.obs;
   final isMainLoading = true.obs;
   final isFilterLoading = false.obs;
-  final isCompleted = true.obs;
+
+  /* -------------------- FORM CONTROLLERS -------------------- */
+
   final recTitle = TextEditingController();
   final location = TextEditingController();
   final invHistory = TextEditingController();
   final notes = TextEditingController();
   final iCanInvest = TextEditingController();
+
   final invType = RxnString();
   final invCapacity = RxnString();
   final partnerKey = GlobalKey<FormState>();
+
+  /* -------------------- DATA -------------------- */
+
   final selectedBusiness = <String>[].obs;
   final requirementList = [].obs;
+  final requestedBusinessList = [].obs;
+
   final wulfList = [].obs;
   final capacityList = [].obs;
+
+  /* -------------------- TAB HANDLING -------------------- */
 
   late TabController tabController;
   final tabIndex = 0.obs;
@@ -32,13 +42,33 @@ class PartnerDataController extends GetxController {
     tabController.animateTo(index);
   }
 
-  resetFilter() {
+  /* -------------------- FILTER -------------------- */
+
+  final selectedCategory = RxnString();
+  final selectedLocation = RxnString();
+  final selectedExp = RxnString();
+  final lookingFor = RxnString();
+  final sort = RxnString("");
+  final address = ''.obs;
+  final addressList = [].obs;
+  final addressController = TextEditingController();
+  final lat = ''.obs;
+  final lng = ''.obs;
+
+  void resetFilter() {
     selectedCategory.value = null;
     selectedExp.value = null;
     selectedLocation.value = null;
     lookingFor.value = null;
     sort.value = "";
+    addressController.clear();
+    addressList.clear();
+    lat.value = '';
+    lng.value = '';
+    address.value = '';
   }
+
+  /* -------------------- PAGINATION (ALL BUSINESS) -------------------- */
 
   int currentBusinessPage = 1;
   int totalBusinessPages = 1;
@@ -59,19 +89,18 @@ class PartnerDataController extends GetxController {
     currentBusinessPage == 1
         ? isLoading.value = showLoading
         : isBusinessLoadMore.value = true;
-    // if (showLoading) isLoading.value = true;
     final userId = await LocalStorage.getString('user_id') ?? '';
 
-    print('selectedCategory.value');
-    print(selectedCategory.value);
-    print(sort.value!.toLowerCase());
-    print(lookingFor.value);
-    print(selectedExp.value);
-    print(userId);
-
-    final lat = getIt<LocationController>().latitude.value.toString();
-    final lng = getIt<LocationController>().longitude.value.toString();
-    print('lat.value=======>$lat,$lng');
+    final latitude = getIt<LocationController>().latitude.value.toString();
+    final longitude = getIt<LocationController>().longitude.value.toString();
+    print('search.value=======>  ${lat.value},${lng.value},');
+    print('live.value=======>$latitude,$longitude');
+    print('currentBusinessPage=======>$currentBusinessPage');
+    print('selectedCategory=======>$selectedCategory');
+    print('sort=======>$sort');
+    print('lookingFor=======>$lookingFor');
+    print('selectedExp=======>$selectedExp');
+    print('userId=======>$userId');
     try {
       final response = await _apiService.businessReqList(
         userId,
@@ -79,8 +108,9 @@ class PartnerDataController extends GetxController {
         sort.value!.toLowerCase(),
         lookingFor.value,
         selectedExp.value,
-        '$lat,$lng',
+        '$latitude,$longitude',
         currentBusinessPage.toString(),
+        '${lat.value},${lng.value}',
       );
       print('getBusinessRequired');
       print(response);
@@ -88,7 +118,6 @@ class PartnerDataController extends GetxController {
         final data = response['data'];
 
         final List list = data['business_requirements'] ?? [];
-
         pertBusinessPage = data['per_page'] ?? pertBusinessPage;
         totalBusinessPages = data['total_pages'] ?? totalBusinessPages;
 
@@ -104,17 +133,119 @@ class PartnerDataController extends GetxController {
 
         if (hastBusinessMore) currentBusinessPage++;
       }
-
-      // if (response['common']['status'] == true) {
-      //   requirementList.value = response['data']['business_requirements'] ?? [];
-      // } else {
-      //   requirementList.value = response['data']['business_requirements'] ?? [];
-      // }
     } catch (e) {
       showError(e);
     } finally {
       if (showLoading) isLoading.value = false;
     }
+  }
+
+  /* -------------------- ADD / EDIT /DELETE BUSINESS -------------------- */
+
+  Future<void> addBusinessRequired({bool showLoading = true}) async {
+    if (showLoading) isAddLoading.value = true;
+    try {
+      // final lat = getIt<LocationController>().latitude.value.toString();
+      // final lng = getIt<LocationController>().longitude.value.toString();
+      final userId = await LocalStorage.getString('user_id') ?? '';
+
+      final response = await _apiService.addBusinessReq(
+        userId,
+        recTitle.text.trim(),
+        addressController.text.trim(),
+        '$lat,$lng',
+        invType.value!,
+        invCapacity.value!,
+        invHistory.text.trim(),
+        notes.text.trim(),
+        iCanInvest.text.trim(),
+        selectedBusiness,
+      );
+      _handleSuccess(response);
+
+      // if (response['common']['status'] == true) {
+      //   resetField();
+      //   getIt<NavigationController>().goBack();
+      //   ToastUtils.showSuccessToast(response['common']['message']);
+      // } else {
+      //   ToastUtils.showWarningToast(response['common']['message']);
+      // }
+    } catch (e) {
+      showError(e);
+    } finally {
+      if (showLoading) isAddLoading.value = false;
+    }
+  }
+
+  Future<void> editBusinessRequired(
+    String businessId, {
+    bool showLoading = true,
+  }) async {
+    if (showLoading) isAddLoading.value = true;
+    try {
+      final lat = getIt<LocationController>().latitude.value.toString();
+      final lng = getIt<LocationController>().longitude.value.toString();
+      final response = await _apiService.editBusinessReq(
+        businessId,
+        recTitle.text.trim(),
+        location.text.trim(),
+        '$lat,$lng',
+        invType.value!,
+        invCapacity.value!,
+        invHistory.text.trim(),
+        notes.text.trim(),
+        iCanInvest.text.trim(),
+        getIdsByNames(selectedBusiness),
+      );
+      _handleSuccess(response);
+    } catch (e) {
+      showError(e);
+    } finally {
+      if (showLoading) isAddLoading.value = false;
+    }
+  }
+
+  Future<void> deleteBusinessRequirement(
+    String businessId, {
+    bool showLoading = true,
+  }) async {
+    if (showLoading) isLoading.value = true;
+    try {
+      final response = await _apiService.deleteBusinessReq(businessId);
+
+      if (response['common']['status'] == true) {
+        ToastUtils.showSuccessToast(response['common']['message']);
+      } else {
+        ToastUtils.showWarningToast(response['common']['message']);
+      }
+    } catch (e) {
+      showError(e);
+    } finally {
+      if (showLoading) isLoading.value = false;
+    }
+  }
+
+  void _handleSuccess(dynamic response) {
+    if (response['common']['status'] == true) {
+      resetField();
+      getIt<NavigationController>().goBack();
+      ToastUtils.showSuccessToast(response['common']['message']);
+    } else {
+      ToastUtils.showWarningToast(response['common']['message']);
+    }
+  }
+
+  /* -------------------- HELPERS -------------------- */
+
+  void resetField() {
+    recTitle.clear();
+    location.clear();
+    invHistory.clear();
+    iCanInvest.clear();
+    notes.clear();
+    invType.value = null;
+    invCapacity.value = null;
+    selectedBusiness.clear();
   }
 
   Future<void> getWulf({bool showLoading = true}) async {
@@ -145,96 +276,6 @@ class PartnerDataController extends GetxController {
       showError(e);
     } finally {
       if (showLoading) isLoading.value = false;
-    }
-  }
-
-  Future<void> deleteBusinessRequirement(
-    String businessId, {
-    bool showLoading = true,
-  }) async {
-    if (showLoading) isLoading.value = true;
-    try {
-      final response = await _apiService.deleteBusinessReq(businessId);
-
-      if (response['common']['status'] == true) {
-        ToastUtils.showSuccessToast(response['common']['message']);
-      } else {
-        ToastUtils.showWarningToast(response['common']['message']);
-      }
-    } catch (e) {
-      showError(e);
-    } finally {
-      if (showLoading) isLoading.value = false;
-    }
-  }
-
-  Future<void> addBusinessRequired({bool showLoading = true}) async {
-    if (showLoading) isAddLoading.value = true;
-    try {
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
-
-      final userId = await LocalStorage.getString('user_id') ?? '';
-
-      final response = await _apiService.addBusinessReq(
-        userId,
-        recTitle.text.trim(),
-        location.text.trim(),
-        '${position.latitude},${position.longitude}',
-        invType.value!,
-        invCapacity.value!,
-        invHistory.text.trim(),
-        notes.text.trim(),
-        iCanInvest.text.trim(),
-        selectedBusiness,
-      );
-      if (response['common']['status'] == true) {
-        resetField();
-        getIt<NavigationController>().goBack();
-        ToastUtils.showSuccessToast(response['common']['message']);
-      } else {
-        ToastUtils.showWarningToast(response['common']['message']);
-      }
-    } catch (e) {
-      showError(e);
-    } finally {
-      if (showLoading) isAddLoading.value = false;
-    }
-  }
-
-  Future<void> editBusinessRequired(
-    String businessId, {
-    bool showLoading = true,
-  }) async {
-    if (showLoading) isAddLoading.value = true;
-    try {
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
-      final response = await _apiService.editBusinessReq(
-        businessId,
-        recTitle.text.trim(),
-        location.text.trim(),
-        '${position.latitude},${position.longitude}',
-        invType.value!,
-        invCapacity.value!,
-        invHistory.text.trim(),
-        notes.text.trim(),
-        iCanInvest.text.trim(),
-        getIdsByNames(selectedBusiness),
-      );
-      if (response['common']['status'] == true) {
-        resetField();
-        getIt<NavigationController>().goBack();
-        ToastUtils.showSuccessToast(response['common']['message']);
-      } else {
-        ToastUtils.showWarningToast(response['common']['message']);
-      }
-    } catch (e) {
-      showError(e);
-    } finally {
-      if (showLoading) isAddLoading.value = false;
     }
   }
 
@@ -281,7 +322,6 @@ class PartnerDataController extends GetxController {
     }
   }
 
-  final requestedBusinessList = [].obs;
   final isLoadMore = false.obs;
 
   int currentPage = 1;
@@ -339,17 +379,6 @@ class PartnerDataController extends GetxController {
     }
   }
 
-  resetField() {
-    recTitle.clear();
-    location.clear();
-    invHistory.clear();
-    iCanInvest.clear();
-    notes.clear();
-    invType.value = null;
-    invCapacity.value = '';
-    selectedBusiness.clear();
-  }
-
   void preselectedRecruitment(dynamic data) async {
     recTitle.text = data['name'] ?? '';
     location.text = data['location'] ?? '';
@@ -362,19 +391,19 @@ class PartnerDataController extends GetxController {
     await getCapacity(data['what_you_look_for_id'].toString()).then((v) {});
   }
 
-  ////////////////////////////////////////rec filter///////////////////////////////
-  final selectedCategory = RxnString();
-
-  final locations = ["Pune", "Mumbai", "Nagpur", "Delhi", "Bangalore"].obs;
-  final selectedLocation = RxnString();
-
-  // EXPERIENCE
-  final selectedExp = RxnString();
-
-  // SORT
-  final sort = RxnString("");
-
-  // LOOKING FOR
-  final lookingList = ["Investor", "Investment", "Expert"].obs;
-  final lookingFor = RxnString();
+  // ////////////////////////////////////////rec filter///////////////////////////////
+  // final selectedCategory = RxnString();
+  //
+  // final locations = ["Pune", "Mumbai", "Nagpur", "Delhi", "Bangalore"].obs;
+  // final selectedLocation = RxnString();
+  //
+  // // EXPERIENCE
+  // final selectedExp = RxnString();
+  //
+  // // SORT
+  // final sort = RxnString("");
+  //
+  // // LOOKING FOR
+  // final lookingList = ["Investor", "Investment", "Expert"].obs;
+  // final lookingFor = RxnString();
 }

@@ -66,6 +66,12 @@ dependencies:
   carousel_slider: ^5.1.1
   flutter_staggered_animations: ^1.1.1
   flutter_widget_from_html: ^0.16.0
+  firebase_core: ^4.3.0
+  flutter_local_notifications: ^19.5.0
+  firebase_messaging: ^16.1.0
+  chewie: ^1.13.0
+  video_player: ^2.10.1
+  youtube_player_flutter: ^9.0.1
 
 dev_dependencies:
   flutter_test:

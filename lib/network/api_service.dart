@@ -61,7 +61,7 @@ abstract class ApiService {
   });
 
   @POST(AllUrl.categories)
-  Future<dynamic> getCategories(   @Part(name: "page_number") String pageNo,);
+  Future<dynamic> getCategories(@Part(name: "page_number") String pageNo);
 
   @POST(AllUrl.explore)
   Future<dynamic> explore(
@@ -76,7 +76,6 @@ abstract class ApiService {
     @Part(name: "business_id") String? catId,
     @Part(name: "lat_long") String? latLong,
     @Part(name: "user_id") String? userId,
-
   );
 
   @POST(AllUrl.myBusinessDetails)
@@ -175,6 +174,7 @@ abstract class ApiService {
     @Part(name: "investement_cap_id") String? investmentCapId,
     @Part(name: "lat_long") String latLng,
     @Part(name: "page_number") String pageNo,
+    @Part(name: "location") String location,
   );
 
   @POST(AllUrl.getWulf)
@@ -221,10 +221,9 @@ abstract class ApiService {
 
   @POST(AllUrl.getFollowList)
   Future<dynamic> getFollowList(
-      @Part(name: "user_id") String? userId,
-      @Part(name: "page_number") String pageNo,
-
-      );
+    @Part(name: "user_id") String? userId,
+    @Part(name: "page_number") String pageNo,
+  );
 
   @POST(AllUrl.getUserProfile)
   Future<dynamic> getUserProfile(@Part(name: "user_id") String? userId);
@@ -249,9 +248,9 @@ abstract class ApiService {
 
   @POST(AllUrl.getBusinessRequested)
   Future<dynamic> getBusinessRequested(
-      @Part(name: "user_id") String? userId,
-      @Part(name: "page_number") String pageNo,
-      );
+    @Part(name: "user_id") String? userId,
+    @Part(name: "page_number") String pageNo,
+  );
 
   @POST(AllUrl.getBusinessReceived)
   Future<dynamic> getBusinessReceivedRequest(
@@ -329,9 +328,9 @@ abstract class ApiService {
 
   @POST(AllUrl.chatList)
   Future<dynamic> getChatList(
-      @Part(name: "user_id") String? userId,
-      @Part(name: "page_number") String pageNo,
-      );
+    @Part(name: "user_id") String? userId,
+    @Part(name: "page_number") String pageNo,
+  );
 
   @POST(AllUrl.getSingleChat)
   Future<dynamic> getSingleChat(

@@ -1,7 +1,18 @@
+
 import 'package:businessbuddy/utils/exported_path.dart';
+
+
+@pragma('vm:entry-point')
+Future<void> backgroundHandler(RemoteMessage message) async {
+  Map<String, dynamic> data = message.data;
+  NotificationService().handleNotificationNavigation(data, '');
+  await Firebase.initializeApp();
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  NotificationService().init();
   await configureDependencies();
   await getIt<DemoService>().init();
   runApp(const MyApp());

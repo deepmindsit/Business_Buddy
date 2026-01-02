@@ -14,11 +14,19 @@ class _EditBusinessState extends State<EditBusiness> {
 
   @override
   void initState() {
-    print('Get.arguments');
-    print(Get.arguments['data']);
-    expController.getCategories();
-    controller.preselectedBusiness(data: Get.arguments['data']);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      expController.getCategories();
+      if (Get.arguments['data'] != null) {
+        controller.setBusinessDetails(Get.arguments['data']);
+      }
+    });
+    getUserNumber();
     super.initState();
+  }
+
+  void getUserNumber() async {
+    controller.numberCtrl.text =
+        await LocalStorage.getString('mobile_no') ?? '';
   }
 
   @override
@@ -211,6 +219,7 @@ class _EditBusinessState extends State<EditBusiness> {
           child: buildLabel('Mobile Number'),
         ),
         buildTextField(
+          enabled: false,
           controller: controller.numberCtrl,
           hintText: 'Enter your mobile number',
           keyboardType: TextInputType.number,

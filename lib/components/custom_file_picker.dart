@@ -32,6 +32,21 @@ class CustomFilePicker {
     return null;
   }
 
+  static Future<File?> pickVideoFromCamera() async {
+    final XFile? video = await ImagePicker().pickVideo(
+      source: ImageSource.camera,
+      maxDuration: const Duration(minutes: 2),
+    );
+    return video != null ? File(video.path) : null;
+  }
+
+  static Future<File?> pickVideoFromGallery() async {
+    final XFile? video = await ImagePicker().pickVideo(
+      source: ImageSource.gallery,
+    );
+    return video != null ? File(video.path) : null;
+  }
+
   static Future<void> showPickerBottomSheet({
     required Function(File file) onFilePicked,
   }) async {
@@ -44,34 +59,89 @@ class CustomFilePicker {
             // mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              ListTile(
-                leading: HugeIcon(icon: HugeIcons.strokeRoundedCamera02),
-                title: CustomText(
-                  title: 'Camera',
-                  textAlign: TextAlign.start,
-                  fontSize: 14.sp,
-                ),
-                onTap: () async {
-                  Get.back();
-                  File? file = await pickCamera();
-                  if (file != null) onFilePicked(file);
-                },
-              ),
-              Divider(height: 5, thickness: 0.5),
-              ListTile(
-                leading: HugeIcon(icon: HugeIcons.strokeRoundedImage02),
-                title: CustomText(
-                  title: 'Gallery',
-                  textAlign: TextAlign.start,
-                  fontSize: 14.sp,
-                ),
-                onTap: () async {
-                  Get.back();
-                  File? file = await pickGallery();
-                  if (file != null) onFilePicked(file);
-                },
-              ),
+              _item(HugeIcons.strokeRoundedCamera02, 'Camera Image', () async {
+                Get.back();
+                File? file = await pickCamera();
+                if (file != null) onFilePicked(file);
+              }),
+              _divider(),
+              _item(HugeIcons.strokeRoundedImage02, 'Gallery Image', () async {
+                Get.back();
+                File? file = await pickGallery();
+                if (file != null) onFilePicked(file);
+              }),
+              _divider(),
+              _item(HugeIcons.strokeRoundedVideo02, 'Camera Video', () async {
+                Get.back();
+                final file = await pickVideoFromCamera();
+                if (file != null) onFilePicked(file);
+              }),
+              _divider(),
+              _item(HugeIcons.strokeRoundedVideo02, 'Gallery Video', () async {
+                Get.back();
+                final file = await pickVideoFromGallery();
+                if (file != null) onFilePicked(file);
+              }),
+              // ListTile(
+              //   leading: HugeIcon(icon: HugeIcons.strokeRoundedCamera02),
+              //   title: CustomText(
+              //     title: 'Camera',
+              //     textAlign: TextAlign.start,
+              //     fontSize: 14.sp,
+              //   ),
+              //   onTap: () async {
+              //     Get.back();
+              //     File? file = await pickCamera();
+              //     if (file != null) onFilePicked(file);
+              //   },
+              // ),
               // Divider(height: 5, thickness: 0.5),
+              // ListTile(
+              //   leading: HugeIcon(icon: HugeIcons.strokeRoundedImage02),
+              //   title: CustomText(
+              //     title: 'Gallery',
+              //     textAlign: TextAlign.start,
+              //     fontSize: 14.sp,
+              //   ),
+              //   onTap: () async {
+              //     Get.back();
+              //     File? file = await pickGallery();
+              //     if (file != null) onFilePicked(file);
+              //   },
+              // ),
+              // Divider(height: 5, thickness: 0.5),
+
+              /// Video Camera
+              // ListTile(
+              //   leading: HugeIcon(icon: HugeIcons.strokeRoundedVideo02),
+              //   title: CustomText(
+              //     title: 'Video (Camera)',
+              //     textAlign: TextAlign.start,
+              //     fontSize: 14.sp,
+              //   ),
+              //   onTap: () async {
+              //     Get.back();
+              //     final file = await pickVideoFromCamera();
+              //     if (file != null) onFilePicked(file);
+              //   },
+              // ),
+
+              // const Divider(),
+
+              /// Video Gallery
+              // ListTile(
+              //   leading: HugeIcon(icon: HugeIcons.strokeRoundedVideo01),
+              //   title: CustomText(
+              //     title: 'Video (Gallery)',
+              //     fontSize: 14.sp,
+              //     textAlign: TextAlign.start,
+              //   ),
+              //   onTap: () async {
+              //     Get.back();
+              //     final file = await pickVideoFromGallery();
+              //     if (file != null) onFilePicked(file);
+              //   },
+              // ),
               // ListTile(
               //   leading: HugeIcon(
               //     icon: HugeIcons.strokeRoundedDocumentValidation,
@@ -92,43 +162,21 @@ class CustomFilePicker {
         ),
       ),
     );
+  }
 
-    //
-    // showModalBottomSheet(
-    //   context: context,
-    //   builder: (_) => SafeArea(
-    //     child: Wrap(
-    //       children: [
-    //         ListTile(
-    //           leading: Icon(Icons.camera_alt),
-    //           title: Text('Camera'),
-    //           onTap: () async {
-    //             Navigator.pop(context);
-    //             File? file = await pickCamera(context);
-    //             if (file != null) onFilePicked(file);
-    //           },
-    //         ),
-    //         ListTile(
-    //           leading: Icon(Icons.photo),
-    //           title: Text('Gallery'),
-    //           onTap: () async {
-    //             Navigator.pop(context);
-    //             File? file = await pickGallery(context);
-    //             if (file != null) onFilePicked(file);
-    //           },
-    //         ),
-    //         ListTile(
-    //           leading: Icon(Icons.insert_drive_file),
-    //           title: Text('Document'),
-    //           onTap: () async {
-    //             Navigator.pop(context);
-    //             File? file = await pickDocument(context);
-    //             if (file != null) onFilePicked(file);
-    //           },
-    //         ),
-    //       ],
-    //     ),
-    //   ),
-    // );
+  static Widget _item(dynamic icon, String title, VoidCallback onTap) {
+    return ListTile(
+      leading: HugeIcon(icon: icon),
+      title: CustomText(
+        title: title,
+        fontSize: 14.sp,
+        textAlign: TextAlign.start,
+      ),
+      onTap: onTap,
+    );
+  }
+
+  static Widget _divider() {
+    return Divider(height: 5, thickness: 0.5);
   }
 }
