@@ -7,11 +7,6 @@ import 'package:geolocator/geolocator.dart';
 Future<String> updateUserLocation() async {
   String userLocation = '';
 
-  // LocationPermission permission = await Geolocator.requestPermission();
-  // if (permission == LocationPermission.denied ||
-  //     permission == LocationPermission.deniedForever) {
-  //   return '';
-  // }
   try {
     Position position = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high,

@@ -42,7 +42,7 @@ InputDecoration inputDecoration({
   Color? fillColor,
 }) {
   return InputDecoration(
-    contentPadding: EdgeInsets.all(15),
+    contentPadding: const EdgeInsets.all(15),
     filled: true,
     // fillColor: Theme.of(Get.context!).appBarTheme.backgroundColor,
     fillColor: fillColor,

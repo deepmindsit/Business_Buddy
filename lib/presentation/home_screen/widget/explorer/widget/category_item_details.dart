@@ -557,19 +557,57 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
   }
 
   Widget _buildActionButtons() {
+    print('whatsapp_number');
+    print(controller.businessDetails['whatsapp_number'].toString());
+    print(controller.businessDetails['whatsapp_number'] != null);
+    print(controller.businessDetails['whatsapp_number'].runtimeType);
     return Row(
       spacing: 12.w,
       children: [
+        if (controller.businessDetails['whatsapp_number']
+                .toString()
+                .isNotEmpty ||
+            controller.businessDetails['whatsapp_number'] != null)
+          Expanded(
+            flex: 2,
+            child: GestureDetector(
+              onTap: () {
+                if (!getIt<DemoService>().isDemo) {
+                  ToastUtils.showLoginToast();
+                  return;
+                }
+                onWhatsApp(
+                  controller.businessDetails['whatsapp_number']?.toString() ??
+                      '',
+                );
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  border: Border.all(color: primaryColor),
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                child: HugeIcon(
+                  icon: HugeIcons.strokeRoundedWhatsapp,
+                  size: 16.sp,
+                  color: Colors.green,
+                ),
+              ),
+            ),
+          ),
         Expanded(
+          flex: 2,
           child: _buildActionButton(
             icon: Icons.call_outlined,
-            text: '+91XXXXXXXXXX',
+            text: '',
             onPressed: () => _handleCall(),
             backgroundColor: primaryColor,
-            isPrimary: true,
+            isPrimary: false,
           ),
         ),
         Expanded(
+          flex: 3,
           child: Obx(() {
             return controller.isFollowLoading.value
                 ? LoadingWidget(color: primaryColor)
@@ -582,7 +620,7 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
                         : 'Follow',
                     onPressed: () => _handleFollow(),
                     backgroundColor: Colors.transparent,
-                    isPrimary: false,
+                    isPrimary: true,
                   );
           }),
         ),
@@ -600,23 +638,25 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
     return GestureDetector(
       onTap: onPressed,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
         decoration: BoxDecoration(
-          color: primaryColor,
-          border: Border.all(
-            color: isPrimary ? primaryColor : Colors.grey.shade300,
-          ),
+          color: isPrimary == false ? Colors.transparent : primaryColor,
+          border: Border.all(color: primaryColor),
           borderRadius: BorderRadius.circular(8.r),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: Colors.white, size: 18.sp),
-            SizedBox(width: 8.w),
+            Icon(
+              icon,
+              color: !isPrimary ? primaryColor : Colors.white,
+              size: 18.sp,
+            ),
+            // SizedBox(width: 8.w),
             CustomText(
               title: text,
               fontSize: 13.sp,
-              color: Colors.white,
+              color: !isPrimary ? Colors.black : Colors.white,
               textAlign: TextAlign.start,
             ),
           ],
@@ -725,15 +765,15 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
               size: 22.w,
             ),
             SizedBox(width: 12.w),
-            if(controller.businessDetails['self_business'] != true)
-            GestureDetector(
-              onTap: () => _addReview(),
-              child: Icon(
-                Icons.add_circle_outline,
-                color: primaryColor,
-                size: 22.w,
+            if (controller.businessDetails['self_business'] != true)
+              GestureDetector(
+                onTap: () => _addReview(),
+                child: Icon(
+                  Icons.add_circle_outline,
+                  color: primaryColor,
+                  size: 22.w,
+                ),
               ),
-            ),
           ],
         ),
       ),
@@ -839,22 +879,6 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
       ],
     );
   }
-
-  // Widget _buildViewAllReviews() {
-  //   return Center(
-  //     child: TextButton(
-  //       onPressed: () {
-  //         // Navigate to all reviews page
-  //       },
-  //       child: CustomText(
-  //         title: 'View All Reviews',
-  //         fontSize: 14.sp,
-  //         color: primaryColor,
-  //         fontWeight: FontWeight.w600,
-  //       ),
-  //     ),
-  //   );
-  // }
 
   void _handleCall() {
     if (!getIt<DemoService>().isDemo) {

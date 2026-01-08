@@ -201,8 +201,11 @@ class _FeedSheetState extends State<FeedSheet> {
               //   await controller.getSpecialOffer();
               // }
               widget.isFrom == 'feed'
-                  ? await getIt<FeedsController>().getFeeds(isRefresh: true, showLoading: true,)
-                  : await controller.getSpecialOffer();
+                  ? await getIt<FeedsController>().getFeeds(
+                      isRefresh: true,
+                      showLoading: true,
+                    )
+                  : await controller.getSpecialOffer(isRefresh: true);
             },
             style: OutlinedButton.styleFrom(
               side: BorderSide(color: Colors.red),
@@ -218,14 +221,9 @@ class _FeedSheetState extends State<FeedSheet> {
             onPressed: () async {
               Get.back();
               controller.isApply.value = true;
-              // if (widget.isFrom == 'feed') {
-              //   await getIt<FeedsController>().getFeeds();
-              // } else {
-              //   await controller.getSpecialOffer();
-              // }
               widget.isFrom == 'feed'
-                  ? await getIt<FeedsController>().getFeeds()
-                  : await controller.getSpecialOffer();
+                  ? await getIt<FeedsController>().getFeeds(isRefresh: true)
+                  : await controller.getSpecialOffer(isRefresh: true);
             },
             style: ElevatedButton.styleFrom(
               surfaceTintColor: Colors.white,

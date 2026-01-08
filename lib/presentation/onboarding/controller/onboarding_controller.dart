@@ -88,6 +88,8 @@ class OnboardingController extends GetxController {
         );
         numberController.clear();
         otpController.clear();
+        getIt<FirebaseTokenController>().updateToken();
+        getIt<NavigationController>().updateBottomIndex(0);
         Get.offAllNamed(Routes.mainScreen);
         ToastUtils.showSuccessToast(response['common']['message'].toString());
       } else {
@@ -132,9 +134,12 @@ class OnboardingController extends GetxController {
           'user_id',
           response['data']['user_details']['user_id'].toString(),
         );
+        getIt<FirebaseTokenController>().updateToken();
+
         numberController.clear();
         nameController.clear();
         emailController.clear();
+        getIt<NavigationController>().updateBottomIndex(0);
         Get.offAllNamed(Routes.mainScreen);
         ToastUtils.showSuccessToast(response['common']['message'].toString());
       } else {

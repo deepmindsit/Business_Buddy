@@ -13,14 +13,19 @@ import 'package:businessbuddy/common/check_demo.dart' as _i771;
 import 'package:businessbuddy/common/global_search_controller.dart' as _i812;
 import 'package:businessbuddy/common/live_location.dart' as _i55;
 import 'package:businessbuddy/common/location_controller.dart' as _i686;
+import 'package:businessbuddy/common/notification_controller.dart' as _i27;
 import 'package:businessbuddy/common/update_app.dart' as _i930;
 import 'package:businessbuddy/network/api_service.dart' as _i889;
 import 'package:businessbuddy/presentation/business_partner/controller/partner_controller.dart'
     as _i235;
 import 'package:businessbuddy/presentation/home_screen/controller/home_controller.dart'
     as _i103;
+import 'package:businessbuddy/presentation/home_screen/controller/home_gate_controller.dart'
+    as _i160;
 import 'package:businessbuddy/presentation/home_screen/controller/search_controller.dart'
     as _i726;
+import 'package:businessbuddy/presentation/home_screen/controller/update_firebase_token.dart'
+    as _i757;
 import 'package:businessbuddy/presentation/home_screen/widget/business/controller/my_bussiness_controller.dart'
     as _i745;
 import 'package:businessbuddy/presentation/home_screen/widget/explorer/controller/explorer_controller.dart'
@@ -56,13 +61,22 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i812.GlobalSearchController(),
     );
     gh.lazySingleton<_i55.LocationService>(() => _i55.LocationService());
+    gh.lazySingleton<_i27.NotificationController>(
+      () => _i27.NotificationController(),
+    );
     gh.lazySingleton<_i930.UpdateController>(() => _i930.UpdateController());
     gh.lazySingleton<_i235.PartnerDataController>(
       () => _i235.PartnerDataController(),
     );
     gh.lazySingleton<_i103.HomeController>(() => _i103.HomeController());
+    gh.lazySingleton<_i160.HomeGateController>(
+      () => _i160.HomeGateController(),
+    );
     gh.lazySingleton<_i726.SearchNewController>(
       () => _i726.SearchNewController(),
+    );
+    gh.lazySingleton<_i757.FirebaseTokenController>(
+      () => _i757.FirebaseTokenController(),
     );
     gh.lazySingleton<_i745.LBOController>(() => _i745.LBOController());
     gh.lazySingleton<_i481.ExplorerController>(

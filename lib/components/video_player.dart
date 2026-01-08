@@ -9,34 +9,49 @@ class InstagramVideoPlayer extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<VideoPlayerControllerX>(
       init: VideoPlayerControllerX(url),
+      tag: url, // ⭐ VERY IMPORTANT (unique per video)
       builder: (controller) {
         return Obx(() {
           if (!controller.isInitialized.value) {
             return Center(child: LoadingWidget(color: primaryColor));
           }
 
-          return GestureDetector(
-            onTap: controller.togglePlayPause,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                _buildVideo(controller),
+          return VisibilityDetector(
+            key: Key('video-$url'),
+            onVisibilityChanged: (info) {
+              final visible = info.visibleFraction > 0.6;
 
-                /// Play icon overlay (like Instagram)
-                if (!controller.isYouTube && !controller.isPlaying.value)
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.4),
-                      shape: BoxShape.circle,
-                    ),
-                    padding: const EdgeInsets.all(16),
-                    child: const Icon(
-                      Icons.play_arrow,
-                      size: 60,
-                      color: Colors.white,
-                    ),
-                  ),
-              ],
+              if (!visible) {
+                controller.pause(); // ⛔ STOP audio
+              } else {
+                controller.play();
+              }
+            },
+            child: GestureDetector(
+              onTap: controller.togglePlayPause,
+              child: _buildVideo(controller),
+
+              // Stack(
+              //   // alignment: Alignment.center,
+              //   children: [
+              //     _buildVideo(controller),
+              //
+              //     /// Play icon overlay (like Instagram)
+              //     // if (!controller.isYouTube && !controller.isPlaying.value)
+              //     //   Container(
+              //     //     decoration: BoxDecoration(
+              //     //       color: Colors.grey.withValues(alpha: 0.4),
+              //     //       shape: BoxShape.circle,
+              //     //     ),
+              //     //     padding: const EdgeInsets.all(16),
+              //     //     child: const Icon(
+              //     //       Icons.play_arrow,
+              //     //       size: 60,
+              //     //       color: Colors.white,
+              //     //     ),
+              //     //   ),
+              //   ],
+              // ),
             ),
           );
         });
@@ -52,6 +67,9 @@ class InstagramVideoPlayer extends StatelessWidget {
       );
     }
 
-    return Chewie(controller: controller.chewieController!);
+    return AspectRatio(
+      aspectRatio: controller.aspectR.value,
+      child: Chewie(controller: controller.chewieController!),
+    );
   }
 }

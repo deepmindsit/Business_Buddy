@@ -193,13 +193,6 @@ class _AddRecruitmentState extends State<AddRecruitment> {
               ? _buildResultsList()
               : SizedBox(),
         ),
-
-        // buildTextField(
-        //   controller: controller.location,
-        //   hintText: 'Enter your Location',
-        //   validator: (value) =>
-        //       value!.trim().isEmpty ? 'Please enter Location' : null,
-        // ),
       ],
     );
   }

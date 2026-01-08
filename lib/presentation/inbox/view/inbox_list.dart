@@ -15,9 +15,9 @@ class _InboxListState extends State<InboxList> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       checkInternetAndShowPopup();
-      controller.getAllChat();
-      controller.getReceiveBusinessRequest();
-      getIt<PartnerDataController>().getRequestedBusiness();
+      controller.getAllChat(isRefresh: true);
+      controller.getReceiveBusinessRequest(isRefresh: true);
+      getIt<PartnerDataController>().getRequestedBusiness(isRefresh: true);
     });
   }
 

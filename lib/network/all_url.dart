@@ -73,4 +73,7 @@ class AllUrl {
   static const String legalPageList = '$baseUrl/get_page_list';
   static const String legalPageDetails = '$baseUrl/get_page_details';
   static const String deleteAccount = '$baseUrl/delete_account';
+  static const String updateFirebaseToken = '$baseUrl/update_firebase_token';
+  static const String getNotification = '$baseUrl/get_notifications';
+  static const String readNotification = '$baseUrl/read_notification';
 }

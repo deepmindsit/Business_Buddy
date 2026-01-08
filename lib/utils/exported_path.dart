@@ -83,6 +83,8 @@ export 'package:businessbuddy/common/app_under_maintainance.dart';
 export 'package:businessbuddy/common/check_internet.dart';
 export 'package:businessbuddy/components/notification_service.dart';
 export 'package:businessbuddy/components/video_player.dart';
+export 'package:businessbuddy/components/location_search_field.dart';
+export 'package:businessbuddy/components/video_preview.dart';
 
 //controller
 export 'package:businessbuddy/presentation/onboarding/controller/splash_controller.dart';
@@ -102,6 +104,7 @@ export 'package:businessbuddy/common/global_search_controller.dart';
 export 'package:businessbuddy/common/location_controller.dart';
 export 'package:businessbuddy/common/update_app.dart';
 export 'package:businessbuddy/utils/video_player_controller.dart';
+export 'package:businessbuddy/presentation/home_screen/controller/update_firebase_token.dart';
 
 //plugins
 export 'package:get/get.dart';
@@ -131,3 +134,4 @@ export 'package:flutter_local_notifications/flutter_local_notifications.dart';
 export 'package:chewie/chewie.dart';
 export 'package:video_player/video_player.dart';
 export 'package:youtube_player_flutter/youtube_player_flutter.dart';
+export 'package:visibility_detector/visibility_detector.dart';

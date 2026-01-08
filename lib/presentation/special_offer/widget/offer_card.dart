@@ -9,37 +9,32 @@ class OfferCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        Card(
-          surfaceTintColor: Colors.white,
-          color: Colors.white,
-          clipBehavior: Clip.none,
-          elevation: 2,
-          margin: EdgeInsets.all(8.w),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.r),
-          ),
-          child: Padding(
-            padding: EdgeInsets.all(12.w),
-            child: Column(
-              spacing: 8,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Header Section
-                _buildHeader(),
+    return Card(
+      surfaceTintColor: Colors.white,
+      color: Colors.white,
+      elevation: 0,
+      margin: EdgeInsets.all(8.w),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16.r),
+        side: BorderSide(color: Colors.grey.shade100, width: 1),
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(12.w),
+        child: Column(
+          spacing: 8,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header Section
+            _buildHeader(),
 
-                // Image Section
-                _buildImageSection(),
+            // Image Section
+            _buildImageSection(),
 
-                // Content Section
-                _buildContentSection(),
-              ],
-            ),
-          ),
+            // Content Section
+            _buildContentSection(),
+          ],
         ),
-      ],
+      ),
     );
   }
 
@@ -271,7 +266,6 @@ class OfferCard extends StatelessWidget {
   //   );
   // }
 
-
   Widget _dot() {
     return Container(
       width: 3.r,
@@ -283,8 +277,7 @@ class OfferCard extends StatelessWidget {
     );
   }
 
-
-    Widget _buildTimeDisplay() {
+  Widget _buildTimeDisplay() {
     final createdAt = data['created_at'] ?? '';
     if (createdAt == null || createdAt.toString().isEmpty) {
       return SizedBox();
@@ -425,21 +418,24 @@ class OfferCard extends StatelessWidget {
           constraints: BoxConstraints(maxHeight: 380.h),
           child:
               // Image.network(image, fit: BoxFit.contain, width: Get.width),
-              FadeInImage(
-                placeholder: const AssetImage(Images.defaultImage),
-                image: NetworkImage(image),
-                width: double.infinity,
-                fit: BoxFit.contain,
-                imageErrorBuilder: (context, error, stackTrace) {
-                  return Center(
-                    child: Image.asset(
-                      Images.defaultImage,
-                      width: 150.w,
-                      height: 150.w,
-                    ),
-                  );
-                },
-                fadeInDuration: const Duration(milliseconds: 500),
+              WidgetZoom(
+                heroAnimationTag: 'tag$image',
+                zoomWidget: FadeInImage(
+                  placeholder: const AssetImage(Images.defaultImage),
+                  image: NetworkImage(image),
+                  width: double.infinity,
+                  fit: BoxFit.contain,
+                  imageErrorBuilder: (context, error, stackTrace) {
+                    return Center(
+                      child: Image.asset(
+                        Images.defaultImage,
+                        width: 150.w,
+                        height: 150.w,
+                      ),
+                    );
+                  },
+                  fadeInDuration: const Duration(milliseconds: 500),
+                ),
               ),
         ),
       ),
@@ -492,7 +488,9 @@ class OfferCard extends StatelessWidget {
             return buildBulletPoint(text: v);
           }).toList(),
         ),
-        _buildEngagementSection(),
+        // _buildEngagementSection(),
+        Divider(height: 12, color: Colors.grey.shade100),
+        _buildContentEngagement(),
       ],
     );
   }
@@ -527,6 +525,79 @@ class OfferCard extends StatelessWidget {
             ),
           ),
       ],
+    );
+  }
+
+  Widget _buildContentEngagement() {
+    return Column(
+      children: [
+        _buildEngagementHeader(),
+        Divider(height: 12, color: Colors.grey.shade100),
+        _buildEngagementActions(),
+      ],
+    );
+  }
+
+  Widget _buildEngagementHeader() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildAnimatedIcon(icon: Icons.favorite, color: Colors.red),
+            SizedBox(width: 6.w),
+            Text(
+              formatCount(
+                int.parse(data['offer_likes_count']?.toString() ?? '0'),
+              ),
+              style: TextStyle(
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w600,
+                color: Colors.black,
+              ),
+            ),
+          ],
+        ),
+        CustomText(
+          title: '${data['offer_comments_count']?.toString() ?? '0'} Comments',
+          fontSize: 12.sp,
+          color: Colors.grey,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEngagementActions() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        GestureDetector(
+          onTap: onLike,
+          child: EngagementAction(
+            color: data['is_offer_liked'] == true ? Colors.red : Colors.black,
+            icon: data['is_offer_liked'] == true
+                ? Icons.favorite
+                : Icons.favorite_border,
+            label: 'Like',
+          ),
+        ),
+        GestureDetector(
+          onTap: _handleComment,
+          child: EngagementAction(
+            hugeIcon: HugeIcons.strokeRoundedMessage02,
+            label: 'Comment',
+          ),
+        ),
+        EngagementAction(hugeIcon: HugeIcons.strokeRoundedSent, label: 'Share'),
+      ],
+    );
+  }
+
+  Widget _buildAnimatedIcon({required IconData icon, required Color color}) {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 200),
+      child: Icon(icon, size: 18.sp, color: color),
     );
   }
 

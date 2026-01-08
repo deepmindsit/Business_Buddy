@@ -14,7 +14,7 @@ class _NewFeedState extends State<NewFeed> {
   void initState() {
     super.initState();
     getIt<SpecialOfferController>().resetData();
-    controller.getFeeds();
+    controller.getFeeds(isRefresh: true);
   }
 
   @override
@@ -67,71 +67,82 @@ class _NewFeedState extends State<NewFeed> {
               ),
 
               /// 🔹 Feed List
-              AnimationLimiter(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  padding: EdgeInsets.symmetric(horizontal: 8.w),
-                  itemCount: controller.feedList.length,
-                  itemBuilder: (_, i) {
-                    final item = controller.feedList[i];
+              Obx(
+                () => AnimationLimiter(
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    padding: EdgeInsets.symmetric(horizontal: 8.w),
+                    itemCount: controller.feedList.length,
+                    itemBuilder: (_, i) {
+                      final item = controller.feedList[i];
 
-                    return AnimationConfiguration.staggeredList(
-                      position: i,
-                      duration: const Duration(milliseconds: 375),
-                      child: SlideAnimation(
-                        verticalOffset: 50,
-                        child: FadeInAnimation(
-                          child: item['type'] == 'offer'
-                              ? OfferCard(
-                                  data: item,
-                                  onLike: () => handleOfferLike(
-                                    item,
-                                    () => controller.getFeeds(
-                                      showLoading: false,
-                                      isRefresh: true,
+                      return AnimationConfiguration.staggeredList(
+                        position: i,
+                        duration: const Duration(milliseconds: 375),
+                        child: SlideAnimation(
+                          verticalOffset: 50,
+                          child: FadeInAnimation(
+                            child: item['type'] == 'offer'
+                                ? OfferCard(
+                                    data: item,
+                                    onLike: () => handleOfferLike(
+                                      item,
+                                      () async => await controller.getFeeds(
+                                        showLoading: false,
+                                        isRefresh: false,
+                                      ),
                                     ),
-                                  ),
-                                )
-                              : FeedCard(
-                                  data: item,
-                                  onLike: () => handleFeedLike(
-                                    item,
-                                    () => controller.getFeeds(
-                                      showLoading: false,
-                                      isRefresh: true,
+                                  )
+                                : FeedCard(
+                                    key: ValueKey(item['post_id'].toString()),
+                                    data: item,
+                                    onLike: () => handleFeedLike(
+                                      item,
+                                      () async => await controller.getFeeds(
+                                        showLoading: false,
+                                        isRefresh: false,
+                                      ),
                                     ),
-                                  ),
-                                  onFollow: () async {
-                                    if (controller.isFollowProcessing.isTrue)
-                                      return;
-
-                                    controller.isFollowProcessing.value = true;
-                                    try {
-                                      if (item['is_followed'] == true) {
-                                        await controller.unfollowBusiness(
-                                          item['follow_id'].toString(),
-                                        );
-                                      } else {
-                                        await controller.followBusiness(
-                                          item['business_id'].toString(),
-                                        );
+                                    onFollow: () async {
+                                      if (controller
+                                          .isFollowProcessing
+                                          .isTrue) {
+                                        return;
                                       }
-
-                                      item['is_followed'] =
-                                          !item['is_followed'];
-
-                                      controller.feedList.refresh();
-                                    } finally {
                                       controller.isFollowProcessing.value =
-                                          false;
-                                    }
-                                  },
-                                ),
+                                          true;
+                                      try {
+                                        final businessId = item['business_id']
+                                            .toString();
+                                        if (item['is_followed'] == true) {
+                                          await controller.unfollowBusiness(
+                                            item['follow_id'].toString(),
+                                          );
+                                        } else {
+                                          await controller.followBusiness(
+                                            businessId,
+                                          );
+                                        }
+
+                                        item['is_followed'] =
+                                            !item['is_followed'];
+
+                                        controller.feedList.refresh();
+                                        await controller.getFeeds(
+                                          showLoading: false,
+                                        );
+                                      } finally {
+                                        controller.isFollowProcessing.value =
+                                            false;
+                                      }
+                                    },
+                                  ),
+                          ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
               ),
 

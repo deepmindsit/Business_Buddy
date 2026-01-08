@@ -14,7 +14,7 @@ class CustomText extends StatelessWidget {
     required this.title,
     required this.fontSize,
     this.fontWeight = FontWeight.normal,
-    this.color,
+    this.color = Colors.black,
     this.maxLines = 1,
     this.textAlign = TextAlign.center,
     this.style,
@@ -22,8 +22,7 @@ class CustomText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final defaultColor = color ?? Theme.of(context).textTheme.bodyMedium?.color;
-
+    // final defaultColor = color ?? Theme.of(context).textTheme.bodyMedium?.color;
     return Text(
       title,
       maxLines: maxLines,
@@ -31,11 +30,7 @@ class CustomText extends StatelessWidget {
       textAlign: textAlign,
       style:
           style ??
-          TextStyle(
-            color: defaultColor,
-            fontSize: fontSize,
-            fontWeight: fontWeight,
-          ),
+          TextStyle(color: color, fontSize: fontSize, fontWeight: fontWeight),
     );
   }
 }

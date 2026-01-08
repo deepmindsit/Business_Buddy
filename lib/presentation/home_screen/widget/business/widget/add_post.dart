@@ -1,8 +1,5 @@
 import 'dart:io';
-
 import 'package:businessbuddy/utils/exported_path.dart';
-
-import '../../../../../components/video_preview.dart';
 
 class AddPost extends StatefulWidget {
   const AddPost({super.key});
@@ -17,6 +14,7 @@ class _AddPostState extends State<AddPost> {
   @override
   void initState() {
     controller.postImage.value = null;
+    controller.postVideo.value = null;
     controller.postAbout.text = '';
     super.initState();
   }
@@ -54,14 +52,18 @@ class _AddPostState extends State<AddPost> {
         children: [
           Obx(() {
             final file = controller.postImage.value;
+            final videoFile = controller.postVideo.value;
 
-            if (file != null && _isVideo(file)) {
+            if (videoFile != null && isVideo(videoFile)) {
               return ClipRRect(
                 borderRadius: BorderRadius.circular(12.r),
                 child: SizedBox(
                   width: Get.width * 0.7.w,
                   height: Get.height * 0.3.h,
-                  child: VideoPreview(file: file),
+                  child: VideoPreview(
+                    key: ValueKey(videoFile.path), // 🔥 THIS FIXES IT
+                    file: videoFile,
+                  ),
                 ),
               );
             }
@@ -114,9 +116,15 @@ class _AddPostState extends State<AddPost> {
             child: GestureDetector(
               onTap: () {
                 CustomFilePicker.showPickerBottomSheet(
+                  showVideo: true,
                   onFilePicked: (file) {
-                    controller.postImage.value = file;
-                    // controller.postImage.add(file);
+                    if (isVideo(file)) {
+                      controller.postVideo.value = file;
+                      controller.postImage.value = null;
+                    } else {
+                      controller.postImage.value = file;
+                      controller.postVideo.value = null;
+                    }
                   },
                 );
               },
@@ -156,14 +164,6 @@ class _AddPostState extends State<AddPost> {
               ),
             ),
     );
-  }
-
-  bool _isVideo(File file) {
-    final ext = file.path.toLowerCase();
-    return ext.endsWith('.mp4') ||
-        ext.endsWith('.mov') ||
-        ext.endsWith('.avi') ||
-        ext.endsWith('.mkv');
   }
 
   Widget _videoPreview(File file) {

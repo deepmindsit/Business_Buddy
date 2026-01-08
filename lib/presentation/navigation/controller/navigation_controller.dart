@@ -1,3 +1,5 @@
+import 'package:businessbuddy/presentation/home_screen/view/home_gate.dart';
+
 import '../../../utils/exported_path.dart';
 
 @lazySingleton
@@ -8,13 +10,13 @@ class NavigationController extends GetxController {
   final RxBool isSubPageOpen = false.obs;
 
   // 🔹 Stack of pages
-  final RxList<Widget> _pageStack = <Widget>[const HomeScreen()].obs;
+  final RxList<Widget> _pageStack = <Widget>[const HomeGateScreen()].obs;
 
   // 🔹 Public getter
   List<Widget> get pageStack => _pageStack;
 
   static final List<Widget> widgetOptions = <Widget>[
-    const HomeScreen(),
+    const HomeGateScreen(),
     const InboxList(),
     const BusinessPartner(),
     const SpecialOffer(),
@@ -29,7 +31,7 @@ class NavigationController extends GetxController {
 
     switch (index) {
       case 0:
-        _pageStack.add(const HomeScreen());
+        _pageStack.add(const HomeGateScreen());
         // topTabIndex.value = 1;
         // isTopTabSelected.value = true;
         break;

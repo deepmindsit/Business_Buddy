@@ -13,20 +13,33 @@ class LocationController extends GetxController {
 
   /// ✅ Call at app start
   Future<void> fetchInitialLocation() async {
-    final position = await _locationService.getCurrentLocation();
+    if (isLocationReady.value) return;
 
-    if (position != null) {
+    try {
+      final position = await _locationService.getCurrentLocation();
+      if (position == null) return;
+
       latitude.value = position.latitude;
       longitude.value = position.longitude;
       isLocationReady.value = true;
+
+      await LocalStorage.setString('address_source', 'gps');
+      print('latitude first===============>$latitude');
+      print('longitude first=============>$longitude');
+    } catch (e) {
+      debugPrint('Location error: $e');
     }
-    print('latitude first===============>$latitude');
-    print('longitude first=============>$longitude');
   }
 
   /// ✅ When user searches a new location
-  void updateLocation({required double lat, required double lng}) {
+  void updateLocation({required double lat, required double lng}) async {
     latitude.value = lat;
     longitude.value = lng;
+    isLocationReady.value = true;
+
+    await LocalStorage.setString('address_source', 'manual');
   }
+
+  Future<bool> get isManual async =>
+      await LocalStorage.getString('address_source') == 'manual';
 }

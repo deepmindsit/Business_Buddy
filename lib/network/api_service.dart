@@ -40,6 +40,7 @@ abstract class ApiService {
     @Part(name: "category_id") String? categoryId,
     @Part(name: "about_business") String? aboutBusiness,
     @Part(name: "lat_long") String? latLong,
+    @Part(name: "whatsapp_number") String? whatsappNo,
     @Part(name: "referral_code") String? referralCode, {
     @Part(name: 'image') File? profileImage,
     @Part(name: "attachments[]") List<MultipartFile>? attachment,
@@ -55,6 +56,7 @@ abstract class ApiService {
     @Part(name: "category_id") String? categoryId,
     @Part(name: "about_business") String? aboutBusiness,
     @Part(name: "lat_long") String? latLong,
+    @Part(name: "whatsapp_number") String? whatsappNo,
     @Part(name: "old_attachments[]") List<String> oldAttachment, {
     @Part(name: 'image') File? profileImage,
     @Part(name: "attachments[]") List<MultipartFile>? attachment,
@@ -95,6 +97,7 @@ abstract class ApiService {
     @Part(name: "business_id") String businessId,
     @Part(name: "details") String details, {
     @Part(name: 'image') File? profileImage,
+    @Part(name: 'video') File? videoFile,
   });
 
   @POST(AllUrl.editPost)
@@ -103,6 +106,7 @@ abstract class ApiService {
     @Part(name: "post_id") String postId,
     @Part(name: "details") String details, {
     @Part(name: 'image') File? profileImage,
+    @Part(name: 'video') File? videoFile,
   });
 
   @POST(AllUrl.addOffer)
@@ -363,6 +367,24 @@ abstract class ApiService {
 
   @POST(AllUrl.deleteAccount)
   Future<dynamic> deleteAccount(@Part(name: "user_id") String? userId);
+
+  @POST(AllUrl.updateFirebaseToken)
+  Future<dynamic> updateFirebaseToken(
+    @Part(name: "user_id") String userId,
+    @Part(name: "firebase_token") String token,
+  );
+
+  @POST(AllUrl.getNotification)
+  Future<dynamic> getNotification(
+    @Part(name: "user_id") String userId,
+    @Part(name: "page_number") String pageNo,
+  );
+
+  @POST(AllUrl.readNotification)
+  Future<dynamic> readNotification(
+    @Part(name: "user_id") String userId,
+    @Part(name: "notification_id") String notificationId,
+  );
 }
 
 //

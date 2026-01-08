@@ -12,8 +12,11 @@ class _BusinessDetailsState extends State<BusinessDetails> {
 
   @override
   void initState() {
-    controller.getMyBusinessDetails(Get.arguments['businessId']);
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkInternetAndShowPopup();
+      controller.getMyBusinessDetails(Get.arguments['businessId']);
+    });
   }
 
   @override
@@ -299,6 +302,7 @@ class _BusinessDetailsState extends State<BusinessDetails> {
   Widget _buildContactSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      // spacing: 12.h,
       children: [
         CustomText(
           title: 'Contact Information',
@@ -306,7 +310,7 @@ class _BusinessDetailsState extends State<BusinessDetails> {
           fontWeight: FontWeight.w700,
           color: Colors.black87,
         ),
-        SizedBox(height: 12.h),
+        // SizedBox(height: 12.h),
         _buildContactItem(
           icon: Icons.phone_outlined,
           title: 'Mobile Number',
@@ -314,7 +318,15 @@ class _BusinessDetailsState extends State<BusinessDetails> {
           onTap: () =>
               _makePhoneCall(controller.businessDetails['mobile_number'] ?? ''),
         ),
-        SizedBox(height: 12.h),
+        if (controller.businessDetails['whatsapp_number'] != null ||
+            controller.businessDetails['whatsapp_number'].toString().isNotEmpty)
+          _buildContactItem(
+            icon: Icons.business_center_outlined,
+            title: 'Whatsapp Number',
+            value: controller.businessDetails['whatsapp_number'] ?? '-',
+            onTap: () {},
+          ),
+        // SizedBox(height: 12.h),
         _buildContactItem(
           icon: Icons.location_on_outlined,
           title: 'Address',

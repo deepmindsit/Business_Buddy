@@ -27,18 +27,18 @@ class _SpecialOfferState extends State<SpecialOffer> {
       backgroundColor: Colors.white,
       body: Obx(() {
         /// 🔹 Initial Loading (Shimmer)
-        if (controller.isLoading.isTrue) {
-          return ListView.builder(
-            padding: EdgeInsets.symmetric(horizontal: 8.w),
-            itemCount: 5,
-            itemBuilder: (_, i) => const FeedShimmer(),
-          );
-        }
-
-        /// 🔹 Empty State
-        if (controller.offerList.isEmpty) {
-          return commonNoDataFound();
-        }
+        // if (controller.isLoading.isTrue) {
+        //   return ListView.builder(
+        //     padding: EdgeInsets.symmetric(horizontal: 8.w),
+        //     itemCount: 5,
+        //     itemBuilder: (_, i) => const FeedShimmer(),
+        //   );
+        // }
+        //
+        // /// 🔹 Empty State
+        // if (controller.offerList.isEmpty) {
+        //   return commonNoDataFound();
+        // }
 
         /// 🔹 Feeds + Pagination
         return NotificationListener<ScrollNotification>(
@@ -72,35 +72,47 @@ class _SpecialOfferState extends State<SpecialOffer> {
                 ),
 
                 /// 🔹 Feed List
-                AnimationLimiter(
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    padding: EdgeInsets.symmetric(horizontal: 8.w),
-                    itemCount: controller.offerList.length,
-                    itemBuilder: (_, i) {
-                      final item = controller.offerList[i];
-                      return AnimationConfiguration.staggeredList(
-                        position: i,
-                        duration: const Duration(milliseconds: 375),
-                        child: SlideAnimation(
-                          verticalOffset: 50.0,
-                          child: FadeInAnimation(
-                            child: OfferCard(
-                              data: item,
-                              onLike: () => handleOfferLike(
-                                item,
-                                () async => await controller.getSpecialOffer(
-                                  showLoading: false,
+                controller.isLoading.isTrue
+                    ? ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        padding: EdgeInsets.symmetric(horizontal: 8.w),
+                        itemCount: 5,
+                        itemBuilder: (_, i) => const FeedShimmer(),
+                      )
+                    : controller.offerList.isEmpty
+                    ? SizedBox(
+                        height: Get.height * 0.5.h,
+                        child: commonNoDataFound(),
+                      )
+                    : AnimationLimiter(
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          padding: EdgeInsets.symmetric(horizontal: 8.w),
+                          itemCount: controller.offerList.length,
+                          itemBuilder: (_, i) {
+                            final item = controller.offerList[i];
+                            return AnimationConfiguration.staggeredList(
+                              position: i,
+                              duration: const Duration(milliseconds: 375),
+                              child: SlideAnimation(
+                                verticalOffset: 50.0,
+                                child: FadeInAnimation(
+                                  child: OfferCard(
+                                    data: item,
+                                    onLike: () => handleOfferLike(
+                                      item,
+                                      () async => await controller
+                                          .getSpecialOffer(showLoading: false),
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
+                            );
+                          },
                         ),
-                      );
-                    },
-                  ),
-                ),
+                      ),
 
                 /// 🔹 Pagination Loader
                 Obx(

@@ -13,7 +13,7 @@ class _ExplorerState extends State<Explorer> {
 
   @override
   void initState() {
-    controller.getCategories();
+    controller.getCategories(isRefresh: true);
     super.initState();
   }
 

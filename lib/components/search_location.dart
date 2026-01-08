@@ -389,8 +389,8 @@ class _SearchLocationState extends State<SearchLocation> {
     controller.addressController.text = searchPlace['description'] ?? '';
     controller.address.value = searchPlace['description'] ?? '';
     getIt<LocationController>().updateLocation(
-      lat: searchPlace['lat'],
-      lng: searchPlace['lng'],
+      lat: double.parse(searchPlace['lat']),
+      lng: double.parse(searchPlace['lng']),
     );
     // Uncomment and use these as needed
     // Get.find<HomeControllerC>().area.value = searchPlace['area'];
@@ -405,15 +405,14 @@ class _SearchLocationState extends State<SearchLocation> {
     debugPrint('Longitude: ${searchPlace['lng']}');
 
     controller.addressList.value = [];
-    _isLoading.value = false;
     Get.back();
+    _isLoading.value = false;
   }
 
   void _showCurrentLocationLoader() {
-    showDialog(
-      context: context,
+    Get.dialog(
       barrierDismissible: false,
-      builder: (context) => AlertDialog(
+      AlertDialog(
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

@@ -27,6 +27,7 @@ Future<void> _toggleOfferLike(
   Map<String, dynamic> item,
   Future<void> Function() refresh,
 ) async {
+  print('item 1============>$item');
   final bool wasLiked = item['is_offer_liked'] ?? false;
   final int likeCount = int.tryParse(item['offer_likes_count'].toString()) ?? 0;
 
@@ -39,7 +40,7 @@ Future<void> _toggleOfferLike(
     } else {
       await _feedController.offerLikeBusiness(
         item['business_id'].toString(),
-        item['id'].toString(),
+        item['offer_id'].toString(),
       );
       item['offer_likes_count'] = likeCount + 1;
     }
@@ -101,4 +102,20 @@ void handleError(String error) {
   // Use proper logging in production
   debugPrint(error);
   // Consider integrating with a crash analytics service
+}
+
+
+void onWhatsApp(String phoneNumber) async {
+  String phone = '91$phoneNumber'; // country code + number
+  const String message = 'Hello, I am interested';
+
+  final Uri url = Uri.parse(
+    'https://wa.me/$phone?text=${Uri.encodeComponent(message)}',
+  );
+
+  if (await canLaunchUrl(url)) {
+    await launchUrl(url, mode: LaunchMode.externalApplication);
+  } else {
+    Get.snackbar('Error', 'WhatsApp not installed');
+  }
 }

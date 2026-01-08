@@ -49,6 +49,7 @@ class CustomFilePicker {
 
   static Future<void> showPickerBottomSheet({
     required Function(File file) onFilePicked,
+    bool showVideo = false,
   }) async {
     Get.bottomSheet(
       backgroundColor: Colors.white,
@@ -70,18 +71,21 @@ class CustomFilePicker {
                 File? file = await pickGallery();
                 if (file != null) onFilePicked(file);
               }),
-              _divider(),
-              _item(HugeIcons.strokeRoundedVideo02, 'Camera Video', () async {
-                Get.back();
-                final file = await pickVideoFromCamera();
-                if (file != null) onFilePicked(file);
-              }),
-              _divider(),
-              _item(HugeIcons.strokeRoundedVideo02, 'Gallery Video', () async {
-                Get.back();
-                final file = await pickVideoFromGallery();
-                if (file != null) onFilePicked(file);
-              }),
+
+              if(showVideo) _divider(),
+              if(showVideo)   _item(HugeIcons.strokeRoundedVideo02, 'Camera Video', () async {
+                  Get.back();
+                  final file = await pickVideoFromCamera();
+                  if (file != null) onFilePicked(file);
+                }),
+              if(showVideo)   _divider(),
+              if(showVideo)  _item(HugeIcons.strokeRoundedVideo02, 'Gallery Video', () async {
+                  Get.back();
+                  final file = await pickVideoFromGallery();
+                  if (file != null) onFilePicked(file);
+                }),
+
+
               // ListTile(
               //   leading: HugeIcon(icon: HugeIcons.strokeRoundedCamera02),
               //   title: CustomText(

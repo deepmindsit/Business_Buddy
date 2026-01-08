@@ -251,7 +251,7 @@ class _GlobalSearchState extends State<GlobalSearch> {
                             reviewCount:
                                 item['reviews_count']?.toString() ?? '0',
                             offerText: '${item['offers_count']} Offers ',
-                            phoneNumber: item['mobile_number'] ?? '',
+                            phoneNumber: item['whatsapp_number'] ?? '',
                             imagePath: item['image'] ?? '',
                             onCall: () {
                               if (!getIt<DemoService>().isDemo) {

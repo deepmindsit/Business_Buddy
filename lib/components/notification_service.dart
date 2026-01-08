@@ -22,7 +22,7 @@ class NotificationService {
 
   /// Initialize Firebase Messaging and Local Notifications
   Future<void> init() async {
-    // await _requestNotificationPermissions();
+    await requestNotificationPermissions();
     await _initPushNotifications();
     await _initLocalNotifications();
   }
@@ -30,8 +30,8 @@ class NotificationService {
   /// Request notification permissions
   Future<void> requestNotificationPermissions() async {
     await _firebaseMessaging.requestPermission();
-    await _firebaseMessaging.getToken();
-    // print('FCM Token: $token');
+    final token = await _firebaseMessaging.getToken();
+    print('FCM Token: $token');
   }
 
   /// Initialize push notifications
@@ -138,25 +138,23 @@ class NotificationService {
   /// Handle navigation based on notification data
   void handleNotificationNavigation(Map<String, dynamic> data, String from) {
     hasHandledNotificationNavigation = true;
+
+    if (data['action'] == 'message') {
+      getIt<NavigationController>().openSubPage(
+        SingleChat(chatId: data['chat_id']?.toString() ?? ''),
+      );
+    } else {
+      Get.offAllNamed(Routes.mainScreen);
+    }
     // Replace the whole stack with main screen, then push details
-    Get.offAllNamed(Routes.mainScreen);
+    //
 
     // Small delay to ensure main screen builds first
-    Future.delayed(Duration(milliseconds: 100), () {
-      // Get.toNamed(
-      //   Routes.newsDetails,
-      //   arguments: {'newsId': data['post_id'].toString()},
-      // );
-    });
-
-    // Get.toNamed(
-    //   Routes.newsDetails,
-    //   arguments: {'newsId': data['post_id'].toString()},
-    // );
-
-    // Get.toNamed(
-    //   Routes.newsDetails,
-    //   arguments: {'newsId': data['post_id'].toString()},
-    // );
+    // Future.delayed(Duration(milliseconds: 100), () {
+    //   // Get.toNamed(
+    //   //   Routes.newsDetails,
+    //   //   arguments: {'newsId': data['post_id'].toString()},
+    //   // );
+    // });
   }
 }

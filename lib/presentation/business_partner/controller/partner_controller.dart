@@ -14,7 +14,7 @@ class PartnerDataController extends GetxController {
   /* -------------------- FORM CONTROLLERS -------------------- */
 
   final recTitle = TextEditingController();
-  final location = TextEditingController();
+  // final location = TextEditingController();
   final invHistory = TextEditingController();
   final notes = TextEditingController();
   final iCanInvest = TextEditingController();
@@ -183,12 +183,12 @@ class PartnerDataController extends GetxController {
   }) async {
     if (showLoading) isAddLoading.value = true;
     try {
-      final lat = getIt<LocationController>().latitude.value.toString();
-      final lng = getIt<LocationController>().longitude.value.toString();
+      // final lat = getIt<LocationController>().latitude.value.toString();
+      // final lng = getIt<LocationController>().longitude.value.toString();
       final response = await _apiService.editBusinessReq(
         businessId,
         recTitle.text.trim(),
-        location.text.trim(),
+        addressController.text.trim(),
         '$lat,$lng',
         invType.value!,
         invCapacity.value!,
@@ -239,7 +239,7 @@ class PartnerDataController extends GetxController {
 
   void resetField() {
     recTitle.clear();
-    location.clear();
+    addressController.clear();
     invHistory.clear();
     iCanInvest.clear();
     notes.clear();
@@ -381,14 +381,16 @@ class PartnerDataController extends GetxController {
 
   void preselectedRecruitment(dynamic data) async {
     recTitle.text = data['name'] ?? '';
-    location.text = data['location'] ?? '';
+    lat.value = data['latitude'] ?? '';
+    lng.value = data['longitude'] ?? '';
+    addressController.text = data['location'] ?? '';
     invHistory.text = data['history'] ?? '';
     notes.text = data['note'] ?? '';
     iCanInvest.text = data['can_invest'] ?? '';
     invType.value = data['what_you_look_for_id'].toString();
     selectedBusiness.value = List<String>.from(data['category_names'] ?? []);
     invCapacity.value = data['investment_capacity_id']?.toString() ?? '';
-    await getCapacity(data['what_you_look_for_id'].toString()).then((v) {});
+    await getCapacity(data['what_you_look_for_id'].toString());
   }
 
   // ////////////////////////////////////////rec filter///////////////////////////////

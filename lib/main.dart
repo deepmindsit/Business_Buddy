@@ -1,6 +1,4 @@
-
 import 'package:businessbuddy/utils/exported_path.dart';
-
 
 @pragma('vm:entry-point')
 Future<void> backgroundHandler(RemoteMessage message) async {

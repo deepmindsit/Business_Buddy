@@ -4,47 +4,81 @@ import 'package:geolocator/geolocator.dart';
 @lazySingleton
 class HomeController extends GetxController {
   final ApiService _apiService = Get.find();
+
   final isLoading = false.obs;
   final isMainLoading = false.obs;
-  final isLikeAnimating = false.obs;
+
   final feedsList = [].obs;
   final categoryList = [].obs;
   final requirementList = [].obs;
   final sliderList = [].obs;
 
+  final _initialApiCalled = false.obs;
+
   @override
-  void onReady() async {
-    super.onReady();
-    await requestLocationPermission();
+  void onInit() {
+    super.onInit();
+
+    _loadInitialHome();
+    requestLocationPermission();
+
+    // 🔄 React to location readiness
+    final locationController = getIt<LocationController>();
+
+    ever(locationController.isLocationReady, (ready) {
+      if (ready == true && _initialApiCalled.value) {
+        getHomeApi(showLoading: false);
+      }
+    });
   }
 
-  Future<void> requestLocationPermission() async {
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      await Geolocator.openLocationSettings();
-      return;
-    }
+  Future<void> _loadInitialHome() async {
+    isMainLoading.value = true;
+    await getHomeApi();
+    _initialApiCalled.value = true;
+    isMainLoading.value = false;
+  }
 
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-    }
-    if (permission == LocationPermission.deniedForever) {
-      Get.snackbar("Permission Required", "Enable location from settings");
-      return;
+  /// ✅ Permission should NEVER block UI
+  Future<void> requestLocationPermission() async {
+    try {
+      final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        await Geolocator.openLocationSettings();
+        return;
+      }
+
+      var permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        Get.snackbar('Permission Required', 'Enable location from settings');
+      }
+    } catch (e) {
+      debugPrint('Location permission error: $e');
     }
   }
 
   Future<void> getHomeApi({bool showLoading = true}) async {
-    // Position position = await Geolocator.getCurrentPosition(
-    //   desiredAccuracy: LocationAccuracy.high,
-    // );
-    final lat = getIt<LocationController>().latitude.value.toString();
-    final lng = getIt<LocationController>().longitude.value.toString();
+    final locationController = getIt<LocationController>();
+
+    final hasLocation = locationController.isLocationReady.value;
+
+    final latLng = hasLocation
+        ? '${locationController.latitude.value},${locationController.longitude.value}'
+        : '';
+
+    // final lat = getIt<LocationController>().latitude.value.toString();
+    // final lng = getIt<LocationController>().longitude.value.toString();
+
     if (showLoading) isLoading.value = true;
-    final userId = await LocalStorage.getString('user_id') ?? '';
+
     try {
-      final response = await _apiService.getHome('$lat,$lng', userId);
+      final userId = await LocalStorage.getString('user_id') ?? '';
+
+      final response = await _apiService.getHome(latLng, userId);
 
       if (response['common']['status'] == true) {
         final data = response['data'] ?? {};

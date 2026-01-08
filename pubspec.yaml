@@ -72,6 +72,7 @@ dependencies:
   chewie: ^1.13.0
   video_player: ^2.10.1
   youtube_player_flutter: ^9.0.1
+  visibility_detector: ^0.4.0+2
 
 dev_dependencies:
   flutter_test:

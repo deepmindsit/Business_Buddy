@@ -23,4 +23,6 @@ class Images {
   static const offerImage = 'assets/images/offer_image.png';
   static const appIcon = 'assets/images/app_icon.png';
   static const appMaintenance = 'assets/images/app_maintenance.png';
+  static const noNotification = 'assets/images/ic_notitication.png';
+  static const video = 'assets/icons/ic_video.png';
 }

@@ -30,24 +30,45 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       checkInternetAndShowPopup();
-      _initializeData();
+
+      // 🚀 Load Home immediately
+      // _homeController.isMainLoading.value = true;
+      // _homeController.getHomeApi().then((_) {
+      //   _homeController.isMainLoading.value = false;
+      // });
+
+      // 🔄 Background tasks
+      // getIt<LocationController>().fetchInitialLocation();
+      // getIt<SearchNewController>().getLiveLocation();
       getIt<UpdateController>().checkForUpdate();
     });
   }
 
-  Future<void> _initializeData() async {
-    _homeController.isMainLoading.value = true;
-    final locationController = getIt<LocationController>();
-    await locationController.fetchInitialLocation();
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     checkInternetAndShowPopup();
+  //     _initializeData();
+  //     getIt<UpdateController>().checkForUpdate();
+  //     // getIt<FirebaseTokenController>().updateToken();
+  //   });
+  // }
 
-    final searchController = getIt<SearchNewController>();
-    searchController.getLiveLocation();
-
-    await _homeController.getHomeApi();
-    _homeController.isMainLoading.value = false;
-  }
+  // Future<void> _initializeData() async {
+  //   _homeController.isMainLoading.value = true;
+  //   // final locationController = getIt<LocationController>();
+  //   // await locationController.fetchInitialLocation();
+  //
+  //   final searchController = getIt<SearchNewController>();
+  //   searchController.getLiveLocation();
+  //
+  //   await _homeController.getHomeApi();
+  //   _homeController.isMainLoading.value = false;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -197,7 +218,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return FeedCard(
       data: item,
-      onLike: () => handleFeedLike(item, () => _homeController.getHomeApi()),
+      onLike: () => handleFeedLike(
+        item,
+        () => _homeController.getHomeApi(showLoading: false),
+      ),
       onFollow: () => _handleFeedFollow(item),
     );
   }

@@ -24,7 +24,6 @@ class FeedsController extends GetxController {
       hasMore = true;
       feedList.clear();
     }
-    // if (!hasMore) return;
 
     currentPage == 1 ? isLoading.value = showLoading : isLoadMore.value = true;
 
@@ -38,7 +37,9 @@ class FeedsController extends GetxController {
               getIt<SpecialOfferController>().lng.value.isNotEmpty
           ? '${getIt<SpecialOfferController>().lat.value},${getIt<SpecialOfferController>().lng.value}'
           : '';
-
+      print('location============<$location');
+      print('lat============<${'$lat,$lng'}');
+      print('userId============<$userId');
       final response = await _apiService.getFeeds(
         '$lat,$lng',
         userId,
@@ -77,6 +78,24 @@ class FeedsController extends GetxController {
       if (showLoading) isLoading.value = false;
       isLoadMore.value = false;
     }
+  }
+
+  void updateFollowStatusForBusiness(
+    String businessId,
+    bool isFollowed,
+    String? followId,
+  ) {
+    for (var feed in feedList) {
+      if (feed['business_id'].toString() == businessId) {
+        feed['is_followed'] = isFollowed;
+        if (isFollowed) {
+          feed['follow_id'] = followId;
+        } else {
+          feed['follow_id'] = null;
+        }
+      }
+    }
+    feedList.refresh();
   }
 
   final followingLoadingMap = <String, bool>{}.obs;
@@ -191,6 +210,7 @@ class FeedsController extends GetxController {
   }) async {
     offerLikeLoadingMap[offerId] = true;
     offerLikeLoadingMap.refresh();
+
     print('like businessId=========>$businessId');
     print('like offerId=========>$offerId');
     final userId = await LocalStorage.getString('user_id') ?? '';

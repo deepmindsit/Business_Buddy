@@ -14,6 +14,7 @@ class VideoPlayerControllerX extends GetxController {
 
   final isInitialized = false.obs;
   final isPlaying = false.obs;
+  final aspectR = (9 / 16).obs;
 
   @override
   void onInit() {
@@ -28,7 +29,7 @@ class VideoPlayerControllerX extends GetxController {
         initialVideoId: YoutubePlayer.convertUrlToId(url)!,
         flags: const YoutubePlayerFlags(
           autoPlay: false,
-          mute: false,
+          mute: true,
           loop: true,
         ),
       );
@@ -36,12 +37,17 @@ class VideoPlayerControllerX extends GetxController {
     } else {
       videoController = VideoPlayerController.networkUrl(Uri.parse(url));
       await videoController!.initialize();
+      // videoController!.pause();
+
+      // ✅ ORIGINAL ASPECT RATIO
+      aspectR.value = videoController!.value.aspectRatio;
 
       chewieController = ChewieController(
         videoPlayerController: videoController!,
-        autoPlay: false,
+        autoPlay: true,
         looping: true,
-        showControls: false,
+        showControls: true,
+
         allowFullScreen: false,
       );
 
@@ -60,6 +66,24 @@ class VideoPlayerControllerX extends GetxController {
       videoController!.play();
       isPlaying.value = true;
     }
+  }
+
+  void pause() {
+    if (isYouTube) {
+      youtubeController?.pause();
+    } else {
+      videoController?.pause();
+    }
+    isPlaying.value = false;
+  }
+
+  void play() {
+    if (isYouTube) {
+      youtubeController?.play();
+    } else {
+      videoController?.play();
+    }
+    isPlaying.value = true;
   }
 
   @override

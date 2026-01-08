@@ -121,6 +121,7 @@ class _ApiService implements ApiService {
     String? categoryId,
     String? aboutBusiness,
     String? latLong,
+    String? whatsappNo,
     String? referralCode, {
     File? profileImage,
     List<MultipartFile>? attachment,
@@ -150,6 +151,9 @@ class _ApiService implements ApiService {
     }
     if (latLong != null) {
       _data.fields.add(MapEntry('lat_long', latLong));
+    }
+    if (whatsappNo != null) {
+      _data.fields.add(MapEntry('whatsapp_number', whatsappNo));
     }
     if (referralCode != null) {
       _data.fields.add(MapEntry('referral_code', referralCode));
@@ -199,6 +203,7 @@ class _ApiService implements ApiService {
     String? categoryId,
     String? aboutBusiness,
     String? latLong,
+    String? whatsappNo,
     List<String> oldAttachment, {
     File? profileImage,
     List<MultipartFile>? attachment,
@@ -228,6 +233,9 @@ class _ApiService implements ApiService {
     }
     if (latLong != null) {
       _data.fields.add(MapEntry('lat_long', latLong));
+    }
+    if (whatsappNo != null) {
+      _data.fields.add(MapEntry('whatsapp_number', whatsappNo));
     }
     oldAttachment.forEach((i) {
       _data.fields.add(MapEntry('old_attachments[]', i));
@@ -428,6 +436,7 @@ class _ApiService implements ApiService {
     String businessId,
     String details, {
     File? profileImage,
+    File? videoFile,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -445,6 +454,19 @@ class _ApiService implements ApiService {
             MultipartFile.fromFileSync(
               profileImage.path,
               filename: profileImage.path.split(Platform.pathSeparator).last,
+            ),
+          ),
+        );
+      }
+    }
+    if (videoFile != null) {
+      if (videoFile != null) {
+        _data.files.add(
+          MapEntry(
+            'video',
+            MultipartFile.fromFileSync(
+              videoFile.path,
+              filename: videoFile.path.split(Platform.pathSeparator).last,
             ),
           ),
         );
@@ -475,6 +497,7 @@ class _ApiService implements ApiService {
     String postId,
     String details, {
     File? profileImage,
+    File? videoFile,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -491,6 +514,19 @@ class _ApiService implements ApiService {
             MultipartFile.fromFileSync(
               profileImage.path,
               filename: profileImage.path.split(Platform.pathSeparator).last,
+            ),
+          ),
+        );
+      }
+    }
+    if (videoFile != null) {
+      if (videoFile != null) {
+        _data.files.add(
+          MapEntry(
+            'video',
+            MultipartFile.fromFileSync(
+              videoFile.path,
+              filename: videoFile.path.split(Platform.pathSeparator).last,
             ),
           ),
         );
@@ -1758,6 +1794,75 @@ class _ApiService implements ApiService {
           .compose(
             _dio.options,
             'http://192.168.29.37/bizyaari/api/user/v1/delete_account',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch(_options);
+    final _value = _result.data;
+    return _value;
+  }
+
+  @override
+  Future<dynamic> updateFirebaseToken(String userId, String token) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    _data.fields.add(MapEntry('user_id', userId));
+    _data.fields.add(MapEntry('firebase_token', token));
+    final _options = _setStreamType<dynamic>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'http://192.168.29.37/bizyaari/api/user/v1/update_firebase_token',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch(_options);
+    final _value = _result.data;
+    return _value;
+  }
+
+  @override
+  Future<dynamic> getNotification(String userId, String pageNo) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    _data.fields.add(MapEntry('user_id', userId));
+    _data.fields.add(MapEntry('page_number', pageNo));
+    final _options = _setStreamType<dynamic>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'http://192.168.29.37/bizyaari/api/user/v1/get_notifications',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch(_options);
+    final _value = _result.data;
+    return _value;
+  }
+
+  @override
+  Future<dynamic> readNotification(String userId, String notificationId) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    _data.fields.add(MapEntry('user_id', userId));
+    _data.fields.add(MapEntry('notification_id', notificationId));
+    final _options = _setStreamType<dynamic>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'http://192.168.29.37/bizyaari/api/user/v1/read_notification',
             queryParameters: queryParameters,
             data: _data,
           )

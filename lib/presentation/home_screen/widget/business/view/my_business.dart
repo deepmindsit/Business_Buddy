@@ -116,7 +116,7 @@ class _LboScreenState extends State<LboScreen> {
             ),
           ),
         ),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.r)),
       ),
     );
   }

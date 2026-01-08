@@ -125,34 +125,6 @@ class CatItemCard extends StatelessWidget {
     );
   }
 
-  // Widget _buildHeader() {
-  //   return Row(
-  //     crossAxisAlignment: CrossAxisAlignment.start,
-  //     children: [
-  //       Expanded(
-  //         child: Column(
-  //           children: [
-  //             CustomText(
-  //               title: name,
-  //               fontSize: 16.sp,
-  //               textAlign: TextAlign.start,
-  //               maxLines: 2,
-  //               style: TextStyle(
-  //                 height: 1.2,
-  //                 fontSize: 16.sp,
-  //                 color: primaryColor,
-  //                 fontWeight: FontWeight.w700,
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-  //       SizedBox(width: 8.w),
-  //       _buildRating(),
-  //     ],
-  //   );
-  // }
-
   Widget _buildHeader() {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -214,46 +186,46 @@ class CatItemCard extends StatelessWidget {
     );
   }
 
-  Widget _buildRating() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          spacing: 2.w,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-              decoration: BoxDecoration(
-                color: primaryColor,
-                borderRadius: BorderRadius.circular(8.r),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.star, color: Colors.white, size: 14.sp),
-                  SizedBox(width: 4.w),
-                  CustomText(
-                    title: rating,
-                    fontSize: 12.sp,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 2.h),
-            CustomText(
-              title: 'By $reviewCount',
-              fontSize: 10.sp,
-              color: textLightGrey,
-            ),
-          ],
-        ),
-        if (isSearch != true) _buildCategory(),
-      ],
-    );
-  }
+  // Widget _buildRating() {
+  //   return Row(
+  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //     children: [
+  //       Row(
+  //         spacing: 2.w,
+  //         crossAxisAlignment: CrossAxisAlignment.center,
+  //         children: [
+  //           Container(
+  //             padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+  //             decoration: BoxDecoration(
+  //               color: primaryColor,
+  //               borderRadius: BorderRadius.circular(8.r),
+  //             ),
+  //             child: Row(
+  //               mainAxisSize: MainAxisSize.min,
+  //               children: [
+  //                 Icon(Icons.star, color: Colors.white, size: 14.sp),
+  //                 SizedBox(width: 4.w),
+  //                 CustomText(
+  //                   title: rating,
+  //                   fontSize: 12.sp,
+  //                   color: Colors.white,
+  //                   fontWeight: FontWeight.w600,
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //           SizedBox(height: 2.h),
+  //           CustomText(
+  //             title: 'By $reviewCount',
+  //             fontSize: 10.sp,
+  //             color: textLightGrey,
+  //           ),
+  //         ],
+  //       ),
+  //       if (isSearch != true) _buildCategory(),
+  //     ],
+  //   );
+  // }
 
   Widget _buildLocation() {
     return Row(
@@ -341,20 +313,59 @@ class CatItemCard extends StatelessWidget {
   Widget _buildActionButtons() {
     return Row(
       children: [
-        Visibility(
-          visible: isSelf == false,
-          child: Expanded(
-            flex: 2,
-            child: _buildActionButton(
-              icon: HugeIcons.strokeRoundedCall02,
-              text: 'Call',
-              onPressed: onCall,
-              backgroundColor: Colors.transparent,
+        /// Call
+        if (!isSelf)
+          Expanded(
+            flex: 1,
+            child: GestureDetector(
+              onTap: onCall,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  border: Border.all(color: Colors.red),
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                child: HugeIcon(
+                  icon: HugeIcons.strokeRoundedCall02,
+                  size: 16.sp,
+                  color: Colors.black,
+                ),
+              ),
             ),
           ),
-        ),
-        SizedBox(width: 8.w),
-        if (!isFollowed && isSelf == false)
+
+        if (!isSelf) SizedBox(width: 4.w),
+
+        /// WhatsApp
+        if (!isSelf || phoneNumber.isNotEmpty)
+          GestureDetector(
+            onTap: () {
+              if (!getIt<DemoService>().isDemo) {
+                ToastUtils.showLoginToast();
+                return;
+              }
+              onWhatsApp(phoneNumber);
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+                border: Border.all(color: Colors.red),
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              child: HugeIcon(
+                icon: HugeIcons.strokeRoundedWhatsapp,
+                size: 16.sp,
+                color: Colors.green,
+              ),
+            ),
+          ),
+
+        if (!isSelf) SizedBox(width: 4.w),
+
+        /// Follow
+        if (!isFollowed && !isSelf)
           Expanded(
             flex: 2,
             child: _buildActionButton(
@@ -364,7 +375,10 @@ class CatItemCard extends StatelessWidget {
               backgroundColor: Colors.transparent,
             ),
           ),
-        SizedBox(width: 8.w),
+
+        if (!isFollowed && !isSelf) SizedBox(width: 4.w),
+
+        /// Offer
         Expanded(
           flex: 3,
           child: _buildActionButton(
@@ -377,6 +391,58 @@ class CatItemCard extends StatelessWidget {
       ],
     );
   }
+
+  // Widget _buildActionButtons() {
+  //   return Row(
+  //     children: [
+  //       Visibility(
+  //         visible: isSelf == false,
+  //         child: Expanded(
+  //           flex: 2,
+  //           child: _buildActionButton(
+  //             icon: HugeIcons.strokeRoundedCall02,
+  //             text: 'Call',
+  //             onPressed: onCall,
+  //             backgroundColor: Colors.transparent,
+  //           ),
+  //         ),
+  //       ),
+  //       Visibility(
+  //         visible: isSelf == false,
+  //         child: Expanded(
+  //           flex: 2,
+  //           child: _buildActionButton(
+  //             icon: HugeIcons.strokeRoundedCall02,
+  //             text: 'Whatsapp',
+  //             onPressed: onCall,
+  //             backgroundColor: Colors.transparent,
+  //           ),
+  //         ),
+  //       ),
+  //       SizedBox(width: 8.w),
+  //       if (!isFollowed && isSelf == false)
+  //         Expanded(
+  //           flex: 2,
+  //           child: _buildActionButton(
+  //             icon: HugeIcons.strokeRoundedUserAdd02,
+  //             text: 'Follow',
+  //             onPressed: onFollow,
+  //             backgroundColor: Colors.transparent,
+  //           ),
+  //         ),
+  //       SizedBox(width: 8.w),
+  //       Expanded(
+  //         flex: 3,
+  //         child: _buildActionButton(
+  //           icon: HugeIcons.strokeRoundedDiscount,
+  //           text: offerText,
+  //           onPressed: () => AllDialogs().offerDialog(offers),
+  //           backgroundColor: primaryColor,
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
   Widget _buildActionButton({
     required var icon,

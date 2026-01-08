@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:businessbuddy/utils/exported_path.dart';
 
 class EditPost extends StatefulWidget {
@@ -13,6 +15,7 @@ class _EditPostState extends State<EditPost> {
   @override
   void initState() {
     controller.postImage.value = null;
+    controller.postVideo.value = null;
     controller.postAbout.text = Get.arguments['postData']['details'] ?? '';
     super.initState();
   }
@@ -49,32 +52,107 @@ class _EditPostState extends State<EditPost> {
         clipBehavior: Clip.none,
         children: [
           Obx(() {
-            final image = Get.arguments['postData']['image'];
-            final imageFile = controller.postImage.value;
-            final ImageProvider<Object> imageProvider = imageFile != null
-                ? FileImage(imageFile)
-                : NetworkImage(image);
-            return ClipRRect(
-              borderRadius: BorderRadius.circular(12.r),
-              child: FadeInImage(
-                width: Get.width * 0.7.w,
-                height: Get.height * 0.3.h,
-                placeholder: const AssetImage(Images.logo),
-                image: imageProvider,
-                imageErrorBuilder: (context, error, stackTrace) {
-                  return Image.asset(
-                    Images.defaultImage,
-                    width: Get.width * 0.7.w,
-                    height: Get.height * 0.3.h,
-                    fit: BoxFit.cover,
-                  );
-                },
-                fit: BoxFit.cover,
-                placeholderFit: BoxFit.contain,
-                fadeInDuration: const Duration(milliseconds: 300),
-              ),
+            final postData = Get.arguments['postData'] ?? {};
+
+            final String imageUrl = postData['image'] ?? '';
+            final String videoUrl = postData['video'] ?? '';
+            final String mediaType = postData['media_type'] ?? '';
+
+            final File? pickedImage = controller.postImage.value;
+            final File? pickedVideo = controller.postVideo.value;
+
+            final double width = Get.width * 0.7;
+            final double height = Get.height * 0.3;
+
+            /// 1️⃣ Picked video (highest priority)
+            if (pickedVideo != null && isVideo(pickedVideo)) {
+              return _videoContainer(
+                child: VideoPreview(
+                  key: ValueKey(pickedVideo.path),
+                  file: pickedVideo,
+                ),
+                width: width,
+                height: height,
+              );
+            }
+
+            /// 2️⃣ Picked image
+            if (pickedImage != null) {
+              return _imageContainer(
+                imageProvider: FileImage(pickedImage),
+                width: width,
+                height: height,
+              );
+            }
+
+            /// 3️⃣ API video
+            if (mediaType == 'video' && videoUrl.isNotEmpty) {
+              return _videoContainer(
+                child: InstagramVideoPlayer(url: videoUrl),
+                width: width,
+                height: height,
+              );
+            }
+
+            /// 4️⃣ API image
+            if (imageUrl.isNotEmpty) {
+              return _imageContainer(
+                imageProvider: NetworkImage(imageUrl),
+                width: width,
+                height: height,
+              );
+            }
+
+            /// 5️⃣ Fallback
+            return _imageContainer(
+              imageProvider: const AssetImage(Images.defaultImage),
+              width: width,
+              height: height,
             );
           }),
+
+          // Obx(() {
+          //   final image = Get.arguments['postData']['image'] ?? '';
+          //   final video = Get.arguments['postData']['video'] ?? '';
+          //   final type = Get.arguments['postData']['media_type'] ?? '';
+          //   final imageFile = controller.postImage.value;
+          //   final videoFile = controller.postVideo.value;
+          //
+          //   if (videoFile != null && isVideo(videoFile)) {
+          //     return ClipRRect(
+          //       borderRadius: BorderRadius.circular(12.r),
+          //       child: SizedBox(
+          //         width: Get.width * 0.7.w,
+          //         height: Get.height * 0.3.h,
+          //         child: VideoPreview(file: videoFile),
+          //       ),
+          //     );
+          //   }
+          //
+          //   final ImageProvider<Object> imageProvider = imageFile != null
+          //       ? FileImage(imageFile)
+          //       : NetworkImage(image);
+          //   return ClipRRect(
+          //     borderRadius: BorderRadius.circular(12.r),
+          //     child: FadeInImage(
+          //       width: Get.width * 0.7.w,
+          //       height: Get.height * 0.3.h,
+          //       placeholder: const AssetImage(Images.logo),
+          //       image: imageProvider,
+          //       imageErrorBuilder: (context, error, stackTrace) {
+          //         return Image.asset(
+          //           Images.defaultImage,
+          //           width: Get.width * 0.7.w,
+          //           height: Get.height * 0.3.h,
+          //           fit: BoxFit.cover,
+          //         );
+          //       },
+          //       fit: BoxFit.cover,
+          //       placeholderFit: BoxFit.contain,
+          //       fadeInDuration: const Duration(milliseconds: 300),
+          //     ),
+          //   );
+          // }),
           Positioned(
             bottom: 0,
             right: -10,
@@ -82,8 +160,13 @@ class _EditPostState extends State<EditPost> {
               onTap: () {
                 CustomFilePicker.showPickerBottomSheet(
                   onFilePicked: (file) {
-                    controller.postImage.value = file;
-                    // controller.postImage.add(file);
+                    if (isVideo(file)) {
+                      controller.postVideo.value = file;
+                      controller.postImage.value = null;
+                    } else {
+                      controller.postImage.value = file;
+                      controller.postVideo.value = null;
+                    }
                   },
                 );
               },
@@ -124,6 +207,44 @@ class _EditPostState extends State<EditPost> {
                 ),
               ),
             ),
+    );
+  }
+
+  Widget _imageContainer({
+    required ImageProvider imageProvider,
+    required double width,
+    required double height,
+  }) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12.r),
+      child: FadeInImage(
+        width: width,
+        height: height,
+        placeholder: const AssetImage(Images.logo),
+        image: imageProvider,
+        fit: BoxFit.cover,
+        placeholderFit: BoxFit.contain,
+        fadeInDuration: const Duration(milliseconds: 300),
+        imageErrorBuilder: (_, __, ___) {
+          return Image.asset(
+            Images.defaultImage,
+            width: width,
+            height: height,
+            fit: BoxFit.cover,
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _videoContainer({
+    required Widget child,
+    required double width,
+    required double height,
+  }) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12.r),
+      child: SizedBox(width: width, height: height, child: child),
     );
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:businessbuddy/utils/exported_path.dart';
 
 Widget buildReviewTile({
@@ -98,24 +100,52 @@ Widget buildGridImages(dynamic data, String type, {bool isEdit = false}) {
         },
         child: Stack(
           children: [
-            Container(
-              width: 100.w,
-              height: 110.h,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8.r),
-                border: Border.all(color: Colors.grey.shade400, width: 1.5),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8.r),
-                child: FadeInImage.assetNetwork(
-                  placeholder: Images.defaultImage,
-                  image: image['image'] ?? '',
-                  fit: BoxFit.contain,
-                  imageErrorBuilder: (_, __, ___) =>
-                      Image.asset(Images.defaultImage, fit: BoxFit.cover),
+            if (image['media_type'] == 'video')
+              Container(
+                width: 100.w,
+                height: 110.h,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8.r),
+                  border: Border.all(color: Colors.grey.shade400, width: 1.5),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8.r),
+                  child: Center(
+                    child: HugeIcon(
+                      icon: HugeIcons.strokeRoundedVideoReplay,
+                      color: Colors.grey.shade400,
+                      size: 40.r,
+                    ),
+                  ),
+
+                  // FadeInImage(
+                  //   placeholder: AssetImage(Images.video),
+                  //   image: AssetImage(Images.video),
+                  //   fit: BoxFit.cover,
+                  //   imageErrorBuilder: (_, __, ___) =>
+                  //       Image.asset(Images.video, fit: BoxFit.cover),
+                  // ),
+                ),
+              )
+            else
+              Container(
+                width: 100.w,
+                height: 110.h,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8.r),
+                  border: Border.all(color: Colors.grey.shade400, width: 1.5),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8.r),
+                  child: FadeInImage.assetNetwork(
+                    placeholder: Images.defaultImage,
+                    image: image['image'] ?? '',
+                    fit: BoxFit.contain,
+                    imageErrorBuilder: (_, __, ___) =>
+                        Image.asset(Images.defaultImage, fit: BoxFit.cover),
+                  ),
                 ),
               ),
-            ),
             // Overlay for unapproved images
             if (!isApproved)
               Container(
@@ -182,6 +212,15 @@ Widget buildGridImages(dynamic data, String type, {bool isEdit = false}) {
       );
     },
   );
+}
+
+bool isVideo(File file) {
+  final ext = file.path.toLowerCase();
+  print('extension+============>$ext');
+  return ext.endsWith('.mp4') ||
+      ext.endsWith('.mov') ||
+      ext.endsWith('.avi') ||
+      ext.endsWith('.mkv');
 }
 
 void showPostBottomSheet(
@@ -378,24 +417,37 @@ Future<dynamic> _showPost(LBOController controller) {
                               borderRadius: BorderRadius.circular(16),
                               child: AspectRatio(
                                 aspectRatio: 1,
-                                child: FadeInImage(
-                                  placeholder: AssetImage(Images.defaultImage),
-                                  image: NetworkImage(
-                                    controller.singlePost['image']
-                                            ?.toString() ??
-                                        '',
-                                  ),
-                                  imageErrorBuilder:
-                                      (context, error, stackTrace) {
-                                        return Image.asset(
+                                child:
+                                    controller.singlePost['media_type'] ==
+                                        'video'
+                                    ? InstagramVideoPlayer(
+                                        url:
+                                            controller.singlePost['video']
+                                                ?.toString() ??
+                                            '',
+                                      )
+                                    : FadeInImage(
+                                        placeholder: AssetImage(
                                           Images.defaultImage,
-                                          fit: BoxFit.contain,
-                                        );
-                                      },
-                                  fit: BoxFit.contain,
-                                  placeholderFit: BoxFit.contain,
-                                  fadeInDuration: Duration(milliseconds: 300),
-                                ),
+                                        ),
+                                        image: NetworkImage(
+                                          controller.singlePost['image']
+                                                  ?.toString() ??
+                                              '',
+                                        ),
+                                        imageErrorBuilder:
+                                            (context, error, stackTrace) {
+                                              return Image.asset(
+                                                Images.defaultImage,
+                                                fit: BoxFit.contain,
+                                              );
+                                            },
+                                        fit: BoxFit.contain,
+                                        placeholderFit: BoxFit.contain,
+                                        fadeInDuration: Duration(
+                                          milliseconds: 300,
+                                        ),
+                                      ),
                               ),
                             ),
                           ),

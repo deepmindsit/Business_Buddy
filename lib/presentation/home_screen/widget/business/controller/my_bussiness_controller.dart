@@ -135,15 +135,21 @@ class LBOController extends GetxController {
   final businessKey = GlobalKey<FormState>();
 
   final shopName = TextEditingController();
-  final address = TextEditingController();
+  // final address = TextEditingController();
   final referCode = TextEditingController();
   final numberCtrl = TextEditingController();
+  final whatsappCtrl = TextEditingController();
   final aboutCtrl = TextEditingController();
   final offering = RxnString();
   final attachments = <File>[].obs;
   final oldAttachments = [].obs;
   final selectedBusiness = RxnInt();
   final isAddBusinessLoading = false.obs;
+  // final address = ''.obs;
+  final addressList = [].obs;
+  final addressController = TextEditingController();
+  final lat = ''.obs;
+  final lng = ''.obs;
 
   Future<void> addNewBusiness() async {
     isAddBusinessLoading.value = true;
@@ -154,18 +160,19 @@ class LBOController extends GetxController {
       // Position position = await Geolocator.getCurrentPosition(
       //   desiredAccuracy: LocationAccuracy.high,
       // );
-      final lat = getIt<LocationController>().latitude.value.toString();
-      final lng = getIt<LocationController>().longitude.value.toString();
+      // final lat = getIt<LocationController>().latitude.value.toString();
+      // final lng = getIt<LocationController>().longitude.value.toString();
       final docs = await prepareDocuments(attachments);
 
       final response = await _apiService.addBusiness(
         userId,
         shopName.text.trim(),
-        address.text.trim(),
+        addressController.text.trim(),
         numberCtrl.text.trim(),
         offering.value,
         aboutCtrl.text.trim(),
         '$lat,$lng',
+        whatsappCtrl.text.trim(),
         referCode.text.trim(),
         profileImage: profileImage.value,
         attachment: docs,
@@ -188,18 +195,19 @@ class LBOController extends GetxController {
   Future<void> editBusiness(String businessId) async {
     isAddBusinessLoading.value = true;
     try {
-      final lat = getIt<LocationController>().latitude.value.toString();
-      final lng = getIt<LocationController>().longitude.value.toString();
+      // final lat = getIt<LocationController>().latitude.value.toString();
+      // final lng = getIt<LocationController>().longitude.value.toString();
       final docs = await prepareDocuments(attachments);
 
       final response = await _apiService.editBusiness(
         businessId,
         shopName.text.trim(),
-        address.text.trim(),
+        addressController.text.trim(),
         numberCtrl.text.trim(),
         offering.value,
         aboutCtrl.text.trim(),
         '$lat,$lng',
+        whatsappCtrl.text.trim(),
         List<String>.from(oldAttachments),
         profileImage: profileImage.value,
         attachment: docs,
@@ -221,21 +229,28 @@ class LBOController extends GetxController {
 
   void clearData() {
     shopName.clear();
-    address.clear();
+    addressController.clear();
     numberCtrl.clear();
+    whatsappCtrl.clear();
     aboutCtrl.clear();
     referCode.clear();
     offering.value = null;
+    offering.value = null;
     profileImage.value = null;
     attachments.clear();
+    addressList.clear();
+    lat.value = '';
+    lng.value = '';
   }
 
   void setBusinessDetails(Map<String, dynamic> data) {
     businessDetails.value = data;
-
     shopName.text = data['name'] ?? '';
-    address.text = data['address'] ?? '';
+    lat.value = data['latitude'] ?? '';
+    lng.value = data['longitude'] ?? '';
+    addressController.text = data['address'] ?? '';
     numberCtrl.text = data['mobile_number'] ?? '';
+    whatsappCtrl.text = data['whatsapp_number'] ?? '';
     offering.value = data['category_id']?.toString();
     aboutCtrl.text = data['about_business'] ?? '';
     oldAttachments.value = data['attachments'] ?? [];
@@ -259,6 +274,7 @@ class LBOController extends GetxController {
   /// ADD  NEW POST &&& EDIT POST
   /// ------------------------
   final postImage = Rx<File?>(null);
+  final postVideo = Rx<File?>(null);
   final postAbout = TextEditingController();
   final isPostLoading = false.obs;
 
@@ -272,6 +288,7 @@ class LBOController extends GetxController {
         selectedBusinessId.value,
         postAbout.text.trim(),
         profileImage: postImage.value,
+        videoFile: postVideo.value,
       );
 
       if (response['common']['status'] == true) {
@@ -295,6 +312,7 @@ class LBOController extends GetxController {
         postId,
         postAbout.text.trim(),
         profileImage: postImage.value,
+        videoFile: postVideo.value,
       );
 
       if (response['common']['status'] == true) {
