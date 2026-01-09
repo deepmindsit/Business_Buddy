@@ -159,6 +159,7 @@ class _EditPostState extends State<EditPost> {
             child: GestureDetector(
               onTap: () {
                 CustomFilePicker.showPickerBottomSheet(
+                  showVideo: true,
                   onFilePicked: (file) {
                     if (isVideo(file)) {
                       controller.postVideo.value = file;

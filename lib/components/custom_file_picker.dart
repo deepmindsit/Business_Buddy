@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:businessbuddy/components/custom_text.dart';
+import 'package:businessbuddy/utils/exported_path.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -35,7 +36,7 @@ class CustomFilePicker {
   static Future<File?> pickVideoFromCamera() async {
     final XFile? video = await ImagePicker().pickVideo(
       source: ImageSource.camera,
-      maxDuration: const Duration(minutes: 2),
+      maxDuration: const Duration(seconds: 15), // 🎯 Camera level limit
     );
     return video != null ? File(video.path) : null;
   }
@@ -44,7 +45,9 @@ class CustomFilePicker {
     final XFile? video = await ImagePicker().pickVideo(
       source: ImageSource.gallery,
     );
-    return video != null ? File(video.path) : null;
+    if (video == null) return null;
+
+    return await _validateVideoDuration(File(video.path));
   }
 
   static Future<void> showPickerBottomSheet({
@@ -72,19 +75,24 @@ class CustomFilePicker {
                 if (file != null) onFilePicked(file);
               }),
 
-              if(showVideo) _divider(),
-              if(showVideo)   _item(HugeIcons.strokeRoundedVideo02, 'Camera Video', () async {
+              if (showVideo) _divider(),
+              if (showVideo)
+                _item(HugeIcons.strokeRoundedVideo02, 'Camera Video', () async {
                   Get.back();
                   final file = await pickVideoFromCamera();
                   if (file != null) onFilePicked(file);
                 }),
-              if(showVideo)   _divider(),
-              if(showVideo)  _item(HugeIcons.strokeRoundedVideo02, 'Gallery Video', () async {
-                  Get.back();
-                  final file = await pickVideoFromGallery();
-                  if (file != null) onFilePicked(file);
-                }),
-
+              if (showVideo) _divider(),
+              if (showVideo)
+                _item(
+                  HugeIcons.strokeRoundedVideo02,
+                  'Gallery Video',
+                  () async {
+                    Get.back();
+                    final file = await pickVideoFromGallery();
+                    if (file != null) onFilePicked(file);
+                  },
+                ),
 
               // ListTile(
               //   leading: HugeIcon(icon: HugeIcons.strokeRoundedCamera02),
@@ -182,5 +190,20 @@ class CustomFilePicker {
 
   static Widget _divider() {
     return Divider(height: 5, thickness: 0.5);
+  }
+
+  static Future<File?> _validateVideoDuration(File file) async {
+    final controller = VideoPlayerController.file(file);
+
+    await controller.initialize();
+    final duration = controller.value.duration;
+    await controller.dispose();
+
+    if (duration.inSeconds > 15) {
+      ToastUtils.showWarningToast('Video must be 15 seconds or less');
+      return null;
+    }
+
+    return file;
   }
 }

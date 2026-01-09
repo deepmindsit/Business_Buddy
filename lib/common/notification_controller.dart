@@ -14,26 +14,26 @@ class NotificationController extends GetxController {
 
   // =================== FETCH dashboard Data ===================
   /// Fetches getNotificationInitial
-  Future<void> getNotificationInitial({bool showLoading = true}) async {
+  Future<void> getNotificationInitial({
+    bool isRefresh = false,
+    bool showLoading = true,
+  }) async {
     if (showLoading) isLoading.value = true;
     final userId = await LocalStorage.getString('user_id') ?? '';
-    print('userId');
-    print(userId);
     page.value = 1;
-    notificationData.clear();
+    if (isRefresh && page.value == 1) notificationData.clear();
     try {
       final res = await _apiService.getNotification(
         userId,
         page.value.toString(),
-        // perPage.value.toString(),
       );
       if (res['common']['status'] == true) {
         notificationData.value = res['data']['notifications'] ?? [];
       }
     } catch (e) {
-      ToastUtils.showWarningToast(
-        'Something went wrong. Please try again later.',
-      );
+      // ToastUtils.showWarningToast(
+      //   'Something went wrong. Please try again later.',
+      // );
       // debugPrint("Login error: $e");
     } finally {
       if (showLoading) isLoading.value = false;
@@ -49,7 +49,6 @@ class NotificationController extends GetxController {
       final res = await _apiService.getNotification(
         userId,
         page.value.toString(),
-        // perPage.value.toString(),
       );
       if (res['common']['status'] == true) {
         final List fetchedPosts = res['data']['notifications'];
@@ -60,9 +59,9 @@ class NotificationController extends GetxController {
         }
       }
     } catch (e) {
-      ToastUtils.showWarningToast(
-        'Something went wrong. Please try again later.',
-      );
+      // ToastUtils.showWarningToast(
+      //   'Something went wrong. Please try again later.',
+      // );
       // debugPrint("Login error: $e");
     } finally {
       isMoreLoading.value = false;
@@ -75,13 +74,7 @@ class NotificationController extends GetxController {
       final res = await _apiService.readNotification(userId, notificationId);
       if (res['common']['status'] == true) {
         await getNotificationInitial(showLoading: false);
-        // notificationData.value = res['data'] ?? [];
       }
-    } catch (e) {
-      ToastUtils.showWarningToast(
-        'Something went wrong. Please try again later.',
-      );
-      // debugPrint("Login error: $e");
-    } finally {}
+    } catch (e) {}
   }
 }

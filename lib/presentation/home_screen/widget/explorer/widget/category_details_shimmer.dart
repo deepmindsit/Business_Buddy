@@ -1,5 +1,3 @@
-
-
 import 'package:businessbuddy/utils/exported_path.dart';
 
 class CategoryDetailShimmer extends StatelessWidget {
@@ -22,11 +20,8 @@ class CategoryDetailShimmer extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               itemCount: 5,
               separatorBuilder: (_, __) => SizedBox(width: 8.w),
-              itemBuilder: (_, __) => _shimmerBox(
-                width: 64.w,
-                height: 64.h,
-                radius: 12,
-              ),
+              itemBuilder: (_, __) =>
+                  _shimmerBox(width: 64.w, height: 64.h, radius: 12),
             ),
           ),
 
@@ -120,11 +115,7 @@ class CategoryDetailShimmer extends StatelessWidget {
     );
   }
 
-  Widget _shimmerBox({
-    double height = 12,
-    double? width,
-    double radius = 8,
-  }) {
+  Widget _shimmerBox({double height = 12, double? width, double radius = 8}) {
     return Shimmer.fromColors(
       baseColor: Colors.grey.shade300,
       highlightColor: Colors.grey.shade100,

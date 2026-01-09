@@ -1,10 +1,23 @@
 import 'package:businessbuddy/utils/exported_path.dart';
 
-class OfferCard extends StatelessWidget {
+class OfferCard extends StatefulWidget {
   final dynamic data;
+  final dynamic followButton;
   final void Function() onLike;
-  OfferCard({super.key, this.data, required this.onLike});
+  final void Function()? onFollow;
+  const OfferCard({
+    super.key,
+    this.data,
+    required this.onLike,
+    this.onFollow,
+    this.followButton,
+  });
 
+  @override
+  State<OfferCard> createState() => _OfferCardState();
+}
+
+class _OfferCardState extends State<OfferCard> {
   final navController = getIt<NavigationController>();
 
   @override
@@ -68,7 +81,7 @@ class OfferCard extends StatelessWidget {
   }
 
   Widget _buildHeader() {
-    final String image = data['business_profile_image'] ?? '';
+    final String image = widget.data['business_profile_image'] ?? '';
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -107,8 +120,8 @@ class OfferCard extends StatelessWidget {
             onTap: () {
               navController.openSubPage(
                 CategoryDetailPage(
-                  title: data['business_name'] ?? '',
-                  businessId: data['business_id']?.toString() ?? '',
+                  title: widget.data['business_name'] ?? '',
+                  businessId: widget.data['business_id']?.toString() ?? '',
                 ),
               );
             },
@@ -117,7 +130,7 @@ class OfferCard extends StatelessWidget {
               children: [
                 /// BUSINESS NAME
                 CustomText(
-                  title: data['business_name'] ?? '',
+                  title: widget.data['business_name'] ?? '',
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w700,
                   color: Colors.black87,
@@ -133,7 +146,7 @@ class OfferCard extends StatelessWidget {
                     /// CATEGORY (FIXED)
                     Flexible(
                       child: CustomText(
-                        title: data['category'] ?? '',
+                        title: widget.data['category'] ?? '',
                         fontSize: 10.sp,
                         color: Colors.grey.shade600,
                         maxLines: 1,
@@ -161,111 +174,13 @@ class OfferCard extends StatelessWidget {
         SizedBox(width: 8.w),
 
         /// FOLLOW BUTTON
-        _buildFollowButton(),
+        widget.followButton ?? SizedBox(),
+        // _buildFollowButton(),
       ],
     );
   }
 
   // Widget _buildHeader() {
-  //   final image = data['business_profile_image'] ?? '';
-  //   return Row(
-  //     spacing: 4.w,
-  //     children: [
-  //       CircleAvatar(
-  //         radius: 18.r,
-  //         backgroundColor: Colors.grey.shade100,
-  //         child: ClipOval(
-  //           child: FadeInImage(
-  //             placeholder: const AssetImage(Images.defaultImage),
-  //             image: NetworkImage(image),
-  //             width: double.infinity,
-  //             height: 100.w,
-  //             fit: BoxFit.cover,
-  //             imageErrorBuilder: (context, error, stackTrace) {
-  //               return Center(
-  //                 child: Image.asset(
-  //                   Images.defaultImage,
-  //                   width: 100.w,
-  //                   height: 100.w,
-  //                 ),
-  //               );
-  //             },
-  //             fadeInDuration: const Duration(milliseconds: 500),
-  //           ),
-  //         ),
-  //       ),
-  //       Expanded(
-  //         child: GestureDetector(
-  //           onTap: () {
-  //             navController.openSubPage(
-  //               CategoryDetailPage(
-  //                 title: data['business_name'] ?? '',
-  //                 businessId: data['business_id']?.toString() ?? '',
-  //               ),
-  //             );
-  //           },
-  //           child: Column(
-  //             spacing: 4.h,
-  //             crossAxisAlignment: CrossAxisAlignment.start,
-  //             children: [
-  //               CustomText(
-  //                 title: data['business_name'] ?? '',
-  //                 fontSize: 14.sp,
-  //                 fontWeight: FontWeight.w700,
-  //                 textAlign: TextAlign.start,
-  //                 color: Colors.black87,
-  //                 maxLines: 1,
-  //                 style: TextStyle(
-  //                   height: 1,
-  //                   fontSize: 14.sp,
-  //                   fontWeight: FontWeight.w700,
-  //                   color: Colors.black87,
-  //                 ),
-  //               ),
-  //               Row(
-  //                 children: [
-  //                   CustomText(
-  //                     title: data['category'] ?? '',
-  //                     fontSize: 10.sp,
-  //                     textAlign: TextAlign.start,
-  //                     color: Colors.grey.shade600,
-  //                     maxLines: 1,
-  //                   ),
-  //                   Padding(
-  //                     padding: EdgeInsets.symmetric(horizontal: 4.w),
-  //                     child: Container(
-  //                       width: 3.r,
-  //                       height: 3.r,
-  //                       decoration: BoxDecoration(
-  //                         shape: BoxShape.circle,
-  //                         color: Colors.grey.shade400,
-  //                       ),
-  //                     ),
-  //                   ),
-  //                   _buildTimeDisplay(),
-  //                   Padding(
-  //                     padding: EdgeInsets.symmetric(horizontal: 4.w),
-  //                     child: Container(
-  //                       width: 3.r,
-  //                       height: 3.r,
-  //                       decoration: BoxDecoration(
-  //                         shape: BoxShape.circle,
-  //                         color: Colors.grey.shade400,
-  //                       ),
-  //                     ),
-  //                   ),
-  //                   ClipRect(child: _buildTypeBadge()),
-  //                 ],
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //       ),
-  //       _buildFollowButton(),
-  //     ],
-  //   );
-  // }
-
   Widget _dot() {
     return Container(
       width: 3.r,
@@ -278,7 +193,7 @@ class OfferCard extends StatelessWidget {
   }
 
   Widget _buildTimeDisplay() {
-    final createdAt = data['created_at'] ?? '';
+    final createdAt = widget.data['created_at'] ?? '';
     if (createdAt == null || createdAt.toString().isEmpty) {
       return SizedBox();
     }
@@ -293,43 +208,47 @@ class OfferCard extends StatelessWidget {
   }
 
   Widget _buildFollowButton() {
-    if (data['self_business'] == true) return SizedBox();
+    if (widget.data['self_business'] == true) return SizedBox();
     return Obx(() {
       bool isLoading = false;
-      if (data['is_followed'] == true) {
+      if (widget.data['is_followed'] == true) {
         isLoading =
-            getIt<FeedsController>().followingLoadingMap[data['follow_id']
+            getIt<FeedsController>().followingLoadingMap[widget
+                .data['follow_id']
                 .toString()] ==
             true;
       } else {
         isLoading =
-            getIt<FeedsController>().followingLoadingMap[data['business_id']
+            getIt<FeedsController>().followingLoadingMap[widget
+                .data['business_id']
                 .toString()] ==
             true;
       }
-      final isFollowing = data['is_followed'] == true;
+      final isFollowing = widget.data['is_followed'] == true;
       return isLoading
-          ? LoadingWidget(color: primaryColor)
+          ? LoadingWidget(color: primaryColor, size: 20.r)
           : GestureDetector(
-              onTap: () async {
-                if (getIt<DemoService>().isDemo == false) {
-                  ToastUtils.showLoginToast();
-                  return;
-                }
-                if (data['is_followed'] == true) {
-                  await getIt<FeedsController>().unfollowBusiness(
-                    data['follow_id'].toString(),
-                  );
-                } else {
-                  await getIt<FeedsController>().followBusiness(
-                    data['business_id'].toString(),
-                  );
-                }
-                data['is_followed'] = !data['is_followed'];
-                await getIt<FeedsController>().getFeeds(showLoading: false);
+              onTap: widget.onFollow,
 
-                // Handle follow action
-              },
+              // onTap: () async {
+              //   if (getIt<DemoService>().isDemo == false) {
+              //     ToastUtils.showLoginToast();
+              //     return;
+              //   }
+              //   if (widget.data['is_followed'] == true) {
+              //     await getIt<FeedsController>().unfollowBusiness(
+              //       widget.data['follow_id'].toString(),
+              //     );
+              //   } else {
+              //     await getIt<FeedsController>().followBusiness(
+              //       widget.data['business_id'].toString(),
+              //     );
+              //   }
+              //   widget.data['is_followed'] = !widget.data['is_followed'];
+              //   await getIt<FeedsController>().getFeeds(showLoading: false);
+              //
+              //   // Handle follow action
+              // },
               child: Container(
                 padding: EdgeInsets.all(8.w),
                 decoration: BoxDecoration(
@@ -406,7 +325,7 @@ class OfferCard extends StatelessWidget {
   }
 
   Widget _buildImageSection() {
-    final image = data['image'] ?? '';
+    final image = widget.data['image'] ?? '';
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12.r),
@@ -448,7 +367,7 @@ class OfferCard extends StatelessWidget {
       children: [
         // Title
         CustomText(
-          title: data['offer_name'] ?? '',
+          title: widget.data['offer_name'] ?? '',
           fontSize: 16.sp,
           fontWeight: FontWeight.w600,
           color: primaryColor,
@@ -471,7 +390,7 @@ class OfferCard extends StatelessWidget {
             Flexible(
               child: CustomText(
                 title:
-                    '${data['start_date'] ?? ''} to ${data['end_date'] ?? ''}',
+                    '${widget.data['start_date'] ?? ''} to ${widget.data['end_date'] ?? ''}',
                 fontSize: 14.sp,
                 color: Colors.grey.shade700,
                 maxLines: 2,
@@ -484,7 +403,7 @@ class OfferCard extends StatelessWidget {
 
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: data['highlight_points'].map<Widget>((v) {
+          children: widget.data['highlight_points'].map<Widget>((v) {
             return buildBulletPoint(text: v);
           }).toList(),
         ),
@@ -496,7 +415,7 @@ class OfferCard extends StatelessWidget {
   }
 
   Widget _offerDetails() {
-    final content = data['details'] ?? '';
+    final content = widget.data['details'] ?? '';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -549,7 +468,7 @@ class OfferCard extends StatelessWidget {
             SizedBox(width: 6.w),
             Text(
               formatCount(
-                int.parse(data['offer_likes_count']?.toString() ?? '0'),
+                int.parse(widget.data['offer_likes_count']?.toString() ?? '0'),
               ),
               style: TextStyle(
                 fontSize: 12.sp,
@@ -560,7 +479,8 @@ class OfferCard extends StatelessWidget {
           ],
         ),
         CustomText(
-          title: '${data['offer_comments_count']?.toString() ?? '0'} Comments',
+          title:
+              '${widget.data['offer_comments_count']?.toString() ?? '0'} Comments',
           fontSize: 12.sp,
           color: Colors.grey,
         ),
@@ -573,10 +493,12 @@ class OfferCard extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         GestureDetector(
-          onTap: onLike,
+          onTap: widget.onLike,
           child: EngagementAction(
-            color: data['is_offer_liked'] == true ? Colors.red : Colors.black,
-            icon: data['is_offer_liked'] == true
+            color: widget.data['is_offer_liked'] == true
+                ? Colors.red
+                : Colors.black,
+            icon: widget.data['is_offer_liked'] == true
                 ? Icons.favorite
                 : Icons.favorite_border,
             label: 'Like',
@@ -611,9 +533,9 @@ class OfferCard extends StatelessWidget {
             buildEngagementButton(
               icon: Icons.favorite_border,
               activeIcon: Icons.favorite,
-              isActive: data['is_offer_liked'] == true,
-              count: data['offer_likes_count']?.toString() ?? '0',
-              onTap: onLike,
+              isActive: widget.data['is_offer_liked'] == true,
+              count: widget.data['offer_likes_count']?.toString() ?? '0',
+              onTap: widget.onLike,
               activeColor: Colors.red,
             ),
 
@@ -623,7 +545,7 @@ class OfferCard extends StatelessWidget {
               icon: HugeIcons.strokeRoundedMessage02,
               activeIcon: Icons.comment,
               isActive: false,
-              count: data['offer_comments_count']?.toString() ?? '0',
+              count: widget.data['offer_comments_count']?.toString() ?? '0',
               onTap: _handleComment,
               isComment: true,
             ),
@@ -639,7 +561,10 @@ class OfferCard extends StatelessWidget {
       return;
     }
     Get.bottomSheet(
-      CommentsBottomSheet(postId: data['id']?.toString() ?? '', isPost: false),
+      CommentsBottomSheet(
+        postId: widget.data['id']?.toString() ?? '',
+        isPost: false,
+      ),
       isDismissible: true,
       isScrollControlled: true,
       backgroundColor: Colors.grey.withValues(alpha: 0.05),

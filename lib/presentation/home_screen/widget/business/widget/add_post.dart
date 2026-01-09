@@ -10,6 +10,7 @@ class AddPost extends StatefulWidget {
 
 class _AddPostState extends State<AddPost> {
   final controller = getIt<LBOController>();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -26,20 +27,23 @@ class _AddPostState extends State<AddPost> {
       appBar: AppbarPlain(title: "New Post"),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.w),
-        child: Column(
-          spacing: 12.h,
-          children: [
-            _buildProfileImage(),
-            Divider(),
-            buildTextField(
-              maxLines: 3,
-              controller: controller.postAbout,
-              hintText: 'About Details',
-              validator: (value) =>
-                  value!.trim().isEmpty ? 'Please enter about' : null,
-            ),
-            _buildAddPostButton(),
-          ],
+        child: Form(
+          key: _formKey,
+          child: Column(
+            spacing: 12.h,
+            children: [
+              _buildProfileImage(),
+              Divider(),
+              buildTextField(
+                maxLines: 3,
+                controller: controller.postAbout,
+                hintText: 'About Details',
+                validator: (value) =>
+                    value!.trim().isEmpty ? 'Please enter about' : null,
+              ),
+              _buildAddPostButton(),
+            ],
+          ),
         ),
       ),
     );
@@ -146,6 +150,25 @@ class _AddPostState extends State<AddPost> {
           ? LoadingWidget(color: primaryColor)
           : GestureDetector(
               onTap: () async {
+                // 1️⃣ Validate text fields
+                if (!_formKey.currentState!.validate()) return;
+
+                // 2️⃣ Validate media
+                if (!_isMediaSelected()) {
+                  ToastUtils.showWarningToast('Please select image or video');
+                  return;
+                }
+
+                // 3️⃣ Validate video size
+                final video = controller.postVideo.value;
+                if (video != null && !_isVideoSizeValid(video)) {
+                  ToastUtils.showWarningToast(
+                    'Video size should be less than 20MB',
+                  );
+                  return;
+                }
+
+                // 4️⃣ Submit
                 await controller.addNewPost();
               },
               child: Container(
@@ -166,20 +189,13 @@ class _AddPostState extends State<AddPost> {
     );
   }
 
-  Widget _videoPreview(File file) {
-    final controller = VideoPlayerController.file(file);
-    return FutureBuilder(
-      future: controller.initialize(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState != ConnectionState.done) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        final controller = snapshot.data as VideoPlayerController;
-        return AspectRatio(
-          aspectRatio: controller.value.aspectRatio,
-          child: VideoPlayer(controller),
-        );
-      },
-    );
+  bool _isMediaSelected() {
+    return controller.postImage.value != null ||
+        controller.postVideo.value != null;
+  }
+
+  bool _isVideoSizeValid(File video) {
+    final sizeInMB = video.lengthSync() / (1024 * 1024);
+    return sizeInMB <= 20;
   }
 }

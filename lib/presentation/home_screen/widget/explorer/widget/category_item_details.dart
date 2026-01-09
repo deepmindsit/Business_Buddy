@@ -557,17 +557,11 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
   }
 
   Widget _buildActionButtons() {
-    print('whatsapp_number');
-    print(controller.businessDetails['whatsapp_number'].toString());
-    print(controller.businessDetails['whatsapp_number'] != null);
-    print(controller.businessDetails['whatsapp_number'].runtimeType);
+    final whatsapp = controller.businessDetails['whatsapp_number'] ?? '';
     return Row(
       spacing: 12.w,
       children: [
-        if (controller.businessDetails['whatsapp_number']
-                .toString()
-                .isNotEmpty ||
-            controller.businessDetails['whatsapp_number'] != null)
+        if (whatsapp != null && whatsapp.toString().trim().isNotEmpty)
           Expanded(
             flex: 2,
             child: GestureDetector(
@@ -576,10 +570,7 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
                   ToastUtils.showLoginToast();
                   return;
                 }
-                onWhatsApp(
-                  controller.businessDetails['whatsapp_number']?.toString() ??
-                      '',
-                );
+                onWhatsApp(whatsapp.toString());
               },
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),

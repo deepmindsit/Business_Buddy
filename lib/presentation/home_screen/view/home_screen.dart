@@ -195,7 +195,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       duration: const Duration(milliseconds: 375),
                       child: SlideAnimation(
                         verticalOffset: 50.0,
-                        child: FadeInAnimation(child: _buildFeedItem(feedItem)),
+                        child: FadeInAnimation(
+                          child: _buildFeedItem(feedItem, index),
+                        ),
                       ),
                     );
                   },
@@ -205,7 +207,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildFeedItem(Map<String, dynamic> item) {
+  Widget _buildFeedItem(Map<String, dynamic> item, index) {
     if (item['type'] == 'offer') {
       return OfferCard(
         data: item,
@@ -213,6 +215,7 @@ class _HomeScreenState extends State<HomeScreen> {
           item,
           () => _homeController.getHomeApi(showLoading: false),
         ),
+        followButton: _followButton(index),
       );
     }
 
@@ -222,8 +225,117 @@ class _HomeScreenState extends State<HomeScreen> {
         item,
         () => _homeController.getHomeApi(showLoading: false),
       ),
-      onFollow: () => _handleFeedFollow(item),
+      // onFollow: () => _handleFeedFollow(item),
+      followButton: _followButton(index),
     );
+  }
+
+  Widget _followButton(index) {
+    return Obx(() {
+      final data = _homeController.feedsList[index];
+
+      if (data['self_business'] == true) return SizedBox();
+
+      final isFollowing = data['is_followed'] == true;
+
+      final key = isFollowing
+          ? data['follow_id'].toString()
+          : data['business_id'].toString();
+
+      final isLoading =
+          key.isNotEmpty && _feedController.followingLoadingMap[key] == true;
+      return isLoading
+          ? LoadingWidget(color: primaryColor, size: 20.r)
+          : GestureDetector(
+              onTap: () => _onFollow(data),
+              child: Container(
+                padding: EdgeInsets.all(8.w),
+                decoration: BoxDecoration(
+                  gradient: isFollowing
+                      ? null
+                      : LinearGradient(
+                          colors: [
+                            primaryColor,
+                            primaryColor.withValues(alpha: 0.8),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                  borderRadius: BorderRadius.circular(8.r),
+                  border: Border.all(
+                    color: isFollowing
+                        ? Colors.grey.shade300
+                        : Colors.transparent,
+                    width: 1,
+                  ),
+                ),
+                child: Row(
+                  spacing: 4.w,
+                  children: [
+                    Icon(
+                      isFollowing ? Icons.check : Icons.add,
+                      size: 14.sp,
+                      color: isFollowing ? Colors.grey.shade600 : Colors.white,
+                    ),
+                    CustomText(
+                      title: isFollowing ? 'Following' : 'Follow',
+                      fontSize: 12.sp,
+                      color: isFollowing ? Colors.grey.shade700 : Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ],
+                ),
+              ),
+            );
+    });
+  }
+
+  int findFeedIndex(dynamic item) {
+    return _homeController.feedsList.indexWhere((e) {
+      if (item['type'] == 'offer') {
+        return e['id'].toString() == item['id'].toString();
+      } else {
+        return e['post_id'].toString() == item['post_id'].toString();
+      }
+    });
+  }
+
+  void _onFollow(dynamic item) async {
+    if (getIt<DemoService>().isDemo == false) {
+      ToastUtils.showLoginToast();
+      return;
+    }
+
+    final index = findFeedIndex(item);
+    if (index == -1) return;
+
+    final isFollowed = _homeController.feedsList[index]['is_followed'] == true;
+    if (isFollowed) {
+      await _feedController.unfollowBusiness(item['follow_id'].toString());
+      _updateFollowStatusForBusiness(
+        businessId: item['business_id'].toString(),
+        isFollowed: !isFollowed,
+      );
+    } else {
+      await _feedController.followBusiness(item['business_id'].toString());
+      _updateFollowStatusForBusiness(
+        businessId: item['business_id'].toString(),
+        isFollowed: !isFollowed,
+      );
+    }
+  }
+
+  void _updateFollowStatusForBusiness({
+    required String businessId,
+    required bool isFollowed,
+  }) async {
+    for (var item in _homeController.feedsList) {
+      if (item['business_id'].toString() == businessId) {
+        item['is_followed'] = isFollowed;
+      }
+    }
+    _homeController.feedsList.refresh();
+    await _homeController.getHomeApi(showLoading: false);
   }
 
   Widget _buildRequirementsSection() {

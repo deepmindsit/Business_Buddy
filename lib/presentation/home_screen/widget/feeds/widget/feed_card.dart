@@ -2,27 +2,32 @@ import 'package:businessbuddy/utils/exported_path.dart';
 
 class FeedCard extends StatefulWidget {
   final dynamic data;
-  final void Function()? onFollow;
+  final dynamic followButton;
+
   final void Function() onLike;
 
-  const FeedCard({super.key, this.data, this.onFollow, required this.onLike});
+  const FeedCard({
+    super.key,
+    this.data,
+    required this.onLike,
+    this.followButton,
+  });
 
   @override
   State<FeedCard> createState() => _FeedCardState();
 }
 
-class _FeedCardState extends State<FeedCard>
-    with AutomaticKeepAliveClientMixin {
+class _FeedCardState extends State<FeedCard> {
   final navController = getIt<NavigationController>();
 
-  @override
-  bool get wantKeepAlive => false; // ⭐ MUST BE FALSE
+  // @override
+  // bool get wantKeepAlive => false; // ⭐ MUST BE FALSE
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
+    // super.build(context);
     return Card(
-      key: ValueKey(widget.data['post_id']),
+      // key: ValueKey(widget.data['post_id']),
       surfaceTintColor: Colors.white,
       color: Colors.white,
       elevation: 0,
@@ -141,75 +146,76 @@ class _FeedCardState extends State<FeedCard>
           ),
         ),
         SizedBox(width: 8.w),
-        _buildFollowButton(),
+        widget.followButton ?? SizedBox(),
+        // _buildFollowButton(),
       ],
     );
   }
 
-  Widget _buildFollowButton() {
-    if (widget.data['self_business'] == true) return SizedBox();
-
-    return Obx(() {
-      bool isLoading = false;
-      if (widget.data['is_followed'] == true) {
-        isLoading =
-            getIt<FeedsController>().followingLoadingMap[widget
-                .data['follow_id']
-                .toString()] ==
-            true;
-      } else {
-        isLoading =
-            getIt<FeedsController>().followingLoadingMap[widget
-                .data['business_id']
-                .toString()] ==
-            true;
-      }
-      final isFollowing = widget.data['is_followed'] == true;
-      return isLoading
-          ? LoadingWidget(color: primaryColor, size: 20.r)
-          : GestureDetector(
-              onTap: widget.onFollow,
-              child: Container(
-                padding: EdgeInsets.all(8.h),
-                decoration: BoxDecoration(
-                  gradient: isFollowing
-                      ? null
-                      : LinearGradient(
-                          colors: [
-                            primaryColor,
-                            primaryColor.withValues(alpha: 0.8),
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                  borderRadius: BorderRadius.circular(8.r),
-                  border: Border.all(
-                    color: isFollowing
-                        ? Colors.grey.shade300
-                        : Colors.transparent,
-                    width: 1,
-                  ),
-                ),
-                child: Row(
-                  spacing: 4.w,
-                  children: [
-                    Icon(
-                      isFollowing ? Icons.check : Icons.add,
-                      size: 14.sp,
-                      color: isFollowing ? Colors.grey.shade600 : Colors.white,
-                    ),
-                    CustomText(
-                      title: isFollowing ? 'Following' : 'Follow',
-                      fontSize: 12.sp,
-                      color: isFollowing ? Colors.grey.shade700 : Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ],
-                ),
-              ),
-            );
-    });
-  }
+  // Widget _buildFollowButton() {
+  //   if (widget.data['self_business'] == true) return SizedBox();
+  //
+  //   return Obx(() {
+  //     bool isLoading = false;
+  //     if (widget.data['is_followed'] == true) {
+  //       isLoading =
+  //           getIt<FeedsController>().followingLoadingMap[widget
+  //               .data['follow_id']
+  //               .toString()] ==
+  //           true;
+  //     } else {
+  //       isLoading =
+  //           getIt<FeedsController>().followingLoadingMap[widget
+  //               .data['business_id']
+  //               .toString()] ==
+  //           true;
+  //     }
+  //     final isFollowing = widget.data['is_followed'] == true;
+  //     return isLoading
+  //         ? LoadingWidget(color: primaryColor, size: 20.r)
+  //         : GestureDetector(
+  //             onTap: widget.onFollow,
+  //             child: Container(
+  //               padding: EdgeInsets.all(8.h),
+  //               decoration: BoxDecoration(
+  //                 gradient: isFollowing
+  //                     ? null
+  //                     : LinearGradient(
+  //                         colors: [
+  //                           primaryColor,
+  //                           primaryColor.withValues(alpha: 0.8),
+  //                         ],
+  //                         begin: Alignment.topLeft,
+  //                         end: Alignment.bottomRight,
+  //                       ),
+  //                 borderRadius: BorderRadius.circular(8.r),
+  //                 border: Border.all(
+  //                   color: isFollowing
+  //                       ? Colors.grey.shade300
+  //                       : Colors.transparent,
+  //                   width: 1,
+  //                 ),
+  //               ),
+  //               child: Row(
+  //                 spacing: 4.w,
+  //                 children: [
+  //                   Icon(
+  //                     isFollowing ? Icons.check : Icons.add,
+  //                     size: 14.sp,
+  //                     color: isFollowing ? Colors.grey.shade600 : Colors.white,
+  //                   ),
+  //                   CustomText(
+  //                     title: isFollowing ? 'Following' : 'Follow',
+  //                     fontSize: 12.sp,
+  //                     color: isFollowing ? Colors.grey.shade700 : Colors.white,
+  //                     fontWeight: FontWeight.w600,
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           );
+  //   });
+  // }
 
   Widget _buildImageSection() {
     final image = widget.data['image'] ?? '';

@@ -16,13 +16,16 @@ class HomeGateController extends GetxController {
 
   Future<void> startFlow() async {
     try {
-      statusMessage.value = 'Checking location permission…';
-      await homeController.requestLocationPermission();
+      if (getIt<SearchNewController>().address.value.isEmpty) {
+        statusMessage.value = 'Checking location permission…';
+        await homeController.requestLocationPermission();
 
-      statusMessage.value = 'Getting your location…';
-      await locationController.fetchInitialLocation();
-      getIt<SearchNewController>().getLiveLocation();
-      statusMessage.value = 'Loading nearby data…';
+        statusMessage.value = 'Getting your location…';
+        await locationController.fetchInitialLocation();
+        getIt<SearchNewController>().getLiveLocation();
+        statusMessage.value = 'Loading nearby data…';
+      }
+
       await homeController.getHomeApi();
 
       isReady.value = true;

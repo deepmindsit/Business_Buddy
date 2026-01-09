@@ -14,7 +14,7 @@ class _NotificationListState extends State<NotificationList> {
 
   @override
   void initState() {
-    controller.getNotificationInitial();
+    controller.getNotificationInitial(isRefresh: true);
     super.initState();
   }
 
@@ -26,7 +26,6 @@ class _NotificationListState extends State<NotificationList> {
       body: Obx(() {
         if (controller.isLoading.isTrue) {
           return _buildShimmerLoader();
-          // return LoadingWidget(color: primaryColor);
         }
 
         if (controller.notificationData.isEmpty) {
@@ -56,6 +55,17 @@ class _NotificationListState extends State<NotificationList> {
                       return NotificationTile(
                         notification: notification,
                         onTap: () async {
+                          if (notification['data']['action'] == 'message') {
+                            Get.back();
+                            getIt<NavigationController>().openSubPage(
+                              SingleChat(
+                                chatId:
+                                    notification['data']['chat_id']
+                                        ?.toString() ??
+                                    '',
+                              ),
+                            );
+                          }
                           await controller.readNotification(
                             notification['id'].toString(),
                           );

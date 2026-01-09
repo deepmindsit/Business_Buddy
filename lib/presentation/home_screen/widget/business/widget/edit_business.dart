@@ -510,15 +510,18 @@ class _EditBusinessState extends State<EditBusiness> {
             FilteringTextInputFormatter.digitsOnly,
             LengthLimitingTextInputFormatter(10),
           ],
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please enter Whatsapp number';
-            }
-            if (!RegExp(r'^[6-9]\d{9}$').hasMatch(value)) {
-              return 'Enter a valid Whatsapp number';
-            }
+          validator: (v) {
             return null;
           },
+          // validator: (value) {
+          //   if (value == null || value.isEmpty) {
+          //     return 'Please enter Whatsapp number';
+          //   }
+          //   if (!RegExp(r'^[6-9]\d{9}$').hasMatch(value)) {
+          //     return 'Enter a valid Whatsapp number';
+          //   }
+          //   return null;
+          // },
         ),
       ],
     );
@@ -567,7 +570,8 @@ class _EditBusinessState extends State<EditBusiness> {
       if (controller.oldAttachments.isEmpty) return Container();
       return SizedBox(
         height: 80.h,
-        child: ListView.separated(clipBehavior: Clip.none,
+        child: ListView.separated(
+          clipBehavior: Clip.none,
           scrollDirection: Axis.horizontal,
           itemCount: controller.oldAttachments.length,
           separatorBuilder: (_, __) => SizedBox(width: 12.w),

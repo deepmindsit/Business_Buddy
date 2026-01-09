@@ -28,7 +28,6 @@ class _LboScreenState extends State<LboScreen> {
         () => Padding(
           padding: EdgeInsets.all(12.w),
           child: controller.isBusinessLoading.isTrue
-              // ? LoadingWidget(color: primaryColor)
               ? _buildBusinessShimmer()
               : controller.businessList.isEmpty
               ? _buildEmptyLBO()
@@ -36,9 +35,12 @@ class _LboScreenState extends State<LboScreen> {
         ),
       ),
       floatingActionButtonLocation: ExpandableFab.location,
-      floatingActionButton: Visibility(
-        visible: getIt<DemoService>().isDemo,
-        child: _buildExpandableFab(),
+      floatingActionButton: Obx(()=>
+        Visibility(
+          visible:
+              getIt<DemoService>().isDemo && controller.businessList.isNotEmpty,
+          child: _buildExpandableFab(),
+        ),
       ),
     );
   }
@@ -116,7 +118,9 @@ class _LboScreenState extends State<LboScreen> {
             ),
           ),
         ),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.r)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(25.r),
+        ),
       ),
     );
   }

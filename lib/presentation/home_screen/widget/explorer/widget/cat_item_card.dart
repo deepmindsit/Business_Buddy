@@ -338,7 +338,7 @@ class CatItemCard extends StatelessWidget {
         if (!isSelf) SizedBox(width: 4.w),
 
         /// WhatsApp
-        if (!isSelf || phoneNumber.isNotEmpty)
+        if (!isSelf && phoneNumber.isNotEmpty)
           GestureDetector(
             onTap: () {
               if (!getIt<DemoService>().isDemo) {

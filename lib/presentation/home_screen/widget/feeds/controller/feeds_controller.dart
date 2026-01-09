@@ -1,3 +1,4 @@
+
 import 'package:businessbuddy/utils/exported_path.dart' hide Position;
 
 @lazySingleton
@@ -68,9 +69,6 @@ class FeedsController extends GetxController {
         hasMore = currentPage < totalPages;
 
         if (hasMore) currentPage++;
-
-        // {
-        //   feedList.value = response['data'] ?? [];
       }
     } catch (e) {
       showError(e);
@@ -80,21 +78,16 @@ class FeedsController extends GetxController {
     }
   }
 
-  void updateFollowStatusForBusiness(
-    String businessId,
-    bool isFollowed,
-    String? followId,
-  ) {
-    for (var feed in feedList) {
-      if (feed['business_id'].toString() == businessId) {
-        feed['is_followed'] = isFollowed;
-        if (isFollowed) {
-          feed['follow_id'] = followId;
-        } else {
-          feed['follow_id'] = null;
-        }
+  void updateFollowStatusForBusiness({
+    required String businessId,
+    required bool isFollowed,
+  }) {
+    for (var item in feedList) {
+      if (item['business_id'].toString() == businessId) {
+        item['is_followed'] = isFollowed;
       }
     }
+    update();
     feedList.refresh();
   }
 
@@ -113,6 +106,7 @@ class FeedsController extends GetxController {
 
       if (response['common']['status'] == true) {
         ToastUtils.showSuccessToast(response['common']['message']);
+        // await getFeeds(showLoading: false);
       } else {
         ToastUtils.showWarningToast(response['common']['message']);
       }
@@ -136,6 +130,7 @@ class FeedsController extends GetxController {
       final response = await _apiService.unfollowBusiness(userId, followId);
 
       if (response['common']['status'] == true) {
+        // await getFeeds(showLoading: false);
         ToastUtils.showSuccessToast(response['common']['message']);
       } else {
         ToastUtils.showWarningToast(response['common']['message']);

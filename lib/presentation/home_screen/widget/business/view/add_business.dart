@@ -507,15 +507,18 @@ class _AddBusinessState extends State<AddBusiness> {
             FilteringTextInputFormatter.digitsOnly,
             LengthLimitingTextInputFormatter(10),
           ],
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please enter Whatsapp number';
-            }
-            if (!RegExp(r'^[6-9]\d{9}$').hasMatch(value)) {
-              return 'Enter a valid Whatsapp number';
-            }
+          validator: (v) {
             return null;
           },
+          // validator: (value) {
+          //   if (value == null || value.isEmpty) {
+          //     return 'Please enter Whatsapp number';
+          //   }
+          //   if (!RegExp(r'^[6-9]\d{9}$').hasMatch(value)) {
+          //     return 'Enter a valid Whatsapp number';
+          //   }
+          //   return null;
+          // },
         ),
       ],
     );
@@ -678,7 +681,10 @@ class _AddBusinessState extends State<AddBusiness> {
           child: _buildActionButton(
             icon: Icons.close,
             text: 'Close',
-            onPressed: () {},
+            onPressed: () {
+              controller.clearData();
+              Get.back();
+            },
             backgroundColor: primaryColor,
             isPrimary: false,
           ),
@@ -690,7 +696,12 @@ class _AddBusinessState extends State<AddBusiness> {
             text: 'Add',
             onPressed: () async {
               if (controller.businessKey.currentState!.validate()) {
-                await controller.addNewBusiness();
+                if (controller.profileImage.value != null) {
+                  await controller.addNewBusiness();
+                } else {
+                  ToastUtils.showWarningToast('Please select business image');
+                  return;
+                }
               }
             },
             backgroundColor: Colors.transparent,

@@ -85,6 +85,7 @@ class _NewFeedState extends State<NewFeed> {
                           child: FadeInAnimation(
                             child: item['type'] == 'offer'
                                 ? OfferCard(
+                                    // key: ValueKey(item['id'].toString()),
                                     data: item,
                                     onLike: () => handleOfferLike(
                                       item,
@@ -93,9 +94,32 @@ class _NewFeedState extends State<NewFeed> {
                                         isRefresh: false,
                                       ),
                                     ),
+                                    onFollow: () async {
+                                      // if (getIt<DemoService>().isDemo ==
+                                      //     false) {
+                                      //   ToastUtils.showLoginToast();
+                                      //   return;
+                                      // }
+                                      // if (item['is_followed'] == true) {
+                                      //   await controller.unfollowBusiness(
+                                      //     item['follow_id'].toString(),
+                                      //   );
+                                      // } else {
+                                      //   await controller.followBusiness(
+                                      //     item['business_id'].toString(),
+                                      //   );
+                                      // }
+                                      // item['is_followed'] =
+                                      //     !item['is_followed'];
+                                      // controller.feedList.refresh();
+                                      // // await controller.getFeeds(
+                                      // //   showLoading: false,
+                                      // // );
+                                    },
+                                    followButton: _followButton(i),
                                   )
                                 : FeedCard(
-                                    key: ValueKey(item['post_id'].toString()),
+                                    // key: ValueKey(item['post_id'].toString()),
                                     data: item,
                                     onLike: () => handleFeedLike(
                                       item,
@@ -104,39 +128,43 @@ class _NewFeedState extends State<NewFeed> {
                                         isRefresh: false,
                                       ),
                                     ),
-                                    onFollow: () async {
-                                      if (controller
-                                          .isFollowProcessing
-                                          .isTrue) {
-                                        return;
-                                      }
-                                      controller.isFollowProcessing.value =
-                                          true;
-                                      try {
-                                        final businessId = item['business_id']
-                                            .toString();
-                                        if (item['is_followed'] == true) {
-                                          await controller.unfollowBusiness(
-                                            item['follow_id'].toString(),
-                                          );
-                                        } else {
-                                          await controller.followBusiness(
-                                            businessId,
-                                          );
-                                        }
-
-                                        item['is_followed'] =
-                                            !item['is_followed'];
-
-                                        controller.feedList.refresh();
-                                        await controller.getFeeds(
-                                          showLoading: false,
-                                        );
-                                      } finally {
-                                        controller.isFollowProcessing.value =
-                                            false;
-                                      }
-                                    },
+                                    // onFollow: () async {
+                                    //   if (controller
+                                    //       .isFollowProcessing
+                                    //       .isTrue) {
+                                    //     return;
+                                    //   }
+                                    //   controller.isFollowProcessing.value =
+                                    //       true;
+                                    //   try {
+                                    //     final businessId = item['business_id']
+                                    //         .toString();
+                                    //     if (item['is_followed'] == true) {
+                                    //       await controller.unfollowBusiness(
+                                    //         item['follow_id'].toString(),
+                                    //       );
+                                    //       await controller.getFeeds(
+                                    //         showLoading: false,
+                                    //       );
+                                    //     } else {
+                                    //       await controller.followBusiness(
+                                    //         businessId,
+                                    //       );
+                                    //       await controller.getFeeds(
+                                    //         showLoading: false,
+                                    //       );
+                                    //     }
+                                    //
+                                    //     // item['is_followed'] =
+                                    //     //     !item['is_followed'];
+                                    //     //
+                                    //     // controller.feedList.refresh();
+                                    //   } finally {
+                                    //     controller.isFollowProcessing.value =
+                                    //         false;
+                                    //   }
+                                    // },
+                                    followButton: _followButton(i),
                                   ),
                           ),
                         ),
@@ -382,5 +410,100 @@ class _NewFeedState extends State<NewFeed> {
       ),
       const FeedSheet(isFrom: 'feed'),
     );
+  }
+
+  Widget _followButton(index) {
+    return Obx(() {
+      final data = controller.feedList[index];
+
+      if (data['self_business'] == true) return SizedBox();
+
+      final isFollowing = data['is_followed'] == true;
+
+      final key = isFollowing
+          ? data['follow_id'].toString()
+          : data['business_id'].toString();
+
+      final isLoading =
+          key.isNotEmpty && controller.followingLoadingMap[key] == true;
+      return isLoading
+          ? LoadingWidget(color: primaryColor, size: 20.r)
+          : GestureDetector(
+              onTap: () => _onFollow(data),
+              child: Container(
+                padding: EdgeInsets.all(8.w),
+                decoration: BoxDecoration(
+                  gradient: isFollowing
+                      ? null
+                      : LinearGradient(
+                          colors: [
+                            primaryColor,
+                            primaryColor.withValues(alpha: 0.8),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                  borderRadius: BorderRadius.circular(8.r),
+                  border: Border.all(
+                    color: isFollowing
+                        ? Colors.grey.shade300
+                        : Colors.transparent,
+                    width: 1,
+                  ),
+                ),
+                child: Row(
+                  spacing: 4.w,
+                  children: [
+                    Icon(
+                      isFollowing ? Icons.check : Icons.add,
+                      size: 14.sp,
+                      color: isFollowing ? Colors.grey.shade600 : Colors.white,
+                    ),
+                    CustomText(
+                      title: isFollowing ? 'Following' : 'Follow',
+                      fontSize: 12.sp,
+                      color: isFollowing ? Colors.grey.shade700 : Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ],
+                ),
+              ),
+            );
+    });
+  }
+
+  int findFeedIndex(dynamic item) {
+    return controller.feedList.indexWhere((e) {
+      if (item['type'] == 'offer') {
+        return e['id'].toString() == item['id'].toString();
+      } else {
+        return e['post_id'].toString() == item['post_id'].toString();
+      }
+    });
+  }
+
+  void _onFollow(dynamic item) async {
+    if (getIt<DemoService>().isDemo == false) {
+      ToastUtils.showLoginToast();
+      return;
+    }
+
+    final index = findFeedIndex(item);
+    if (index == -1) return;
+
+    final isFollowed = controller.feedList[index]['is_followed'] == true;
+    if (isFollowed) {
+      await controller.unfollowBusiness(item['follow_id'].toString());
+      controller.updateFollowStatusForBusiness(
+        businessId: item['business_id'].toString(),
+        isFollowed: !isFollowed,
+      );
+    } else {
+      await controller.followBusiness(item['business_id'].toString());
+      controller.updateFollowStatusForBusiness(
+        businessId: item['business_id'].toString(),
+        isFollowed: !isFollowed,
+      );
+    }
   }
 }

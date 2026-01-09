@@ -10,7 +10,7 @@ class SpecialOffer extends StatefulWidget {
 class _SpecialOfferState extends State<SpecialOffer> {
   final controller = getIt<SpecialOfferController>();
   // final _homeController = getIt<HomeController>();
-  // final _feedController = getIt<FeedsController>();
+  final _feedController = getIt<FeedsController>();
   @override
   void initState() {
     super.initState();
@@ -100,6 +100,7 @@ class _SpecialOfferState extends State<SpecialOffer> {
                                 verticalOffset: 50.0,
                                 child: FadeInAnimation(
                                   child: OfferCard(
+                                    followButton: _followButton(i),
                                     data: item,
                                     onLike: () => handleOfferLike(
                                       item,
@@ -190,6 +191,110 @@ class _SpecialOfferState extends State<SpecialOffer> {
       //         ),
       // ),
     );
+  }
+
+  Widget _followButton(index) {
+    return Obx(() {
+      final data = controller.offerList[index];
+
+      if (data['self_business'] == true) return SizedBox();
+
+      final isFollowing = data['is_followed'] == true;
+
+      final key = isFollowing
+          ? data['follow_id'].toString()
+          : data['business_id'].toString();
+
+      final isLoading =
+          key.isNotEmpty && _feedController.followingLoadingMap[key] == true;
+      return isLoading
+          ? LoadingWidget(color: primaryColor, size: 20.r)
+          : GestureDetector(
+              onTap: () => _onFollow(data),
+              child: Container(
+                padding: EdgeInsets.all(8.w),
+                decoration: BoxDecoration(
+                  gradient: isFollowing
+                      ? null
+                      : LinearGradient(
+                          colors: [
+                            primaryColor,
+                            primaryColor.withValues(alpha: 0.8),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                  borderRadius: BorderRadius.circular(8.r),
+                  border: Border.all(
+                    color: isFollowing
+                        ? Colors.grey.shade300
+                        : Colors.transparent,
+                    width: 1,
+                  ),
+                ),
+                child: Row(
+                  spacing: 4.w,
+                  children: [
+                    Icon(
+                      isFollowing ? Icons.check : Icons.add,
+                      size: 14.sp,
+                      color: isFollowing ? Colors.grey.shade600 : Colors.white,
+                    ),
+                    CustomText(
+                      title: isFollowing ? 'Following' : 'Follow',
+                      fontSize: 12.sp,
+                      color: isFollowing ? Colors.grey.shade700 : Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ],
+                ),
+              ),
+            );
+    });
+  }
+
+  int findFeedIndex(dynamic item) {
+    return controller.offerList.indexWhere((e) {
+      return e['id'].toString() == item['id'].toString();
+    });
+  }
+
+  void _onFollow(dynamic item) async {
+    if (getIt<DemoService>().isDemo == false) {
+      ToastUtils.showLoginToast();
+      return;
+    }
+
+    final index = findFeedIndex(item);
+    if (index == -1) return;
+
+    final isFollowed = controller.offerList[index]['is_followed'] == true;
+    if (isFollowed) {
+      await _feedController.unfollowBusiness(item['follow_id'].toString());
+      _updateFollowStatusForBusiness(
+        businessId: item['business_id'].toString(),
+        isFollowed: !isFollowed,
+      );
+    } else {
+      await _feedController.followBusiness(item['business_id'].toString());
+      _updateFollowStatusForBusiness(
+        businessId: item['business_id'].toString(),
+        isFollowed: !isFollowed,
+      );
+    }
+  }
+
+  void _updateFollowStatusForBusiness({
+    required String businessId,
+    required bool isFollowed,
+  }) async {
+    for (var item in controller.offerList) {
+      if (item['business_id'].toString() == businessId) {
+        item['is_followed'] = isFollowed;
+      }
+    }
+    controller.offerList.refresh();
+    await controller.getSpecialOffer(showLoading: false);
   }
 
   // Enhanced Filter Button Widget

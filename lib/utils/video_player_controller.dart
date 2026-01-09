@@ -44,10 +44,9 @@ class VideoPlayerControllerX extends GetxController {
 
       chewieController = ChewieController(
         videoPlayerController: videoController!,
-        autoPlay: true,
+        autoPlay: false,
         looping: true,
         showControls: true,
-
         allowFullScreen: false,
       );
 
