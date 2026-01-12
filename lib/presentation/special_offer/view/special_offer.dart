@@ -26,20 +26,6 @@ class _SpecialOfferState extends State<SpecialOffer> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Obx(() {
-        /// 🔹 Initial Loading (Shimmer)
-        // if (controller.isLoading.isTrue) {
-        //   return ListView.builder(
-        //     padding: EdgeInsets.symmetric(horizontal: 8.w),
-        //     itemCount: 5,
-        //     itemBuilder: (_, i) => const FeedShimmer(),
-        //   );
-        // }
-        //
-        // /// 🔹 Empty State
-        // if (controller.offerList.isEmpty) {
-        //   return commonNoDataFound();
-        // }
-
         /// 🔹 Feeds + Pagination
         return NotificationListener<ScrollNotification>(
           onNotification: (scroll) {
@@ -88,6 +74,8 @@ class _SpecialOfferState extends State<SpecialOffer> {
                     : AnimationLimiter(
                         child: ListView.builder(
                           shrinkWrap: true,
+                          addAutomaticKeepAlives: false,
+                          addRepaintBoundaries: true,
                           physics: NeverScrollableScrollPhysics(),
                           padding: EdgeInsets.symmetric(horizontal: 8.w),
                           itemCount: controller.offerList.length,
@@ -99,13 +87,15 @@ class _SpecialOfferState extends State<SpecialOffer> {
                               child: SlideAnimation(
                                 verticalOffset: 50.0,
                                 child: FadeInAnimation(
-                                  child: OfferCard(
-                                    followButton: _followButton(i),
-                                    data: item,
-                                    onLike: () => handleOfferLike(
-                                      item,
-                                      () async => await controller
-                                          .getSpecialOffer(showLoading: false),
+                                  child: RepaintBoundary(
+                                    child: OfferCard(
+                                      followButton: _followButton(i),
+                                      data: item,
+                                      onLike: () => handleOfferLike(
+                                        item,
+                                        () async => await controller
+                                            .getSpecialOffer(showLoading: false),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -351,24 +341,4 @@ class _SpecialOfferState extends State<SpecialOffer> {
       const FeedSheet(isFrom: 'offer'),
     );
   }
-
-  // bool _isUserAuthenticated() {
-  //   return getIt<DemoService>().isDemo;
-  // }
-  //
-  // Future<void> _handleOfferLike(Map<String, dynamic> item) async {
-  //   if (_feedController.isLikeProcessing.value) return;
-  //
-  //   if (!_isUserAuthenticated()) {
-  //     ToastUtils.showLoginToast();
-  //     return;
-  //   }
-  //
-  //   await _feedController.isLikeProcessing.runWithLoader(() async {
-  //     await toggleOfferLike(
-  //       item,
-  //       () => controller.getSpecialOffer(showLoading: false),
-  //     );
-  //   });
-  // }
 }

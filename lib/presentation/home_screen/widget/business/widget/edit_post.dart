@@ -11,6 +11,7 @@ class EditPost extends StatefulWidget {
 
 class _EditPostState extends State<EditPost> {
   final controller = getIt<LBOController>();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -27,20 +28,23 @@ class _EditPostState extends State<EditPost> {
       appBar: AppbarPlain(title: "Edit Post"),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.w),
-        child: Column(
-          spacing: 12.h,
-          children: [
-            _buildProfileImage(),
-            Divider(),
-            buildTextField(
-              maxLines: 3,
-              controller: controller.postAbout,
-              hintText: 'About Details',
-              validator: (value) =>
-                  value!.trim().isEmpty ? 'Please enter about' : null,
-            ),
-            _buildAddPostButton(),
-          ],
+        child: Form(
+          key: _formKey,
+          child: Column(
+            spacing: 12.h,
+            children: [
+              _buildProfileImage(),
+              Divider(),
+              buildTextField(
+                maxLines: 3,
+                controller: controller.postAbout,
+                hintText: 'About Details',
+                validator: (value) =>
+                    value!.trim().isEmpty ? 'Please enter about' : null,
+              ),
+              _buildAddPostButton(),
+            ],
+          ),
         ),
       ),
     );
@@ -189,6 +193,22 @@ class _EditPostState extends State<EditPost> {
           ? LoadingWidget(color: primaryColor)
           : GestureDetector(
               onTap: () async {
+                if (!_formKey.currentState!.validate()) return;
+
+                // if (!_isMediaSelected()) {
+                //   ToastUtils.showWarningToast('Please select image or video');
+                //   return;
+                // }
+
+                // 3️⃣ Validate video size
+                final video = controller.postVideo.value;
+                if (video != null && !_isVideoSizeValid(video)) {
+                  ToastUtils.showWarningToast(
+                    'Video size should be less than 20MB',
+                  );
+                  return;
+                }
+
                 await controller.editPost(
                   Get.arguments['postData']['id'].toString(),
                 );
@@ -209,6 +229,16 @@ class _EditPostState extends State<EditPost> {
               ),
             ),
     );
+  }
+
+  bool _isMediaSelected() {
+    return controller.postImage.value != null ||
+        controller.postVideo.value != null;
+  }
+
+  bool _isVideoSizeValid(File video) {
+    final sizeInMB = video.lengthSync() / (1024 * 1024);
+    return sizeInMB <= 20;
   }
 
   Widget _imageContainer({

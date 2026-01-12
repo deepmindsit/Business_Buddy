@@ -38,19 +38,19 @@ class DioClient {
             'Accept': 'application/json',
           });
 
-          if (kDebugMode) {
-            debugPrint('📤 Request: ${options.method} ${options.uri}');
-            debugPrint('Headers: ${options.headers}');
-            debugPrint('Body: ${options.data}');
-            debugPrint('token: $token');
-          }
+          // if (kDebugMode) {
+          //   debugPrint('📤 Request: ${options.method} ${options.uri}');
+          //   debugPrint('Headers: ${options.headers}');
+          //   debugPrint('Body: ${options.data}');
+          //   debugPrint('token: $token');
+          // }
 
           return handler.next(options);
         },
         onResponse: (response, handler) async {
-          if (kDebugMode) {
-            log('✅ Response: ${response.statusCode} → ${response.data}');
-          }
+          // if (kDebugMode) {
+          //   log('✅ Response: ${response.statusCode} → ${response.data}');
+          // }
           // final requestPath = response.requestOptions.path;
 
           if (response.data.containsKey('user_login') &&

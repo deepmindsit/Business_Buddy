@@ -43,8 +43,11 @@ class AllUrl {
   static const String editBusinessReq = '$baseUrl/update_business_requirement';
   static const String deleteBusinessReq =
       '$baseUrl/delete_business_requirement';
+  static const String revokeBusinessReq =
+      '$baseUrl/revoke_business_requirement';
   static const String getMyProfile = '$baseUrl/my_profile_details';
   static const String getFollowList = '$baseUrl/get_business_following_list';
+  static const String getFollowersList = '$baseUrl/my_business_followers';
   static const String getUserProfile = '$baseUrl/user_profile_details';
   static const String updateProfile = '$baseUrl/update_profile';
   static const String sendBusinessRequest =

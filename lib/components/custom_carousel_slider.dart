@@ -51,12 +51,20 @@ class CustomCarouselSlider extends StatelessWidget {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(radius),
-                child: Image.network(
-                  imagePath['image'],
-                  // imagePath,
+                child: CachedNetworkImage(
+                  imageUrl: imagePath['image'],
                   fit: BoxFit.cover,
                   width: double.infinity,
-                ),
+                  placeholder: (context, url) =>Image.asset(Images.defaultImage),
+                  errorWidget: (context, url, error) =>Image.asset(Images.defaultImage),
+                )
+
+
+                // Image.network(
+                //   imagePath['image'],
+                //   fit: BoxFit.cover,
+                //   width: double.infinity,
+                // ),
               ),
             );
           }).toList(),

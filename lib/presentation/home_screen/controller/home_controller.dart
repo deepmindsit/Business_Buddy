@@ -40,26 +40,48 @@ class HomeController extends GetxController {
   }
 
   /// ✅ Permission should NEVER block UI
-  Future<void> requestLocationPermission() async {
+  Future<bool> requestLocationPermission() async {
     try {
       final serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
+        Get.snackbar(
+          'Location Disabled',
+          'Please enable location services',
+        );
         await Geolocator.openLocationSettings();
-        return;
+        return false;
       }
 
       var permission = await Geolocator.checkPermission();
+
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
       }
 
-      if (permission == LocationPermission.deniedForever) {
-        Get.snackbar('Permission Required', 'Enable location from settings');
+      if (permission == LocationPermission.denied) {
+        Get.snackbar(
+          'Permission Required',
+          'Location permission is required to continue',
+        );
+        return false;
       }
+
+      if (permission == LocationPermission.deniedForever) {
+        Get.snackbar(
+          'Permission Required',
+          'Enable location permission from settings',
+        );
+        await Geolocator.openAppSettings();
+        return false;
+      }
+
+      return true; // ✅ permission granted
     } catch (e) {
       debugPrint('Location permission error: $e');
+      return false;
     }
   }
+
 
   Future<void> getHomeApi({bool showLoading = true}) async {
     final locationController = getIt<LocationController>();

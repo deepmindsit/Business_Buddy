@@ -12,6 +12,12 @@ class _AddOfferState extends State<AddOffer> {
   final controller = getIt<LBOController>();
 
   @override
+  void initState() {
+    controller.clearOfferData();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -39,11 +45,16 @@ class _AddOfferState extends State<AddOffer> {
                     child: _buildDateField(
                       'Start Date',
                       controller.startDateCtrl,
+                      true,
                     ),
                   ),
                   SizedBox(width: 12.w),
                   Expanded(
-                    child: _buildDateField('End Date', controller.endDateCtrl),
+                    child: _buildDateField(
+                      'End Date',
+                      controller.endDateCtrl,
+                      false,
+                    ),
                   ),
                 ],
               ),
@@ -126,7 +137,11 @@ class _AddOfferState extends State<AddOffer> {
     );
   }
 
-  Widget _buildDateField(String label, TextEditingController dateController) {
+  Widget _buildDateField(
+    String label,
+    TextEditingController dateController,
+    bool isStartDate,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -149,10 +164,18 @@ class _AddOfferState extends State<AddOffer> {
             hintStyle: TextStyle(fontSize: 14, color: Colors.grey.shade500),
           ),
           onTap: () async {
+            DateTime now = DateTime.now();
+
+            /// If end date → minimum should be selected start date
+            DateTime firstDate = now;
+            if (!isStartDate && controller.startDateCtrl.text.isNotEmpty) {
+              firstDate = DateTime.parse(controller.startDateCtrl.text);
+            }
+
             DateTime? picked = await showDatePicker(
               context: context,
-              initialDate: DateTime.now(),
-              firstDate: DateTime.now(),
+              initialDate: firstDate,
+              firstDate: firstDate,
               lastDate: DateTime(2101),
               builder: (context, child) {
                 return Theme(
@@ -279,6 +302,14 @@ class _AddOfferState extends State<AddOffer> {
           : GestureDetector(
               onTap: () async {
                 if (controller.offerKey.currentState!.validate()) {
+                  // if (controller.points.isEmpty) {
+                  //   Get.snackbar(
+                  //     'Validation Error',
+                  //     'Please add at least one highlight point',
+                  //     snackPosition: SnackPosition.BOTTOM,
+                  //   );
+                  //   return;
+                  // }
                   await controller.addNewOffer();
                 }
               },

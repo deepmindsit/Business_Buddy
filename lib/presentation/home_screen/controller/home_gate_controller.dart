@@ -6,6 +6,7 @@ class HomeGateController extends GetxController {
   final locationController = getIt<LocationController>();
 
   final isReady = false.obs;
+  final hasError = false.obs;
   final statusMessage = 'Starting…'.obs;
 
   @override
@@ -18,7 +19,16 @@ class HomeGateController extends GetxController {
     try {
       if (getIt<SearchNewController>().address.value.isEmpty) {
         statusMessage.value = 'Checking location permission…';
-        await homeController.requestLocationPermission();
+        // await homeController.requestLocationPermission();
+
+        final permissionGranted = await homeController
+            .requestLocationPermission();
+
+        if (!permissionGranted) {
+          statusMessage.value = 'Location permission is required to continue';
+          hasError.value = true;
+          return; // 🚫 STOP FLOW
+        }
 
         statusMessage.value = 'Getting your location…';
         await locationController.fetchInitialLocation();

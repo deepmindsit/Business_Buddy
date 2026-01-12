@@ -192,6 +192,11 @@ abstract class ApiService {
     @Part(name: "requirement_id") String? requirementId,
   );
 
+  @POST(AllUrl.revokeBusinessReq)
+  Future<dynamic> revokeBusinessReq(
+    @Part(name: "requirement_id") String? requirementId,
+  );
+
   @POST(AllUrl.addBusinessReq)
   Future<dynamic> addBusinessReq(
     @Part(name: "user_id") String userId,
@@ -226,6 +231,12 @@ abstract class ApiService {
   @POST(AllUrl.getFollowList)
   Future<dynamic> getFollowList(
     @Part(name: "user_id") String? userId,
+    @Part(name: "page_number") String pageNo,
+  );
+
+  @POST(AllUrl.getFollowersList)
+  Future<dynamic> getFollowersList(
+    @Part(name: "business_id") String? businessId,
     @Part(name: "page_number") String pageNo,
   );
 

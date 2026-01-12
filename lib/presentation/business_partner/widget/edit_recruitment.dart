@@ -15,6 +15,7 @@ class _EditRecruitmentState extends State<EditRecruitment> {
   final catController = getIt<ExplorerController>();
   final RxBool _isSearchingLocation = false.obs;
   final _debouncer = Debouncer(milliseconds: 500);
+
   @override
   void initState() {
     loadAllData();

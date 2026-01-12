@@ -195,23 +195,32 @@ class _BusinessDetailsState extends State<BusinessDetails> {
           fontWeight: FontWeight.w500,
         ),
         SizedBox(height: 4.h),
-        RichText(
-          text: TextSpan(
-            children: [
-              TextSpan(
-                text:
-                    controller.businessDetails['followers']?.toString() ?? '0',
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  color: primaryColor,
-                  fontWeight: FontWeight.bold,
+        GestureDetector(
+          onTap: () => Get.toNamed(
+            Routes.followersList,
+            arguments: {
+              'business_id': Get.arguments['businessId']?.toString() ?? '',
+            },
+          ),
+          child: RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text:
+                      controller.businessDetails['followers']?.toString() ??
+                      '0',
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    color: primaryColor,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              TextSpan(
-                text: ' followers',
-                style: TextStyle(fontSize: 12.sp, color: textLightGrey),
-              ),
-            ],
+                TextSpan(
+                  text: ' Followers',
+                  style: TextStyle(fontSize: 12.sp, color: textLightGrey),
+                ),
+              ],
+            ),
           ),
         ),
       ],
@@ -453,17 +462,17 @@ class _BusinessDetailsState extends State<BusinessDetails> {
           );
         }).toList(),
 
-        Center(
-          child: TextButton(
-            onPressed: _viewAllReviews,
-            child: CustomText(
-              title: 'View All Reviews',
-              fontSize: 14,
-              color: primaryColor,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
+        // Center(
+        //   child: TextButton(
+        //     onPressed: _viewAllReviews,
+        //     child: CustomText(
+        //       title: 'View All Reviews',
+        //       fontSize: 14,
+        //       color: primaryColor,
+        //       fontWeight: FontWeight.w600,
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }

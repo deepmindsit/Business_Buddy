@@ -40,7 +40,7 @@ Future<void> _toggleOfferLike(
     } else {
       await _feedController.offerLikeBusiness(
         item['business_id'].toString(),
-        item['offer_id'].toString(),
+        item['id'].toString(),
       );
       item['offer_likes_count'] = likeCount + 1;
     }
@@ -59,16 +59,27 @@ Future<void> handleFeedLike(
   Map<String, dynamic> item,
   Future<void> Function() refresh,
 ) async {
-  if (_feedController.isLikeProcessing.value) return;
+  final postId = item['post_id'].toString();
+
+  if (_feedController.isPostLikeLoading(postId)) return;
+
+  // if (_feedController.isLikeProcessing.value) return;
 
   if (!isUserAuthenticated()) {
     ToastUtils.showLoginToast();
     return;
   }
 
-  await _feedController.isLikeProcessing.runWithLoader(() async {
+  try {
+    _feedController.setPostLikeLoading(postId, true);
     await _toggleFeedLike(item, refresh);
-  });
+  } finally {
+    _feedController.setPostLikeLoading(postId, false);
+  }
+
+  // await _feedController.isLikeProcessing.runWithLoader(() async {
+  //   await _toggleFeedLike(item, refresh);
+  // });
 }
 
 Future<void> _toggleFeedLike(
@@ -77,7 +88,7 @@ Future<void> _toggleFeedLike(
 ) async {
   final bool wasLiked = item['is_liked'] ?? false;
   final int likeCount = int.tryParse(item['likes_count'].toString()) ?? 0;
-
+  print('item==========================>$item');
   try {
     if (wasLiked) {
       await _feedController.unLikeBusiness(item['liked_id'].toString());
@@ -103,7 +114,6 @@ void handleError(String error) {
   debugPrint(error);
   // Consider integrating with a crash analytics service
 }
-
 
 void onWhatsApp(String phoneNumber) async {
   String phone = '91$phoneNumber'; // country code + number

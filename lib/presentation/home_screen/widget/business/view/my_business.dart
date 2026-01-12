@@ -35,59 +35,63 @@ class _LboScreenState extends State<LboScreen> {
         ),
       ),
       floatingActionButtonLocation: ExpandableFab.location,
-      floatingActionButton: Obx(()=>
-        Visibility(
-          visible:
-              getIt<DemoService>().isDemo && controller.businessList.isNotEmpty,
-          child: _buildExpandableFab(),
-        ),
-      ),
+      floatingActionButton: Obx(() {
+        final isDemo = getIt<DemoService>().isDemo;
+        final hasBusiness = controller.businessList.isNotEmpty;
+        final isApproved = controller.isBusinessApproved.value == '1';
+
+        if (!isDemo) return const SizedBox();
+        if (!hasBusiness) return const SizedBox();
+        if (!isApproved) return const SizedBox();
+
+        return _buildExpandableFab();
+      }),
+
+      // Visibility(
+      //   visible:
+      //       getIt<DemoService>().isDemo && controller.businessList.isNotEmpty,
+      //   child: _buildExpandableFab(),
+      // ),
     );
   }
 
   // ---------------- FAB -----------------
   Widget _buildExpandableFab() {
-    return Obx(() {
-      if (controller.isBusinessApproved.value == '0') {
-        return const SizedBox();
-      }
-
-      return ExpandableFab(
-        distance: 70,
-        type: ExpandableFabType.up,
-        openButtonBuilder: RotateFloatingActionButtonBuilder(
-          fabSize: ExpandableFabSize.small,
-          child: const Icon(Icons.add, color: Colors.white, size: 24),
-          backgroundColor: primaryColor,
-          foregroundColor: Colors.white,
-          shape: const CircleBorder(),
-          elevation: 0,
-          // elevation: 8,
+    return ExpandableFab(
+      distance: 70,
+      type: ExpandableFabType.up,
+      openButtonBuilder: RotateFloatingActionButtonBuilder(
+        fabSize: ExpandableFabSize.small,
+        child: const Icon(Icons.add, color: Colors.white, size: 24),
+        backgroundColor: primaryColor,
+        foregroundColor: Colors.white,
+        shape: const CircleBorder(),
+        elevation: 0,
+        // elevation: 8,
+      ),
+      closeButtonBuilder: RotateFloatingActionButtonBuilder(
+        fabSize: ExpandableFabSize.small,
+        child: const Icon(Icons.close, color: Colors.white, size: 20),
+        backgroundColor: Colors.redAccent,
+        foregroundColor: Colors.white,
+        shape: const CircleBorder(),
+        // elevation: 6,
+      ),
+      children: [
+        _buildFabChild(
+          icon: Icons.post_add,
+          text: 'Post',
+          color: Colors.black,
+          onPressed: () => Get.toNamed(Routes.addPost),
         ),
-        closeButtonBuilder: RotateFloatingActionButtonBuilder(
-          fabSize: ExpandableFabSize.small,
-          child: const Icon(Icons.close, color: Colors.white, size: 20),
-          backgroundColor: Colors.redAccent,
-          foregroundColor: Colors.white,
-          shape: const CircleBorder(),
-          // elevation: 6,
+        _buildFabChild(
+          icon: Icons.local_offer,
+          text: 'Offer',
+          color: Colors.red,
+          onPressed: () => Get.toNamed(Routes.addOffer),
         ),
-        children: [
-          _buildFabChild(
-            icon: Icons.post_add,
-            text: 'Post',
-            color: Colors.black,
-            onPressed: () => Get.toNamed(Routes.addPost),
-          ),
-          _buildFabChild(
-            icon: Icons.local_offer,
-            text: 'Offer',
-            color: Colors.red,
-            onPressed: () => Get.toNamed(Routes.addOffer),
-          ),
-        ],
-      );
-    });
+      ],
+    );
   }
 
   // Helper method to create consistent FAB children

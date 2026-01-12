@@ -1,11 +1,12 @@
 import 'package:businessbuddy/common/global_search.dart';
-import 'package:businessbuddy/components/video_player.dart';
 import 'package:businessbuddy/presentation/home_screen/widget/business/view/my_business_details.dart';
 import 'package:businessbuddy/presentation/home_screen/widget/business/widget/edit_business.dart';
 import 'package:businessbuddy/presentation/home_screen/widget/business/widget/edit_post.dart';
 import 'package:businessbuddy/presentation/profile/widget/edit_profile.dart';
+import 'package:businessbuddy/presentation/profile/widget/followers_list.dart';
 import 'package:businessbuddy/presentation/profile/widget/following_list.dart';
-import '../presentation/home_screen/widget/business/widget/edit_offer.dart' show EditOffer;
+import '../presentation/home_screen/widget/business/widget/edit_offer.dart'
+    show EditOffer;
 import '../presentation/profile/view/profile_screen.dart';
 import '../utils/exported_path.dart';
 
@@ -30,5 +31,6 @@ class AppRoutes {
     // GetPage(name: Routes.deleteAccount, page: () => DeleteAccount()),
     GetPage(name: Routes.notificationList, page: () => NotificationList()),
     GetPage(name: Routes.globalSearch, page: () => GlobalSearch()),
+    GetPage(name: Routes.followersList, page: () => FollowersList()),
   ];
 }

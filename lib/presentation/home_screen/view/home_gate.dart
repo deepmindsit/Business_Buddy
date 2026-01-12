@@ -20,6 +20,41 @@ class _HomeGateScreenState extends State<HomeGateScreen> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
+      if (controller.hasError.value) {
+        return Scaffold(
+          backgroundColor: Colors.white,
+          body: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.location_off,
+                    size: 48,
+                    color: Colors.redAccent,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    controller.statusMessage.value,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 14, color: Colors.black54),
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: () {
+                      controller.hasError.value = false;
+                      controller.startFlow();
+                    },
+                    child: const Text('Try Again'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      }
+
       if (!controller.isReady.value) {
         return Scaffold(
           backgroundColor: Colors.white,

@@ -956,6 +956,31 @@ class _ApiService implements ApiService {
   }
 
   @override
+  Future<dynamic> revokeBusinessReq(String? requirementId) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    if (requirementId != null) {
+      _data.fields.add(MapEntry('requirement_id', requirementId));
+    }
+    final _options = _setStreamType<dynamic>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'https://businessbuddy.deepmindsit.com/api/user/v1/revoke_business_requirement',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch(_options);
+    final _value = _result.data;
+    return _value;
+  }
+
+  @override
   Future<dynamic> addBusinessReq(
     String userId,
     String name,
@@ -1084,6 +1109,32 @@ class _ApiService implements ApiService {
           .compose(
             _dio.options,
             'https://businessbuddy.deepmindsit.com/api/user/v1/get_business_following_list',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch(_options);
+    final _value = _result.data;
+    return _value;
+  }
+
+  @override
+  Future<dynamic> getFollowersList(String? businessId, String pageNo) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    if (businessId != null) {
+      _data.fields.add(MapEntry('business_id', businessId));
+    }
+    _data.fields.add(MapEntry('page_number', pageNo));
+    final _options = _setStreamType<dynamic>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'https://businessbuddy.deepmindsit.com/api/user/v1/my_business_followers',
             queryParameters: queryParameters,
             data: _data,
           )

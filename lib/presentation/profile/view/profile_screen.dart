@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import '../../../common/policy_data.dart';
 import '../../../utils/exported_path.dart';
 
@@ -318,7 +320,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildCategoryItem(String title, String value) {
     return Row(
-      // crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(flex: 2, child: Text(title, style: _labelStyle())),
         Expanded(flex: 3, child: Text(value, style: _valueStyle())),
@@ -450,6 +451,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _businessRequirement() {
     final businesses = controller.profileDetails['business_requirements'] ?? [];
+    print('businesses.length');
+    print(businesses.length);
     if (businesses.length == 0) return const SizedBox();
     return Column(
       spacing: 8.h,
@@ -458,22 +461,96 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _buildSectionTitle('Business Requirements'),
         Column(
           children: businesses.map<Widget>((business) {
-            return BusinessCard(
-              data: business,
-              onDelete: () {
-                AllDialogs().showConfirmationDialog(
-                  'Delete Recruitment',
-                  'Are you sure you want to delete this recruitment?',
-                  onConfirm: () async {
-                    await getIt<PartnerDataController>()
-                        .deleteBusinessRequirement(
-                          business['id']?.toString() ?? '',
-                        );
-                    Get.back();
-                    await controller.getProfile();
+            return Stack(
+              children: [
+                BusinessCard(
+                  data: business,
+                  onDelete: () {
+                    AllDialogs().showConfirmationDialog(
+                      'Delete Recruitment',
+                      'Are you sure you want to delete this recruitment?',
+                      onConfirm: () async {
+                        await getIt<PartnerDataController>()
+                            .deleteBusinessRequirement(
+                              business['id']?.toString() ?? '',
+                            );
+                        Get.back();
+                        await controller.getProfile();
+                      },
+                    );
                   },
-                );
-              },
+                ),
+
+                /// 🔒 Blur Overlay
+                if (business['is_deleted'] == true)
+                  Positioned.fill(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(16.r),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+                        child: Container(
+                          color: Colors.black.withValues(alpha: 0.25),
+                          alignment: Alignment.center,
+                          child: Text(
+                            'Deleted Requirement',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                /// ⋮ Menu Icon
+                if (business['is_deleted'] == true)
+                  Positioned(
+                    top: 8.h,
+                    right: 8.w,
+                    child: PopupMenuButton<String>(
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16.r),
+                      ),
+                      elevation: 0,
+                      popUpAnimationStyle: AnimationStyle(
+                        curve: Curves.easeInOut,
+                      ),
+                      padding: EdgeInsets.zero,
+                      surfaceTintColor: Colors.white,
+                      onSelected: (value) async {
+                        if (value == 'revoke') {
+                          await getIt<PartnerDataController>()
+                              .revokeBusinessRequirement(
+                                business['id']?.toString() ?? '',
+                              );
+                          // _onRequestRevoke();
+                        }
+                      },
+                      itemBuilder: (context) => [
+                        PopupMenuItem(
+                          value: 'revoke',
+                          child:
+                              getIt<PartnerDataController>()
+                                  .isRevokeLoading
+                                  .value
+                              ? LoadingWidget(color: primaryColor)
+                              : Text('Request Revoke'),
+                        ),
+                      ],
+                      icon: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                        ),
+                        child: Icon(Icons.more_vert, color: primaryColor),
+                      ),
+                    ),
+                  ),
+              ],
             );
           }).toList(),
         ),

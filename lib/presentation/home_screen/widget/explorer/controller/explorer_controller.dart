@@ -7,7 +7,7 @@ class ExplorerController extends GetxController {
   final isLoading = false.obs;
   final isFollowLoading = false.obs;
   final categories = [].obs;
-
+  final currentIndex = 0.obs;
   int currentPage = 1;
   int totalPages = 1;
   int perPage = 10;

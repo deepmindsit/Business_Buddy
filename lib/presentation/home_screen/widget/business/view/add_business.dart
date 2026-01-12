@@ -113,6 +113,7 @@ class _AddBusinessState extends State<AddBusiness> {
             ),
 
             _buildUploadDocuments(),
+            SizedBox(height: 8.h),
             _buildSelectedFilesWrap(),
             Obx(
               () => controller.isAddBusinessLoading.isTrue
@@ -588,6 +589,10 @@ class _AddBusinessState extends State<AddBusiness> {
       child: GestureDetector(
         onTap: () {
           CustomFilePicker.showPickerBottomSheet(
+            allowMultipleDocuments: true,
+            onFileMultiPicked: (files) {
+              controller.attachments.addAll(files);
+            },
             onFilePicked: (file) {
               controller.attachments.add(file);
             },

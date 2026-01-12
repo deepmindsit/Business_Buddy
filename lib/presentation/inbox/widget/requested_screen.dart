@@ -132,7 +132,7 @@ class _RequestedScreenState extends State<RequestedScreen> {
                                     Images.defaultImage,
                                   ),
                                   image: NetworkImage(
-                                    data['requiement_user_profile_image'],
+                                    data['requiement_user_profile_image'] ?? '',
                                   ),
                                   imageErrorBuilder:
                                       (context, error, stackTrace) {

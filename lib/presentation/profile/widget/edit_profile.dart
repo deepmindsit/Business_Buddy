@@ -56,7 +56,7 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   Widget _buildProfileImage() {
-    final image = controller.profileDetails['profile_image'];
+    final image = controller.profileDetails['profile_image'] ?? '';
     return Center(
       child: GestureDetector(
         onTap: () {

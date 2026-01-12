@@ -17,10 +17,20 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
   final controller = getIt<ExplorerController>();
   final navController = getIt<NavigationController>();
   final feedsController = getIt<FeedsController>();
+
+  late PageController _pageController;
+
   @override
   void initState() {
-    controller.getBusinessDetails(widget.businessId);
     super.initState();
+    controller.getBusinessDetails(widget.businessId);
+    _pageController = PageController();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   @override
@@ -65,39 +75,6 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
         ],
       ),
     );
-    //   Container(
-    //   color: Colors.white,
-    //   padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-    //   child: Row(
-    //     children: [
-    //       GestureDetector(
-    //         onTap: () => navController.goBack(),
-    //         child: Container(
-    //           padding: EdgeInsets.all(8.w),
-    //           decoration: BoxDecoration(
-    //             color: Colors.grey.shade100,
-    //             borderRadius: BorderRadius.circular(8.r),
-    //           ),
-    //           child: Icon(
-    //             Icons.arrow_back_ios_rounded,
-    //             size: 18.sp,
-    //             color: Colors.grey.shade700,
-    //           ),
-    //         ),
-    //       ),
-    //       SizedBox(width: 12.w),
-    //       Expanded(
-    //         child: CustomText(
-    //           title: widget.title,
-    //           textAlign: TextAlign.start,
-    //           fontSize: 18.sp,
-    //           fontWeight: FontWeight.w700,
-    //           color: Colors.black87,
-    //         ),
-    //       ),
-    //     ],
-    //   ),
-    // );
   }
 
   Widget _buildBody() {
@@ -122,46 +99,65 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
     );
   }
 
+  List<String> get allImages {
+    final mainImage = controller.businessDetails['image'];
+    final attachments = List<String>.from(
+      controller.businessDetails['attachments'] ?? [],
+    );
+
+    return [
+      if (mainImage != null && mainImage.toString().isNotEmpty) mainImage,
+      ...attachments,
+    ];
+  }
+
   Widget _buildImageSection() {
     return Column(
       children: [
-        _buildMainImage(),
+        _buildMainImageSlider(),
         SizedBox(height: 12.h),
         _buildImageGallery(),
       ],
     );
   }
 
-  Widget _buildMainImage() {
-    final image = controller.businessDetails['image'];
+  Widget _buildMainImageSlider() {
+    final images = allImages;
+
     return Container(
-      // padding: EdgeInsets.all(2),
-      // clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: Colors.grey.shade200, width: 1),
+        border: Border.all(color: Colors.grey.shade200),
       ),
       child: Stack(
-        // clipBehavior: Clip.hardEdge,
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(16.r),
-            child: FadeInImage(
-              placeholder: const AssetImage(Images.defaultImage),
-              image: NetworkImage(image),
-              width: double.infinity,
+            child: SizedBox(
               height: 180.h,
-              imageErrorBuilder: (context, error, stackTrace) {
-                return Container(
-                  width: double.infinity,
-                  height: 180.h,
-                  padding: EdgeInsets.all(32.w),
-                  child: Image.asset(Images.defaultImage, fit: BoxFit.cover),
-                );
-              },
-              fit: BoxFit.cover,
-              placeholderFit: BoxFit.contain,
-              fadeInDuration: const Duration(milliseconds: 500),
+              width: double.infinity,
+              child: PageView.builder(
+                controller: _pageController,
+                itemCount: images.length,
+                onPageChanged: (index) {
+                  controller.currentIndex.value = index;
+                },
+                itemBuilder: (_, index) {
+                  return FadeInImage(
+                    placeholder: const AssetImage(Images.defaultImage),
+                    image: NetworkImage(images[index]),
+                    width: double.infinity,
+                    height: 180.h,
+                    fit: BoxFit.cover,
+                    imageErrorBuilder: (_, __, ___) {
+                      return Image.asset(
+                        Images.defaultImage,
+                        fit: BoxFit.cover,
+                      );
+                    },
+                  );
+                },
+              ),
             ),
           ),
           Positioned(top: 10, right: 10, child: _buildCategoryChip()),
@@ -171,69 +167,158 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
   }
 
   Widget _buildImageGallery() {
-    final images = controller.businessDetails['attachments'];
+    final images = allImages;
+
     return SizedBox(
-      height: 60.h,
+      height: 64.h,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: images.length,
         separatorBuilder: (_, __) => SizedBox(width: 8.w),
-        itemBuilder: (context, index) {
-          final attach = images[index];
-          return _buildGalleryImage(attach);
-
-          //   return GestureDetector(
-          //     onTap: () {
-          //       // Add image preview functionality
-          //     },
-          //     child: Container(
-          //       width: 64.w,
-          //       height: 64.h,
-          //       decoration: BoxDecoration(
-          //         borderRadius: BorderRadius.circular(12.r),
-          //         border: Border.all(color: Colors.grey.shade200, width: 1),
-          //         image: DecorationImage(
-          //           image: NetworkImage(images[index]),
-          //           fit: BoxFit.cover,
-          //         ),
-          //       ),
-          //     ),
-          //   );
+        itemBuilder: (_, index) {
+          return GestureDetector(
+            onTap: () {
+              controller.currentIndex.value = index;
+              _pageController.animateToPage(
+                index,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+              );
+            },
+            child: _buildGalleryImage(images[index], index),
+          );
         },
       ),
     );
   }
 
-  Widget _buildGalleryImage(dynamic attach) {
-    return Container(
-      width: 64.w,
-      height: 64.h,
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade200),
-        borderRadius: BorderRadius.circular(12.r),
-      ),
-      child: WidgetZoom(
-        heroAnimationTag: 'tag $attach',
-        zoomWidget: ClipRRect(
+  Widget _buildGalleryImage(String image, int index) {
+    return Obx(() {
+      final isSelected = controller.currentIndex.value == index;
+      return Container(
+        width: 64.w,
+        height: 64.h,
+        decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12.r),
-          child: FadeInImage(
-            width: 64.w,
-            height: 64.h,
-            placeholder: const AssetImage(Images.defaultImage),
-            image: NetworkImage(attach),
-            fit: BoxFit.contain,
-            imageErrorBuilder: (context, error, stackTrace) {
-              return Container(
-                padding: EdgeInsets.all(20.w),
-                child: Image.asset(Images.defaultImage, fit: BoxFit.contain),
-              );
-            },
-            fadeInDuration: const Duration(milliseconds: 300),
+          border: Border.all(
+            color: isSelected ? primaryColor : Colors.grey.shade200,
+            width: isSelected ? 2 : 1,
           ),
         ),
-      ),
-    );
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(10.r),
+          child: FadeInImage(
+            placeholder: const AssetImage(Images.defaultImage),
+            image: NetworkImage(image),
+            fit: BoxFit.contain,
+            imageErrorBuilder: (_, __, ___) {
+              return Image.asset(Images.defaultImage, fit: BoxFit.cover);
+            },
+          ),
+        ),
+      );
+    });
   }
+
+  // Widget _buildMainImage() {
+  //   final image = controller.businessDetails['image'] ?? '';
+  //   return Container(
+  //     decoration: BoxDecoration(
+  //       borderRadius: BorderRadius.circular(16.r),
+  //       border: Border.all(color: Colors.grey.shade200, width: 1),
+  //     ),
+  //     child: Stack(
+  //       children: [
+  //         ClipRRect(
+  //           borderRadius: BorderRadius.circular(16.r),
+  //           child: FadeInImage(
+  //             placeholder: const AssetImage(Images.defaultImage),
+  //             image: NetworkImage(image),
+  //             width: double.infinity,
+  //             height: 180.h,
+  //             imageErrorBuilder: (context, error, stackTrace) {
+  //               return Container(
+  //                 width: double.infinity,
+  //                 height: 180.h,
+  //                 padding: EdgeInsets.all(32.w),
+  //                 child: Image.asset(Images.defaultImage, fit: BoxFit.cover),
+  //               );
+  //             },
+  //             fit: BoxFit.cover,
+  //             placeholderFit: BoxFit.contain,
+  //             fadeInDuration: const Duration(milliseconds: 500),
+  //           ),
+  //         ),
+  //         Positioned(top: 10, right: 10, child: _buildCategoryChip()),
+  //       ],
+  //     ),
+  //   );
+  // }
+
+  // Widget _buildImageGallery() {
+  //   final images = controller.businessDetails['attachments'];
+  //   return SizedBox(
+  //     height: 60.h,
+  //     child: ListView.separated(
+  //       scrollDirection: Axis.horizontal,
+  //       itemCount: images.length,
+  //       separatorBuilder: (_, __) => SizedBox(width: 8.w),
+  //       itemBuilder: (context, index) {
+  //         final attach = images[index];
+  //         return _buildGalleryImage(attach);
+  //
+  //         //   return GestureDetector(
+  //         //     onTap: () {
+  //         //       // Add image preview functionality
+  //         //     },
+  //         //     child: Container(
+  //         //       width: 64.w,
+  //         //       height: 64.h,
+  //         //       decoration: BoxDecoration(
+  //         //         borderRadius: BorderRadius.circular(12.r),
+  //         //         border: Border.all(color: Colors.grey.shade200, width: 1),
+  //         //         image: DecorationImage(
+  //         //           image: NetworkImage(images[index]),
+  //         //           fit: BoxFit.cover,
+  //         //         ),
+  //         //       ),
+  //         //     ),
+  //         //   );
+  //       },
+  //     ),
+  //   );
+  // }
+
+  // Widget _buildGalleryImage(dynamic attach) {
+  //   return Container(
+  //     width: 64.w,
+  //     height: 64.h,
+  //     decoration: BoxDecoration(
+  //       border: Border.all(color: Colors.grey.shade200),
+  //       borderRadius: BorderRadius.circular(12.r),
+  //     ),
+  //     child: WidgetZoom(
+  //       heroAnimationTag: 'tag $attach',
+  //       zoomWidget: ClipRRect(
+  //         borderRadius: BorderRadius.circular(12.r),
+  //         child: FadeInImage(
+  //           width: 64.w,
+  //           height: 64.h,
+  //           placeholder: const AssetImage(Images.defaultImage),
+  //           image: NetworkImage(attach),
+  //           fit: BoxFit.contain,
+  //           imageErrorBuilder: (context, error, stackTrace) {
+  //             return Container(
+  //               padding: EdgeInsets.all(20.w),
+  //               child: Image.asset(Images.defaultImage, fit: BoxFit.contain),
+  //             );
+  //           },
+  //           fadeInDuration: const Duration(milliseconds: 300),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildHotelDetails() {
     return Column(

@@ -137,6 +137,7 @@ class ProfileController extends GetxController {
       showError(e);
     } finally {
       if (showLoading) isFollowLoading.value = false;
+      isLoadMore.value = false;
     }
   }
 
@@ -200,6 +201,63 @@ class ProfileController extends GetxController {
       showError(e);
     } finally {
       if (showLoading) isLoading.value = false;
+    }
+  }
+
+  /////////////////////////followers List/////////////////////////
+  final isFollowerLoading = false.obs;
+  final isFollowLoadMore = false.obs;
+  int currentFollowPage = 1;
+  int totalFollowPages = 1;
+  int perFollowPage = 10;
+  bool hasFollowMore = true;
+  final followersList = [].obs;
+
+  Future<void> getFollowersList({
+    String? businessId = '',
+    bool showLoading = true,
+    bool isRefresh = false,
+  }) async {
+    if (isRefresh) {
+      currentFollowPage = 1;
+      totalFollowPages = 1;
+      hasFollowMore = true;
+      followersList.clear();
+    }
+
+    currentFollowPage == 1
+        ? isFollowerLoading.value = showLoading
+        : isFollowLoadMore.value = true;
+    try {
+      final response = await _apiService.getFollowersList(
+        businessId,
+        currentFollowPage.toString(),
+      );
+      if (response['common']['status'] == true) {
+        final data = response['data'];
+
+        final List list = data['followers'] ?? [];
+
+        perFollowPage = data['per_page'] ?? perFollowPage;
+        totalFollowPages = data['total_pages'] ?? totalFollowPages;
+
+        /// 🔹 IMPORTANT
+        if (isRefresh || currentFollowPage == 1) {
+          followersList.assignAll(list); // 🔥 replaces list
+        } else {
+          followersList.addAll(list); // pagination
+        }
+
+        /// 👇 backend-accurate pagination check
+        hasFollowMore = currentFollowPage < totalFollowPages;
+
+        if (hasFollowMore) currentFollowPage++;
+      }
+    } catch (e) {
+      showError(e);
+    } finally {
+      if (showLoading) isFollowerLoading.value = false;
+      isFollowLoadMore.value = false;
     }
   }
 }

@@ -389,16 +389,29 @@ class _FeedCardState extends State<FeedCard> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        GestureDetector(
-          onTap: widget.onLike,
-          child: EngagementAction(
-            color: widget.data['is_liked'] == true ? Colors.red : Colors.black,
-            icon: widget.data['is_liked'] == true
-                ? Icons.favorite
-                : Icons.favorite_border,
-            label: 'Like',
-          ),
-        ),
+        Obx(() {
+          final postId = widget.data['post_id'].toString();
+          final isLoading = getIt<FeedsController>().isPostLikeLoading(postId);
+          return AbsorbPointer(
+            absorbing: isLoading,
+            child: AnimatedOpacity(
+              duration: const Duration(milliseconds: 200),
+              opacity: isLoading ? 0.4 : 1,
+              child: GestureDetector(
+                onTap: widget.onLike,
+                child: EngagementAction(
+                  color: widget.data['is_liked'] == true
+                      ? Colors.red
+                      : Colors.black,
+                  icon: widget.data['is_liked'] == true
+                      ? Icons.favorite
+                      : Icons.favorite_border,
+                  label: 'Like',
+                ),
+              ),
+            ),
+          );
+        }),
         GestureDetector(
           onTap: _handleComment,
           child: EngagementAction(

@@ -50,17 +50,35 @@ class CustomFilePicker {
     return await _validateVideoDuration(File(video.path));
   }
 
+  static Future<List<File>?> pickDocumentMulti({
+    bool allowMultiple = false,
+  }) async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      allowMultiple: allowMultiple,
+      type: FileType.image, // ✅ only images
+    );
+
+    if (result != null) {
+      return result.paths
+          .whereType<String>()
+          .map((path) => File(path))
+          .toList();
+    }
+    return null;
+  }
+
   static Future<void> showPickerBottomSheet({
     required Function(File file) onFilePicked,
+    Function(List<File> files)? onFileMultiPicked,
     bool showVideo = false,
+    bool allowMultipleDocuments = false,
   }) async {
     Get.bottomSheet(
       backgroundColor: Colors.white,
       SafeArea(
         child: Container(
-          padding: EdgeInsets.all(12),
+          padding: const EdgeInsets.all(12),
           child: Wrap(
-            // mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               _item(HugeIcons.strokeRoundedCamera02, 'Camera Image', () async {
@@ -93,7 +111,16 @@ class CustomFilePicker {
                     if (file != null) onFilePicked(file);
                   },
                 ),
-
+              if (allowMultipleDocuments) _divider(),
+              if (allowMultipleDocuments)
+                _item(HugeIcons.strokeRoundedAlbum02, 'Multi Images', () async {
+                  List<File>? files = await pickDocumentMulti(
+                    allowMultiple: allowMultipleDocuments,
+                  );
+                  if (files != null && files.isNotEmpty) {
+                    onFileMultiPicked!(files);
+                  }
+                }),
               // ListTile(
               //   leading: HugeIcon(icon: HugeIcons.strokeRoundedCamera02),
               //   title: CustomText(

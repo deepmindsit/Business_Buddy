@@ -112,6 +112,10 @@ class _EditBusinessState extends State<EditBusiness> {
                 GestureDetector(
                   onTap: () {
                     CustomFilePicker.showPickerBottomSheet(
+                      allowMultipleDocuments: true,
+                      onFileMultiPicked: (files) {
+                        controller.attachments.addAll(files);
+                      },
                       onFilePicked: (file) {
                         controller.attachments.add(file);
                       },

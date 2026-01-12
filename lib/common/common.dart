@@ -93,6 +93,7 @@ Widget buildGridImages(dynamic data, String type, {bool isEdit = false}) {
     ),
     itemBuilder: (context, index) {
       final image = data[index];
+      final isExpired = image['is_expired'] ?? false;
       final isApproved = image['approved'] == "1";
       return GestureDetector(
         onTap: () {
@@ -147,6 +148,38 @@ Widget buildGridImages(dynamic data, String type, {bool isEdit = false}) {
                 ),
               ),
             // Overlay for unapproved images
+            if (isExpired)
+              Container(
+                width: 100.w,
+                height: 110.h,
+                decoration: BoxDecoration(
+                  color: Colors.black54,
+                  border: Border.all(color: Colors.red.shade400, width: 1.5),
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.timer_off_rounded,
+                        color: Colors.white,
+                        size: 24.r,
+                      ),
+                      SizedBox(height: 8.h),
+                      Text(
+                        "Offer Expired",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 10.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             if (!isApproved)
               Container(
                 width: 100.w,

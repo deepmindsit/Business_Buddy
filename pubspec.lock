@@ -1272,6 +1272,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.0.1"
+  photo_viewer:
+    dependency: "direct main"
+    description:
+      name: photo_viewer
+      sha256: "16edd1f322e3b768f600e1eb5072168ff92a101dcd64d32fc00a2542e406d552"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0"
   pin_input_text_field:
     dependency: transitive
     description:

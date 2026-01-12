@@ -1,11 +1,11 @@
 import 'package:businessbuddy/utils/exported_path.dart';
 
-class OfferCard extends StatefulWidget {
+class OfferCard extends StatelessWidget {
   final dynamic data;
   final dynamic followButton;
   final void Function() onLike;
   final void Function()? onFollow;
-  const OfferCard({
+  OfferCard({
     super.key,
     this.data,
     required this.onLike,
@@ -13,11 +13,6 @@ class OfferCard extends StatefulWidget {
     this.followButton,
   });
 
-  @override
-  State<OfferCard> createState() => _OfferCardState();
-}
-
-class _OfferCardState extends State<OfferCard> {
   final navController = getIt<NavigationController>();
 
   @override
@@ -81,7 +76,7 @@ class _OfferCardState extends State<OfferCard> {
   }
 
   Widget _buildHeader() {
-    final String image = widget.data['business_profile_image'] ?? '';
+    final String image = data['business_profile_image'] ?? '';
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -120,8 +115,8 @@ class _OfferCardState extends State<OfferCard> {
             onTap: () {
               navController.openSubPage(
                 CategoryDetailPage(
-                  title: widget.data['business_name'] ?? '',
-                  businessId: widget.data['business_id']?.toString() ?? '',
+                  title: data['business_name'] ?? '',
+                  businessId: data['business_id']?.toString() ?? '',
                 ),
               );
             },
@@ -130,7 +125,7 @@ class _OfferCardState extends State<OfferCard> {
               children: [
                 /// BUSINESS NAME
                 CustomText(
-                  title: widget.data['business_name'] ?? '',
+                  title: data['business_name'] ?? '',
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w700,
                   color: Colors.black87,
@@ -146,7 +141,7 @@ class _OfferCardState extends State<OfferCard> {
                     /// CATEGORY (FIXED)
                     Flexible(
                       child: CustomText(
-                        title: widget.data['category'] ?? '',
+                        title: data['category'] ?? '',
                         fontSize: 10.sp,
                         color: Colors.grey.shade600,
                         maxLines: 1,
@@ -174,7 +169,7 @@ class _OfferCardState extends State<OfferCard> {
         SizedBox(width: 8.w),
 
         /// FOLLOW BUTTON
-        widget.followButton ?? SizedBox(),
+        followButton ?? SizedBox(),
         // _buildFollowButton(),
       ],
     );
@@ -193,7 +188,7 @@ class _OfferCardState extends State<OfferCard> {
   }
 
   Widget _buildTimeDisplay() {
-    final createdAt = widget.data['created_at'] ?? '';
+    final createdAt = data['created_at'] ?? '';
     if (createdAt == null || createdAt.toString().isEmpty) {
       return SizedBox();
     }
@@ -207,155 +202,160 @@ class _OfferCardState extends State<OfferCard> {
     );
   }
 
-  Widget _buildFollowButton() {
-    if (widget.data['self_business'] == true) return SizedBox();
-    return Obx(() {
-      bool isLoading = false;
-      if (widget.data['is_followed'] == true) {
-        isLoading =
-            getIt<FeedsController>().followingLoadingMap[widget
-                .data['follow_id']
-                .toString()] ==
-            true;
-      } else {
-        isLoading =
-            getIt<FeedsController>().followingLoadingMap[widget
-                .data['business_id']
-                .toString()] ==
-            true;
-      }
-      final isFollowing = widget.data['is_followed'] == true;
-      return isLoading
-          ? LoadingWidget(color: primaryColor, size: 20.r)
-          : GestureDetector(
-              onTap: widget.onFollow,
-
-              // onTap: () async {
-              //   if (getIt<DemoService>().isDemo == false) {
-              //     ToastUtils.showLoginToast();
-              //     return;
-              //   }
-              //   if (widget.data['is_followed'] == true) {
-              //     await getIt<FeedsController>().unfollowBusiness(
-              //       widget.data['follow_id'].toString(),
-              //     );
-              //   } else {
-              //     await getIt<FeedsController>().followBusiness(
-              //       widget.data['business_id'].toString(),
-              //     );
-              //   }
-              //   widget.data['is_followed'] = !widget.data['is_followed'];
-              //   await getIt<FeedsController>().getFeeds(showLoading: false);
-              //
-              //   // Handle follow action
-              // },
-              child: Container(
-                padding: EdgeInsets.all(8.w),
-                decoration: BoxDecoration(
-                  gradient: isFollowing
-                      ? null
-                      : LinearGradient(
-                          colors: [
-                            primaryColor,
-                            primaryColor.withValues(alpha: 0.8),
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                  borderRadius: BorderRadius.circular(8.r),
-                  border: Border.all(
-                    color: isFollowing
-                        ? Colors.grey.shade300
-                        : Colors.transparent,
-                    width: 1,
-                  ),
-                ),
-                child: Row(
-                  spacing: 4.w,
-                  children: [
-                    Icon(
-                      isFollowing ? Icons.check : Icons.add,
-                      size: 14.sp,
-                      color: isFollowing ? Colors.grey.shade600 : Colors.white,
-                    ),
-                    CustomText(
-                      title: isFollowing ? 'Following' : 'Follow',
-                      fontSize: 12.sp,
-                      color: isFollowing ? Colors.grey.shade700 : Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ],
-                ),
-              ),
-            );
-    });
-
-    //   GestureDetector(
-    //   onTap: () {
-    //     if (!getIt<DemoService>().isDemo) {
-    //       ToastUtils.showLoginToast();
-    //       return;
-    //     }
-    //   },
-    //   child: Container(
-    //     padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-    //     decoration: BoxDecoration(
-    //       gradient: LinearGradient(
-    //         colors: [primaryColor, primaryColor.withValues(alpha: 0.8)],
-    //         begin: Alignment.topLeft,
-    //         end: Alignment.bottomRight,
-    //       ),
-    //       borderRadius: BorderRadius.circular(8.r),
-    //       boxShadow: [
-    //         BoxShadow(
-    //           color: primaryColor.withValues(alpha: 0.3),
-    //           blurRadius: 4,
-    //           offset: const Offset(0, 2),
-    //         ),
-    //       ],
-    //     ),
-    //     child: CustomText(
-    //       title: data['is_followed'] == true ? 'Following' : 'Follow',
-    //       fontSize: 12.sp,
-    //       color: Colors.white,
-    //       fontWeight: FontWeight.w600,
-    //     ),
-    //   ),
-    // );
-  }
+  // Widget _buildFollowButton() {
+  //   if (data['self_business'] == true) return SizedBox();
+  //   return Obx(() {
+  //     bool isLoading = false;
+  //     if (data['is_followed'] == true) {
+  //       isLoading =
+  //           getIt<FeedsController>().followingLoadingMap[data['follow_id']
+  //               .toString()] ==
+  //           true;
+  //     } else {
+  //       isLoading =
+  //           getIt<FeedsController>().followingLoadingMap[data['business_id']
+  //               .toString()] ==
+  //           true;
+  //     }
+  //     final isFollowing = data['is_followed'] == true;
+  //     return isLoading
+  //         ? LoadingWidget(color: primaryColor, size: 20.r)
+  //         : GestureDetector(
+  //             onTap: onFollow,
+  //
+  //             // onTap: () async {
+  //             //   if (getIt<DemoService>().isDemo == false) {
+  //             //     ToastUtils.showLoginToast();
+  //             //     return;
+  //             //   }
+  //             //   if (widget.data['is_followed'] == true) {
+  //             //     await getIt<FeedsController>().unfollowBusiness(
+  //             //       widget.data['follow_id'].toString(),
+  //             //     );
+  //             //   } else {
+  //             //     await getIt<FeedsController>().followBusiness(
+  //             //       widget.data['business_id'].toString(),
+  //             //     );
+  //             //   }
+  //             //   widget.data['is_followed'] = !widget.data['is_followed'];
+  //             //   await getIt<FeedsController>().getFeeds(showLoading: false);
+  //             //
+  //             //   // Handle follow action
+  //             // },
+  //             child: Container(
+  //               padding: EdgeInsets.all(8.w),
+  //               decoration: BoxDecoration(
+  //                 gradient: isFollowing
+  //                     ? null
+  //                     : LinearGradient(
+  //                         colors: [
+  //                           primaryColor,
+  //                           primaryColor.withValues(alpha: 0.8),
+  //                         ],
+  //                         begin: Alignment.topLeft,
+  //                         end: Alignment.bottomRight,
+  //                       ),
+  //                 borderRadius: BorderRadius.circular(8.r),
+  //                 border: Border.all(
+  //                   color: isFollowing
+  //                       ? Colors.grey.shade300
+  //                       : Colors.transparent,
+  //                   width: 1,
+  //                 ),
+  //               ),
+  //               child: Row(
+  //                 spacing: 4.w,
+  //                 children: [
+  //                   Icon(
+  //                     isFollowing ? Icons.check : Icons.add,
+  //                     size: 14.sp,
+  //                     color: isFollowing ? Colors.grey.shade600 : Colors.white,
+  //                   ),
+  //                   CustomText(
+  //                     title: isFollowing ? 'Following' : 'Follow',
+  //                     fontSize: 12.sp,
+  //                     color: isFollowing ? Colors.grey.shade700 : Colors.white,
+  //                     fontWeight: FontWeight.w600,
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           );
+  //   });
+  //
+  //   //   GestureDetector(
+  //   //   onTap: () {
+  //   //     if (!getIt<DemoService>().isDemo) {
+  //   //       ToastUtils.showLoginToast();
+  //   //       return;
+  //   //     }
+  //   //   },
+  //   //   child: Container(
+  //   //     padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+  //   //     decoration: BoxDecoration(
+  //   //       gradient: LinearGradient(
+  //   //         colors: [primaryColor, primaryColor.withValues(alpha: 0.8)],
+  //   //         begin: Alignment.topLeft,
+  //   //         end: Alignment.bottomRight,
+  //   //       ),
+  //   //       borderRadius: BorderRadius.circular(8.r),
+  //   //       boxShadow: [
+  //   //         BoxShadow(
+  //   //           color: primaryColor.withValues(alpha: 0.3),
+  //   //           blurRadius: 4,
+  //   //           offset: const Offset(0, 2),
+  //   //         ),
+  //   //       ],
+  //   //     ),
+  //   //     child: CustomText(
+  //   //       title: data['is_followed'] == true ? 'Following' : 'Follow',
+  //   //       fontSize: 12.sp,
+  //   //       color: Colors.white,
+  //   //       fontWeight: FontWeight.w600,
+  //   //     ),
+  //   //   ),
+  //   // );
+  // }
 
   Widget _buildImageSection() {
-    final image = widget.data['image'] ?? '';
+    final image = data['image'] ?? '';
     return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12.r),
-        // border: Border.all(color: Colors.grey.shade300, width: 0.5),
-      ),
+      alignment: Alignment.center,
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(12.r)),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12.r),
         child: ConstrainedBox(
           constraints: BoxConstraints(maxHeight: 380.h),
-          child:
-              // Image.network(image, fit: BoxFit.contain, width: Get.width),
-              WidgetZoom(
-                heroAnimationTag: 'tag$image',
-                zoomWidget: FadeInImage(
-                  placeholder: const AssetImage(Images.defaultImage),
-                  image: NetworkImage(image),
-                  width: double.infinity,
-                  fit: BoxFit.contain,
-                  imageErrorBuilder: (context, error, stackTrace) {
-                    return Center(
-                      child: Image.asset(
-                        Images.defaultImage,
-                        width: 150.w,
-                        height: 150.w,
-                      ),
-                    );
-                  },
-                  fadeInDuration: const Duration(milliseconds: 500),
-                ),
-              ),
+          child: CachedNetworkImage(
+            placeholder: (_, __) => Image.asset(Images.defaultImage),
+            imageUrl: image,
+            fit: BoxFit.contain,
+            memCacheHeight: 600,
+            errorWidget: (_, __, ___) => Image.asset(Images.defaultImage),
+            fadeInDuration: Duration.zero,
+          ),
+          // WidgetZoom(
+          //   heroAnimationTag: 'tag$image',
+          //   zoomWidget:
+          //
+          //
+          //   //   FadeInImage(
+          //   //   placeholder: const AssetImage(Images.defaultImage),
+          //   //   image: NetworkImage(image),
+          //   //   width: double.infinity,
+          //   //   fit: BoxFit.contain,
+          //   //   imageErrorBuilder: (context, error, stackTrace) {
+          //   //     return Center(
+          //   //       child: Image.asset(
+          //   //         Images.defaultImage,
+          //   //         width: 150.w,
+          //   //         height: 150.w,
+          //   //       ),
+          //   //     );
+          //   //   },
+          //   //   fadeInDuration: const Duration(milliseconds: 500),
+          //   // ),
+          // ),
         ),
       ),
     );
@@ -367,7 +367,7 @@ class _OfferCardState extends State<OfferCard> {
       children: [
         // Title
         CustomText(
-          title: widget.data['offer_name'] ?? '',
+          title: data['offer_name'] ?? '',
           fontSize: 16.sp,
           fontWeight: FontWeight.w600,
           color: primaryColor,
@@ -390,7 +390,7 @@ class _OfferCardState extends State<OfferCard> {
             Flexible(
               child: CustomText(
                 title:
-                    '${widget.data['start_date'] ?? ''} to ${widget.data['end_date'] ?? ''}',
+                    '${data['start_date'] ?? ''} to ${data['end_date'] ?? ''}',
                 fontSize: 14.sp,
                 color: Colors.grey.shade700,
                 maxLines: 2,
@@ -403,7 +403,7 @@ class _OfferCardState extends State<OfferCard> {
 
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: widget.data['highlight_points'].map<Widget>((v) {
+          children: data['highlight_points'].map<Widget>((v) {
             return buildBulletPoint(text: v);
           }).toList(),
         ),
@@ -415,7 +415,7 @@ class _OfferCardState extends State<OfferCard> {
   }
 
   Widget _offerDetails() {
-    final content = widget.data['details'] ?? '';
+    final content = data['details'] ?? '';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -468,7 +468,7 @@ class _OfferCardState extends State<OfferCard> {
             SizedBox(width: 6.w),
             Text(
               formatCount(
-                int.parse(widget.data['offer_likes_count']?.toString() ?? '0'),
+                int.parse(data['offer_likes_count']?.toString() ?? '0'),
               ),
               style: TextStyle(
                 fontSize: 12.sp,
@@ -479,8 +479,7 @@ class _OfferCardState extends State<OfferCard> {
           ],
         ),
         CustomText(
-          title:
-              '${widget.data['offer_comments_count']?.toString() ?? '0'} Comments',
+          title: '${data['offer_comments_count']?.toString() ?? '0'} Comments',
           fontSize: 12.sp,
           color: Colors.grey,
         ),
@@ -493,12 +492,10 @@ class _OfferCardState extends State<OfferCard> {
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         GestureDetector(
-          onTap: widget.onLike,
+          onTap: onLike,
           child: EngagementAction(
-            color: widget.data['is_offer_liked'] == true
-                ? Colors.red
-                : Colors.black,
-            icon: widget.data['is_offer_liked'] == true
+            color: data['is_offer_liked'] == true ? Colors.red : Colors.black,
+            icon: data['is_offer_liked'] == true
                 ? Icons.favorite
                 : Icons.favorite_border,
             label: 'Like',
@@ -523,37 +520,37 @@ class _OfferCardState extends State<OfferCard> {
     );
   }
 
-  Widget _buildEngagementSection() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        // Likes and Comments
-        Row(
-          children: [
-            buildEngagementButton(
-              icon: Icons.favorite_border,
-              activeIcon: Icons.favorite,
-              isActive: widget.data['is_offer_liked'] == true,
-              count: widget.data['offer_likes_count']?.toString() ?? '0',
-              onTap: widget.onLike,
-              activeColor: Colors.red,
-            ),
-
-            SizedBox(width: 16.w),
-
-            buildEngagementButton(
-              icon: HugeIcons.strokeRoundedMessage02,
-              activeIcon: Icons.comment,
-              isActive: false,
-              count: widget.data['offer_comments_count']?.toString() ?? '0',
-              onTap: _handleComment,
-              isComment: true,
-            ),
-          ],
-        ),
-      ],
-    );
-  }
+  // Widget _buildEngagementSection() {
+  //   return Row(
+  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //     children: [
+  //       // Likes and Comments
+  //       Row(
+  //         children: [
+  //           buildEngagementButton(
+  //             icon: Icons.favorite_border,
+  //             activeIcon: Icons.favorite,
+  //             isActive: data['is_offer_liked'] == true,
+  //             count: data['offer_likes_count']?.toString() ?? '0',
+  //             onTap: onLike,
+  //             activeColor: Colors.red,
+  //           ),
+  //
+  //           SizedBox(width: 16.w),
+  //
+  //           buildEngagementButton(
+  //             icon: HugeIcons.strokeRoundedMessage02,
+  //             activeIcon: Icons.comment,
+  //             isActive: false,
+  //             count: data['offer_comments_count']?.toString() ?? '0',
+  //             onTap: _handleComment,
+  //             isComment: true,
+  //           ),
+  //         ],
+  //       ),
+  //     ],
+  //   );
+  // }
 
   void _handleComment() {
     if (!getIt<DemoService>().isDemo) {
@@ -561,10 +558,7 @@ class _OfferCardState extends State<OfferCard> {
       return;
     }
     Get.bottomSheet(
-      CommentsBottomSheet(
-        postId: widget.data['id']?.toString() ?? '',
-        isPost: false,
-      ),
+      CommentsBottomSheet(postId: data['id']?.toString() ?? '', isPost: false),
       isDismissible: true,
       isScrollControlled: true,
       backgroundColor: Colors.grey.withValues(alpha: 0.05),

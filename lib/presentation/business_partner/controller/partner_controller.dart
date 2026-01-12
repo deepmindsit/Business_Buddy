@@ -389,23 +389,33 @@ class PartnerDataController extends GetxController {
     iCanInvest.text = data['can_invest'] ?? '';
     invType.value = data['what_you_look_for_id'].toString();
     selectedBusiness.value = List<String>.from(data['category_names'] ?? []);
-    invCapacity.value = data['investment_capacity_id']?.toString() ?? '';
-    await getCapacity(data['what_you_look_for_id'].toString());
+
+    await getCapacity(data['what_you_look_for_id'].toString()).then((v) {
+      invCapacity.value = data['investment_capacity_id']?.toString() ?? '';
+    });
   }
 
   // ////////////////////////////////////////rec filter///////////////////////////////
-  // final selectedCategory = RxnString();
-  //
-  // final locations = ["Pune", "Mumbai", "Nagpur", "Delhi", "Bangalore"].obs;
-  // final selectedLocation = RxnString();
-  //
-  // // EXPERIENCE
-  // final selectedExp = RxnString();
-  //
-  // // SORT
-  // final sort = RxnString("");
-  //
-  // // LOOKING FOR
-  // final lookingList = ["Investor", "Investment", "Expert"].obs;
-  // final lookingFor = RxnString();
+
+  final isRevokeLoading = false.obs;
+
+  Future<void> revokeBusinessRequirement(
+    String requirementId, {
+    bool showLoading = true,
+  }) async {
+    if (showLoading) isRevokeLoading.value = true;
+    try {
+      final response = await _apiService.revokeBusinessReq(requirementId);
+
+      if (response['common']['status'] == true) {
+        ToastUtils.showSuccessToast(response['common']['message']);
+      } else {
+        ToastUtils.showWarningToast(response['common']['message']);
+      }
+    } catch (e) {
+      showError(e);
+    } finally {
+      if (showLoading) isRevokeLoading.value = false;
+    }
+  }
 }
