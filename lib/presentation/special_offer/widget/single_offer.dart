@@ -1,0 +1,470 @@
+import 'package:businessbuddy/utils/exported_path.dart';
+
+class InstagramOfferView extends StatefulWidget {
+  final Map<String, dynamic> offerData;
+  final String? heroTag;
+  final void Function() onLike;
+  final void Function()? onFollow;
+  final dynamic followButton;
+
+  const InstagramOfferView({
+    super.key,
+    required this.offerData,
+    this.heroTag,
+    required this.onLike,
+    this.onFollow,
+    this.followButton,
+  });
+
+  @override
+  State<InstagramOfferView> createState() => _InstagramOfferViewState();
+}
+
+class _InstagramOfferViewState extends State<InstagramOfferView> {
+  bool _showAllPoints = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppbarPlain(title: 'Special Offer'),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Offer Header
+                _buildOfferHeader(),
+                // Offer Image with Right-side Icons
+                SizedBox(
+                  height: Get.height * 0.7.h,
+                  child: _buildOfferImageWithIcons(),
+                ),
+                // Offer Details
+                _buildOfferDetails(),
+                // Highlight Points
+                _buildHighlightPoints(),
+                // Date Range
+                _buildDateRange(),
+
+                SizedBox(height: 20),
+              ],
+            ),
+          ),
+          _buildFloatingRightIcons(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOfferHeader() {
+    final String image = widget.offerData['business_profile_image'] ?? '';
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: Colors.grey.shade200, width: 0.5),
+        ),
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 20,
+            backgroundColor: Colors.grey.shade200,
+            child: ClipOval(
+              child: FadeInImage(
+                placeholder: const AssetImage(Images.defaultImage),
+                image: NetworkImage(image),
+                width: double.infinity,
+                height: 100.w,
+                fit: BoxFit.cover,
+                imageErrorBuilder: (context, error, stackTrace) {
+                  return Center(
+                    child: Image.asset(
+                      Images.defaultImage,
+                      width: 100.w,
+                      height: 100.w,
+                    ),
+                  );
+                },
+                fadeInDuration: const Duration(milliseconds: 500),
+              ),
+            ),
+          ),
+          const SizedBox(width: 4),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CustomText(
+                  title: widget.offerData['business_name'] ?? '',
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.w600,
+                  textAlign: TextAlign.start,
+                  color: Colors.black,
+                  maxLines: 1,
+                ),
+                const SizedBox(height: 2),
+                Row(
+                  children: [
+                    CustomText(
+                      title: widget.offerData['category'] ?? '',
+                      fontSize: 10.sp,
+                      textAlign: TextAlign.start,
+                      color: Colors.grey.shade600,
+                      maxLines: 1,
+                    ),
+                    const SizedBox(width: 4),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 6.w),
+                      child: Container(
+                        width: 3.r,
+                        height: 3.r,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.grey.shade400,
+                        ),
+                      ),
+                    ),
+                    _buildTimeDisplay(),
+                    const SizedBox(width: 4),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 6.w),
+                      child: Container(
+                        width: 3.r,
+                        height: 3.r,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.grey.shade400,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.red.shade50,
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(color: Colors.red.shade100),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.local_offer, color: Colors.red, size: 12),
+                          SizedBox(width: 4),
+                          Text(
+                            'Special Offer',
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Colors.red,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          SizedBox(width: 12),
+
+          // Follow button
+          widget.followButton ?? SizedBox(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTimeDisplay() {
+    final createdAt = widget.offerData['created_at'] ?? '';
+    if (createdAt.toString().isEmpty) return SizedBox();
+
+    return CustomText(
+      title: getTimeAgo(createdAt),
+      fontSize: 10.sp,
+      textAlign: TextAlign.start,
+      color: Colors.grey.shade600,
+      maxLines: 1,
+    );
+  }
+
+  Widget _buildOfferImageWithIcons() {
+    final image = widget.offerData['image'] ?? '';
+    final video = widget.offerData['video'] ?? '';
+    final mediaType = widget.offerData['media_type'] ?? '';
+    final heroTag = widget.heroTag ?? 'offer_${widget.offerData['id']}';
+
+    return Hero(
+      tag: heroTag,
+      child: Container(
+        color: Colors.black,
+        constraints: BoxConstraints(
+          minHeight: MediaQuery.of(context).size.width,
+          maxHeight: MediaQuery.of(context).size.height * 0.7,
+        ),
+        width: double.infinity,
+        child: mediaType == 'video'
+            ? InstagramVideoPlayer(
+                isSingleView: true,
+                key: ValueKey(video),
+                url: video?.toString() ?? '',
+              )
+            : CachedNetworkImage(
+                placeholder: (_, __) => Image.asset(Images.defaultImage),
+                imageUrl: image,
+                fit: BoxFit.contain,
+                memCacheHeight: 600,
+                errorWidget: (_, __, ___) => Image.asset(Images.defaultImage),
+                fadeInDuration: Duration.zero,
+              ),
+      ),
+    );
+  }
+
+  Widget _buildFloatingRightIcons() {
+    return Positioned(
+      right: 16,
+      bottom: Get.height * 0.2,
+      child: Column(
+        children: [
+          _buildLikeButton(),
+          const SizedBox(height: 10),
+          _buildRightIcon(
+            icon: HugeIcons.strokeRoundedMessage02,
+            color: Colors.white,
+            count: widget.offerData['comments_count']?.toString() ?? '0',
+            onTap: _handleComment,
+          ),
+          const SizedBox(height: 10),
+          _buildRightIcon(
+            icon: HugeIcons.strokeRoundedSent,
+            color: Colors.white,
+            count: '0',
+            onTap: () {},
+            isShare: true,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLikeButton() {
+    return _buildRightIcon(
+      isLike: true,
+      icon: widget.offerData['is_offer_liked'] == true
+          ? Icons.favorite
+          : Icons.favorite_border,
+      color: widget.offerData['is_offer_liked'] == true
+          ? Colors.red
+          : Colors.white,
+      count: widget.offerData['offer_likes_count']?.toString() ?? '0',
+      onTap: widget.onLike,
+    );
+  }
+
+  void _handleComment() {
+    if (!getIt<DemoService>().isDemo) {
+      ToastUtils.showLoginToast();
+      return;
+    }
+    Get.bottomSheet(
+      CommentsBottomSheet(
+        postId: widget.offerData['id']?.toString() ?? '',
+        isPost: false,
+      ),
+      isDismissible: true,
+      isScrollControlled: true,
+      backgroundColor: Colors.grey.withValues(alpha: 0.05),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20.r),
+          topRight: Radius.circular(20.r),
+        ),
+      ),
+      ignoreSafeArea: false,
+    );
+    // Implement comment functionality
+  }
+
+  Widget _buildRightIcon({
+    required dynamic icon,
+    required Color color,
+    required String count,
+    required VoidCallback onTap,
+    bool isLike = false,
+    bool isShare = false,
+  }) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(30.r),
+      onTap: onTap,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.35),
+              shape: BoxShape.circle,
+            ),
+            child: isLike
+                ? Icon(icon, color: color, size: 18.r)
+                : HugeIcon(icon: icon, color: color, size: 18.r),
+          ),
+          if (!isShare) const SizedBox(height: 4),
+          if (!isShare)
+            Text(
+              count,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                shadows: [Shadow(color: Colors.black54, blurRadius: 4)],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOfferDetails() {
+    final offerName = widget.offerData['offer_name'] ?? '';
+    final details = widget.offerData['details'] ?? '';
+
+    return Padding(
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Offer Title
+          CustomText(
+            title: offerName,
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w700,
+            color: primaryColor,
+            textAlign: TextAlign.start,
+            maxLines: 2,
+          ),
+          SizedBox(height: 8),
+          // Offer Description
+          CustomText(
+            title: details,
+            fontSize: 14.sp,
+            textAlign: TextAlign.start,
+            style: TextStyle(fontSize: 14.sp, height: 1.5),
+            maxLines: 2,
+          ),
+          if (details.length > 150)
+            Padding(
+              padding: EdgeInsets.only(top: 4.h),
+              child: GestureDetector(
+                onTap: () => expandContent(details),
+                child: Text(
+                  'Read more',
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: primaryColor,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHighlightPoints() {
+    final List<dynamic> points = widget.offerData['highlight_points'] ?? [];
+    final int maxVisiblePoints = 3;
+
+    if (points.isEmpty) return SizedBox();
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Highlights:',
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          SizedBox(height: 8),
+          Column(
+            children: (_showAllPoints ? points : points.take(maxVisiblePoints))
+                .map<Widget>((point) {
+                  return buildBulletPoint(text: point.toString());
+                })
+                .toList(),
+          ),
+          if (points.length > maxVisiblePoints && !_showAllPoints)
+            GestureDetector(
+              onTap: () {
+                setState(() => _showAllPoints = true);
+              },
+              child: Padding(
+                padding: EdgeInsets.only(top: 8),
+                child: Text(
+                  'Show more highlights',
+                  style: TextStyle(
+                    color: primaryColor,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDateRange() {
+    final startDate = widget.offerData['start_date'] ?? '';
+    final endDate = widget.offerData['end_date'] ?? '';
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade50,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey.shade200),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.calendar_today, color: primaryColor, size: 20),
+            SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Valid Until',
+                    style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    '$startDate - $endDate',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

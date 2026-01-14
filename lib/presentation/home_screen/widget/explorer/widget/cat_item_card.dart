@@ -12,6 +12,7 @@ class CatItemCard extends StatelessWidget {
   final String imagePath;
   final String latitude;
   final String longitude;
+  final String followersCount;
   final bool isFollowed;
   final bool isSelf;
   final List offers;
@@ -29,6 +30,7 @@ class CatItemCard extends StatelessWidget {
     required this.location,
     required this.category,
     required this.distance,
+    required this.followersCount,
     required this.rating,
     required this.reviewCount,
     required this.offerText,
@@ -117,10 +119,7 @@ class CatItemCard extends StatelessWidget {
       child: Column(
         spacing: 8.h,
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildHeader(), _buildLocation(),
-          // _buildRating()
-        ],
+        children: [_buildHeader(), _buildLocation()],
       ),
     );
   }
@@ -177,55 +176,65 @@ class CatItemCard extends StatelessWidget {
                     ),
                 ],
               ),
+              if (followersCount != '0')
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(4, 8, 0, 0),
+                  child: CustomText(
+                    title: '$followersCount Followers',
+                    fontSize: 13.sp,
+                    textAlign: TextAlign.start,
+                    color: Colors.grey,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
             ],
           ),
         ),
-
+        _buildRating(),
         // Direction Icon
       ],
     );
   }
 
-  // Widget _buildRating() {
-  //   return Row(
-  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //     children: [
-  //       Row(
-  //         spacing: 2.w,
-  //         crossAxisAlignment: CrossAxisAlignment.center,
-  //         children: [
-  //           Container(
-  //             padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-  //             decoration: BoxDecoration(
-  //               color: primaryColor,
-  //               borderRadius: BorderRadius.circular(8.r),
-  //             ),
-  //             child: Row(
-  //               mainAxisSize: MainAxisSize.min,
-  //               children: [
-  //                 Icon(Icons.star, color: Colors.white, size: 14.sp),
-  //                 SizedBox(width: 4.w),
-  //                 CustomText(
-  //                   title: rating,
-  //                   fontSize: 12.sp,
-  //                   color: Colors.white,
-  //                   fontWeight: FontWeight.w600,
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //           SizedBox(height: 2.h),
-  //           CustomText(
-  //             title: 'By $reviewCount',
-  //             fontSize: 10.sp,
-  //             color: textLightGrey,
-  //           ),
-  //         ],
-  //       ),
-  //       if (isSearch != true) _buildCategory(),
-  //     ],
-  //   );
-  // }
+  Widget _buildRating() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          spacing: 2.w,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+              decoration: BoxDecoration(
+                color: primaryColor,
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.star, color: Colors.white, size: 14.sp),
+                  SizedBox(width: 4.w),
+                  CustomText(
+                    title: rating,
+                    fontSize: 12.sp,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 2.h),
+            // CustomText(
+            //   title: 'By $reviewCount',
+            //   fontSize: 10.sp,
+            //   color: textLightGrey,
+            // ),
+          ],
+        ),
+      ],
+    );
+  }
 
   Widget _buildLocation() {
     return Row(
@@ -268,9 +277,9 @@ class CatItemCard extends StatelessWidget {
             border: Border.all(color: Colors.grey[200]!),
           ),
           child: Icon(
-            Icons.navigation_rounded,
+            Icons.location_on_outlined,
             size: 18.sp,
-            color: Colors.grey[700],
+            color: Colors.red,
           ),
         ),
       ),
@@ -379,15 +388,16 @@ class CatItemCard extends StatelessWidget {
         if (!isFollowed && !isSelf) SizedBox(width: 4.w),
 
         /// Offer
-        Expanded(
-          flex: 3,
-          child: _buildActionButton(
-            icon: HugeIcons.strokeRoundedDiscount,
-            text: offerText,
-            onPressed: () => AllDialogs().offerDialog(offers),
-            backgroundColor: primaryColor,
+        if (offerText != '0 Offers ')
+          Expanded(
+            flex: 3,
+            child: _buildActionButton(
+              icon: HugeIcons.strokeRoundedDiscount,
+              text: offerText,
+              onPressed: () => AllDialogs().offerDialog(offers),
+              backgroundColor: primaryColor,
+            ),
           ),
-        ),
       ],
     );
   }

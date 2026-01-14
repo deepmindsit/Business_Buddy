@@ -10,11 +10,13 @@ class HomeGateScreen extends StatefulWidget {
 
 class _HomeGateScreenState extends State<HomeGateScreen> {
   final controller = getIt<HomeGateController>();
+
   @override
   void initState() {
-    // 🔥 START FLOW HERE
-    controller.startFlow();
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.startFlow();
+    });
   }
 
   @override

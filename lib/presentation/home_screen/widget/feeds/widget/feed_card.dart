@@ -1,33 +1,25 @@
+import 'package:businessbuddy/presentation/home_screen/widget/feeds/widget/single_post.dart';
 import 'package:businessbuddy/utils/exported_path.dart';
 
-class FeedCard extends StatefulWidget {
+class FeedCard extends StatelessWidget {
   final dynamic data;
   final dynamic followButton;
-
+  final Function()? onOpenSingleView;
   final void Function() onLike;
 
-  const FeedCard({
+  FeedCard({
     super.key,
     this.data,
     required this.onLike,
     this.followButton,
+    this.onOpenSingleView,
   });
 
-  @override
-  State<FeedCard> createState() => _FeedCardState();
-}
-
-class _FeedCardState extends State<FeedCard> {
   final navController = getIt<NavigationController>();
-
-  // @override
-  // bool get wantKeepAlive => false; // ⭐ MUST BE FALSE
 
   @override
   Widget build(BuildContext context) {
-    // super.build(context);
     return Card(
-      // key: ValueKey(widget.data['post_id']),
       surfaceTintColor: Colors.white,
       color: Colors.white,
       elevation: 0,
@@ -62,32 +54,34 @@ class _FeedCardState extends State<FeedCard> {
   }
 
   Widget _buildHeader() {
-    final image = widget.data['business_profile_image'] ?? '';
+    final image = data['business_profile_image'] ?? '';
     return Row(
       children: [
-        CircleAvatar(
-          radius: 20.r,
-          backgroundColor: Colors.grey.shade100,
-          child: ClipOval(
-            child: FadeInImage(
-              placeholder: const AssetImage(Images.defaultImage),
-              image: NetworkImage(image),
-              width: double.infinity,
-              height: 100.w,
-              fit: BoxFit.cover,
-              imageErrorBuilder: (context, error, stackTrace) {
-                return Center(
-                  child: Image.asset(
-                    Images.defaultImage,
-                    width: 100.w,
-                    height: 100.w,
-                  ),
-                );
-              },
-              fadeInDuration: const Duration(milliseconds: 500),
+        GestureDetector(
+          child: CircleAvatar(
+            radius: 20.r,
+            backgroundColor: Colors.grey.shade100,
+            child: ClipOval(
+              child: FadeInImage(
+                placeholder: const AssetImage(Images.defaultImage),
+                image: NetworkImage(image),
+                width: double.infinity,
+                height: 100.w,
+                fit: BoxFit.cover,
+                imageErrorBuilder: (context, error, stackTrace) {
+                  return Center(
+                    child: Image.asset(
+                      Images.defaultImage,
+                      width: 100.w,
+                      height: 100.w,
+                    ),
+                  );
+                },
+                fadeInDuration: const Duration(milliseconds: 500),
+              ),
             ),
+            // backgroundImage: AssetImage(Images.hotelImg),
           ),
-          // backgroundImage: AssetImage(Images.hotelImg),
         ),
         SizedBox(width: 8.w),
         Expanded(
@@ -95,8 +89,8 @@ class _FeedCardState extends State<FeedCard> {
             onTap: () {
               navController.openSubPage(
                 CategoryDetailPage(
-                  title: widget.data['business_name'] ?? '',
-                  businessId: widget.data['business_id']?.toString() ?? '',
+                  title: data['business_name'] ?? '',
+                  businessId: data['business_id']?.toString() ?? '',
                 ),
               );
             },
@@ -105,7 +99,7 @@ class _FeedCardState extends State<FeedCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CustomText(
-                  title: widget.data['business_name'] ?? '',
+                  title: data['business_name'] ?? '',
                   fontSize: 15.sp,
                   fontWeight: FontWeight.w700,
                   textAlign: TextAlign.start,
@@ -121,7 +115,7 @@ class _FeedCardState extends State<FeedCard> {
                 Row(
                   children: [
                     CustomText(
-                      title: widget.data['category'] ?? '',
+                      title: data['category'] ?? '',
                       fontSize: 10.sp,
                       textAlign: TextAlign.start,
                       color: Colors.grey.shade600,
@@ -146,115 +140,59 @@ class _FeedCardState extends State<FeedCard> {
           ),
         ),
         SizedBox(width: 8.w),
-        widget.followButton ?? SizedBox(),
-        // _buildFollowButton(),
+        followButton ?? SizedBox(),
       ],
     );
   }
 
-  // Widget _buildFollowButton() {
-  //   if (widget.data['self_business'] == true) return SizedBox();
-  //
-  //   return Obx(() {
-  //     bool isLoading = false;
-  //     if (widget.data['is_followed'] == true) {
-  //       isLoading =
-  //           getIt<FeedsController>().followingLoadingMap[widget
-  //               .data['follow_id']
-  //               .toString()] ==
-  //           true;
-  //     } else {
-  //       isLoading =
-  //           getIt<FeedsController>().followingLoadingMap[widget
-  //               .data['business_id']
-  //               .toString()] ==
-  //           true;
-  //     }
-  //     final isFollowing = widget.data['is_followed'] == true;
-  //     return isLoading
-  //         ? LoadingWidget(color: primaryColor, size: 20.r)
-  //         : GestureDetector(
-  //             onTap: widget.onFollow,
-  //             child: Container(
-  //               padding: EdgeInsets.all(8.h),
-  //               decoration: BoxDecoration(
-  //                 gradient: isFollowing
-  //                     ? null
-  //                     : LinearGradient(
-  //                         colors: [
-  //                           primaryColor,
-  //                           primaryColor.withValues(alpha: 0.8),
-  //                         ],
-  //                         begin: Alignment.topLeft,
-  //                         end: Alignment.bottomRight,
-  //                       ),
-  //                 borderRadius: BorderRadius.circular(8.r),
-  //                 border: Border.all(
-  //                   color: isFollowing
-  //                       ? Colors.grey.shade300
-  //                       : Colors.transparent,
-  //                   width: 1,
-  //                 ),
-  //               ),
-  //               child: Row(
-  //                 spacing: 4.w,
-  //                 children: [
-  //                   Icon(
-  //                     isFollowing ? Icons.check : Icons.add,
-  //                     size: 14.sp,
-  //                     color: isFollowing ? Colors.grey.shade600 : Colors.white,
-  //                   ),
-  //                   CustomText(
-  //                     title: isFollowing ? 'Following' : 'Follow',
-  //                     fontSize: 12.sp,
-  //                     color: isFollowing ? Colors.grey.shade700 : Colors.white,
-  //                     fontWeight: FontWeight.w600,
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //           );
-  //   });
-  // }
-
   Widget _buildImageSection() {
-    final image = widget.data['image'] ?? '';
-    final video = widget.data['video'] ?? '';
-    final mediaType = widget.data['media_type'] ?? '';
+    final image = data['image'] ?? '';
+    final video = data['video'] ?? '';
+    final mediaType = data['media_type'] ?? '';
+    final heroTag = 'post_${data['post_id']}';
 
     return GestureDetector(
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12.r),
-        child: Center(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: 380.h),
-            child: mediaType == 'video'
-                ? WidgetZoom(
-                    heroAnimationTag: 'tag$video',
-                    zoomWidget: InstagramVideoPlayer(
+      // onTap: () => _openSinglePost(),
+      child: Hero(
+        tag: heroTag,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12.r),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: 380.h),
+              child: mediaType == 'video'
+                  ? InstagramVideoPlayer(
+                      isSingleView: true,
                       key: ValueKey(video),
                       url: video?.toString() ?? '',
-                    ),
-                  )
-                : WidgetZoom(
-                    heroAnimationTag: 'tag$image',
-                    zoomWidget: FadeInImage(
-                      placeholder: const AssetImage(Images.defaultImage),
-                      image: NetworkImage(image),
-                      width: Get.width,
+                    )
+                  : CachedNetworkImage(
+                      placeholder: (_, __) => Image.asset(Images.defaultImage),
+                      imageUrl: image,
                       fit: BoxFit.contain,
-                      imageErrorBuilder: (context, error, stackTrace) {
-                        return Center(
-                          child: Image.asset(
-                            Images.defaultImage,
-                            width: 150.w,
-                            height: 150.h,
-                          ),
-                        );
-                      },
-                      fadeInDuration: const Duration(milliseconds: 500),
+                      memCacheHeight: 600,
+                      errorWidget: (_, __, ___) =>
+                          Image.asset(Images.defaultImage),
+                      fadeInDuration: Duration.zero,
                     ),
-                  ),
+              //
+              // FadeInImage(
+              //         placeholder: const AssetImage(Images.defaultImage),
+              //         image: NetworkImage(image),
+              //         width: Get.width,
+              //         fit: BoxFit.contain,
+              //         imageErrorBuilder: (context, error, stackTrace) {
+              //           return Center(
+              //             child: Image.asset(
+              //               Images.defaultImage,
+              //               width: 150.w,
+              //               height: 150.h,
+              //             ),
+              //           );
+              //         },
+              //         fadeInDuration: const Duration(milliseconds: 500),
+              //       ),
+            ),
           ),
         ),
       ),
@@ -345,6 +283,27 @@ class _FeedCardState extends State<FeedCard> {
     // );
   }
 
+  void _openSinglePost() {
+    Get.to(
+      () => InstagramPostView(
+        onLike: onLike,
+        followButton: followButton ?? SizedBox(),
+        postData: data,
+        heroTag: 'post_${data['post_id']}',
+      ),
+      transition: Transition.cupertino,
+      duration: Duration(milliseconds: 300),
+    );
+    // Get.to(
+    //   () => InstagramPostView(
+    //     postData: widget.data,followButton: widget.followButton,
+    //     heroTag: 'post_${widget.data['post_id']}',
+    //   ),
+    //   transition: Transition.cupertino,
+    //   duration: Duration(milliseconds: 300),
+    // );
+  }
+
   Widget _buildContentEngagement() {
     return Column(
       children: [
@@ -365,9 +324,7 @@ class _FeedCardState extends State<FeedCard> {
             _buildAnimatedIcon(icon: Icons.favorite, color: Colors.red),
             SizedBox(width: 6.w),
             Text(
-              formatCount(
-                int.parse(widget.data['likes_count']?.toString() ?? '0'),
-              ),
+              formatCount(int.parse(data['likes_count']?.toString() ?? '0')),
               style: TextStyle(
                 fontSize: 12.sp,
                 fontWeight: FontWeight.w600,
@@ -377,7 +334,7 @@ class _FeedCardState extends State<FeedCard> {
           ],
         ),
         CustomText(
-          title: '${widget.data['comments_count']?.toString() ?? '0'} Comments',
+          title: '${data['comments_count']?.toString() ?? '0'} Comments',
           fontSize: 12.sp,
           color: Colors.grey,
         ),
@@ -390,7 +347,7 @@ class _FeedCardState extends State<FeedCard> {
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         Obx(() {
-          final postId = widget.data['post_id'].toString();
+          final postId = data['post_id'].toString();
           final isLoading = getIt<FeedsController>().isPostLikeLoading(postId);
           return AbsorbPointer(
             absorbing: isLoading,
@@ -398,12 +355,10 @@ class _FeedCardState extends State<FeedCard> {
               duration: const Duration(milliseconds: 200),
               opacity: isLoading ? 0.4 : 1,
               child: GestureDetector(
-                onTap: widget.onLike,
+                onTap: onLike,
                 child: EngagementAction(
-                  color: widget.data['is_liked'] == true
-                      ? Colors.red
-                      : Colors.black,
-                  icon: widget.data['is_liked'] == true
+                  color: data['is_liked'] == true ? Colors.red : Colors.black,
+                  icon: data['is_liked'] == true
                       ? Icons.favorite
                       : Icons.favorite_border,
                   label: 'Like',
@@ -433,7 +388,7 @@ class _FeedCardState extends State<FeedCard> {
 
   // Widget _buildContentEngagement() {
   Widget _buildTimeDisplay() {
-    final createdAt = widget.data['created_at'] ?? '';
+    final createdAt = data['created_at'] ?? '';
     if (createdAt == null || createdAt.toString().isEmpty) {
       return SizedBox();
     }
@@ -448,7 +403,7 @@ class _FeedCardState extends State<FeedCard> {
   }
 
   Widget _buildContentSection() {
-    final content = widget.data['details'] ?? '';
+    final content = data['details'] ?? '';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -486,7 +441,7 @@ class _FeedCardState extends State<FeedCard> {
       return;
     }
     Get.bottomSheet(
-      CommentsBottomSheet(postId: widget.data['post_id']?.toString() ?? ''),
+      CommentsBottomSheet(postId: data['post_id']?.toString() ?? ''),
       isDismissible: true,
       isScrollControlled: true,
       backgroundColor: Colors.grey.withValues(alpha: 0.05),

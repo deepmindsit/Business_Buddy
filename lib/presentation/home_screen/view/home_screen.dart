@@ -87,6 +87,24 @@ class _HomeScreenState extends State<HomeScreen> {
         _buildCategorySection(),
         _buildRequirementsSection(),
         _buildFeedsSection(),
+        Center(
+          child: Container(
+            padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 8),
+            margin: const EdgeInsets.fromLTRB(8, 0, 8, 20),
+            decoration: BoxDecoration(
+              color: primaryColor,
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+            child: GestureDetector(
+              onTap: _handleViewAllFeeds,
+              child: CustomText(
+                title: 'View All Feeds',
+                fontSize: 12.sp,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -119,49 +137,57 @@ class _HomeScreenState extends State<HomeScreen> {
     return Obx(
       () => _homeController.isMainLoading.isTrue
           ? buildCategoryLoader()
-          : SectionContainer(
-              title: 'Categories',
-              actionText: 'View More',
-              onActionTap: _handleViewAllCategories,
-              child: AnimationLimiter(
-                child: GridView.builder(
-                  padding: EdgeInsets.only(top: 8.h, left: 8.w, right: 8.w),
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4,
-                    crossAxisSpacing: 20.w,
-                    mainAxisSpacing: 0.h,
-                    childAspectRatio: 0.7,
-                  ),
-                  itemCount: _homeController.categoryList.length,
-                  itemBuilder: (context, index) {
-                    final category = _homeController.categoryList[index];
-                    return AnimationConfiguration.staggeredGrid(
-                      position: index,
-                      duration: const Duration(milliseconds: 375),
-                      columnCount: 4,
-                      child: SlideAnimation(
-                        verticalOffset: 50.0,
-                        child: FadeInAnimation(
-                          child: GestureDetector(
-                            onTap: () {
-                              _navigationController.openSubPage(
-                                CategoryList(
-                                  categoryId: category['id'].toString(),
-                                  categoryName: category['name'].toString(),
-                                ),
-                              );
-                            },
-                            child: CategoryCard(
-                              image: category['image'].toString(),
-                              name: category['name'].toString(),
+          : Container(
+              padding: const EdgeInsets.only(top: 12),
+              margin: const EdgeInsets.symmetric(horizontal: 12),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              child: SectionContainer(
+                title: 'Categories',
+                actionText: 'View More',
+                onActionTap: _handleViewAllCategories,
+                child: AnimationLimiter(
+                  child: GridView.builder(
+                    padding: EdgeInsets.only(top: 8.h, left: 8.w, right: 8.w),
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 4,
+                      crossAxisSpacing: 20.w,
+                      mainAxisSpacing: 0.h,
+                      childAspectRatio: 0.7,
+                    ),
+                    itemCount: _homeController.categoryList.length,
+                    itemBuilder: (context, index) {
+                      final category = _homeController.categoryList[index];
+                      return AnimationConfiguration.staggeredGrid(
+                        position: index,
+                        duration: const Duration(milliseconds: 375),
+                        columnCount: 4,
+                        child: SlideAnimation(
+                          verticalOffset: 50.0,
+                          child: FadeInAnimation(
+                            child: GestureDetector(
+                              onTap: () {
+                                _navigationController.openSubPage(
+                                  CategoryList(
+                                    categoryId: category['id'].toString(),
+                                    categoryName: category['name'].toString(),
+                                  ),
+                                );
+                              },
+                              child: CategoryCard(
+                                image: category['image'].toString(),
+                                name: category['name'].toString(),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
               ),
             ),

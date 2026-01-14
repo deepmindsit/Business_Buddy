@@ -13,6 +13,7 @@ class _EditBusinessState extends State<EditBusiness> {
   final expController = getIt<ExplorerController>();
   final RxBool _isSearchingLocation = false.obs;
   final _debouncer = Debouncer(milliseconds: 500);
+
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {

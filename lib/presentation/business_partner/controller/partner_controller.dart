@@ -79,12 +79,13 @@ class PartnerDataController extends GetxController {
   Future<void> getBusinessRequired({
     bool showLoading = true,
     bool isRefresh = false,
+    bool isFirst = false,
   }) async {
     if (isRefresh) {
       currentBusinessPage = 1;
       totalBusinessPages = 1;
       hastBusinessMore = true;
-      requirementList.clear();
+      if (isFirst) requirementList.clear();
     }
     currentBusinessPage == 1
         ? isLoading.value = showLoading
@@ -112,8 +113,6 @@ class PartnerDataController extends GetxController {
         currentBusinessPage.toString(),
         '${lat.value},${lng.value}',
       );
-      print('getBusinessRequired');
-      print(response);
       if (response['common']['status'] == true) {
         final data = response['data'];
 
@@ -307,9 +306,9 @@ class PartnerDataController extends GetxController {
         userId,
         businessId,
       );
-
+      print('response================>$response');
       if (response['common']['status'] == true) {
-        await getBusinessRequired();
+        await getBusinessRequired(isRefresh: true);
         ToastUtils.showSuccessToast(response['common']['message']);
       } else {
         ToastUtils.showWarningToast(response['common']['message']);
@@ -317,6 +316,7 @@ class PartnerDataController extends GetxController {
     } catch (e) {
       showError(e);
     } finally {
+      isSendLoading.value = false;
       businessLoadingMap[businessId] = false;
       businessLoadingMap.refresh();
     }

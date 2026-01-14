@@ -33,7 +33,6 @@ class AllDialogs {
                   // await checkMaintenance();
                 } else {
                   Get.offAllNamed(Routes.splash);
-                  // Optionally show a toast/snackbar
                 }
               },
               child: const Text('Retry', style: TextStyle(color: Colors.white)),

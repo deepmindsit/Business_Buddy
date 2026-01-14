@@ -83,45 +83,81 @@ class _AddOfferState extends State<AddOffer> {
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          Container(
-            width: Get.width * 0.7,
-            height: Get.height * 0.3,
-            decoration: BoxDecoration(
-              border: Border.all(color: lightGrey, width: 0.5.w),
-              borderRadius: BorderRadius.circular(12.r),
-            ),
-            child: Obx(() {
-              final imageFile = controller.offerImage.value;
-              final ImageProvider<Object> imageProvider = imageFile != null
-                  ? FileImage(imageFile)
-                  : const AssetImage(Images.defaultImage);
+          Obx(() {
+            final file = controller.offerImage.value;
+            final videoFile = controller.offerVideo.value;
 
+            if (videoFile != null && isVideo(videoFile)) {
               return ClipRRect(
                 borderRadius: BorderRadius.circular(12.r),
-                child: FadeInImage(
-                  placeholder: const AssetImage(Images.logo),
-                  image: imageProvider,
-                  imageErrorBuilder: (context, error, stackTrace) {
-                    return Image.asset(
-                      Images.defaultImage,
-                      fit: BoxFit.contain,
-                    );
-                  },
-                  fit: BoxFit.cover,
-                  placeholderFit: BoxFit.contain,
-                  fadeInDuration: const Duration(milliseconds: 300),
+                child: SizedBox(
+                  width: Get.width * 0.7.w,
+                  height: Get.height * 0.3.h,
+                  child: VideoPreview(
+                    key: ValueKey(videoFile.path), // 🔥 THIS FIXES IT
+                    file: videoFile,
+                  ),
                 ),
               );
-            }),
-          ),
+            }
+
+            final ImageProvider imageProvider = file != null
+                ? FileImage(file)
+                : const AssetImage(Images.defaultImage);
+
+            return ClipRRect(
+              borderRadius: BorderRadius.circular(12.r),
+              child: FadeInImage(
+                width: Get.width * 0.7.w,
+                height: Get.height * 0.3.h,
+                placeholder: const AssetImage(Images.logo),
+                image: imageProvider,
+                fit: BoxFit.cover,
+              ),
+            );
+          }),
+
+          // Obx(() {
+          //   final imageFile = controller.postImage.value;
+          //   final ImageProvider<Object> imageProvider = imageFile != null
+          //       ? FileImage(imageFile)
+          //       : const AssetImage(Images.defaultImage);
+          //   return ClipRRect(
+          //     borderRadius: BorderRadius.circular(12.r),
+          //     child: FadeInImage(
+          //       width: Get.width * 0.7.w,
+          //       height: Get.height * 0.3.h,
+          //       placeholder: const AssetImage(Images.logo),
+          //       image: imageProvider,
+          //       imageErrorBuilder: (context, error, stackTrace) {
+          //         return Image.asset(
+          //           Images.defaultImage,
+          //           width: Get.width * 0.7.w,
+          //           height: Get.height * 0.3.h,
+          //           fit: BoxFit.cover,
+          //         );
+          //       },
+          //       fit: BoxFit.cover,
+          //       placeholderFit: BoxFit.contain,
+          //       fadeInDuration: const Duration(milliseconds: 300),
+          //     ),
+          //   );
+          // }),
           Positioned(
-            bottom: -10,
+            bottom: 0,
             right: -10,
             child: GestureDetector(
               onTap: () {
                 CustomFilePicker.showPickerBottomSheet(
+                  showVideo: true,
                   onFilePicked: (file) {
-                    controller.offerImage.value = file;
+                    if (isVideo(file)) {
+                      controller.offerVideo.value = file;
+                      controller.offerImage.value = null;
+                    } else {
+                      controller.offerImage.value = file;
+                      controller.offerVideo.value = null;
+                    }
                   },
                 );
               },
@@ -136,6 +172,65 @@ class _AddOfferState extends State<AddOffer> {
       ),
     );
   }
+
+  // Widget _buildProfileImage() {
+  //   return Center(
+  //     child: Stack(
+  //       clipBehavior: Clip.none,
+  //       children: [
+  //         Container(
+  //           width: Get.width * 0.7,
+  //           height: Get.height * 0.3,
+  //           decoration: BoxDecoration(
+  //             border: Border.all(color: lightGrey, width: 0.5.w),
+  //             borderRadius: BorderRadius.circular(12.r),
+  //           ),
+  //           child: Obx(() {
+  //             final imageFile = controller.offerImage.value;
+  //             final ImageProvider<Object> imageProvider = imageFile != null
+  //                 ? FileImage(imageFile)
+  //                 : const AssetImage(Images.defaultImage);
+  //
+  //             return ClipRRect(
+  //               borderRadius: BorderRadius.circular(12.r),
+  //               child: FadeInImage(
+  //                 placeholder: const AssetImage(Images.logo),
+  //                 image: imageProvider,
+  //                 imageErrorBuilder: (context, error, stackTrace) {
+  //                   return Image.asset(
+  //                     Images.defaultImage,
+  //                     fit: BoxFit.contain,
+  //                   );
+  //                 },
+  //                 fit: BoxFit.cover,
+  //                 placeholderFit: BoxFit.contain,
+  //                 fadeInDuration: const Duration(milliseconds: 300),
+  //               ),
+  //             );
+  //           }),
+  //         ),
+  //         Positioned(
+  //           bottom: -10,
+  //           right: -10,
+  //           child: GestureDetector(
+  //             onTap: () {
+  //               CustomFilePicker.showPickerBottomSheet(
+  //                 onFilePicked: (file) {
+  //                   controller.offerImage.value = file;
+  //                 },
+  //               );
+  //             },
+  //             child: CircleAvatar(
+  //               radius: 18.r,
+  //               backgroundColor: primaryColor,
+  //               child: Icon(Icons.edit, size: 20.sp, color: Colors.white),
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildDateField(
     String label,

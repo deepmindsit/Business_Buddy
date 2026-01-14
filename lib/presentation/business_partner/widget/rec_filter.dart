@@ -152,7 +152,7 @@ class _RecruitmentFilterState extends State<RecruitmentFilter> {
                       onPressed: () async {
                         Navigator.pop(context);
                         controller.changeTab(0);
-                        await controller.getBusinessRequired();
+                        await controller.getBusinessRequired(isRefresh: true);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: primaryColor,

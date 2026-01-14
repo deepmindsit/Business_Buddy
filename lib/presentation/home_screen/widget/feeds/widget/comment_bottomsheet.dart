@@ -83,7 +83,7 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                         }
 
                         return ListView.builder(
-                          padding: EdgeInsets.all(16),
+                          padding: const EdgeInsets.all(16),
                           itemCount: commentController.comments.length,
                           itemBuilder: (context, index) {
                             final comment = commentController.comments[index];

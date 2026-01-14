@@ -738,6 +738,7 @@ Widget _buildLikeIconData(LBOController controller) {
 Future<dynamic> _showOffer(LBOController controller) {
   return Get.bottomSheet(
     ConstrainedBox(
+      key: ValueKey(controller.singleOffer['id']?.toString() ?? ''),
       constraints: BoxConstraints(maxHeight: Get.height * 0.75.h),
       child: SafeArea(
         child: Container(
@@ -889,27 +890,41 @@ Future<dynamic> _showOffer(LBOController controller) {
                                 borderRadius: BorderRadius.circular(16),
                                 child: AspectRatio(
                                   aspectRatio: 1,
-                                  child: FadeInImage(
-                                    placeholder: const AssetImage(
-                                      Images.defaultImage,
-                                    ),
-                                    image: NetworkImage(
-                                      controller.singleOffer['image']
-                                          .toString(),
-                                    ),
-                                    imageErrorBuilder:
-                                        (context, error, stackTrace) {
-                                          return Image.asset(
+                                  child:
+                                      controller.singleOffer['media_type'] ==
+                                          'video'
+                                      ? InstagramVideoPlayer(
+                                          key: ValueKey(
+                                            controller.singleOffer['video']
+                                                    ?.toString() ??
+                                                '',
+                                          ),
+                                          url:
+                                              controller.singleOffer['video']
+                                                  ?.toString() ??
+                                              '',
+                                        )
+                                      : FadeInImage(
+                                          placeholder: const AssetImage(
                                             Images.defaultImage,
-                                            fit: BoxFit.contain,
-                                          );
-                                        },
-                                    fit: BoxFit.contain,
-                                    placeholderFit: BoxFit.contain,
-                                    fadeInDuration: const Duration(
-                                      milliseconds: 300,
-                                    ),
-                                  ),
+                                          ),
+                                          image: NetworkImage(
+                                            controller.singleOffer['image']
+                                                .toString(),
+                                          ),
+                                          imageErrorBuilder:
+                                              (context, error, stackTrace) {
+                                                return Image.asset(
+                                                  Images.defaultImage,
+                                                  fit: BoxFit.contain,
+                                                );
+                                              },
+                                          fit: BoxFit.contain,
+                                          placeholderFit: BoxFit.contain,
+                                          fadeInDuration: const Duration(
+                                            milliseconds: 300,
+                                          ),
+                                        ),
                                 ),
                               ),
                             ),
@@ -1318,12 +1333,12 @@ Widget buildHighlightPoint(String text) {
 }
 
 void showError(dynamic e) {
-  ToastUtils.showToast(
-    title: 'Something went wrong',
-    // description: e.toString(),
-    type: ToastificationType.error,
-    icon: Icons.error,
-  );
+  // ToastUtils.showToast(
+  //   title: 'Something went wrong',
+  //   // description: e.toString(),
+  //   type: ToastificationType.error,
+  //   icon: Icons.error,
+  // );
   debugPrint("Error: $e");
 }
 
@@ -1355,7 +1370,7 @@ Widget buildHeadingWithButton({
         Container(
           padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 8),
           decoration: BoxDecoration(
-            border: Border.all(color: lightGrey),
+            color: primaryColor,
             borderRadius: BorderRadius.circular(8.r),
           ),
           child: GestureDetector(
@@ -1363,7 +1378,7 @@ Widget buildHeadingWithButton({
             child: CustomText(
               title: rightText,
               fontSize: 12.sp,
-              color: Colors.black,
+              color: Colors.white,
             ),
           ),
         ),

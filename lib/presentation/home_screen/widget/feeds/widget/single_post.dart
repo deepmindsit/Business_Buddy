@@ -1,0 +1,452 @@
+import 'package:businessbuddy/utils/exported_path.dart';
+
+class InstagramPostView extends StatefulWidget {
+  final Map<String, dynamic> postData;
+  final String? heroTag;
+  final void Function() onLike;
+  final dynamic followButton;
+
+  const InstagramPostView({
+    super.key,
+    required this.postData,
+    this.heroTag,
+    required this.onLike,
+    this.followButton,
+  });
+
+  @override
+  State<InstagramPostView> createState() => _InstagramPostViewState();
+}
+
+class _InstagramPostViewState extends State<InstagramPostView> {
+  final GlobalKey _captionKey = GlobalKey();
+  // double _captionHeight = 0;
+  //
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     final box = _captionKey.currentContext?.findRenderObject() as RenderBox?;
+  //     if (box != null) {
+  //       setState(() {
+  //         _captionHeight = box.size.height;
+  //       });
+  //     }
+  //   });
+  // }
+
+  @override
+  Widget build(BuildContext context) {
+    return PopScope(
+      // canPop: true,
+      // onPopInvokedWithResult: (didPop, result) {
+      //   if (didPop) {
+      //     final url = widget.postData['video'];
+      //
+      //     if (url != null &&
+      //         Get.isRegistered<VideoPlayerControllerX>(tag: url)) {
+      //       Get.find<VideoPlayerControllerX>(tag: url).pause();
+      //     }
+      //   }
+      // },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppbarPlain(title: "Post"),
+        body: Stack(
+          children: [
+            SingleChildScrollView(
+              child: Column(
+                children: [
+                  _buildPostHeader(),
+                  SizedBox(
+                    height: Get.height * 0.7.h,
+                    child: _buildPostMediaWithIcons(),
+                  ),
+                  _buildCaptionSection(),
+                ],
+              ),
+            ),
+            _buildFloatingRightIcons(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPostHeader() {
+    final image = widget.postData['business_profile_image'] ?? '';
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: Colors.grey.shade200, width: 0.5),
+        ),
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 20,
+            backgroundColor: Colors.grey.shade200,
+            child: ClipOval(
+              child: FadeInImage(
+                placeholder: const AssetImage(Images.defaultImage),
+                image: NetworkImage(image),
+                width: double.infinity,
+                height: 100.w,
+                fit: BoxFit.cover,
+                imageErrorBuilder: (context, error, stackTrace) {
+                  return Center(
+                    child: Image.asset(
+                      Images.defaultImage,
+                      width: 100.w,
+                      height: 100.w,
+                    ),
+                  );
+                },
+                fadeInDuration: const Duration(milliseconds: 500),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CustomText(
+                  title: widget.postData['business_name'] ?? '',
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.w600,
+                  textAlign: TextAlign.start,
+                  color: Colors.black,
+                  maxLines: 1,
+                ),
+                const SizedBox(height: 2),
+                Row(
+                  children: [
+                    CustomText(
+                      title: widget.postData['category'] ?? '',
+                      fontSize: 10.sp,
+                      textAlign: TextAlign.start,
+                      color: Colors.grey.shade600,
+                      maxLines: 1,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 6.w),
+                      child: Container(
+                        width: 3.r,
+                        height: 3.r,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.grey.shade400,
+                        ),
+                      ),
+                    ),
+                    _buildTimeDisplay(),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          widget.followButton ?? SizedBox(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTimeDisplay() {
+    final createdAt = widget.postData['created_at'] ?? '';
+    if (createdAt == null || createdAt.toString().isEmpty) {
+      return SizedBox();
+    }
+
+    return CustomText(
+      title: getTimeAgo(createdAt),
+      fontSize: 10.sp,
+      textAlign: TextAlign.start,
+      color: Colors.grey.shade600,
+      maxLines: 1,
+    );
+  }
+
+  Widget _buildPostMediaWithIcons() {
+    final image = widget.postData['image'] ?? '';
+    final video = widget.postData['video'] ?? '';
+    final mediaType = widget.postData['media_type'] ?? '';
+    final heroTag = widget.heroTag ?? 'offer_${widget.postData['id']}';
+
+    return Hero(
+      tag: heroTag,
+      child: Container(
+        color: Colors.black,
+        constraints: BoxConstraints(
+          minHeight: MediaQuery.of(context).size.width,
+          maxHeight: MediaQuery.of(context).size.height * 0.7,
+        ),
+        width: double.infinity,
+        child: mediaType == 'video'
+            ? InstagramVideoPlayer(
+                isSingleView: true,
+                key: ValueKey(video),
+                url: video?.toString() ?? '',
+              )
+            : CachedNetworkImage(
+                placeholder: (_, __) => Image.asset(Images.defaultImage),
+                imageUrl: image,
+                fit: BoxFit.contain,
+                memCacheHeight: 600,
+                errorWidget: (_, __, ___) => Image.asset(Images.defaultImage),
+                fadeInDuration: Duration.zero,
+              ),
+      ),
+    );
+  }
+
+  // Widget _buildPostMediaWithIcons() {
+  //   final image = widget.postData['image'] ?? '';
+  //   final video = widget.postData['video'] ?? '';
+  //   final mediaType = widget.postData['media_type'] ?? '';
+  //   final heroTag = widget.heroTag ?? 'post_${widget.postData['post_id']}';
+  //
+  //   return Hero(
+  //     tag: heroTag,
+  //     child: Container(
+  //       color: Colors.black,
+  //       constraints: BoxConstraints(
+  //         minHeight: MediaQuery.of(context).size.width,
+  //         maxHeight: MediaQuery.of(context).size.height * 0.7,
+  //       ),
+  //       width: double.infinity,
+  //       child: mediaType == 'video'
+  //           ? InstagramVideoPlayer(
+  //               isSingleView: true,
+  //               key: ValueKey(video),
+  //               url: video?.toString() ?? '',
+  //             )
+  //           : CachedNetworkImage(
+  //               placeholder: (_, __) => Image.asset(Images.defaultImage),
+  //               imageUrl: image,
+  //               fit: BoxFit.contain,
+  //               memCacheHeight: 600,
+  //               errorWidget: (_, __, ___) => Image.asset(Images.defaultImage),
+  //               fadeInDuration: Duration.zero,
+  //             ),
+  //
+  //       // FadeInImage(
+  //       //         placeholder: const AssetImage(Images.defaultImage),
+  //       //         image: NetworkImage(image),
+  //       //         fit: BoxFit.contain,
+  //       //         imageErrorBuilder: (context, error, stackTrace) {
+  //       //           return Center(
+  //       //             child: Image.asset(
+  //       //               Images.defaultImage,
+  //       //               width: 150.w,
+  //       //               height: 150.h,
+  //       //             ),
+  //       //           );
+  //       //         },
+  //       //
+  //       //       ),
+  //     ),
+  //   );
+  // }
+
+  Widget _buildFloatingRightIcons() {
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    /// Minimum spacing from caption
+    final minBottomSpacing = 60 + 24;
+
+    /// Clamp position to avoid overlap
+    final bottomPosition = (screenHeight * 0.18).clamp(
+      minBottomSpacing,
+      screenHeight * 0.45,
+    );
+    return Positioned(
+      right: 16,
+      bottom: 60,
+      child: Column(
+        children: [
+          _buildLikeButton(),
+          const SizedBox(height: 10),
+          _buildRightIcon(
+            icon: HugeIcons.strokeRoundedMessage02,
+            color: Colors.white,
+            count: widget.postData['comments_count']?.toString() ?? '0',
+            onTap: _handleComment,
+          ),
+          const SizedBox(height: 10),
+          _buildRightIcon(
+            icon: HugeIcons.strokeRoundedSent,
+            color: Colors.white,
+            count: widget.postData['shares_count']?.toString() ?? '0',
+            onTap: _sharePost,
+            isShare: true,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLikeButton() {
+    return Obx(() {
+      final postId = widget.postData['post_id'].toString();
+      final isLoading = getIt<FeedsController>().isPostLikeLoading(postId);
+      return AbsorbPointer(
+        absorbing: isLoading,
+        child: AnimatedOpacity(
+          duration: const Duration(milliseconds: 200),
+          opacity: isLoading ? 0.4 : 1,
+          child: _buildRightIcon(
+            isLike: true,
+            icon: widget.postData['is_liked'] == true
+                ? Icons.favorite
+                : Icons.favorite_border,
+            color: widget.postData['is_liked'] == true
+                ? Colors.red
+                : Colors.white,
+            count: widget.postData['likes_count']?.toString() ?? '0',
+            onTap: widget.onLike,
+          ),
+        ),
+      );
+    });
+  }
+
+  void _handleComment() {
+    if (!getIt<DemoService>().isDemo) {
+      ToastUtils.showLoginToast();
+      return;
+    }
+    Get.bottomSheet(
+      CommentsBottomSheet(postId: widget.postData['post_id']?.toString() ?? ''),
+      isDismissible: true,
+      isScrollControlled: true,
+      backgroundColor: Colors.grey.withValues(alpha: 0.05),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20.r),
+          topRight: Radius.circular(20.r),
+        ),
+      ),
+      ignoreSafeArea: false,
+    );
+    // Implement comment functionality
+  }
+
+  Widget _buildRightIcon({
+    required dynamic icon,
+    required Color color,
+    required String count,
+    required VoidCallback onTap,
+    bool isLike = false,
+    bool isShare = false,
+  }) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(30.r),
+      onTap: onTap,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.35),
+              shape: BoxShape.circle,
+            ),
+            child: isLike
+                ? Icon(icon, color: color, size: 18.r)
+                : HugeIcon(icon: icon, color: color, size: 18.r),
+          ),
+          if (!isShare) const SizedBox(height: 4),
+          if (!isShare)
+            Text(
+              count,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                shadows: [Shadow(color: Colors.black54, blurRadius: 4)],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCaptionSection() {
+    return Container(
+      key: _captionKey,
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(top: BorderSide(color: Colors.grey.shade200)),
+      ),
+      child: _buildCaption(),
+    );
+  }
+
+  Widget _buildCaption() {
+    final content = widget.postData['details'] ?? '';
+    return RichText(
+      text: TextSpan(
+        children: [
+          TextSpan(
+            text: '${widget.postData['business_name']} ',
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
+              height: 1.5,
+            ),
+          ),
+          TextSpan(
+            text: content,
+            style: TextStyle(color: Colors.black, fontSize: 14, height: 1.5),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _sharePost() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
+      builder: (context) => Container(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildShareOption(Icons.message, 'Direct'),
+            _buildShareOption(Icons.people_outline, 'Story'),
+            _buildShareOption(Icons.link, 'Copy Link'),
+            _buildShareOption(Icons.download_outlined, 'Save'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildShareOption(IconData icon, String label) {
+    return ListTile(
+      leading: CircleAvatar(
+        radius: 24,
+        backgroundColor: Colors.grey.shade100,
+        child: Icon(icon, color: Colors.black, size: 24),
+      ),
+      title: Text(label, style: TextStyle(fontSize: 16)),
+      onTap: () {
+        Navigator.pop(context);
+        // Handle share option
+      },
+    );
+  }
+}

@@ -319,7 +319,6 @@ class _BusinessDetailsState extends State<BusinessDetails> {
           fontWeight: FontWeight.w700,
           color: Colors.black87,
         ),
-        // SizedBox(height: 12.h),
         _buildContactItem(
           icon: Icons.phone_outlined,
           title: 'Mobile Number',
@@ -327,15 +326,7 @@ class _BusinessDetailsState extends State<BusinessDetails> {
           onTap: () =>
               _makePhoneCall(controller.businessDetails['mobile_number'] ?? ''),
         ),
-        if (controller.businessDetails['whatsapp_number'] != null ||
-            controller.businessDetails['whatsapp_number'].toString().isNotEmpty)
-          _buildContactItem(
-            icon: Icons.business_center_outlined,
-            title: 'Whatsapp Number',
-            value: controller.businessDetails['whatsapp_number'] ?? '-',
-            onTap: () {},
-          ),
-        // SizedBox(height: 12.h),
+        _buildWhatsapp(),
         _buildContactItem(
           icon: Icons.location_on_outlined,
           title: 'Address',
@@ -344,6 +335,22 @@ class _BusinessDetailsState extends State<BusinessDetails> {
         ),
       ],
     );
+  }
+
+  Widget _buildWhatsapp() {
+    final whatsapp = controller.businessDetails['whatsapp_number']
+        ?.toString()
+        .trim();
+
+    if (whatsapp != null && whatsapp.isNotEmpty) {
+      return _buildContactItem(
+        icon: Icons.business_center_outlined,
+        title: 'Whatsapp Number',
+        value: controller.businessDetails['whatsapp_number']?.toString() ?? '-',
+        onTap: () {},
+      );
+    }
+    return const SizedBox.shrink();
   }
 
   Widget _buildContactItem({

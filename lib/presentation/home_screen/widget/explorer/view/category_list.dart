@@ -91,6 +91,8 @@ class _CategoryListState extends State<CategoryList> {
                   itemBuilder: (_, i) {
                     final item = controller.businessList[i];
                     return CatItemCard(
+                      followersCount:
+                          item['followers_count']?.toString() ?? '0',
                       offers: item['offers'] ?? [],
                       latitude: item['latitude'] ?? '',
                       isFollowed: item['is_followed'] ?? false,

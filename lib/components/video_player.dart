@@ -2,14 +2,20 @@ import 'package:businessbuddy/utils/exported_path.dart';
 
 class InstagramVideoPlayer extends StatelessWidget {
   final String url;
+  final bool isSingleView;
 
-  const InstagramVideoPlayer({super.key, required this.url});
+  const InstagramVideoPlayer({
+    super.key,
+    required this.url,
+    this.isSingleView = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<VideoPlayerControllerX>(
       init: VideoPlayerControllerX(url),
-      tag: url, // ⭐ VERY IMPORTANT (unique per video)
+      autoRemove: true,
+      tag: url,
       builder: (controller) {
         return Obx(() {
           if (!controller.isInitialized.value) {
@@ -28,30 +34,30 @@ class InstagramVideoPlayer extends StatelessWidget {
               }
             },
             child: GestureDetector(
-              onTap: controller.togglePlayPause,
-              child: _buildVideo(controller),
+              onTap: isSingleView ? controller.togglePlayPause : null,
+              child:
+                  // _buildVideo(controller),
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      _buildVideo(controller),
 
-              // Stack(
-              //   // alignment: Alignment.center,
-              //   children: [
-              //     _buildVideo(controller),
-              //
-              //     /// Play icon overlay (like Instagram)
-              //     // if (!controller.isYouTube && !controller.isPlaying.value)
-              //     //   Container(
-              //     //     decoration: BoxDecoration(
-              //     //       color: Colors.grey.withValues(alpha: 0.4),
-              //     //       shape: BoxShape.circle,
-              //     //     ),
-              //     //     padding: const EdgeInsets.all(16),
-              //     //     child: const Icon(
-              //     //       Icons.play_arrow,
-              //     //       size: 60,
-              //     //       color: Colors.white,
-              //     //     ),
-              //     //   ),
-              //   ],
-              // ),
+                      // / Play icon overlay (like Instagram)
+                      if (!controller.isYouTube && !controller.isPlaying.value)
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.grey.withValues(alpha: 0.4),
+                            shape: BoxShape.circle,
+                          ),
+                          padding: const EdgeInsets.all(4),
+                          child: const Icon(
+                            Icons.play_arrow,
+                            size: 30,
+                            color: Colors.white,
+                          ),
+                        ),
+                    ],
+                  ),
             ),
           );
         });
@@ -69,7 +75,12 @@ class InstagramVideoPlayer extends StatelessWidget {
 
     return AspectRatio(
       aspectRatio: controller.aspectR.value,
-      child: Chewie(controller: controller.chewieController!),
+      child: SizedBox.expand(
+        child: Chewie(
+          key: ValueKey(controller.url),
+          controller: controller.chewieController!,
+        ),
+      ),
     );
   }
 }

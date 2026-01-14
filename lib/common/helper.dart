@@ -70,16 +70,15 @@ Future<void> handleFeedLike(
     return;
   }
 
+  _feedController.setPostLikeLoading(postId, true);
+  _feedController.likeLoadingMap.refresh();
+
   try {
-    _feedController.setPostLikeLoading(postId, true);
     await _toggleFeedLike(item, refresh);
   } finally {
     _feedController.setPostLikeLoading(postId, false);
+    _feedController.likeLoadingMap.refresh();
   }
-
-  // await _feedController.isLikeProcessing.runWithLoader(() async {
-  //   await _toggleFeedLike(item, refresh);
-  // });
 }
 
 Future<void> _toggleFeedLike(
@@ -89,24 +88,21 @@ Future<void> _toggleFeedLike(
   final bool wasLiked = item['is_liked'] ?? false;
   final int likeCount = int.tryParse(item['likes_count'].toString()) ?? 0;
   print('item==========================>$item');
-  try {
-    if (wasLiked) {
-      await _feedController.unLikeBusiness(item['liked_id'].toString());
-      item['likes_count'] = (likeCount - 1).clamp(0, 999999);
-    } else {
-      await _feedController.likeBusiness(
-        item['business_id'].toString(),
-        item['post_id'].toString(),
-      );
-      item['likes_count'] = likeCount + 1;
-    }
 
-    item['is_liked'] = !wasLiked;
-    await refresh();
-  } catch (e) {
-    handleError('Like error: $e');
-    // Consider showing an error toast to the user
+
+  if (wasLiked) {
+    await _feedController.unLikeBusiness(item['liked_id'].toString());
+    item['likes_count'] = (likeCount - 1).clamp(0, 999999);
+  } else {
+    await _feedController.likeBusiness(
+      item['business_id'].toString(),
+      item['post_id'].toString(),
+    );
+    item['likes_count'] = likeCount + 1;
   }
+
+  item['is_liked'] = !wasLiked;
+  await refresh();
 }
 
 void handleError(String error) {

@@ -237,6 +237,8 @@ class _GlobalSearchState extends State<GlobalSearch> {
                         itemBuilder: (_, i) {
                           final item = _controller.businessList[i];
                           return CatItemCard(
+                            followersCount:
+                                item['followers_count']?.toString() ?? '0',
                             isSearch: true,
                             offers: item['offers'] ?? [],
                             latitude: item['latitude'] ?? '',

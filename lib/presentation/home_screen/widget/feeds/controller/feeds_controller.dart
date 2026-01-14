@@ -104,8 +104,8 @@ class FeedsController extends GetxController {
       final response = await _apiService.followBusiness(userId, businessId);
 
       if (response['common']['status'] == true) {
+        await getFeeds(showLoading: false);
         ToastUtils.showSuccessToast(response['common']['message']);
-        // await getFeeds(showLoading: false);
       } else {
         ToastUtils.showWarningToast(response['common']['message']);
       }
@@ -129,7 +129,7 @@ class FeedsController extends GetxController {
       final response = await _apiService.unfollowBusiness(userId, followId);
 
       if (response['common']['status'] == true) {
-        // await getFeeds(showLoading: false);
+        await getFeeds(showLoading: false);
         ToastUtils.showSuccessToast(response['common']['message']);
       } else {
         ToastUtils.showWarningToast(response['common']['message']);
@@ -176,7 +176,6 @@ class FeedsController extends GetxController {
     }
   }
 
-
   bool isPostLikeLoading(String postId) {
     return likeLoadingMap[postId] ?? false;
   }
@@ -184,7 +183,6 @@ class FeedsController extends GetxController {
   void setPostLikeLoading(String postId, bool value) {
     likeLoadingMap[postId] = value;
   }
-
 
   Future<void> unLikeBusiness(String likeId, {bool showLoading = true}) async {
     likeLoadingMap[likeId] = true;

@@ -562,6 +562,7 @@ class _ApiService implements ApiService {
     String endDate,
     List<String> highlightPoints, {
     File? profileImage,
+    File? videoFile,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -585,6 +586,19 @@ class _ApiService implements ApiService {
             MultipartFile.fromFileSync(
               profileImage.path,
               filename: profileImage.path.split(Platform.pathSeparator).last,
+            ),
+          ),
+        );
+      }
+    }
+    if (videoFile != null) {
+      if (videoFile != null) {
+        _data.files.add(
+          MapEntry(
+            'video',
+            MultipartFile.fromFileSync(
+              videoFile.path,
+              filename: videoFile.path.split(Platform.pathSeparator).last,
             ),
           ),
         );
@@ -619,6 +633,7 @@ class _ApiService implements ApiService {
     String endDate,
     List<String> highlightPoints, {
     File? profileImage,
+    File? videoFile,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -641,6 +656,19 @@ class _ApiService implements ApiService {
             MultipartFile.fromFileSync(
               profileImage.path,
               filename: profileImage.path.split(Platform.pathSeparator).last,
+            ),
+          ),
+        );
+      }
+    }
+    if (videoFile != null) {
+      if (videoFile != null) {
+        _data.files.add(
+          MapEntry(
+            'video',
+            MultipartFile.fromFileSync(
+              videoFile.path,
+              filename: videoFile.path.split(Platform.pathSeparator).last,
             ),
           ),
         );

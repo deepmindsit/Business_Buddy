@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:businessbuddy/utils/exported_path.dart';
 import 'package:intl/intl.dart';
 
@@ -83,46 +84,141 @@ class _EditOfferState extends State<EditOffer> {
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          Container(
-            width: Get.width * 0.7,
-            height: Get.height * 0.3,
-            decoration: BoxDecoration(
-              border: Border.all(color: lightGrey, width: 0.5.w),
-              borderRadius: BorderRadius.circular(12.r),
-            ),
-            child: Obx(() {
-              final image = Get.arguments['offerData']['image'] ?? '';
-              final imageFile = controller.offerImage.value;
-              final ImageProvider<Object> imageProvider = imageFile != null
-                  ? FileImage(imageFile)
-                  : NetworkImage(image);
+          Obx(() {
+            final offerData = Get.arguments['offerData'] ?? {};
 
-              return ClipRRect(
-                borderRadius: BorderRadius.circular(12.r),
-                child: FadeInImage(
-                  placeholder: const AssetImage(Images.logo),
-                  image: imageProvider,
-                  imageErrorBuilder: (context, error, stackTrace) {
-                    return Image.asset(
-                      Images.defaultImage,
-                      fit: BoxFit.contain,
-                    );
-                  },
-                  fit: BoxFit.cover,
-                  placeholderFit: BoxFit.contain,
-                  fadeInDuration: const Duration(milliseconds: 300),
+            final String imageUrl = offerData['image'] ?? '';
+            final String videoUrl = offerData['video'] ?? '';
+            final String mediaType = offerData['media_type'] ?? '';
+
+            final File? pickedImage = controller.offerImage.value;
+            final File? pickedVideo = controller.offerVideo.value;
+
+            final double width = Get.width * 0.7;
+            final double height = Get.height * 0.3;
+
+            /// 1️⃣ Picked video (highest priority)
+            if (pickedVideo != null && isVideo(pickedVideo)) {
+              return _videoContainer(
+                child: VideoPreview(
+                  key: ValueKey(pickedVideo.path),
+                  file: pickedVideo,
                 ),
+                width: width,
+                height: height,
               );
-            }),
-          ),
+            }
+
+            /// 2️⃣ Picked image
+            if (pickedImage != null) {
+              return _imageContainer(
+                imageProvider: FileImage(pickedImage),
+                width: width,
+                height: height,
+              );
+            }
+
+            /// 3️⃣ API video
+            if (mediaType == 'video' && videoUrl.isNotEmpty) {
+              return _videoContainer(
+                child: InstagramVideoPlayer(url: videoUrl),
+                width: width,
+                height: height,
+              );
+            }
+
+            /// 4️⃣ API image
+            if (imageUrl.isNotEmpty) {
+              return _imageContainer(
+                imageProvider: NetworkImage(imageUrl),
+                width: width,
+                height: height,
+              );
+            }
+
+            /// 5️⃣ Fallback
+            return _imageContainer(
+              imageProvider: const AssetImage(Images.defaultImage),
+              width: width,
+              height: height,
+            );
+          }),
+
+          // Obx(() {
+          //   final file = controller.offerImage.value;
+          //   final videoFile = controller.offerVideo.value;
+          //
+          //   if (videoFile != null && isVideo(videoFile)) {
+          //     return ClipRRect(
+          //       borderRadius: BorderRadius.circular(12.r),
+          //       child: SizedBox(
+          //         width: Get.width * 0.7.w,
+          //         height: Get.height * 0.3.h,
+          //         child: VideoPreview(
+          //           key: ValueKey(videoFile.path), // 🔥 THIS FIXES IT
+          //           file: videoFile,
+          //         ),
+          //       ),
+          //     );
+          //   }
+          //
+          //   final ImageProvider imageProvider = file != null
+          //       ? FileImage(file)
+          //       : const AssetImage(Images.defaultImage);
+          //
+          //   return ClipRRect(
+          //     borderRadius: BorderRadius.circular(12.r),
+          //     child: FadeInImage(
+          //       width: Get.width * 0.7.w,
+          //       height: Get.height * 0.3.h,
+          //       placeholder: const AssetImage(Images.logo),
+          //       image: imageProvider,
+          //       fit: BoxFit.cover,
+          //     ),
+          //   );
+          // }),
+
+          // Obx(() {
+          //   final imageFile = controller.postImage.value;
+          //   final ImageProvider<Object> imageProvider = imageFile != null
+          //       ? FileImage(imageFile)
+          //       : const AssetImage(Images.defaultImage);
+          //   return ClipRRect(
+          //     borderRadius: BorderRadius.circular(12.r),
+          //     child: FadeInImage(
+          //       width: Get.width * 0.7.w,
+          //       height: Get.height * 0.3.h,
+          //       placeholder: const AssetImage(Images.logo),
+          //       image: imageProvider,
+          //       imageErrorBuilder: (context, error, stackTrace) {
+          //         return Image.asset(
+          //           Images.defaultImage,
+          //           width: Get.width * 0.7.w,
+          //           height: Get.height * 0.3.h,
+          //           fit: BoxFit.cover,
+          //         );
+          //       },
+          //       fit: BoxFit.cover,
+          //       placeholderFit: BoxFit.contain,
+          //       fadeInDuration: const Duration(milliseconds: 300),
+          //     ),
+          //   );
+          // }),
           Positioned(
-            bottom: -10,
+            bottom: 0,
             right: -10,
             child: GestureDetector(
               onTap: () {
                 CustomFilePicker.showPickerBottomSheet(
+                  showVideo: true,
                   onFilePicked: (file) {
-                    controller.offerImage.value = file;
+                    if (isVideo(file)) {
+                      controller.offerVideo.value = file;
+                      controller.offerImage.value = null;
+                    } else {
+                      controller.offerImage.value = file;
+                      controller.offerVideo.value = null;
+                    }
                   },
                 );
               },
@@ -137,6 +233,104 @@ class _EditOfferState extends State<EditOffer> {
       ),
     );
   }
+
+  Widget _imageContainer({
+    required ImageProvider imageProvider,
+    required double width,
+    required double height,
+  }) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12.r),
+      child: FadeInImage(
+        width: width,
+        height: height,
+        placeholder: const AssetImage(Images.logo),
+        image: imageProvider,
+        fit: BoxFit.cover,
+        placeholderFit: BoxFit.contain,
+        fadeInDuration: const Duration(milliseconds: 300),
+        imageErrorBuilder: (_, __, ___) {
+          return Image.asset(
+            Images.defaultImage,
+            width: width,
+            height: height,
+            fit: BoxFit.cover,
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _videoContainer({
+    required Widget child,
+    required double width,
+    required double height,
+  }) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12.r),
+      child: SizedBox(width: width, height: height, child: child),
+    );
+  }
+
+  // Widget _buildProfileImage() {
+  //   return Center(
+  //     child: Stack(
+  //       clipBehavior: Clip.none,
+  //       children: [
+  //         Container(
+  //           width: Get.width * 0.7,
+  //           height: Get.height * 0.3,
+  //           decoration: BoxDecoration(
+  //             border: Border.all(color: lightGrey, width: 0.5.w),
+  //             borderRadius: BorderRadius.circular(12.r),
+  //           ),
+  //           child: Obx(() {
+  //             final image = Get.arguments['offerData']['image'] ?? '';
+  //             final imageFile = controller.offerImage.value;
+  //             final ImageProvider<Object> imageProvider = imageFile != null
+  //                 ? FileImage(imageFile)
+  //                 : NetworkImage(image);
+  //
+  //             return ClipRRect(
+  //               borderRadius: BorderRadius.circular(12.r),
+  //               child: FadeInImage(
+  //                 placeholder: const AssetImage(Images.logo),
+  //                 image: imageProvider,
+  //                 imageErrorBuilder: (context, error, stackTrace) {
+  //                   return Image.asset(
+  //                     Images.defaultImage,
+  //                     fit: BoxFit.contain,
+  //                   );
+  //                 },
+  //                 fit: BoxFit.cover,
+  //                 placeholderFit: BoxFit.contain,
+  //                 fadeInDuration: const Duration(milliseconds: 300),
+  //               ),
+  //             );
+  //           }),
+  //         ),
+  //         Positioned(
+  //           bottom: -10,
+  //           right: -10,
+  //           child: GestureDetector(
+  //             onTap: () {
+  //               CustomFilePicker.showPickerBottomSheet(
+  //                 onFilePicked: (file) {
+  //                   controller.offerImage.value = file;
+  //                 },
+  //               );
+  //             },
+  //             child: CircleAvatar(
+  //               radius: 18.r,
+  //               backgroundColor: primaryColor,
+  //               child: Icon(Icons.edit, size: 20.sp, color: Colors.white),
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildDateField(
     String label,
@@ -303,14 +497,6 @@ class _EditOfferState extends State<EditOffer> {
           : GestureDetector(
               onTap: () async {
                 if (controller.offerKey.currentState!.validate()) {
-                  // if (controller.points.isEmpty) {
-                  //   Get.snackbar(
-                  //     'Validation Error',
-                  //     'Please add at least one highlight point',
-                  //     snackPosition: SnackPosition.BOTTOM,
-                  //   );
-                  //   return;
-                  // }
                   await controller.editOffer(
                     Get.arguments['offerData']['id'].toString(),
                   );

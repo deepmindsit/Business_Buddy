@@ -335,79 +335,90 @@ class _SingleChatState extends State<SingleChat> {
 
   Widget _buildAllChat() {
     return Expanded(
-      child: NotificationListener<ScrollNotification>(
-        onNotification: (scrollInfo) {
-          // 🔥 reverse list → load more when reaching TOP
-          if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent &&
-              controller.hasSingleMore &&
-              !controller.isSingleLoadMore.value) {
-            controller.getSingleChat(widget.chatId, showLoading: false);
-          }
-          return false;
+      child: RefreshIndicator(
+        backgroundColor: Colors.white,
+        strokeWidth: 1,
+        color: primaryColor,
+        onRefresh: () async {
+          await controller.getSingleChat(widget.chatId, isRefresh: true);
         },
-        child: Obx(
-          () => ListView.builder(
-            reverse: true,
-            padding: const EdgeInsets.all(12),
-            itemCount:
-                controller.allMessages.length +
-                (controller.isSingleLoadMore.value ? 1 : 0),
-            itemBuilder: (context, index) {
-              // 🔄 loader at top
-              if (index == controller.allMessages.length) {
-                return Padding(
-                  padding: EdgeInsets.all(8),
-                  child: Center(child: LoadingWidget(color: primaryColor)),
-                );
-              }
+        child: NotificationListener<ScrollNotification>(
+          onNotification: (scrollInfo) {
+            // 🔥 reverse list → load more when reaching TOP
+            if (scrollInfo.metrics.pixels ==
+                    scrollInfo.metrics.maxScrollExtent &&
+                controller.hasSingleMore &&
+                !controller.isSingleLoadMore.value) {
+              controller.getSingleChat(widget.chatId, showLoading: false);
+            }
+            return false;
+          },
+          child: Obx(
+            () => ListView.builder(
+              reverse: true,
+              padding: const EdgeInsets.all(12),
+              itemCount:
+                  controller.allMessages.length +
+                  (controller.isSingleLoadMore.value ? 1 : 0),
+              itemBuilder: (context, index) {
+                // 🔄 loader at top
+                if (index == controller.allMessages.length) {
+                  return Padding(
+                    padding: EdgeInsets.all(8),
+                    child: Center(child: LoadingWidget(color: primaryColor)),
+                  );
+                }
 
-              final message = controller.allMessages[index];
-              final isMe = message['self'] == true;
+                final message = controller.allMessages[index];
+                final isMe = message['self'] == true;
 
-              return Align(
-                alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: Get.width * 0.75),
-                  child: IntrinsicWidth(
-                    child: Card(
-                      elevation: 0,
-                      color: isMe
-                          ? Colors.grey.shade200
-                          : primaryColor.withValues(alpha: 0.05),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 10,
+                return Align(
+                  alignment: isMe
+                      ? Alignment.centerRight
+                      : Alignment.centerLeft,
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: Get.width * 0.75),
+                    child: IntrinsicWidth(
+                      child: Card(
+                        elevation: 0,
+                        color: isMe
+                            ? Colors.grey.shade200
+                            : primaryColor.withValues(alpha: 0.05),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Align(
-                              alignment: isMe
-                                  ? Alignment.centerRight
-                                  : Alignment.centerLeft,
-                              child: CustomText(
-                                title: message['message'] ?? '',
-                                fontSize: 13,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 10,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Align(
+                                alignment: isMe
+                                    ? Alignment.centerRight
+                                    : Alignment.centerLeft,
+                                child: CustomText(
+                                  title: message['message'] ?? '',
+                                  fontSize: 13,
+                                ),
                               ),
-                            ),
-                            SizedBox(height: 4),
-                            CustomText(
-                              title: message['created_at'] ?? '',
-                              fontSize: 10,
-                              color: Colors.grey,
-                            ),
-                          ],
+                              SizedBox(height: 4),
+                              CustomText(
+                                title: message['created_at'] ?? '',
+                                fontSize: 10,
+                                color: Colors.grey,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
         ),
       ),

@@ -30,7 +30,7 @@ class _BusinessPartnerState extends State<BusinessPartner>
   Future<void> loadAllData() async {
     controller.isMainLoading.value = true;
     await Future.wait([
-      controller.getBusinessRequired(isRefresh: true),
+      controller.getBusinessRequired(isRefresh: true, isFirst: true),
       controller.getRequestedBusiness(isRefresh: true),
     ]);
     controller.isMainLoading.value = false;
@@ -97,7 +97,6 @@ class _BusinessPartnerState extends State<BusinessPartner>
                     onTap: () {
                       showModalBottomSheet(
                         isScrollControlled: true,
-
                         backgroundColor: Colors.grey.withValues(alpha: 0.05),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.vertical(
@@ -316,6 +315,7 @@ class _BusinessPartnerState extends State<BusinessPartner>
               AnimationLimiter(
                 child: ListView.separated(
                   shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
                   separatorBuilder: (context, index) =>
                       Divider(height: 5, color: lightGrey),
                   padding: const EdgeInsets.all(8),

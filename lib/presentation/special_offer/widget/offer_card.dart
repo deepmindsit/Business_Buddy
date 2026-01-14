@@ -1,3 +1,4 @@
+import 'package:businessbuddy/presentation/special_offer/widget/single_offer.dart';
 import 'package:businessbuddy/utils/exported_path.dart';
 
 class OfferCard extends StatelessWidget {
@@ -319,43 +320,69 @@ class OfferCard extends StatelessWidget {
 
   Widget _buildImageSection() {
     final image = data['image'] ?? '';
-    return Container(
-      alignment: Alignment.center,
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(12.r)),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12.r),
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: 380.h),
-          child: CachedNetworkImage(
-            placeholder: (_, __) => Image.asset(Images.defaultImage),
-            imageUrl: image,
-            fit: BoxFit.contain,
-            memCacheHeight: 600,
-            errorWidget: (_, __, ___) => Image.asset(Images.defaultImage),
-            fadeInDuration: Duration.zero,
+    final video = data['video'] ?? '';
+    final mediaType = data['media_type'] ?? '';
+    final heroTag = 'offer_${data['id']}';
+
+    return GestureDetector(
+      onTap: () {
+        // Get.to(
+        //   () => InstagramOfferView(
+        //     offerData: data,
+        //     heroTag: heroTag,
+        //     onLike: onLike,
+        //     followButton: followButton,
+        //     onFollow: onFollow,
+        //   ),
+        //   transition: Transition.cupertino,
+        //   duration: Duration(milliseconds: 300),
+        // );
+      },
+      child: Container(
+        alignment: Alignment.center,
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(12.r)),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12.r),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: 380.h),
+            child: mediaType == 'video'
+                ? InstagramVideoPlayer(
+                    isSingleView: true,
+                    key: ValueKey(video),
+                    url: video?.toString() ?? '',
+                  )
+                : CachedNetworkImage(
+                    placeholder: (_, __) => Image.asset(Images.defaultImage),
+                    imageUrl: image,
+                    fit: BoxFit.contain,
+                    memCacheHeight: 600,
+                    errorWidget: (_, __, ___) =>
+                        Image.asset(Images.defaultImage),
+                    fadeInDuration: Duration.zero,
+                  ),
+            // WidgetZoom(
+            //   heroAnimationTag: 'tag$image',
+            //   zoomWidget:
+            //
+            //
+            //   //   FadeInImage(
+            //   //   placeholder: const AssetImage(Images.defaultImage),
+            //   //   image: NetworkImage(image),
+            //   //   width: double.infinity,
+            //   //   fit: BoxFit.contain,
+            //   //   imageErrorBuilder: (context, error, stackTrace) {
+            //   //     return Center(
+            //   //       child: Image.asset(
+            //   //         Images.defaultImage,
+            //   //         width: 150.w,
+            //   //         height: 150.w,
+            //   //       ),
+            //   //     );
+            //   //   },
+            //   //   fadeInDuration: const Duration(milliseconds: 500),
+            //   // ),
+            // ),
           ),
-          // WidgetZoom(
-          //   heroAnimationTag: 'tag$image',
-          //   zoomWidget:
-          //
-          //
-          //   //   FadeInImage(
-          //   //   placeholder: const AssetImage(Images.defaultImage),
-          //   //   image: NetworkImage(image),
-          //   //   width: double.infinity,
-          //   //   fit: BoxFit.contain,
-          //   //   imageErrorBuilder: (context, error, stackTrace) {
-          //   //     return Center(
-          //   //       child: Image.asset(
-          //   //         Images.defaultImage,
-          //   //         width: 150.w,
-          //   //         height: 150.w,
-          //   //       ),
-          //   //     );
-          //   //   },
-          //   //   fadeInDuration: const Duration(milliseconds: 500),
-          //   // ),
-          // ),
         ),
       ),
     );

@@ -46,7 +46,7 @@ class VideoPlayerControllerX extends GetxController {
         videoPlayerController: videoController!,
         autoPlay: false,
         looping: true,
-        showControls: true,
+        showControls: false,
         allowFullScreen: false,
       );
 
@@ -87,9 +87,14 @@ class VideoPlayerControllerX extends GetxController {
 
   @override
   void onClose() {
-    videoController?.dispose();
+    chewieController?.pause();
+    videoController?.pause();
+
     chewieController?.dispose();
+    videoController?.dispose();
     youtubeController?.dispose();
+
     super.onClose();
   }
+
 }

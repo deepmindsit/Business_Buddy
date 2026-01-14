@@ -43,7 +43,10 @@ class LBOController extends GetxController {
   Future<void> pickImage() async {
     try {
       final picker = ImagePicker();
-      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+      final pickedFile = await picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 70,
+      );
       if (pickedFile != null) {
         profileImage.value = File(pickedFile.path);
       }
@@ -332,6 +335,7 @@ class LBOController extends GetxController {
   /// ADD NEW OFFER &&& EDIT OFFER
   /// ------------------------
   final offerImage = Rx<File?>(null);
+  final offerVideo = Rx<File?>(null);
   final titleCtrl = TextEditingController();
   final startDateCtrl = TextEditingController();
   final endDateCtrl = TextEditingController();
@@ -356,6 +360,7 @@ class LBOController extends GetxController {
         endDateCtrl.text.trim(),
         points,
         profileImage: offerImage.value,
+        videoFile: offerVideo.value,
       );
 
       if (response['common']['status'] == true) {
@@ -386,6 +391,7 @@ class LBOController extends GetxController {
         endDate,
         points,
         profileImage: offerImage.value,
+        videoFile: offerVideo.value,
       );
 
       if (response['common']['status'] == true) {
@@ -422,6 +428,7 @@ class LBOController extends GetxController {
 
   void clearOfferData() {
     offerImage.value = null;
+    offerVideo.value = null;
     titleCtrl.clear();
     startDateCtrl.clear();
     endDateCtrl.clear();

@@ -120,6 +120,7 @@ abstract class ApiService {
     @Part(name: "end_date") String endDate,
     @Part(name: "highlight_points[]") List<String> highlightPoints, {
     @Part(name: 'image') File? profileImage,
+    @Part(name: 'video') File? videoFile,
   });
 
   @POST(AllUrl.editOffer)
@@ -132,6 +133,7 @@ abstract class ApiService {
     @Part(name: "end_date") String endDate,
     @Part(name: "highlight_points[]") List<String> highlightPoints, {
     @Part(name: 'image') File? profileImage,
+    @Part(name: 'video') File? videoFile,
   });
 
   @POST(AllUrl.postDetails)

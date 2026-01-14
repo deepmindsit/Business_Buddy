@@ -22,7 +22,7 @@ class _CustomTabBarState extends State<CustomTabBar> {
         width: Get.width,
         height: 35.h,
         margin: EdgeInsets.symmetric(vertical: 8.h),
-        decoration: BoxDecoration(color: Colors.black),
+        decoration: BoxDecoration(color: Colors.black,border: Border.all(color: primaryColor)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: List.generate(tabs.length, (index) {

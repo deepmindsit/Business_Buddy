@@ -12,7 +12,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final controller = getIt<ProfileController>();
-
+  final navController = getIt<NavigationController>();
   @override
   void initState() {
     super.initState();
@@ -369,76 +369,90 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _buildSectionTitle('Business'),
         Column(
           children: businesses.map<Widget>((business) {
-            return Container(
-              margin: EdgeInsets.only(bottom: 10.h),
-              padding: EdgeInsets.all(10.w),
-              decoration: _boxDecoration(),
-              child: Row(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8.r),
-                    child: Image.network(
-                      business['image']?.toString() ?? '',
-                      width: 50.w,
-                      height: 50.h,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => Image.asset(
-                        Images.defaultImage,
+            return GestureDetector(
+              onTap: controller.isMe.isTrue
+                  ? null
+                  : () {
+                      Get.back();
+                      Get.back();
+                      navController.openSubPage(
+                        CategoryDetailPage(
+                          title: business['name']?.toString() ?? '',
+                          businessId: business['id']?.toString() ?? '',
+                        ),
+                      );
+                    },
+              child: Container(
+                margin: EdgeInsets.only(bottom: 10.h),
+                padding: EdgeInsets.all(10.w),
+                decoration: _boxDecoration(),
+                child: Row(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8.r),
+                      child: Image.network(
+                        business['image']?.toString() ?? '',
                         width: 50.w,
                         height: 50.h,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Image.asset(
+                          Images.defaultImage,
+                          width: 50.w,
+                          height: 50.h,
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(width: 12.w),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CustomText(
-                          title: business['name']?.toString() ?? '',
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w600,
-                          textAlign: TextAlign.start,
-                        ),
-                        Text(
-                          business['category']?.toString() ?? '',
-                          style: TextStyle(
-                            fontSize: 12.sp,
-                            color: Colors.grey[600],
+                    SizedBox(width: 12.w),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CustomText(
+                            title: business['name']?.toString() ?? '',
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w600,
+                            textAlign: TextAlign.start,
                           ),
-                        ),
-                        SizedBox(height: 6.h),
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.people_alt_outlined,
-                              size: 14.sp,
-                              color: Colors.grey,
+                          Text(
+                            business['category']?.toString() ?? '',
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              color: Colors.grey[600],
                             ),
-                            SizedBox(width: 4.w),
-                            Text(
-                              '${business['followers']?.toString() ?? '0'} Followers',
-                              style: TextStyle(
-                                fontSize: 11.sp,
-                                color: Colors.grey[600],
+                          ),
+                          SizedBox(height: 6.h),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.people_alt_outlined,
+                                size: 14.sp,
+                                color: Colors.grey,
                               ),
-                            ),
-                          ],
+                              SizedBox(width: 4.w),
+                              Text(
+                                '${business['followers']?.toString() ?? '0'} Followers',
+                                style: TextStyle(
+                                  fontSize: 11.sp,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (controller.isMe.isTrue)
+                      GestureDetector(
+                        onTap: () => Get.toNamed(
+                          Routes.editBusiness,
+                          arguments: {'data': business},
                         ),
-                      ],
-                    ),
-                  ),
-                  if (controller.isMe.isTrue)
-                    GestureDetector(
-                      onTap: () => Get.toNamed(
-                        Routes.editBusiness,
-                        arguments: {'data': business},
+                        child: HugeIcon(
+                          icon: HugeIcons.strokeRoundedPencilEdit02,
+                        ),
                       ),
-                      child: HugeIcon(
-                        icon: HugeIcons.strokeRoundedPencilEdit02,
-                      ),
-                    ),
-                ],
+                  ],
+                ),
               ),
             );
           }).toList(),

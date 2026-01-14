@@ -10,11 +10,6 @@ class RequestedScreen extends StatefulWidget {
 class _RequestedScreenState extends State<RequestedScreen> {
   final controller = getIt<InboxController>();
 
-  // @override
-  // void initState() {
-  //   // getIt<PartnerDataController>().getRequestedBusiness();
-  //   super.initState();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -106,6 +101,7 @@ class _RequestedScreenState extends State<RequestedScreen> {
               AnimationLimiter(
                 child: ListView.separated(
                   shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
                   separatorBuilder: (context, index) =>
                       Divider(height: 5, color: lightGrey),
                   padding: const EdgeInsets.all(8),
@@ -369,6 +365,7 @@ class _RequestedScreenState extends State<RequestedScreen> {
               AnimationLimiter(
                 child: ListView.separated(
                   shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
                   separatorBuilder: (context, index) =>
                       Divider(height: 5, color: lightGrey),
                   padding: const EdgeInsets.all(8),

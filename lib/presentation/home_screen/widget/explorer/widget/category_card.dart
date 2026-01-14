@@ -13,10 +13,7 @@ class CategoryCard extends StatelessWidget {
         Container(
           height: Get.height * 0.08,
           padding: EdgeInsets.all(20.w),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12.r),
-          ),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(12.r)),
           child: FadeInImage(
             placeholder: AssetImage(Images.defaultImage),
             image: NetworkImage(image),

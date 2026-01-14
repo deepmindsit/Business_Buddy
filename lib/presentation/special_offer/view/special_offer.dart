@@ -11,6 +11,7 @@ class _SpecialOfferState extends State<SpecialOffer> {
   final controller = getIt<SpecialOfferController>();
   // final _homeController = getIt<HomeController>();
   final _feedController = getIt<FeedsController>();
+  final double _headerHeight = 30.h;
   @override
   void initState() {
     super.initState();
@@ -38,12 +39,83 @@ class _SpecialOfferState extends State<SpecialOffer> {
             }
             return false;
           },
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Padding(
+          child: Stack(
+            children: [
+              SingleChildScrollView(
+                padding: EdgeInsets.only(top: _headerHeight),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    /// 🔹 Feed List
+                    controller.isLoading.isTrue
+                        ? ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            padding: EdgeInsets.symmetric(horizontal: 8.w),
+                            itemCount: 5,
+                            itemBuilder: (_, i) => const FeedShimmer(),
+                          )
+                        : controller.offerList.isEmpty
+                        ? SizedBox(
+                            height: Get.height * 0.5.h,
+                            child: commonNoDataFound(),
+                          )
+                        : AnimationLimiter(
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              addAutomaticKeepAlives: false,
+                              addRepaintBoundaries: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              padding: EdgeInsets.symmetric(horizontal: 8.w),
+                              itemCount: controller.offerList.length,
+                              itemBuilder: (_, i) {
+                                final item = controller.offerList[i];
+                                return AnimationConfiguration.staggeredList(
+                                  position: i,
+                                  duration: const Duration(milliseconds: 375),
+                                  child: SlideAnimation(
+                                    verticalOffset: 50.0,
+                                    child: FadeInAnimation(
+                                      child: RepaintBoundary(
+                                        child: OfferCard(
+                                          followButton: _followButton(i),
+                                          data: item,
+                                          onLike: () => handleOfferLike(
+                                            item,
+                                            () async => await controller
+                                                .getSpecialOffer(
+                                                  showLoading: false,
+                                                ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+
+                    /// 🔹 Pagination Loader
+                    Obx(
+                      () => controller.isLoadMore.value
+                          ? Padding(
+                              padding: EdgeInsets.symmetric(vertical: 16.h),
+                              child: LoadingWidget(color: primaryColor),
+                            )
+                          : const SizedBox(),
+                    ),
+                  ],
+                ),
+              ),
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  height: _headerHeight,
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  decoration: BoxDecoration(color: Colors.white),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -56,66 +128,8 @@ class _SpecialOfferState extends State<SpecialOffer> {
                     ],
                   ),
                 ),
-
-                /// 🔹 Feed List
-                controller.isLoading.isTrue
-                    ? ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        padding: EdgeInsets.symmetric(horizontal: 8.w),
-                        itemCount: 5,
-                        itemBuilder: (_, i) => const FeedShimmer(),
-                      )
-                    : controller.offerList.isEmpty
-                    ? SizedBox(
-                        height: Get.height * 0.5.h,
-                        child: commonNoDataFound(),
-                      )
-                    : AnimationLimiter(
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          addAutomaticKeepAlives: false,
-                          addRepaintBoundaries: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          padding: EdgeInsets.symmetric(horizontal: 8.w),
-                          itemCount: controller.offerList.length,
-                          itemBuilder: (_, i) {
-                            final item = controller.offerList[i];
-                            return AnimationConfiguration.staggeredList(
-                              position: i,
-                              duration: const Duration(milliseconds: 375),
-                              child: SlideAnimation(
-                                verticalOffset: 50.0,
-                                child: FadeInAnimation(
-                                  child: RepaintBoundary(
-                                    child: OfferCard(
-                                      followButton: _followButton(i),
-                                      data: item,
-                                      onLike: () => handleOfferLike(
-                                        item,
-                                        () async => await controller
-                                            .getSpecialOffer(showLoading: false),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-
-                /// 🔹 Pagination Loader
-                Obx(
-                  () => controller.isLoadMore.value
-                      ? Padding(
-                          padding: EdgeInsets.symmetric(vertical: 16.h),
-                          child: LoadingWidget(color: primaryColor),
-                        )
-                      : const SizedBox(),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       }),
