@@ -465,8 +465,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _businessRequirement() {
     final businesses = controller.profileDetails['business_requirements'] ?? [];
-    print('businesses.length');
-    print(businesses.length);
+    // print('businesses.length');
+    // print(businesses.length);
     if (businesses.length == 0) return const SizedBox();
     return Column(
       spacing: 8.h,

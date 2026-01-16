@@ -10,8 +10,8 @@ class DemoService {
   }
 
   Future<void> updateDemoStatus(String newAuthKey) async {
-    print('newAuthKey');
-    print(newAuthKey);
+    // print('newAuthKey');
+    // print(newAuthKey);
     await LocalStorage.setString('auth_key', newAuthKey);
     isDemo = newAuthKey != 'demo';
   }

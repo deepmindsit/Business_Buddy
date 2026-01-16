@@ -1,27 +1,25 @@
 import 'package:businessbuddy/utils/exported_path.dart';
 
 class InstagramPostView extends StatefulWidget {
-  final Map<String, dynamic> postData;
-  final String? heroTag;
-  final void Function() onLike;
+  final String postId;
   final dynamic followButton;
 
-  const InstagramPostView({
-    super.key,
-    required this.postData,
-    this.heroTag,
-    required this.onLike,
-    this.followButton,
-  });
+  const InstagramPostView({super.key, required this.postId, this.followButton});
 
   @override
   State<InstagramPostView> createState() => _InstagramPostViewState();
 }
 
 class _InstagramPostViewState extends State<InstagramPostView> {
-  final GlobalKey _captionKey = GlobalKey();
-  // double _captionHeight = 0;
-  //
+  final controller = getIt<LBOController>();
+  final navController = getIt<NavigationController>();
+
+  @override
+  void initState() {
+    controller.getSinglePost(widget.postId.toString());
+    super.initState();
+  }
+
   // @override
   // void didChangeDependencies() {
   //   super.didChangeDependencies();
@@ -39,43 +37,36 @@ class _InstagramPostViewState extends State<InstagramPostView> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      // canPop: true,
-      // onPopInvokedWithResult: (didPop, result) {
-      //   if (didPop) {
-      //     final url = widget.postData['video'];
-      //
-      //     if (url != null &&
-      //         Get.isRegistered<VideoPlayerControllerX>(tag: url)) {
-      //       Get.find<VideoPlayerControllerX>(tag: url).pause();
-      //     }
-      //   }
-      // },
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppbarPlain(title: "Post"),
-        body: Stack(
-          children: [
-            SingleChildScrollView(
-              child: Column(
-                children: [
-                  _buildPostHeader(),
-                  SizedBox(
-                    height: Get.height * 0.7.h,
-                    child: _buildPostMediaWithIcons(),
-                  ),
-                  _buildCaptionSection(),
-                ],
-              ),
-            ),
-            _buildFloatingRightIcons(),
-          ],
+        body: Obx(
+          () => controller.isSinglePostLoading.isTrue
+              ? LoadingWidget(color: primaryColor)
+              : Stack(
+                  children: [
+                    SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          _buildPostHeader(),
+                          SizedBox(
+                            height: Get.height * 0.7.h,
+                            child: _buildPostMediaWithIcons(),
+                          ),
+                          _buildCaptionSection(),
+                        ],
+                      ),
+                    ),
+                    _buildFloatingRightIcons(),
+                  ],
+                ),
         ),
       ),
     );
   }
 
   Widget _buildPostHeader() {
-    final image = widget.postData['business_profile_image'] ?? '';
+    final image = controller.singlePost['business_profile_image'] ?? '';
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -85,67 +76,73 @@ class _InstagramPostViewState extends State<InstagramPostView> {
       ),
       child: Row(
         children: [
-          CircleAvatar(
-            radius: 20,
-            backgroundColor: Colors.grey.shade200,
-            child: ClipOval(
-              child: FadeInImage(
-                placeholder: const AssetImage(Images.defaultImage),
-                image: NetworkImage(image),
-                width: double.infinity,
-                height: 100.w,
-                fit: BoxFit.cover,
-                imageErrorBuilder: (context, error, stackTrace) {
-                  return Center(
-                    child: Image.asset(
-                      Images.defaultImage,
-                      width: 100.w,
-                      height: 100.w,
-                    ),
-                  );
-                },
-                fadeInDuration: const Duration(milliseconds: 500),
+          GestureDetector(
+            onTap: _openBusinessDetails,
+            child: CircleAvatar(
+              radius: 20,
+              backgroundColor: Colors.grey.shade200,
+              child: ClipOval(
+                child: FadeInImage(
+                  placeholder: const AssetImage(Images.defaultImage),
+                  image: NetworkImage(image),
+                  width: double.infinity,
+                  height: 100.w,
+                  fit: BoxFit.cover,
+                  imageErrorBuilder: (context, error, stackTrace) {
+                    return Center(
+                      child: Image.asset(
+                        Images.defaultImage,
+                        width: 100.w,
+                        height: 100.w,
+                      ),
+                    );
+                  },
+                  fadeInDuration: const Duration(milliseconds: 500),
+                ),
               ),
             ),
           ),
           const SizedBox(width: 12),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CustomText(
-                  title: widget.postData['business_name'] ?? '',
-                  fontSize: 15.sp,
-                  fontWeight: FontWeight.w600,
-                  textAlign: TextAlign.start,
-                  color: Colors.black,
-                  maxLines: 1,
-                ),
-                const SizedBox(height: 2),
-                Row(
-                  children: [
-                    CustomText(
-                      title: widget.postData['category'] ?? '',
-                      fontSize: 10.sp,
-                      textAlign: TextAlign.start,
-                      color: Colors.grey.shade600,
-                      maxLines: 1,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 6.w),
-                      child: Container(
-                        width: 3.r,
-                        height: 3.r,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.grey.shade400,
+            child: GestureDetector(
+              onTap: _openBusinessDetails,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CustomText(
+                    title: controller.singlePost['business_name'] ?? '',
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w600,
+                    textAlign: TextAlign.start,
+                    color: Colors.black,
+                    maxLines: 1,
+                  ),
+                  const SizedBox(height: 2),
+                  Row(
+                    children: [
+                      CustomText(
+                        title: controller.singlePost['category'] ?? '',
+                        fontSize: 10.sp,
+                        textAlign: TextAlign.start,
+                        color: Colors.grey.shade600,
+                        maxLines: 1,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 6.w),
+                        child: Container(
+                          width: 3.r,
+                          height: 3.r,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.grey.shade400,
+                          ),
                         ),
                       ),
-                    ),
-                    _buildTimeDisplay(),
-                  ],
-                ),
-              ],
+                      _buildTimeDisplay(),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
           widget.followButton ?? SizedBox(),
@@ -155,7 +152,7 @@ class _InstagramPostViewState extends State<InstagramPostView> {
   }
 
   Widget _buildTimeDisplay() {
-    final createdAt = widget.postData['created_at'] ?? '';
+    final createdAt = controller.singlePost['created_at'] ?? '';
     if (createdAt == null || createdAt.toString().isEmpty) {
       return SizedBox();
     }
@@ -170,98 +167,46 @@ class _InstagramPostViewState extends State<InstagramPostView> {
   }
 
   Widget _buildPostMediaWithIcons() {
-    final image = widget.postData['image'] ?? '';
-    final video = widget.postData['video'] ?? '';
-    final mediaType = widget.postData['media_type'] ?? '';
-    final heroTag = widget.heroTag ?? 'offer_${widget.postData['id']}';
+    final image = controller.singlePost['image'] ?? '';
+    final video = controller.singlePost['video'] ?? '';
+    final mediaType = controller.singlePost['media_type'] ?? '';
+    // final heroTag = widget.heroTag ?? 'offer_${controller.singlePost['id']}';
 
-    return Hero(
-      tag: heroTag,
-      child: Container(
-        color: Colors.black,
-        constraints: BoxConstraints(
-          minHeight: MediaQuery.of(context).size.width,
-          maxHeight: MediaQuery.of(context).size.height * 0.7,
-        ),
-        width: double.infinity,
-        child: mediaType == 'video'
-            ? InstagramVideoPlayer(
-                isSingleView: true,
-                key: ValueKey(video),
-                url: video?.toString() ?? '',
-              )
-            : CachedNetworkImage(
-                placeholder: (_, __) => Image.asset(Images.defaultImage),
-                imageUrl: image,
-                fit: BoxFit.contain,
-                memCacheHeight: 600,
-                errorWidget: (_, __, ___) => Image.asset(Images.defaultImage),
-                fadeInDuration: Duration.zero,
-              ),
+    return Container(
+      color: Colors.black,
+      constraints: BoxConstraints(
+        minHeight: MediaQuery.of(context).size.width,
+        maxHeight: MediaQuery.of(context).size.height * 0.7,
       ),
+      width: double.infinity,
+      child: mediaType == 'video'
+          ? InstagramVideoPlayer(
+              isSingleView: true,
+              key: ValueKey(video),
+              url: video?.toString() ?? '',
+            )
+          : CachedNetworkImage(
+              placeholder: (_, __) => Image.asset(Images.defaultImage),
+              imageUrl: image,
+              fit: BoxFit.contain,
+              memCacheHeight: 600,
+              errorWidget: (_, __, ___) => Image.asset(Images.defaultImage),
+              fadeInDuration: Duration.zero,
+            ),
     );
   }
 
-  // Widget _buildPostMediaWithIcons() {
-  //   final image = widget.postData['image'] ?? '';
-  //   final video = widget.postData['video'] ?? '';
-  //   final mediaType = widget.postData['media_type'] ?? '';
-  //   final heroTag = widget.heroTag ?? 'post_${widget.postData['post_id']}';
-  //
-  //   return Hero(
-  //     tag: heroTag,
-  //     child: Container(
-  //       color: Colors.black,
-  //       constraints: BoxConstraints(
-  //         minHeight: MediaQuery.of(context).size.width,
-  //         maxHeight: MediaQuery.of(context).size.height * 0.7,
-  //       ),
-  //       width: double.infinity,
-  //       child: mediaType == 'video'
-  //           ? InstagramVideoPlayer(
-  //               isSingleView: true,
-  //               key: ValueKey(video),
-  //               url: video?.toString() ?? '',
-  //             )
-  //           : CachedNetworkImage(
-  //               placeholder: (_, __) => Image.asset(Images.defaultImage),
-  //               imageUrl: image,
-  //               fit: BoxFit.contain,
-  //               memCacheHeight: 600,
-  //               errorWidget: (_, __, ___) => Image.asset(Images.defaultImage),
-  //               fadeInDuration: Duration.zero,
-  //             ),
-  //
-  //       // FadeInImage(
-  //       //         placeholder: const AssetImage(Images.defaultImage),
-  //       //         image: NetworkImage(image),
-  //       //         fit: BoxFit.contain,
-  //       //         imageErrorBuilder: (context, error, stackTrace) {
-  //       //           return Center(
-  //       //             child: Image.asset(
-  //       //               Images.defaultImage,
-  //       //               width: 150.w,
-  //       //               height: 150.h,
-  //       //             ),
-  //       //           );
-  //       //         },
-  //       //
-  //       //       ),
-  //     ),
-  //   );
-  // }
-
   Widget _buildFloatingRightIcons() {
-    final screenHeight = MediaQuery.of(context).size.height;
+    // final screenHeight = MediaQuery.of(context).size.height;
+    //
+    // /// Minimum spacing from caption
+    // final minBottomSpacing = 60 + 24;
 
-    /// Minimum spacing from caption
-    final minBottomSpacing = 60 + 24;
-
-    /// Clamp position to avoid overlap
-    final bottomPosition = (screenHeight * 0.18).clamp(
-      minBottomSpacing,
-      screenHeight * 0.45,
-    );
+    // /// Clamp position to avoid overlap
+    // final bottomPosition = (screenHeight * 0.18).clamp(
+    //   minBottomSpacing,
+    //   screenHeight * 0.45,
+    // );
     return Positioned(
       right: 16,
       bottom: 60,
@@ -272,15 +217,15 @@ class _InstagramPostViewState extends State<InstagramPostView> {
           _buildRightIcon(
             icon: HugeIcons.strokeRoundedMessage02,
             color: Colors.white,
-            count: widget.postData['comments_count']?.toString() ?? '0',
+            count: controller.singlePost['comments_count']?.toString() ?? '0',
             onTap: _handleComment,
           ),
           const SizedBox(height: 10),
           _buildRightIcon(
             icon: HugeIcons.strokeRoundedSent,
             color: Colors.white,
-            count: widget.postData['shares_count']?.toString() ?? '0',
-            onTap: _sharePost,
+            count: '0',
+            onTap: () {},
             isShare: true,
           ),
         ],
@@ -290,7 +235,7 @@ class _InstagramPostViewState extends State<InstagramPostView> {
 
   Widget _buildLikeButton() {
     return Obx(() {
-      final postId = widget.postData['post_id'].toString();
+      final postId = controller.singlePost['id'].toString();
       final isLoading = getIt<FeedsController>().isPostLikeLoading(postId);
       return AbsorbPointer(
         absorbing: isLoading,
@@ -299,14 +244,24 @@ class _InstagramPostViewState extends State<InstagramPostView> {
           opacity: isLoading ? 0.4 : 1,
           child: _buildRightIcon(
             isLike: true,
-            icon: widget.postData['is_liked'] == true
+            icon: controller.singlePost['is_liked'] == true
                 ? Icons.favorite
                 : Icons.favorite_border,
-            color: widget.postData['is_liked'] == true
+            color: controller.singlePost['is_liked'] == true
                 ? Colors.red
                 : Colors.white,
-            count: widget.postData['likes_count']?.toString() ?? '0',
-            onTap: widget.onLike,
+            count: controller.singlePost['likes_count']?.toString() ?? '0',
+            onTap: () async {
+              await handleFeedLike(
+                isSingle: true,
+                controller.singlePost,
+                () async => await controller
+                    .getSinglePost(postId, showLoading: false)
+                    .then((v) {
+                      getIt<HomeController>().getHomeApi(showLoading: false);
+                    }),
+              );
+            },
           ),
         ),
       );
@@ -319,7 +274,9 @@ class _InstagramPostViewState extends State<InstagramPostView> {
       return;
     }
     Get.bottomSheet(
-      CommentsBottomSheet(postId: widget.postData['post_id']?.toString() ?? ''),
+      CommentsBottomSheet(
+        postId: controller.singlePost['id']?.toString() ?? '',
+      ),
       isDismissible: true,
       isScrollControlled: true,
       backgroundColor: Colors.grey.withValues(alpha: 0.05),
@@ -376,7 +333,6 @@ class _InstagramPostViewState extends State<InstagramPostView> {
 
   Widget _buildCaptionSection() {
     return Container(
-      key: _captionKey,
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
       decoration: BoxDecoration(
@@ -388,12 +344,12 @@ class _InstagramPostViewState extends State<InstagramPostView> {
   }
 
   Widget _buildCaption() {
-    final content = widget.postData['details'] ?? '';
+    final content = controller.singlePost['details'] ?? '';
     return RichText(
       text: TextSpan(
         children: [
           TextSpan(
-            text: '${widget.postData['business_name']} ',
+            text: '${controller.singlePost['business_name']} ',
             style: TextStyle(
               color: Colors.black,
               fontWeight: FontWeight.w600,
@@ -410,43 +366,13 @@ class _InstagramPostViewState extends State<InstagramPostView> {
     );
   }
 
-  void _sharePost() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
+  void _openBusinessDetails() {
+    Get.back();
+    navController.openSubPage(
+      CategoryDetailPage(
+        title: controller.singlePost['business_name'] ?? '',
+        businessId: controller.singlePost['business_id']?.toString() ?? '',
       ),
-      builder: (context) => Container(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildShareOption(Icons.message, 'Direct'),
-            _buildShareOption(Icons.people_outline, 'Story'),
-            _buildShareOption(Icons.link, 'Copy Link'),
-            _buildShareOption(Icons.download_outlined, 'Save'),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildShareOption(IconData icon, String label) {
-    return ListTile(
-      leading: CircleAvatar(
-        radius: 24,
-        backgroundColor: Colors.grey.shade100,
-        child: Icon(icon, color: Colors.black, size: 24),
-      ),
-      title: Text(label, style: TextStyle(fontSize: 16)),
-      onTap: () {
-        Navigator.pop(context);
-        // Handle share option
-      },
     );
   }
 }

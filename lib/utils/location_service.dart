@@ -24,7 +24,7 @@ Future<String> updateUserLocation() async {
     }
     return userLocation;
   } catch (e) {
-    print('Error getting user location: $e');
+    // print('Error getting user location: $e');
   }
   return userLocation;
 }
@@ -118,7 +118,7 @@ Future<Map<String, String>> getPlaceDetails(String placeId) async {
     final data = jsonDecode(response.body);
     final components = data["result"]["address_components"] as List;
     final location = data["result"]["geometry"]["location"];
-    print('location=========>$location');
+    // print('location=========>$location');
     String country = "";
     String state = "";
     String city = "";

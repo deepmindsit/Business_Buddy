@@ -84,7 +84,7 @@ class _EditProfileState extends State<EditProfile> {
                   backgroundColor: lightGrey,
                   child: ClipOval(
                     child: FadeInImage(
-                      placeholder: const AssetImage(Images.logo),
+                      placeholder: const AssetImage(Images.defaultImage),
                       image: imageProvider,
                       fit: BoxFit.cover,
                       width: 120.r,
@@ -158,8 +158,8 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   Widget _buildSpecialization() {
-    print('controller.specialization.value');
-    print(controller.specialization.value);
+    // print('controller.specialization.value');
+    // print(controller.specialization.value);
     return Obx(
       () => getIt<ExplorerController>().isLoading.isTrue
           ? LoadingWidget(color: primaryColor)

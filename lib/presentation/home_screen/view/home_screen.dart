@@ -155,7 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     physics: const NeverScrollableScrollPhysics(),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 4,
-                      crossAxisSpacing: 20.w,
+                      crossAxisSpacing: 12.w,
                       mainAxisSpacing: 0.h,
                       childAspectRatio: 0.7,
                     ),
@@ -201,7 +201,8 @@ class _HomeScreenState extends State<HomeScreen> {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               padding: EdgeInsets.symmetric(horizontal: 8.w),
-              itemCount: 5, // shimmer count
+              itemCount: 5,
+              // shimmer count
               itemBuilder: (_, i) => const FeedShimmer(),
             )
           : SectionContainer(
@@ -247,9 +248,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return FeedCard(
       data: item,
-      onLike: () => handleFeedLike(
+      onLike: () async => await handleFeedLike(
         item,
-        () => _homeController.getHomeApi(showLoading: false),
+        () async => await _homeController.getHomeApi(showLoading: false),
       ),
       // onFollow: () => _handleFeedFollow(item),
       followButton: _followButton(index),

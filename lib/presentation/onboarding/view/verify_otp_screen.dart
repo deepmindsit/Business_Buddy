@@ -20,7 +20,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> with CodeAutoFill {
   @override
   void codeUpdated() {
     controller.otpController.text = code!;
-    print('OTP Received: ${controller.otpController.text}');
+    // print('OTP Received: ${controller.otpController.text}');
   }
 
   @override

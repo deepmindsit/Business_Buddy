@@ -57,7 +57,7 @@ class ExplorerController extends GetxController {
         type: ToastificationType.error,
         icon: Icons.error,
       );
-      debugPrint("Error: $e");
+      // debugPrint("Error: $e");
     } finally {
       if (showLoading) isLoading.value = false;
       isLoadMore.value = false;
@@ -131,7 +131,7 @@ class ExplorerController extends GetxController {
         type: ToastificationType.error,
         icon: Icons.error,
       );
-      debugPrint("Error: $e");
+      // debugPrint("Error: $e");
     } finally {
       if (showLoading) isBusinessLoading.value = false;
     }
@@ -165,7 +165,7 @@ class ExplorerController extends GetxController {
         type: ToastificationType.error,
         icon: Icons.error,
       );
-      debugPrint("Error: $e");
+      // debugPrint("Error: $e");
     } finally {
       if (showLoading) isDetailsLoading.value = false;
     }
@@ -201,7 +201,7 @@ class ExplorerController extends GetxController {
         type: ToastificationType.error,
         icon: Icons.error,
       );
-      debugPrint("Error: $e");
+      // debugPrint("Error: $e");
     } finally {
       Get.back();
       if (showLoading) isSubmitting.value = false;

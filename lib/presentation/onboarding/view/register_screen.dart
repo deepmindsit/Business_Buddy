@@ -1,5 +1,4 @@
 import 'package:businessbuddy/utils/exported_path.dart';
-import 'package:flutter/gestures.dart';
 
 class RegisterScreen extends StatelessWidget {
   RegisterScreen({super.key});
@@ -225,9 +224,19 @@ class RegisterScreen extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _buildLinkText("Terms & Conditions", onTap: () {}),
+            _buildLinkText(
+              "Terms & Conditions",
+              onTap: () {
+                launchURL(AllUrl.termsCondition);
+              },
+            ),
             CustomText(title: " and  ", fontSize: 14.sp, color: textGrey),
-            _buildLinkText("Privacy Policy", onTap: () {}),
+            _buildLinkText(
+              "Privacy Policy",
+              onTap: () {
+                launchURL(AllUrl.privacyPolicy);
+              },
+            ),
           ],
         ),
       ],

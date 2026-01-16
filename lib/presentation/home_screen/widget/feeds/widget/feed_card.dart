@@ -1,19 +1,11 @@
-import 'package:businessbuddy/presentation/home_screen/widget/feeds/widget/single_post.dart';
 import 'package:businessbuddy/utils/exported_path.dart';
 
 class FeedCard extends StatelessWidget {
   final dynamic data;
   final dynamic followButton;
-  final Function()? onOpenSingleView;
-  final void Function() onLike;
+  final Future<void> Function() onLike;
 
-  FeedCard({
-    super.key,
-    this.data,
-    required this.onLike,
-    this.followButton,
-    this.onOpenSingleView,
-  });
+  FeedCard({super.key, this.data, required this.onLike, this.followButton});
 
   final navController = getIt<NavigationController>();
 
@@ -38,7 +30,6 @@ class FeedCard extends StatelessWidget {
           children: [
             // Header Section
             _buildHeader(),
-            // SizedBox(height: 16.h),
             _buildContentSection(),
             // Image Section
             _buildImageSection(),
@@ -152,7 +143,16 @@ class FeedCard extends StatelessWidget {
     final heroTag = 'post_${data['post_id']}';
 
     return GestureDetector(
-      // onTap: () => _openSinglePost(),
+      onTap: () {
+        Get.to(
+          () => InstagramPostView(
+            followButton: followButton,
+            postId: data['post_id']?.toString() ?? '',
+          ),
+          transition: Transition.cupertino,
+          duration: Duration(milliseconds: 300),
+        );
+      },
       child: Hero(
         tag: heroTag,
         child: ClipRRect(
@@ -162,7 +162,7 @@ class FeedCard extends StatelessWidget {
               constraints: BoxConstraints(maxHeight: 380.h),
               child: mediaType == 'video'
                   ? InstagramVideoPlayer(
-                      isSingleView: true,
+                      // isSingleView: true,
                       key: ValueKey(video),
                       url: video?.toString() ?? '',
                     )
@@ -175,23 +175,6 @@ class FeedCard extends StatelessWidget {
                           Image.asset(Images.defaultImage),
                       fadeInDuration: Duration.zero,
                     ),
-              //
-              // FadeInImage(
-              //         placeholder: const AssetImage(Images.defaultImage),
-              //         image: NetworkImage(image),
-              //         width: Get.width,
-              //         fit: BoxFit.contain,
-              //         imageErrorBuilder: (context, error, stackTrace) {
-              //           return Center(
-              //             child: Image.asset(
-              //               Images.defaultImage,
-              //               width: 150.w,
-              //               height: 150.h,
-              //             ),
-              //           );
-              //         },
-              //         fadeInDuration: const Duration(milliseconds: 500),
-              //       ),
             ),
           ),
         ),
@@ -283,27 +266,6 @@ class FeedCard extends StatelessWidget {
     // );
   }
 
-  void _openSinglePost() {
-    Get.to(
-      () => InstagramPostView(
-        onLike: onLike,
-        followButton: followButton ?? SizedBox(),
-        postData: data,
-        heroTag: 'post_${data['post_id']}',
-      ),
-      transition: Transition.cupertino,
-      duration: Duration(milliseconds: 300),
-    );
-    // Get.to(
-    //   () => InstagramPostView(
-    //     postData: widget.data,followButton: widget.followButton,
-    //     heroTag: 'post_${widget.data['post_id']}',
-    //   ),
-    //   transition: Transition.cupertino,
-    //   duration: Duration(milliseconds: 300),
-    // );
-  }
-
   Widget _buildContentEngagement() {
     return Column(
       children: [
@@ -374,7 +336,7 @@ class FeedCard extends StatelessWidget {
             label: 'Comment',
           ),
         ),
-        EngagementAction(hugeIcon: HugeIcons.strokeRoundedSent, label: 'Share'),
+        // EngagementAction(hugeIcon: HugeIcons.strokeRoundedSent, label: 'Share'),
       ],
     );
   }

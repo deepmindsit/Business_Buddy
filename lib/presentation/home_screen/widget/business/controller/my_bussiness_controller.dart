@@ -125,7 +125,7 @@ class LBOController extends GetxController {
         type: ToastificationType.error,
         icon: Icons.error,
       );
-      debugPrint("Error: $e");
+      // debugPrint("Error: $e");
     } finally {
       if (showLoading) isDetailsLoading.value = false;
     }
@@ -421,7 +421,7 @@ class LBOController extends GetxController {
       final parsed = DateFormat('MMM dd, yyyy').parse(date);
       return DateFormat('yyyy-MM-dd').format(parsed);
     } catch (e) {
-      debugPrint('Date parse error: $e');
+      // debugPrint('Date parse error: $e');
       return '';
     }
   }

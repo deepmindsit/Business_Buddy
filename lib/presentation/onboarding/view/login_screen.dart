@@ -24,7 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
         controller.numberController.text = number;
       } else {}
     } catch (e) {
-      print("Error getting number: $e");
+      // print("Error getting number: $e");
     }
   }
 
@@ -176,9 +176,19 @@ class _LoginScreenState extends State<LoginScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _buildLinkText("Terms & Conditions", onTap: () {}),
+            _buildLinkText(
+              "Terms & Conditions",
+              onTap: () {
+                launchURL(AllUrl.termsCondition);
+              },
+            ),
             CustomText(title: " and  ", fontSize: 14.sp, color: textGrey),
-            _buildLinkText("Privacy Policy", onTap: () {}),
+            _buildLinkText(
+              "Privacy Policy",
+              onTap: () {
+                launchURL(AllUrl.privacyPolicy);
+              },
+            ),
           ],
         ),
       ],

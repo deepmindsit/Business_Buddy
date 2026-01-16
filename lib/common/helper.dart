@@ -10,7 +10,6 @@ Future<void> handleOfferLike(
   Map<String, dynamic> item,
   Future<void> Function() refresh,
 ) async {
-  print('handleOfferLike');
   if (_feedController.isLikeProcessing.value) return;
 
   if (!isUserAuthenticated()) {
@@ -27,7 +26,6 @@ Future<void> _toggleOfferLike(
   Map<String, dynamic> item,
   Future<void> Function() refresh,
 ) async {
-  print('item 1============>$item');
   final bool wasLiked = item['is_offer_liked'] ?? false;
   final int likeCount = int.tryParse(item['offer_likes_count'].toString()) ?? 0;
 
@@ -48,7 +46,7 @@ Future<void> _toggleOfferLike(
     item['is_offer_liked'] = !wasLiked;
     await refresh();
   } catch (e) {
-    debugPrint('Like error: $e');
+    // debugPrint('Like error: $e');
     // Consider showing an error toast to the user
   }
 }
@@ -57,13 +55,12 @@ Future<void> _toggleOfferLike(
 
 Future<void> handleFeedLike(
   Map<String, dynamic> item,
-  Future<void> Function() refresh,
-) async {
-  final postId = item['post_id'].toString();
+  Future<void> Function() refresh, {
+  bool isSingle = false,
+}) async {
+  final postId = isSingle ? item['id'].toString() : item['post_id'].toString();
 
   if (_feedController.isPostLikeLoading(postId)) return;
-
-  // if (_feedController.isLikeProcessing.value) return;
 
   if (!isUserAuthenticated()) {
     ToastUtils.showLoginToast();
@@ -74,7 +71,7 @@ Future<void> handleFeedLike(
   _feedController.likeLoadingMap.refresh();
 
   try {
-    await _toggleFeedLike(item, refresh);
+    await _toggleFeedLike(item, refresh, isSingle: isSingle);
   } finally {
     _feedController.setPostLikeLoading(postId, false);
     _feedController.likeLoadingMap.refresh();
@@ -83,12 +80,11 @@ Future<void> handleFeedLike(
 
 Future<void> _toggleFeedLike(
   Map<String, dynamic> item,
-  Future<void> Function() refresh,
-) async {
+  Future<void> Function() refresh, {
+  bool isSingle = false,
+}) async {
   final bool wasLiked = item['is_liked'] ?? false;
   final int likeCount = int.tryParse(item['likes_count'].toString()) ?? 0;
-  print('item==========================>$item');
-
 
   if (wasLiked) {
     await _feedController.unLikeBusiness(item['liked_id'].toString());
@@ -96,7 +92,7 @@ Future<void> _toggleFeedLike(
   } else {
     await _feedController.likeBusiness(
       item['business_id'].toString(),
-      item['post_id'].toString(),
+      isSingle ? item['id'].toString() : item['post_id'].toString(),
     );
     item['likes_count'] = likeCount + 1;
   }
@@ -107,7 +103,7 @@ Future<void> _toggleFeedLike(
 
 void handleError(String error) {
   // Use proper logging in production
-  debugPrint(error);
+  // debugPrint(error);
   // Consider integrating with a crash analytics service
 }
 

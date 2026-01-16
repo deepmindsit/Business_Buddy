@@ -705,12 +705,12 @@ class _BusinessDetailsState extends State<BusinessDetails> {
 
   void _makePhoneCall(String phoneNumber) {
     // Implement phone call functionality
-    print('Make phone call to: $phoneNumber');
+    // print('Make phone call to: $phoneNumber');
   }
 
   void _viewAllReviews() {
     // Navigate to all reviews screen
-    print('View all reviews tapped');
+    // print('View all reviews tapped');
   }
 }
 

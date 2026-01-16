@@ -37,9 +37,9 @@ class FeedsController extends GetxController {
               getIt<SpecialOfferController>().lng.value.isNotEmpty
           ? '${getIt<SpecialOfferController>().lat.value},${getIt<SpecialOfferController>().lng.value}'
           : '';
-      print('location============<$location');
-      print('lat============<${'$lat,$lng'}');
-      print('userId============<$userId');
+      // print('location============<$location');
+      // print('lat============<${'$lat,$lng'}');
+      // print('userId============<$userId');
       final response = await _apiService.getFeeds(
         '$lat,$lng',
         userId,
@@ -151,18 +151,18 @@ class FeedsController extends GetxController {
   }) async {
     likeLoadingMap[postId] = true;
     likeLoadingMap.refresh();
-    print('businessId==========================>$businessId');
-    print('postId==========================>$postId');
+    // print('businessId==========================>$businessId');
+    // print('postId==========================>$postId');
 
     final userId = await LocalStorage.getString('user_id') ?? '';
-    print('userId==========================>$userId');
+    // print('userId==========================>$userId');
     try {
       final response = await _apiService.likeBusiness(
         userId,
         businessId,
         postId,
       );
-      print('like response==========================>$response');
+      // print('like response==========================>$response');
       if (response['common']['status'] == true) {
         ToastUtils.showSuccessToast(response['common']['message']);
       } else {
@@ -191,7 +191,7 @@ class FeedsController extends GetxController {
     final userId = await LocalStorage.getString('user_id') ?? '';
     try {
       final response = await _apiService.unlikeBusiness(userId, likeId);
-      print('unLikeBusiness response==========================>$response');
+      // print('unLikeBusiness response==========================>$response');
       if (response['common']['status'] == true) {
         ToastUtils.showSuccessToast(response['common']['message']);
       } else {
@@ -216,12 +216,12 @@ class FeedsController extends GetxController {
     offerLikeLoadingMap[offerId] = true;
     offerLikeLoadingMap.refresh();
 
-    print('like businessId=========>$businessId');
-    print('like offerId=========>$offerId');
+    // print('like businessId=========>$businessId');
+    // print('like offerId=========>$offerId');
     final userId = await LocalStorage.getString('user_id') ?? '';
     try {
       final response = await _apiService.likeOffer(userId, businessId, offerId);
-      print('offerLikeBusiness response=========>$response');
+      // print('offerLikeBusiness response=========>$response');
       if (response['common']['status'] == true) {
         ToastUtils.showSuccessToast(response['common']['message']);
       } else {
@@ -241,11 +241,11 @@ class FeedsController extends GetxController {
   }) async {
     offerLikeLoadingMap[likeId] = true;
     offerLikeLoadingMap.refresh();
-    print('offerUnLikeBusiness likeId=========>$likeId');
+    // print('offerUnLikeBusiness likeId=========>$likeId');
     final userId = await LocalStorage.getString('user_id') ?? '';
     try {
       final response = await _apiService.unlikeOffer(userId, likeId);
-      print('offerLikeBusiness response=========>$response');
+      // print('offerLikeBusiness response=========>$response');
       if (response['common']['status'] == true) {
         ToastUtils.showSuccessToast(response['common']['message']);
       } else {

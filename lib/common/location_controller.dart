@@ -24,10 +24,7 @@ class LocationController extends GetxController {
       isLocationReady.value = true;
 
       await LocalStorage.setString('address_source', 'gps');
-      print('latitude first===============>$latitude');
-      print('longitude first=============>$longitude');
     } catch (e) {
-      debugPrint('Location error: $e');
     }
   }
 

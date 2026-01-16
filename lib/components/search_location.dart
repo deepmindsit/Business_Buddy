@@ -400,9 +400,9 @@ class _SearchLocationState extends State<SearchLocation> {
     // controller.lat.value = searchPlace['lat'];
     // controller.lng.value = searchPlace['lng'];
 
-    debugPrint('Selected location: ${searchPlace['description']}');
-    debugPrint('Latitude: ${searchPlace['lat']}');
-    debugPrint('Longitude: ${searchPlace['lng']}');
+    // debugPrint('Selected location: ${searchPlace['description']}');
+    // debugPrint('Latitude: ${searchPlace['lat']}');
+    // debugPrint('Longitude: ${searchPlace['lng']}');
 
     controller.addressList.value = [];
     Get.back();

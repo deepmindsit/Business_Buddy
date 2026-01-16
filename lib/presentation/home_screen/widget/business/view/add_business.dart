@@ -189,7 +189,7 @@ class _AddBusinessState extends State<AddBusiness> {
         controller.lat.value = place['lat'];
         controller.lng.value = place['lng'];
 
-        debugPrint('Selected: ${place['description']}');
+        // debugPrint('Selected: ${place['description']}');
       },
     );
 
@@ -433,9 +433,9 @@ class _AddBusinessState extends State<AddBusiness> {
     // controller.lat.value = searchPlace['lat'];
     // controller.lng.value = searchPlace['lng'];
 
-    debugPrint('Selected location: ${searchPlace['description']}');
-    debugPrint('Latitude: ${searchPlace['lat']}');
-    debugPrint('Longitude: ${searchPlace['lng']}');
+    // debugPrint('Selected location: ${searchPlace['description']}');
+    // debugPrint('Latitude: ${searchPlace['lat']}');
+    // debugPrint('Longitude: ${searchPlace['lng']}');
 
     controller.addressList.value = [];
     _isSearchingLocation.value = false;

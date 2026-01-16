@@ -1,6 +1,8 @@
 import 'dart:io';
-
+import 'package:get_thumbnail_video/video_thumbnail.dart';
+import 'dart:typed_data';
 import 'package:businessbuddy/utils/exported_path.dart';
+import 'package:get_thumbnail_video/index.dart';
 
 Widget buildReviewTile({
   required String userName,
@@ -97,36 +99,68 @@ Widget buildGridImages(dynamic data, String type, {bool isEdit = false}) {
       final isApproved = image['approved'] == "1";
       return GestureDetector(
         onTap: () {
-          showPostBottomSheet(image['id'].toString(), type, data, index);
+          showPostBottomSheet(
+            image['id'].toString(),
+            type,
+            data,
+            index,
+            isEdit,
+          );
         },
         child: Stack(
           children: [
             if (image['media_type'] == 'video')
-              Container(
-                width: 100.w,
-                height: 110.h,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.r),
-                  border: Border.all(color: Colors.grey.shade400, width: 1.5),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8.r),
-                  child: Center(
-                    child: HugeIcon(
-                      icon: HugeIcons.strokeRoundedVideoReplay,
-                      color: Colors.grey.shade400,
-                      size: 40.r,
+              FutureBuilder<Uint8List?>(
+                future: getVideoThumbnail(image['video']),
+                builder: (context, snapshot) {
+                  return Container(
+                    width: 100.w,
+                    height: 110.h,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.r),
+                      border: Border.all(
+                        color: Colors.grey.shade400,
+                        width: 1.5,
+                      ),
                     ),
-                  ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8.r),
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 300),
+                        child: snapshot.hasData
+                            ? Stack(
+                                fit: StackFit.expand,
+                                children: [
+                                  Image.memory(
+                                    snapshot.data!,
+                                    fit: BoxFit.contain,
+                                  ),
+                                  Center(
+                                    child: Icon(
+                                      Icons.play_circle_fill,
+                                      color: Colors.white,
+                                      size: 25.r,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : Image.asset(
+                                Images.defaultImage,
+                                fit: BoxFit.cover,
+                                key: ValueKey('placeholder'),
+                              ),
+                      ),
 
-                  // FadeInImage(
-                  //   placeholder: AssetImage(Images.video),
-                  //   image: AssetImage(Images.video),
-                  //   fit: BoxFit.cover,
-                  //   imageErrorBuilder: (_, __, ___) =>
-                  //       Image.asset(Images.video, fit: BoxFit.cover),
-                  // ),
-                ),
+                      // Center(
+                      //   child: HugeIcon(
+                      //     icon: HugeIcons.strokeRoundedVideoReplay,
+                      //     color: Colors.grey.shade400,
+                      //     size: 40.r,
+                      //   ),
+                      // ),
+                    ),
+                  );
+                },
               )
             else
               Container(
@@ -247,9 +281,18 @@ Widget buildGridImages(dynamic data, String type, {bool isEdit = false}) {
   );
 }
 
+Future<Uint8List?> getVideoThumbnail(String url) async {
+  return await VideoThumbnail.thumbnailData(
+    video: url,
+    imageFormat: ImageFormat.JPEG,
+    maxWidth: 300,
+    quality: 75,
+  );
+}
+
 bool isVideo(File file) {
   final ext = file.path.toLowerCase();
-  print('extension+============>$ext');
+  // print('extension+============>$ext');
   return ext.endsWith('.mp4') ||
       ext.endsWith('.mov') ||
       ext.endsWith('.avi') ||
@@ -261,6 +304,7 @@ void showPostBottomSheet(
   String type,
   dynamic data,
   int initialIndex,
+  bool isEdit,
 ) async {
   final controller = getIt<LBOController>();
 
@@ -272,14 +316,14 @@ void showPostBottomSheet(
   // Load initial item
   if (type == 'post') {
     await controller.getSinglePost(postId);
-    _showPost(controller);
+    _showPost(controller, isEdit: isEdit);
   } else {
     await controller.getSingleOffer(postId);
-    _showOffer(controller);
+    _showOffer(controller, isEdit: isEdit);
   }
 }
 
-Future<dynamic> _showPost(LBOController controller) {
+Future<dynamic> _showPost(LBOController controller, {bool isEdit = false}) {
   return Get.bottomSheet(
     ConstrainedBox(
       constraints: BoxConstraints(maxHeight: Get.height * 0.85.h),
@@ -430,59 +474,95 @@ Future<dynamic> _showPost(LBOController controller) {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Image with enhanced styling
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(
-                                width: 0.5,
-                                color: Colors.grey.shade300,
-                              ),
-                              borderRadius: BorderRadius.circular(16),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black12,
-                                  blurRadius: 8,
-                                  offset: Offset(0, 2),
+                          Stack(
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(
+                                    width: 0.5,
+                                    color: Colors.grey.shade300,
+                                  ),
+                                  borderRadius: BorderRadius.circular(16),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black12,
+                                      blurRadius: 8,
+                                      offset: Offset(0, 2),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(16),
-                              child: AspectRatio(
-                                aspectRatio: 1,
-                                child:
-                                    controller.singlePost['media_type'] ==
-                                        'video'
-                                    ? InstagramVideoPlayer(
-                                        url:
-                                            controller.singlePost['video']
-                                                ?.toString() ??
-                                            '',
-                                      )
-                                    : FadeInImage(
-                                        placeholder: AssetImage(
-                                          Images.defaultImage,
-                                        ),
-                                        image: NetworkImage(
-                                          controller.singlePost['image']
-                                                  ?.toString() ??
-                                              '',
-                                        ),
-                                        imageErrorBuilder:
-                                            (context, error, stackTrace) {
-                                              return Image.asset(
-                                                Images.defaultImage,
-                                                fit: BoxFit.contain,
-                                              );
-                                            },
-                                        fit: BoxFit.contain,
-                                        placeholderFit: BoxFit.contain,
-                                        fadeInDuration: Duration(
-                                          milliseconds: 300,
-                                        ),
-                                      ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(16.r),
+                                  child: AspectRatio(
+                                    aspectRatio: 1,
+                                    child:
+                                        controller.singlePost['media_type'] ==
+                                            'video'
+                                        ? InstagramVideoPlayer(
+                                            isSingleView: true,
+                                            url:
+                                                controller.singlePost['video']
+                                                    ?.toString() ??
+                                                '',
+                                          )
+                                        : FadeInImage(
+                                            placeholder: AssetImage(
+                                              Images.defaultImage,
+                                            ),
+                                            image: NetworkImage(
+                                              controller.singlePost['image']
+                                                      ?.toString() ??
+                                                  '',
+                                            ),
+                                            imageErrorBuilder:
+                                                (context, error, stackTrace) {
+                                                  return Image.asset(
+                                                    Images.defaultImage,
+                                                    fit: BoxFit.contain,
+                                                  );
+                                                },
+                                            fit: BoxFit.contain,
+                                            placeholderFit: BoxFit.contain,
+                                            fadeInDuration: Duration(
+                                              milliseconds: 300,
+                                            ),
+                                          ),
+                                  ),
+                                ),
                               ),
-                            ),
+                              // ✏️ Edit Icon
+                              if (isEdit)
+                                Positioned(
+                                  top: 10.h,
+                                  right: 10.w,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      // Get.back();
+                                      Get.toNamed(
+                                        Routes.editPost,
+                                        arguments: {
+                                          'postData': controller.singlePost,
+                                        },
+                                      );
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.all(8.w),
+                                      decoration: BoxDecoration(
+                                        color: Colors.black.withValues(
+                                          alpha: 0.6,
+                                        ),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Icon(
+                                        Icons.edit,
+                                        color: Colors.white,
+                                        size: 18.r,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
                           ),
 
                           SizedBox(height: 16.h),
@@ -609,7 +689,7 @@ Future<dynamic> _showPost(LBOController controller) {
                                 Text(
                                   controller.singlePost['details']
                                           ?.toString() ??
-                                      "No description available",
+                                      "",
                                   style: TextStyle(
                                     fontSize: 15.sp,
                                     height: 1.6,
@@ -680,7 +760,7 @@ Widget _buildLikeIconData(LBOController controller) {
           showLoading: false,
         );
       } catch (e) {
-        print("follow error: $e");
+        // print("follow error: $e");
       } finally {
         getIt<FeedsController>().isLikeProcessing.value = false;
       }
@@ -735,7 +815,7 @@ Widget _buildLikeIconData(LBOController controller) {
   );
 }
 
-Future<dynamic> _showOffer(LBOController controller) {
+Future<dynamic> _showOffer(LBOController controller, {bool isEdit = false}) {
   return Get.bottomSheet(
     ConstrainedBox(
       key: ValueKey(controller.singleOffer['id']?.toString() ?? ''),
@@ -878,55 +958,92 @@ Future<dynamic> _showOffer(LBOController controller) {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // Image with better styling
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(
-                                  width: 0.5,
-                                  color: Colors.grey,
+                            Stack(
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(16),
+                                    border: Border.all(
+                                      width: 0.5,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(16),
+                                    child: AspectRatio(
+                                      aspectRatio: 1,
+                                      child:
+                                          controller
+                                                  .singleOffer['media_type'] ==
+                                              'video'
+                                          ? InstagramVideoPlayer(
+                                              isSingleView: true,
+                                              key: ValueKey(
+                                                controller.singleOffer['video']
+                                                        ?.toString() ??
+                                                    '',
+                                              ),
+                                              url:
+                                                  controller
+                                                      .singleOffer['video']
+                                                      ?.toString() ??
+                                                  '',
+                                            )
+                                          : FadeInImage(
+                                              placeholder: const AssetImage(
+                                                Images.defaultImage,
+                                              ),
+                                              image: NetworkImage(
+                                                controller.singleOffer['image']
+                                                    .toString(),
+                                              ),
+                                              imageErrorBuilder:
+                                                  (context, error, stackTrace) {
+                                                    return Image.asset(
+                                                      Images.defaultImage,
+                                                      fit: BoxFit.contain,
+                                                    );
+                                                  },
+                                              fit: BoxFit.contain,
+                                              placeholderFit: BoxFit.contain,
+                                              fadeInDuration: const Duration(
+                                                milliseconds: 300,
+                                              ),
+                                            ),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(16),
-                                child: AspectRatio(
-                                  aspectRatio: 1,
-                                  child:
-                                      controller.singleOffer['media_type'] ==
-                                          'video'
-                                      ? InstagramVideoPlayer(
-                                          key: ValueKey(
-                                            controller.singleOffer['video']
-                                                    ?.toString() ??
-                                                '',
+                                if (isEdit)
+                                  Positioned(
+                                    top: 10.h,
+                                    right: 10.w,
+                                    child: GestureDetector(
+                                      onTap: () {
+
+                                        Get.toNamed(
+                                          Routes.editOffer,
+                                          arguments: {
+                                            'offerData': controller.singleOffer,
+                                          },
+                                        );
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.all(8.w),
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withValues(
+                                            alpha: 0.6,
                                           ),
-                                          url:
-                                              controller.singleOffer['video']
-                                                  ?.toString() ??
-                                              '',
-                                        )
-                                      : FadeInImage(
-                                          placeholder: const AssetImage(
-                                            Images.defaultImage,
-                                          ),
-                                          image: NetworkImage(
-                                            controller.singleOffer['image']
-                                                .toString(),
-                                          ),
-                                          imageErrorBuilder:
-                                              (context, error, stackTrace) {
-                                                return Image.asset(
-                                                  Images.defaultImage,
-                                                  fit: BoxFit.contain,
-                                                );
-                                              },
-                                          fit: BoxFit.contain,
-                                          placeholderFit: BoxFit.contain,
-                                          fadeInDuration: const Duration(
-                                            milliseconds: 300,
-                                          ),
+                                          shape: BoxShape.circle,
                                         ),
-                                ),
-                              ),
+                                        child: Icon(
+                                          Icons.edit,
+                                          color: Colors.white,
+                                          size: 18.r,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ],
                             ),
 
                             SizedBox(height: 20),
@@ -1339,7 +1456,7 @@ void showError(dynamic e) {
   //   type: ToastificationType.error,
   //   icon: Icons.error,
   // );
-  debugPrint("Error: $e");
+  // debugPrint("Error: $e");
 }
 
 void checkLogin({required bool status, required String message}) async {

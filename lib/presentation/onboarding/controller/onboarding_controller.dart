@@ -57,7 +57,7 @@ class OnboardingController extends GetxController {
       }
     } catch (e) {
       ToastUtils.showErrorToast('Something went wrong please try later.');
-      debugPrint("Error: $e");
+      // debugPrint("Error: $e");
     } finally {
       isLoading.value = false;
     }
@@ -102,7 +102,7 @@ class OnboardingController extends GetxController {
       }
     } catch (e) {
       ToastUtils.showErrorToast('Something went wrong please try later.');
-      debugPrint("Error: $e");
+      // debugPrint("Error: $e");
     } finally {
       isVerifyLoading.value = false;
     }
@@ -147,7 +147,7 @@ class OnboardingController extends GetxController {
       }
     } catch (e) {
       ToastUtils.showErrorToast('Something went wrong please try later.');
-      debugPrint("Error: $e");
+      // debugPrint("Error: $e");
     } finally {
       isRegLoading.value = false;
     }

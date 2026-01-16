@@ -1,8 +1,8 @@
 import 'exported_path.dart';
 
-const Color primaryColor = const Color(0xffD42431);
-const Color primaryBlueColor = const Color(0xff1C274C);
-const Color lightRed = const Color(0xffFFDDDD);
+const Color primaryColor =  Color(0xffD42431);
+const Color primaryBlueColor =  Color(0xff1C274C);
+const Color lightRed =  Color(0xffFFDDDD);
 Color primaryBlack = const Color(0xFF1C1C1C);
 Color primaryGrey = const Color(0xFFC4C4C4);
 Color primaryGreen = const Color(0xFF03AF29);

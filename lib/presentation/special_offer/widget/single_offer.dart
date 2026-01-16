@@ -1,19 +1,15 @@
 import 'package:businessbuddy/utils/exported_path.dart';
 
 class InstagramOfferView extends StatefulWidget {
-  final Map<String, dynamic> offerData;
-  final String? heroTag;
-  final void Function() onLike;
-  final void Function()? onFollow;
+  final String offerId;
   final dynamic followButton;
+  final void Function() refresh;
 
   const InstagramOfferView({
     super.key,
-    required this.offerData,
-    this.heroTag,
-    required this.onLike,
-    this.onFollow,
+    required this.offerId,
     this.followButton,
+    required this.refresh,
   });
 
   @override
@@ -21,45 +17,57 @@ class InstagramOfferView extends StatefulWidget {
 }
 
 class _InstagramOfferViewState extends State<InstagramOfferView> {
+  final controller = getIt<LBOController>();
+  final navController = getIt<NavigationController>();
   bool _showAllPoints = false;
+
+  @override
+  void initState() {
+    controller.getSingleOffer(widget.offerId.toString());
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppbarPlain(title: 'Special Offer'),
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Offer Header
-                _buildOfferHeader(),
-                // Offer Image with Right-side Icons
-                SizedBox(
-                  height: Get.height * 0.7.h,
-                  child: _buildOfferImageWithIcons(),
-                ),
-                // Offer Details
-                _buildOfferDetails(),
-                // Highlight Points
-                _buildHighlightPoints(),
-                // Date Range
-                _buildDateRange(),
+      body: Obx(
+        () => controller.isSingleOfferLoading.isTrue
+            ? LoadingWidget(color: primaryColor)
+            : Stack(
+                children: [
+                  SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Offer Header
+                        _buildOfferHeader(),
+                        // Offer Image with Right-side Icons
+                        SizedBox(
+                          height: Get.height * 0.7.h,
+                          child: _buildOfferImageWithIcons(),
+                        ),
+                        // Offer Details
+                        _buildOfferDetails(),
+                        // Highlight Points
+                        _buildHighlightPoints(),
+                        // Date Range
+                        _buildDateRange(),
 
-                SizedBox(height: 20),
-              ],
-            ),
-          ),
-          _buildFloatingRightIcons(),
-        ],
+                        SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
+                  _buildFloatingRightIcons(),
+                ],
+              ),
       ),
     );
   }
 
   Widget _buildOfferHeader() {
-    final String image = widget.offerData['business_profile_image'] ?? '';
+    final String image = controller.singleOffer['business_profile_image'] ?? '';
 
     return Container(
       padding: const EdgeInsets.all(12),
@@ -99,7 +107,7 @@ class _InstagramOfferViewState extends State<InstagramOfferView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CustomText(
-                  title: widget.offerData['business_name'] ?? '',
+                  title: controller.singleOffer['business_name'] ?? '',
                   fontSize: 15.sp,
                   fontWeight: FontWeight.w600,
                   textAlign: TextAlign.start,
@@ -110,7 +118,7 @@ class _InstagramOfferViewState extends State<InstagramOfferView> {
                 Row(
                   children: [
                     CustomText(
-                      title: widget.offerData['category'] ?? '',
+                      title: controller.singleOffer['category'] ?? '',
                       fontSize: 10.sp,
                       textAlign: TextAlign.start,
                       color: Colors.grey.shade600,
@@ -179,7 +187,7 @@ class _InstagramOfferViewState extends State<InstagramOfferView> {
   }
 
   Widget _buildTimeDisplay() {
-    final createdAt = widget.offerData['created_at'] ?? '';
+    final createdAt = controller.singleOffer['created_at'] ?? '';
     if (createdAt.toString().isEmpty) return SizedBox();
 
     return CustomText(
@@ -192,35 +200,31 @@ class _InstagramOfferViewState extends State<InstagramOfferView> {
   }
 
   Widget _buildOfferImageWithIcons() {
-    final image = widget.offerData['image'] ?? '';
-    final video = widget.offerData['video'] ?? '';
-    final mediaType = widget.offerData['media_type'] ?? '';
-    final heroTag = widget.heroTag ?? 'offer_${widget.offerData['id']}';
+    final image = controller.singleOffer['image'] ?? '';
+    final video = controller.singleOffer['video'] ?? '';
+    final mediaType = controller.singleOffer['media_type'] ?? '';
 
-    return Hero(
-      tag: heroTag,
-      child: Container(
-        color: Colors.black,
-        constraints: BoxConstraints(
-          minHeight: MediaQuery.of(context).size.width,
-          maxHeight: MediaQuery.of(context).size.height * 0.7,
-        ),
-        width: double.infinity,
-        child: mediaType == 'video'
-            ? InstagramVideoPlayer(
-                isSingleView: true,
-                key: ValueKey(video),
-                url: video?.toString() ?? '',
-              )
-            : CachedNetworkImage(
-                placeholder: (_, __) => Image.asset(Images.defaultImage),
-                imageUrl: image,
-                fit: BoxFit.contain,
-                memCacheHeight: 600,
-                errorWidget: (_, __, ___) => Image.asset(Images.defaultImage),
-                fadeInDuration: Duration.zero,
-              ),
+    return Container(
+      color: Colors.black,
+      constraints: BoxConstraints(
+        minHeight: MediaQuery.of(context).size.width,
+        maxHeight: MediaQuery.of(context).size.height * 0.7,
       ),
+      width: double.infinity,
+      child: mediaType == 'video'
+          ? InstagramVideoPlayer(
+              isSingleView: true,
+              key: ValueKey(video),
+              url: video?.toString() ?? '',
+            )
+          : CachedNetworkImage(
+              placeholder: (_, __) => Image.asset(Images.defaultImage),
+              imageUrl: image,
+              fit: BoxFit.contain,
+              memCacheHeight: 600,
+              errorWidget: (_, __, ___) => Image.asset(Images.defaultImage),
+              fadeInDuration: Duration.zero,
+            ),
     );
   }
 
@@ -235,7 +239,7 @@ class _InstagramOfferViewState extends State<InstagramOfferView> {
           _buildRightIcon(
             icon: HugeIcons.strokeRoundedMessage02,
             color: Colors.white,
-            count: widget.offerData['comments_count']?.toString() ?? '0',
+            count: controller.singleOffer['comments_count']?.toString() ?? '0',
             onTap: _handleComment,
           ),
           const SizedBox(height: 10),
@@ -252,16 +256,28 @@ class _InstagramOfferViewState extends State<InstagramOfferView> {
   }
 
   Widget _buildLikeButton() {
+    final offerId = controller.singleOffer['id'].toString();
     return _buildRightIcon(
       isLike: true,
-      icon: widget.offerData['is_offer_liked'] == true
+      icon: controller.singleOffer['is_offer_liked'] == true
           ? Icons.favorite
           : Icons.favorite_border,
-      color: widget.offerData['is_offer_liked'] == true
+      color: controller.singleOffer['is_offer_liked'] == true
           ? Colors.red
           : Colors.white,
-      count: widget.offerData['offer_likes_count']?.toString() ?? '0',
-      onTap: widget.onLike,
+      count: controller.singleOffer['offer_likes_count']?.toString() ?? '0',
+      // onTap: widget.onLike,
+      onTap: () async {
+        await handleOfferLike(
+          controller.singleOffer,
+          () async => await controller
+              .getSingleOffer(offerId, showLoading: false)
+              .then((v) {
+                widget.refresh;
+                // getIt<HomeController>().getHomeApi(showLoading: false);
+              }),
+        );
+      },
     );
   }
 
@@ -272,7 +288,7 @@ class _InstagramOfferViewState extends State<InstagramOfferView> {
     }
     Get.bottomSheet(
       CommentsBottomSheet(
-        postId: widget.offerData['id']?.toString() ?? '',
+        postId: controller.singleOffer['id']?.toString() ?? '',
         isPost: false,
       ),
       isDismissible: true,
@@ -330,8 +346,8 @@ class _InstagramOfferViewState extends State<InstagramOfferView> {
   }
 
   Widget _buildOfferDetails() {
-    final offerName = widget.offerData['offer_name'] ?? '';
-    final details = widget.offerData['details'] ?? '';
+    final offerName = controller.singleOffer['offer_name'] ?? '';
+    final details = controller.singleOffer['details'] ?? '';
 
     return Padding(
       padding: const EdgeInsets.all(12),
@@ -377,7 +393,8 @@ class _InstagramOfferViewState extends State<InstagramOfferView> {
   }
 
   Widget _buildHighlightPoints() {
-    final List<dynamic> points = widget.offerData['highlight_points'] ?? [];
+    final List<dynamic> points =
+        controller.singleOffer['highlight_points'] ?? [];
     final int maxVisiblePoints = 3;
 
     if (points.isEmpty) return SizedBox();
@@ -426,8 +443,8 @@ class _InstagramOfferViewState extends State<InstagramOfferView> {
   }
 
   Widget _buildDateRange() {
-    final startDate = widget.offerData['start_date'] ?? '';
-    final endDate = widget.offerData['end_date'] ?? '';
+    final startDate = controller.singleOffer['start_date'] ?? '';
+    final endDate = controller.singleOffer['end_date'] ?? '';
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),

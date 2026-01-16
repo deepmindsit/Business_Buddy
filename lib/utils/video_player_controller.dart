@@ -96,5 +96,4 @@ class VideoPlayerControllerX extends GetxController {
 
     super.onClose();
   }
-
 }

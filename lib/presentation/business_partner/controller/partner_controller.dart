@@ -94,14 +94,14 @@ class PartnerDataController extends GetxController {
 
     final latitude = getIt<LocationController>().latitude.value.toString();
     final longitude = getIt<LocationController>().longitude.value.toString();
-    print('search.value=======>  ${lat.value},${lng.value},');
-    print('live.value=======>$latitude,$longitude');
-    print('currentBusinessPage=======>$currentBusinessPage');
-    print('selectedCategory=======>$selectedCategory');
-    print('sort=======>$sort');
-    print('lookingFor=======>$lookingFor');
-    print('selectedExp=======>$selectedExp');
-    print('userId=======>$userId');
+    // print('search.value=======>  ${lat.value},${lng.value},');
+    // print('live.value=======>$latitude,$longitude');
+    // print('currentBusinessPage=======>$currentBusinessPage');
+    // print('selectedCategory=======>$selectedCategory');
+    // print('sort=======>$sort');
+    // print('lookingFor=======>$lookingFor');
+    // print('selectedExp=======>$selectedExp');
+    // print('userId=======>$userId');
     try {
       final response = await _apiService.businessReqList(
         userId,
@@ -306,7 +306,7 @@ class PartnerDataController extends GetxController {
         userId,
         businessId,
       );
-      print('response================>$response');
+      // print('response================>$response');
       if (response['common']['status'] == true) {
         await getBusinessRequired(isRefresh: true);
         ToastUtils.showSuccessToast(response['common']['message']);

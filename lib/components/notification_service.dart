@@ -31,7 +31,7 @@ class NotificationService {
   Future<void> requestNotificationPermissions() async {
     await _firebaseMessaging.requestPermission();
     final token = await _firebaseMessaging.getToken();
-    print('FCM Token: $token');
+    // print('FCM Token: $token');
   }
 
   /// Initialize push notifications

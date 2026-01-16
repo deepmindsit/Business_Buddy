@@ -1,7 +1,5 @@
 import 'package:businessbuddy/utils/exported_path.dart';
 
-import '../widget/single_post.dart';
-
 class NewFeed extends StatefulWidget {
   const NewFeed({super.key});
 
@@ -114,31 +112,6 @@ class _NewFeedState extends State<NewFeed> {
                                     : FeedCard(
                                         // key: ValueKey(item['post_id'].toString()),
                                         data: item,
-                                        onOpenSingleView: () {
-                                          // Get.to(
-                                          //   () => InstagramPostView(
-                                          //     onLike: () => handleFeedLike(
-                                          //       item,
-                                          //       () async =>
-                                          //           await controller.getFeeds(
-                                          //             showLoading: false,
-                                          //             isRefresh: false,
-                                          //           ),
-                                          //     ),
-                                          //     followButton: _followButton(i),
-                                          //     postData: item,
-                                          //     heroTag:
-                                          //         'post_${item['post_id']}',
-                                          //   ),
-                                          //   transition: Transition.cupertino,
-                                          //   duration: Duration(
-                                          //     milliseconds: 300,
-                                          //   ),
-                                          // );
-
-                                          // Option 2: Modal
-                                          // showSinglePostModal(postData);
-                                        },
                                         onLike: () => handleFeedLike(
                                           item,
                                           () async => await controller.getFeeds(
@@ -146,42 +119,6 @@ class _NewFeedState extends State<NewFeed> {
                                             isRefresh: false,
                                           ),
                                         ),
-                                        // onFollow: () async {
-                                        //   if (controller
-                                        //       .isFollowProcessing
-                                        //       .isTrue) {
-                                        //     return;
-                                        //   }
-                                        //   controller.isFollowProcessing.value =
-                                        //       true;
-                                        //   try {
-                                        //     final businessId = item['business_id']
-                                        //         .toString();
-                                        //     if (item['is_followed'] == true) {
-                                        //       await controller.unfollowBusiness(
-                                        //         item['follow_id'].toString(),
-                                        //       );
-                                        //       await controller.getFeeds(
-                                        //         showLoading: false,
-                                        //       );
-                                        //     } else {
-                                        //       await controller.followBusiness(
-                                        //         businessId,
-                                        //       );
-                                        //       await controller.getFeeds(
-                                        //         showLoading: false,
-                                        //       );
-                                        //     }
-                                        //
-                                        //     // item['is_followed'] =
-                                        //     //     !item['is_followed'];
-                                        //     //
-                                        //     // controller.feedList.refresh();
-                                        //   } finally {
-                                        //     controller.isFollowProcessing.value =
-                                        //         false;
-                                        //   }
-                                        // },
                                         followButton: _followButton(i),
                                       ),
                               ),

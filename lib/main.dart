@@ -40,7 +40,6 @@ class MyApp extends StatelessWidget {
             return MediaQuery(data: newMediaQueryData, child: child!);
           },
           title: 'BizYaari',
-          // initialRoute: Routes.mainScreen,
           initialRoute: Routes.splash,
           defaultTransition: Transition.fadeIn,
           transitionDuration: const Duration(milliseconds: 300),

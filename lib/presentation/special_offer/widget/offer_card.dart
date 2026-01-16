@@ -322,21 +322,18 @@ class OfferCard extends StatelessWidget {
     final image = data['image'] ?? '';
     final video = data['video'] ?? '';
     final mediaType = data['media_type'] ?? '';
-    final heroTag = 'offer_${data['id']}';
 
     return GestureDetector(
       onTap: () {
-        // Get.to(
-        //   () => InstagramOfferView(
-        //     offerData: data,
-        //     heroTag: heroTag,
-        //     onLike: onLike,
-        //     followButton: followButton,
-        //     onFollow: onFollow,
-        //   ),
-        //   transition: Transition.cupertino,
-        //   duration: Duration(milliseconds: 300),
-        // );
+        Get.to(
+          () => InstagramOfferView(
+            refresh: () {},
+            offerId: data['id']?.toString() ?? '',
+            followButton: followButton,
+          ),
+          transition: Transition.cupertino,
+          duration: Duration(milliseconds: 300),
+        );
       },
       child: Container(
         alignment: Alignment.center,
@@ -347,7 +344,7 @@ class OfferCard extends StatelessWidget {
             constraints: BoxConstraints(maxHeight: 380.h),
             child: mediaType == 'video'
                 ? InstagramVideoPlayer(
-                    isSingleView: true,
+                    // isSingleView: true,
                     key: ValueKey(video),
                     url: video?.toString() ?? '',
                   )
@@ -535,7 +532,7 @@ class OfferCard extends StatelessWidget {
             label: 'Comment',
           ),
         ),
-        EngagementAction(hugeIcon: HugeIcons.strokeRoundedSent, label: 'Share'),
+        // EngagementAction(hugeIcon: HugeIcons.strokeRoundedSent, label: 'Share'),
       ],
     );
   }

@@ -77,7 +77,7 @@ class HomeController extends GetxController {
 
       return true; // ✅ permission granted
     } catch (e) {
-      debugPrint('Location permission error: $e');
+      // debugPrint('Location permission error: $e');
       return false;
     }
   }

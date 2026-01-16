@@ -1,12 +1,6 @@
 import 'dart:io';
-import 'package:businessbuddy/components/custom_text.dart';
 import 'package:businessbuddy/utils/exported_path.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:hugeicons/hugeicons.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:get/get.dart';
 
 class CustomFilePicker {
   static Future<File?> pickCamera() async {

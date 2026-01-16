@@ -7,19 +7,19 @@ class FirebaseTokenController extends GetxController {
   Future<void> updateToken() async {
     await FirebaseMessaging.instance.deleteToken();
     String? token = await FirebaseMessaging.instance.getToken();
-    print('token firebase---->$token');
+    // print('token firebase---->$token');
     final userId = await LocalStorage.getString('user_id') ?? '';
     try {
-      final response = await _apiService.updateFirebaseToken(
+      await _apiService.updateFirebaseToken(
         userId,
         token.toString(),
       );
-      print('updateToken---->$response');
+      // print('updateToken---->$response');
     } catch (e) {
       // ToastUtils.showWarningToast(
       //   'Something went wrong. Please try again later.',
       // );
-      debugPrint("updateToken error: $e");
+      // debugPrint("updateToken error: $e");
     }
   }
 }

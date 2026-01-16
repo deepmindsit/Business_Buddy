@@ -431,10 +431,10 @@ class _EditRecruitmentState extends State<EditRecruitment> {
     // Get.find<HomeControllerC>().country.value = searchPlace['country'];
     // controller.lat.value = searchPlace['lat'];
     // controller.lng.value = searchPlace['lng'];
-
-    debugPrint('Selected location: ${searchPlace['description']}');
-    debugPrint('Latitude: ${searchPlace['lat']}');
-    debugPrint('Longitude: ${searchPlace['lng']}');
+    //
+    // debugPrint('Selected location: ${searchPlace['description']}');
+    // debugPrint('Latitude: ${searchPlace['lat']}');
+    // debugPrint('Longitude: ${searchPlace['lng']}');
 
     controller.addressList.value = [];
     _isSearchingLocation.value = false;

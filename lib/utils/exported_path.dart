@@ -30,6 +30,7 @@ export 'package:businessbuddy/presentation/inbox/widget/requested_screen.dart';
 export 'package:businessbuddy/presentation/business_partner/widget/edit_recruitment.dart';
 
 //widget
+export 'package:businessbuddy/network/all_url.dart';
 export 'package:businessbuddy/utils/color.dart';
 export 'package:businessbuddy/di/injection.config.dart';
 export 'package:businessbuddy/di/injection.dart';
@@ -53,6 +54,7 @@ export 'package:businessbuddy/components/time_converter.dart';
 export 'package:businessbuddy/presentation/home_screen/widget/feeds/widget/comment_bottomsheet.dart';
 export 'package:businessbuddy/common/helper.dart';
 export 'package:businessbuddy/utils/like_animation.dart';
+export 'package:businessbuddy/presentation/home_screen/widget/feeds/widget/single_post.dart';
 
 //component
 export 'package:businessbuddy/components/screenutil_config.dart';

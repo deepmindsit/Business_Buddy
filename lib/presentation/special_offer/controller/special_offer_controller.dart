@@ -22,7 +22,7 @@ class SpecialOfferController extends GetxController {
     bool isRefresh = false,
   }) async {
     if (isRefresh == true) {
-      print('in refresh');
+      // print('in refresh');
       currentPage = 1;
       totalPages = 1;
       hasMore = true;
@@ -46,8 +46,8 @@ class SpecialOfferController extends GetxController {
         location,
         currentPage.toString(),
       );
-      print('response');
-      print(response);
+      // print('response');
+      // print(response);
       if (response['common']['status'] == true) {
         final data = response['data'];
 
