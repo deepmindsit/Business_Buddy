@@ -78,6 +78,8 @@ class _NewFeedState extends State<NewFeed> {
                                     ? OfferCard(
                                         // key: ValueKey(item['id'].toString()),
                                         data: item,
+                                        onRefresh: () async => await controller
+                                            .getFeeds(showLoading: false),
                                         onLike: () => handleOfferLike(
                                           item,
                                           () async => await controller.getFeeds(
@@ -111,6 +113,11 @@ class _NewFeedState extends State<NewFeed> {
                                       )
                                     : FeedCard(
                                         // key: ValueKey(item['post_id'].toString()),
+                                        onRefresh: () async =>
+                                            await controller.getFeeds(
+                                              showLoading: false,
+                                              isRefresh: false,
+                                            ),
                                         data: item,
                                         onLike: () => handleFeedLike(
                                           item,
@@ -150,7 +157,7 @@ class _NewFeedState extends State<NewFeed> {
               child: Container(
                 height: _headerHeight,
                 padding: EdgeInsets.symmetric(horizontal: 16.w),
-                decoration: BoxDecoration(color: Colors.white),
+                decoration: BoxDecoration(color: scaffoldBackground),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -158,6 +165,7 @@ class _NewFeedState extends State<NewFeed> {
                       title: 'Feeds',
                       fontSize: 18.sp,
                       fontWeight: FontWeight.bold,
+                      color: primaryBlack,
                     ),
                     _buildFilterButton(),
                   ],

@@ -73,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SingleChildScrollView(child: _buildHomeContent()),
     );
   }
@@ -141,7 +141,8 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.only(top: 12),
               margin: const EdgeInsets.symmetric(horizontal: 12),
               decoration: BoxDecoration(
-                color: Colors.grey.shade100,
+                color: Get.theme.cardColor,
+                border: Border.all(color: Get.theme.dividerColor, width: 0.5),
                 borderRadius: BorderRadius.circular(12.r),
               ),
               child: SectionContainer(
@@ -238,6 +239,8 @@ class _HomeScreenState extends State<HomeScreen> {
     if (item['type'] == 'offer') {
       return OfferCard(
         data: item,
+        onRefresh: () async =>
+            await _homeController.getHomeApi(showLoading: false),
         onLike: () => handleOfferLike(
           item,
           () => _homeController.getHomeApi(showLoading: false),
@@ -248,6 +251,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return FeedCard(
       data: item,
+      onRefresh: () async =>
+          await _homeController.getHomeApi(showLoading: false),
       onLike: () async => await handleFeedLike(
         item,
         () async => await _homeController.getHomeApi(showLoading: false),
@@ -371,9 +376,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ? ListView.separated(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              padding: EdgeInsets.all(8),
+              padding: const EdgeInsets.all(8),
               itemCount: 6,
-              separatorBuilder: (_, __) => SizedBox(height: 10),
+              separatorBuilder: (_, __) =>const SizedBox(height: 10),
               itemBuilder: (context, index) => const BusinessCardShimmer(),
             )
           : SectionContainer(

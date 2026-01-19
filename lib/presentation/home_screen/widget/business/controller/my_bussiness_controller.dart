@@ -476,9 +476,10 @@ class LBOController extends GetxController {
 
   Future<void> getSingleOffer(String offerId, {bool showLoading = true}) async {
     if (showLoading) isSingleOfferLoading.value = true;
+    final userId = await LocalStorage.getString('user_id') ?? '';
     comments.clear();
     try {
-      final response = await _apiService.offerDetails(offerId);
+      final response = await _apiService.offerDetails(offerId, userId);
 
       if (response['common']['status'] == true) {
         singleOffer.value = response['data'] ?? {};

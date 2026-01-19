@@ -8,7 +8,7 @@ class FeedShimmer extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.all(8.w),
       child: Shimmer.fromColors(
-        baseColor: Colors.grey.shade300,
+        baseColor: lightGrey,
         highlightColor: Colors.grey.shade100,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

@@ -9,7 +9,7 @@ class CatItemCardShimmer extends StatelessWidget {
       padding: EdgeInsets.all(12.w),
       margin: EdgeInsets.only(bottom: 12.h),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: lightGrey,
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
@@ -88,13 +88,13 @@ class ShimmerBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
-      baseColor: Colors.grey.shade300,
+      baseColor: lightGrey,
       highlightColor: Colors.grey.shade100,
       child: Container(
         width: width,
         height: height,
         decoration: BoxDecoration(
-          color: Colors.grey.shade300,
+          color: lightGrey,
           borderRadius: BorderRadius.circular(radius),
         ),
       ),

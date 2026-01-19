@@ -1,4 +1,4 @@
-import 'dart:io';
+      import 'dart:io';
 import 'package:businessbuddy/network/all_url.dart';
 import 'package:injectable/injectable.dart';
 import 'package:retrofit/retrofit.dart';
@@ -143,7 +143,9 @@ abstract class ApiService {
   );
 
   @POST(AllUrl.offerDetails)
-  Future<dynamic> offerDetails(@Part(name: "offer_id") String? offerId);
+  Future<dynamic> offerDetails(
+      @Part(name: "offer_id") String? offerId,
+      @Part(name: "user_id") String? userId,);
 
   @POST(AllUrl.getFeeds)
   Future<dynamic> getFeeds(

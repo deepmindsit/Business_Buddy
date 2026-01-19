@@ -23,7 +23,7 @@ class _LboScreenState extends State<LboScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Obx(
         () => Padding(
           padding: EdgeInsets.all(12.w),
@@ -46,12 +46,6 @@ class _LboScreenState extends State<LboScreen> {
 
         return _buildExpandableFab();
       }),
-
-      // Visibility(
-      //   visible:
-      //       getIt<DemoService>().isDemo && controller.businessList.isNotEmpty,
-      //   child: _buildExpandableFab(),
-      // ),
     );
   }
 
@@ -210,7 +204,7 @@ class _LboScreenState extends State<LboScreen> {
                 duration: const Duration(milliseconds: 250),
                 width: Get.width * 0.7.w,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: scaffoldBackground,
                   borderRadius: BorderRadius.circular(16.r),
                   boxShadow: [
                     BoxShadow(
@@ -220,7 +214,7 @@ class _LboScreenState extends State<LboScreen> {
                     ),
                   ],
                   border: Border.all(
-                    color: isSelected ? primaryColor : Colors.grey.shade200,
+                    color: isSelected ? primaryColor : lightGrey,
                     width: isSelected ? 1.8 : 1,
                   ),
                 ),
@@ -269,12 +263,13 @@ class _LboScreenState extends State<LboScreen> {
                               fontSize: 14.sp,
                               fontWeight: FontWeight.w700,
                               maxLines: 1,
+                              color: primaryBlack,
                             ),
                             SizedBox(height: 4.h),
                             CustomText(
                               title: business['category'] ?? '',
                               fontSize: 12.sp,
-                              color: Colors.grey.shade600,
+                              color: textGrey,
                             ),
                           ],
                         ),
@@ -295,7 +290,8 @@ class _LboScreenState extends State<LboScreen> {
       length: 2,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: scaffoldBackground,
+          border: Border.all(color: lightGrey, width: 0.5),
           borderRadius: BorderRadius.circular(12.r),
         ),
         child: Column(

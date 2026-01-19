@@ -3,7 +3,7 @@ import 'package:businessbuddy/utils/exported_path.dart';
 class InstagramOfferView extends StatefulWidget {
   final String offerId;
   final dynamic followButton;
-  final void Function() refresh;
+  final Future<void> Function() refresh;
 
   const InstagramOfferView({
     super.key,
@@ -29,39 +29,56 @@ class _InstagramOfferViewState extends State<InstagramOfferView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppbarPlain(title: 'Special Offer'),
-      body: Obx(
-        () => controller.isSingleOfferLoading.isTrue
-            ? LoadingWidget(color: primaryColor)
-            : Stack(
-                children: [
-                  SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Offer Header
-                        _buildOfferHeader(),
-                        // Offer Image with Right-side Icons
-                        SizedBox(
-                          height: Get.height * 0.7.h,
-                          child: _buildOfferImageWithIcons(),
-                        ),
-                        // Offer Details
-                        _buildOfferDetails(),
-                        // Highlight Points
-                        _buildHighlightPoints(),
-                        // Date Range
-                        _buildDateRange(),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (_, didPop) {
+        if (didPop != null) {
+          // Route was already popped by system
+          return;
+        }
 
-                        SizedBox(height: 20),
-                      ],
+        // 🔥 If we reach here, pop was NOT handled automatically
+        if (Navigator.of(context).canPop()) {
+          Navigator.of(context).pop();
+        } else {
+          // Opened via deep link → go to Main/Home
+          Get.offAllNamed(Routes.mainScreen);
+        }
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppbarPlain(title: 'Special Offer'),
+        body: Obx(
+          () => controller.isSingleOfferLoading.isTrue
+              ? OfferDetailShimmer()
+              : Stack(
+                  children: [
+                    SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Offer Header
+                          _buildOfferHeader(),
+                          // Offer Image with Right-side Icons
+                          SizedBox(
+                            height: Get.height * 0.7.h,
+                            child: _buildOfferImageWithIcons(),
+                          ),
+                          // Offer Details
+                          _buildOfferDetails(),
+                          // Highlight Points
+                          _buildHighlightPoints(),
+                          // Date Range
+                          _buildDateRange(),
+
+                          SizedBox(height: 20),
+                        ],
+                      ),
                     ),
-                  ),
-                  _buildFloatingRightIcons(),
-                ],
-              ),
+                    _buildFloatingRightIcons(),
+                  ],
+                ),
+        ),
       ),
     );
   }
@@ -78,103 +95,107 @@ class _InstagramOfferViewState extends State<InstagramOfferView> {
       ),
       child: Row(
         children: [
-          CircleAvatar(
-            radius: 20,
-            backgroundColor: Colors.grey.shade200,
-            child: ClipOval(
-              child: FadeInImage(
-                placeholder: const AssetImage(Images.defaultImage),
-                image: NetworkImage(image),
-                width: double.infinity,
-                height: 100.w,
-                fit: BoxFit.cover,
-                imageErrorBuilder: (context, error, stackTrace) {
-                  return Center(
-                    child: Image.asset(
-                      Images.defaultImage,
-                      width: 100.w,
-                      height: 100.w,
-                    ),
-                  );
-                },
-                fadeInDuration: const Duration(milliseconds: 500),
+          GestureDetector(
+            onTap: _openBusinessDetails,
+            child: CircleAvatar(
+              radius: 20,
+              backgroundColor: Colors.grey.shade200,
+              child: ClipOval(
+                child: FadeInImage(
+                  placeholder: const AssetImage(Images.defaultImage),
+                  image: NetworkImage(image),
+                  width: double.infinity,
+                  height: 100.w,
+                  fit: BoxFit.cover,
+                  imageErrorBuilder: (context, error, stackTrace) {
+                    return Center(
+                      child: Image.asset(
+                        Images.defaultImage,
+                        width: 100.w,
+                        height: 100.w,
+                      ),
+                    );
+                  },
+                  fadeInDuration: const Duration(milliseconds: 500),
+                ),
               ),
             ),
           ),
           const SizedBox(width: 4),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CustomText(
-                  title: controller.singleOffer['business_name'] ?? '',
-                  fontSize: 15.sp,
-                  fontWeight: FontWeight.w600,
-                  textAlign: TextAlign.start,
-                  color: Colors.black,
-                  maxLines: 1,
-                ),
-                const SizedBox(height: 2),
-                Row(
-                  children: [
-                    CustomText(
-                      title: controller.singleOffer['category'] ?? '',
-                      fontSize: 10.sp,
-                      textAlign: TextAlign.start,
-                      color: Colors.grey.shade600,
-                      maxLines: 1,
-                    ),
-                    const SizedBox(width: 4),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 6.w),
-                      child: Container(
-                        width: 3.r,
-                        height: 3.r,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.grey.shade400,
+            child: GestureDetector(
+              onTap: _openBusinessDetails,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CustomText(
+                    title: controller.singleOffer['business_name'] ?? '',
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w600,
+                    textAlign: TextAlign.start,
+                    color: Colors.black,
+                    maxLines: 1,
+                  ),
+                  const SizedBox(height: 2),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomText(
+                          title: controller.singleOffer['category'] ?? '',
+                          fontSize: 10.sp,
+                          textAlign: TextAlign.start,
+                          color: Colors.grey.shade600,
+                          maxLines: 1,
                         ),
                       ),
-                    ),
-                    _buildTimeDisplay(),
-                    const SizedBox(width: 4),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 6.w),
-                      child: Container(
-                        width: 3.r,
-                        height: 3.r,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.grey.shade400,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: Colors.red.shade50,
-                        borderRadius: BorderRadius.circular(4),
-                        border: Border.all(color: Colors.red.shade100),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.local_offer, color: Colors.red, size: 12),
-                          SizedBox(width: 4),
-                          Text(
-                            'Special Offer',
-                            style: TextStyle(
-                              fontSize: 10,
-                              color: Colors.red,
-                              fontWeight: FontWeight.w600,
-                            ),
+
+                      _dot(),
+                      const SizedBox(width: 4),
+                      _buildTimeDisplay(),
+                      const SizedBox(width: 4),
+                      _dot(),
+                      const SizedBox(width: 4),
+                      ConstrainedBox(
+                        constraints: BoxConstraints(maxWidth: 90.w),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
                           ),
-                        ],
+                          decoration: BoxDecoration(
+                            color: Colors.red.shade50,
+                            borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: Colors.red.shade100),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.local_offer,
+                                color: Colors.red,
+                                size: 12.r,
+                              ),
+                              SizedBox(width: 4),
+                              Flexible(
+                                child: Text(
+                                  'Special Offer',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 10.sp,
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
           SizedBox(width: 12),
@@ -185,6 +206,15 @@ class _InstagramOfferViewState extends State<InstagramOfferView> {
       ),
     );
   }
+
+  Widget _dot() => Container(
+    width: 3,
+    height: 3,
+    decoration: BoxDecoration(
+      shape: BoxShape.circle,
+      color: Colors.grey.shade400,
+    ),
+  );
 
   Widget _buildTimeDisplay() {
     final createdAt = controller.singleOffer['created_at'] ?? '';
@@ -247,7 +277,7 @@ class _InstagramOfferViewState extends State<InstagramOfferView> {
             icon: HugeIcons.strokeRoundedSent,
             color: Colors.white,
             count: '0',
-            onTap: () {},
+            onTap: _handleShare,
             isShare: true,
           ),
         ],
@@ -256,29 +286,40 @@ class _InstagramOfferViewState extends State<InstagramOfferView> {
   }
 
   Widget _buildLikeButton() {
-    final offerId = controller.singleOffer['id'].toString();
-    return _buildRightIcon(
-      isLike: true,
-      icon: controller.singleOffer['is_offer_liked'] == true
-          ? Icons.favorite
-          : Icons.favorite_border,
-      color: controller.singleOffer['is_offer_liked'] == true
-          ? Colors.red
-          : Colors.white,
-      count: controller.singleOffer['offer_likes_count']?.toString() ?? '0',
-      // onTap: widget.onLike,
-      onTap: () async {
-        await handleOfferLike(
-          controller.singleOffer,
-          () async => await controller
-              .getSingleOffer(offerId, showLoading: false)
-              .then((v) {
-                widget.refresh;
-                // getIt<HomeController>().getHomeApi(showLoading: false);
-              }),
-        );
+    final offer = controller.singleOffer;
+    final String offerId = offer['id']?.toString() ?? '';
+
+    final bool isLiked = offer['is_offer_liked'] == true;
+    final String likeCount = offer['offer_likes_count']?.toString() ?? '0';
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 250),
+      switchInCurve: Curves.easeOutBack,
+      switchOutCurve: Curves.easeIn,
+      transitionBuilder: (child, anim) {
+        return ScaleTransition(scale: anim, child: child);
       },
+      child: _buildRightIcon(
+        key: ValueKey(isLiked), // 🔥 REQUIRED
+        isLike: true,
+        icon: isLiked ? Icons.favorite : Icons.favorite_border,
+        color: isLiked ? Colors.red : Colors.white,
+        count: likeCount.toString(),
+        onTap: () async {
+          if (offerId.isEmpty) return;
+
+          await handleOfferLike(offer, () async {
+            await controller.getSingleOffer(offerId, showLoading: false);
+
+            // 🔥 FORCE feed refresh
+            await widget.refresh();
+          });
+        },
+      ),
     );
+  }
+
+  void _handleShare() {
+    AppShare.share(type: ShareEntityType.offer, id: widget.offerId.toString());
   }
 
   void _handleComment() {
@@ -306,6 +347,7 @@ class _InstagramOfferViewState extends State<InstagramOfferView> {
   }
 
   Widget _buildRightIcon({
+    Key? key,
     required dynamic icon,
     required Color color,
     required String count,
@@ -314,6 +356,7 @@ class _InstagramOfferViewState extends State<InstagramOfferView> {
     bool isShare = false,
   }) {
     return InkWell(
+      key: key,
       borderRadius: BorderRadius.circular(30.r),
       onTap: onTap,
       child: Column(
@@ -481,6 +524,16 @@ class _InstagramOfferViewState extends State<InstagramOfferView> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _openBusinessDetails() {
+    Get.back();
+    navController.openSubPage(
+      CategoryDetailPage(
+        title: controller.singleOffer['business_name'] ?? '',
+        businessId: controller.singleOffer['business_id']?.toString() ?? '',
       ),
     );
   }

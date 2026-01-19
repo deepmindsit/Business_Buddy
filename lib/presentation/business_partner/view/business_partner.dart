@@ -22,9 +22,17 @@ class _BusinessPartnerState extends State<BusinessPartner>
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkDisc();
       checkInternetAndShowPopup();
       loadAllData();
     });
+  }
+
+  void checkDisc() {
+    if (getIt<DemoService>().isDemo) {
+      getIt<DisclaimerController>().showDisclaimerIfNeeded();
+      return;
+    }
   }
 
   Future<void> loadAllData() async {
@@ -63,7 +71,7 @@ class _BusinessPartnerState extends State<BusinessPartner>
         initialIndex: controller.tabIndex.value,
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).scaffoldBackgroundColor,
             borderRadius: BorderRadius.circular(12.r),
           ),
           child: Column(
@@ -115,6 +123,7 @@ class _BusinessPartnerState extends State<BusinessPartner>
                         child: HugeIcon(
                           icon: HugeIcons.strokeRoundedFilter,
                           size: 18.r,
+                          color: Colors.grey,
                         ),
                       ),
                     ),

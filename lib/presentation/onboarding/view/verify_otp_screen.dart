@@ -10,6 +10,7 @@ class VerifyOtpScreen extends StatefulWidget {
 
 class _VerifyOtpScreenState extends State<VerifyOtpScreen> with CodeAutoFill {
   final controller = getIt<OnboardingController>();
+
   @override
   void initState() {
     controller.startTimer();
@@ -33,7 +34,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> with CodeAutoFill {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       resizeToAvoidBottomInset: false,
       appBar: const CustomAppBar(showBackButton: false, titleSpacing: 0),
       body: SafeArea(
@@ -129,11 +130,14 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> with CodeAutoFill {
       height: 50.h,
       textStyle: TextStyle(
         fontSize: 22.sp,
-        color: Colors.black,
+        color: Theme.of(context).textTheme.bodySmall!.color,
         fontWeight: FontWeight.w600,
       ),
       decoration: BoxDecoration(
-        color: Colors.grey.shade100,
+        border: Border.all(
+          color: Theme.of(context).textTheme.bodySmall!.color!,
+        ),
+        color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(10.r),
       ),
     );
@@ -147,6 +151,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> with CodeAutoFill {
           child: Pinput(
             controller: controller.otpController,
             length: 6,
+
             keyboardType: TextInputType.number,
             validator: (value) =>
                 value == null || value.isEmpty ? 'OTP is required' : null,
@@ -179,7 +184,6 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> with CodeAutoFill {
         // if (controller.otpController.text.length == 6) {
         if (controller.verifyKey.currentState!.validate()) {
           await controller.verifyOtpApi();
-          // Get.offAllNamed(Routes.mainScreen);
         } else {
           // showCustomSnackBar('Please enter a valid 6-digit OTP');
         }

@@ -28,6 +28,7 @@ class CategoryCard extends StatelessWidget {
           title: name,
           fontSize: 14.sp,
           maxLines: 2,
+          color: inverseColor,
           style: TextStyle(height: 1),
         ),
       ],

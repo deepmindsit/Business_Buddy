@@ -31,6 +31,7 @@ export 'package:businessbuddy/presentation/business_partner/widget/edit_recruitm
 
 //widget
 export 'package:businessbuddy/network/all_url.dart';
+export 'package:businessbuddy/utils/app_colors.dart';
 export 'package:businessbuddy/utils/color.dart';
 export 'package:businessbuddy/di/injection.config.dart';
 export 'package:businessbuddy/di/injection.dart';
@@ -55,9 +56,11 @@ export 'package:businessbuddy/presentation/home_screen/widget/feeds/widget/comme
 export 'package:businessbuddy/common/helper.dart';
 export 'package:businessbuddy/utils/like_animation.dart';
 export 'package:businessbuddy/presentation/home_screen/widget/feeds/widget/single_post.dart';
+export 'package:businessbuddy/presentation/special_offer/widget/single_offer.dart';
 
 //component
 export 'package:businessbuddy/components/screenutil_config.dart';
+export 'package:businessbuddy/presentation/special_offer/widget/single_offer_shimmer.dart';
 export 'package:businessbuddy/utils/image_path.dart';
 export 'package:businessbuddy/routes/app_routes.dart';
 export 'package:businessbuddy/common/dialogs.dart';
@@ -87,8 +90,12 @@ export 'package:businessbuddy/components/notification_service.dart';
 export 'package:businessbuddy/components/video_player.dart';
 export 'package:businessbuddy/components/location_search_field.dart';
 export 'package:businessbuddy/components/video_preview.dart';
+export 'package:businessbuddy/utils/app_share.dart';
+export 'package:businessbuddy/utils/theme.dart';
 
 //controller
+export 'package:businessbuddy/common/deeplink_controller.dart';
+export 'package:businessbuddy/utils/theme_controller.dart';
 export 'package:businessbuddy/presentation/onboarding/controller/splash_controller.dart';
 export 'package:businessbuddy/presentation/onboarding/controller/onboarding_controller.dart';
 export 'package:businessbuddy/presentation/navigation/controller/navigation_controller.dart';
@@ -107,9 +114,12 @@ export 'package:businessbuddy/common/location_controller.dart';
 export 'package:businessbuddy/common/update_app.dart';
 export 'package:businessbuddy/utils/video_player_controller.dart';
 export 'package:businessbuddy/presentation/home_screen/controller/update_firebase_token.dart';
+export 'package:businessbuddy/presentation/business_partner/controller/disclaimer_controller.dart';
 
 //plugins
 export 'package:get/get.dart';
+export 'package:app_links/app_links.dart';
+export 'package:share_plus/share_plus.dart';
 export 'package:flutter_screenutil/flutter_screenutil.dart';
 export 'package:hugeicons/hugeicons.dart';
 export 'package:get_it/get_it.dart';

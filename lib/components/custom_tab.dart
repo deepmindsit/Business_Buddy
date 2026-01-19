@@ -22,7 +22,10 @@ class _CustomTabBarState extends State<CustomTabBar> {
         width: Get.width,
         height: 35.h,
         margin: EdgeInsets.symmetric(vertical: 8.h),
-        decoration: BoxDecoration(color: Colors.black,border: Border.all(color: primaryColor)),
+        decoration: BoxDecoration(
+          color: scaffoldBackground,
+          border: Border.symmetric(horizontal:BorderSide(color: primaryColor)),
+        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: List.generate(tabs.length, (index) {
@@ -35,7 +38,7 @@ class _CustomTabBarState extends State<CustomTabBar> {
                 child: Container(
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: isSelected ? primaryColor : Colors.grey.shade100,
+                    color: isSelected ? primaryColor : scaffoldBackground,
                   ),
                   padding: EdgeInsets.symmetric(horizontal: 4.w),
                   child: Row(
@@ -43,7 +46,7 @@ class _CustomTabBarState extends State<CustomTabBar> {
                     children: [
                       HugeIcon(
                         icon: tabs[index]['icon'],
-                        color: isSelected ? Colors.white : Colors.black,
+                        color: isSelected ? Colors.white : textSmall,
                         size: 18.sp,
                       ),
                       SizedBox(width: 6.w),
@@ -56,7 +59,7 @@ class _CustomTabBarState extends State<CustomTabBar> {
                             fontWeight: isSelected
                                 ? FontWeight.w600
                                 : FontWeight.w400,
-                            color: isSelected ? Colors.white : Colors.black,
+                            color: isSelected ? Colors.white : textSmall,
                             height: 1.2,
                           ),
                         ),

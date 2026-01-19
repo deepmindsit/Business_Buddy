@@ -22,7 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
       String? number = await SmsAutoFill().hint;
       if (number != null && number.isNotEmpty) {
         controller.numberController.text = number;
-      } else {}
+      }
     } catch (e) {
       // print("Error getting number: $e");
     }
@@ -32,7 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: _buildAppbar(),
       body: SafeArea(
         child: Column(
@@ -83,13 +83,13 @@ class _LoginScreenState extends State<LoginScreen> {
             margin: EdgeInsets.symmetric(horizontal: 12.w),
             padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.red),
+              border: Border.all(color: primaryColor),
               borderRadius: BorderRadius.circular(100.r),
             ),
             child: CustomText(
               title: 'Skip',
               fontSize: 12.sp,
-              color: textGrey,
+              color: textSmall,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -129,6 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
         buildLabel(label),
         SizedBox(height: 8.h),
         buildTextField(
+          fillColor: Theme.of(context).scaffoldBackgroundColor,
           controller: controller.numberController,
           hintText: 'Enter your mobile number',
           keyboardType: TextInputType.number,

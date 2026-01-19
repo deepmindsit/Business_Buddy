@@ -27,23 +27,29 @@ Future<void> _toggleOfferLike(
   Future<void> Function() refresh,
 ) async {
   final bool wasLiked = item['is_offer_liked'] ?? false;
-  final int likeCount = int.tryParse(item['offer_likes_count'].toString()) ?? 0;
+  final int likeCount =
+      int.tryParse(item['offer_likes_count']?.toString() ?? '0') ?? 0;
+
+  item['is_offer_liked'] = !wasLiked;
+  item['offer_likes_count'] = wasLiked
+      ? (likeCount - 1).clamp(0, 999999)
+      : likeCount + 1;
 
   try {
     if (wasLiked) {
       await _feedController.offerUnLikeBusiness(
         item['offer_liked_id'].toString(),
       );
-      item['offer_likes_count'] = (likeCount - 1).clamp(0, 999999);
+      // item['offer_likes_count'] = (likeCount - 1).clamp(0, 999999);
     } else {
       await _feedController.offerLikeBusiness(
         item['business_id'].toString(),
         item['id'].toString(),
       );
-      item['offer_likes_count'] = likeCount + 1;
+      // item['offer_likes_count'] = likeCount + 1;
     }
 
-    item['is_offer_liked'] = !wasLiked;
+    // item['is_offer_liked'] = !wasLiked;
     await refresh();
   } catch (e) {
     // debugPrint('Like error: $e');
@@ -86,18 +92,23 @@ Future<void> _toggleFeedLike(
   final bool wasLiked = item['is_liked'] ?? false;
   final int likeCount = int.tryParse(item['likes_count'].toString()) ?? 0;
 
+  item['is_liked'] = !wasLiked;
+  item['likes_count'] = wasLiked
+      ? (likeCount - 1).clamp(0, 999999)
+      : likeCount + 1;
+
   if (wasLiked) {
     await _feedController.unLikeBusiness(item['liked_id'].toString());
-    item['likes_count'] = (likeCount - 1).clamp(0, 999999);
+    // item['likes_count'] = (likeCount - 1).clamp(0, 999999);
   } else {
     await _feedController.likeBusiness(
       item['business_id'].toString(),
       isSingle ? item['id'].toString() : item['post_id'].toString(),
     );
-    item['likes_count'] = likeCount + 1;
+    // item['likes_count'] = likeCount + 1;
   }
 
-  item['is_liked'] = !wasLiked;
+  // item['is_liked'] = !wasLiked;
   await refresh();
 }
 

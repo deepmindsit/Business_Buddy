@@ -4,8 +4,15 @@ class FeedCard extends StatelessWidget {
   final dynamic data;
   final dynamic followButton;
   final Future<void> Function() onLike;
+  final void Function()? onRefresh;
 
-  FeedCard({super.key, this.data, required this.onLike, this.followButton});
+  FeedCard({
+    super.key,
+    this.data,
+    required this.onLike,
+    this.followButton,
+    this.onRefresh,
+  });
 
   final navController = getIt<NavigationController>();
 
@@ -13,12 +20,12 @@ class FeedCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       surfaceTintColor: Colors.white,
-      color: Colors.white,
+      color: Get.theme.cardColor,
       elevation: 0,
       margin: EdgeInsets.all(8.w),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16.r),
-        side: BorderSide(color: Colors.grey.shade100, width: 1),
+        side: BorderSide(color: Get.theme.dividerColor, width: 0.5),
       ),
       child: Padding(
         padding: EdgeInsets.symmetric(
@@ -94,13 +101,13 @@ class FeedCard extends StatelessWidget {
                   fontSize: 15.sp,
                   fontWeight: FontWeight.w700,
                   textAlign: TextAlign.start,
-                  color: Colors.black,
+                  color: primaryBlack,
                   maxLines: 1,
                   style: TextStyle(
                     height: 1,
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w700,
-                    color: Colors.black,
+                    color: primaryBlack,
                   ),
                 ),
                 Row(
@@ -109,7 +116,7 @@ class FeedCard extends StatelessWidget {
                       title: data['category'] ?? '',
                       fontSize: 10.sp,
                       textAlign: TextAlign.start,
-                      color: Colors.grey.shade600,
+                      color: textSmall,
                       maxLines: 1,
                     ),
                     Padding(
@@ -119,7 +126,7 @@ class FeedCard extends StatelessWidget {
                         height: 3.r,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Colors.grey.shade400,
+                          color: textSmall,
                         ),
                       ),
                     ),
@@ -146,6 +153,7 @@ class FeedCard extends StatelessWidget {
       onTap: () {
         Get.to(
           () => InstagramPostView(
+            refresh: onRefresh!,
             followButton: followButton,
             postId: data['post_id']?.toString() ?? '',
           ),
@@ -155,25 +163,36 @@ class FeedCard extends StatelessWidget {
       },
       child: Hero(
         tag: heroTag,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(12.r),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12.r),
+            border: Border.all(color: Get.theme.dividerColor, width: 0.5),
+          ),
+
           child: Center(
             child: ConstrainedBox(
               constraints: BoxConstraints(maxHeight: 380.h),
               child: mediaType == 'video'
-                  ? InstagramVideoPlayer(
-                      // isSingleView: true,
-                      key: ValueKey(video),
-                      url: video?.toString() ?? '',
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(12.r),
+                      child: InstagramVideoPlayer(
+                        // isSingleView: true,
+                        key: ValueKey(video),
+                        url: video?.toString() ?? '',
+                      ),
                     )
-                  : CachedNetworkImage(
-                      placeholder: (_, __) => Image.asset(Images.defaultImage),
-                      imageUrl: image,
-                      fit: BoxFit.contain,
-                      memCacheHeight: 600,
-                      errorWidget: (_, __, ___) =>
-                          Image.asset(Images.defaultImage),
-                      fadeInDuration: Duration.zero,
+                  : ClipRRect(
+                      borderRadius: BorderRadius.circular(12.r),
+                      child: CachedNetworkImage(
+                        placeholder: (_, __) =>
+                            Image.asset(Images.defaultImage),
+                        imageUrl: image,
+                        fit: BoxFit.contain,
+                        memCacheHeight: 600,
+                        errorWidget: (_, __, ___) =>
+                            Image.asset(Images.defaultImage),
+                        fadeInDuration: Duration.zero,
+                      ),
                     ),
             ),
           ),
@@ -270,7 +289,7 @@ class FeedCard extends StatelessWidget {
     return Column(
       children: [
         _buildEngagementHeader(),
-        Divider(height: 12, color: Colors.grey.shade100),
+        Divider(height: 12, color: lightGrey),
         _buildEngagementActions(),
       ],
     );
@@ -319,7 +338,7 @@ class FeedCard extends StatelessWidget {
               child: GestureDetector(
                 onTap: onLike,
                 child: EngagementAction(
-                  color: data['is_liked'] == true ? Colors.red : Colors.black,
+                  color: data['is_liked'] == true ? Colors.red : primaryBlack,
                   icon: data['is_liked'] == true
                       ? Icons.favorite
                       : Icons.favorite_border,
@@ -336,7 +355,18 @@ class FeedCard extends StatelessWidget {
             label: 'Comment',
           ),
         ),
-        // EngagementAction(hugeIcon: HugeIcons.strokeRoundedSent, label: 'Share'),
+        GestureDetector(
+          onTap: () {
+            AppShare.share(
+              type: ShareEntityType.post,
+              id: data['post_id']?.toString() ?? '',
+            );
+          },
+          child: EngagementAction(
+            hugeIcon: HugeIcons.strokeRoundedSent,
+            label: 'Share',
+          ),
+        ),
       ],
     );
   }
@@ -348,7 +378,6 @@ class FeedCard extends StatelessWidget {
     );
   }
 
-  // Widget _buildContentEngagement() {
   Widget _buildTimeDisplay() {
     final createdAt = data['created_at'] ?? '';
     if (createdAt == null || createdAt.toString().isEmpty) {
@@ -359,7 +388,7 @@ class FeedCard extends StatelessWidget {
       title: getTimeAgo(createdAt),
       fontSize: 10.sp,
       textAlign: TextAlign.start,
-      color: Colors.grey.shade600,
+      color: textSmall,
       maxLines: 1,
     );
   }
@@ -442,10 +471,10 @@ class EngagementAction extends StatelessWidget {
           duration: const Duration(milliseconds: 200),
           child: icon != null
               ? Icon(icon, size: 18.sp, color: color)
-              : HugeIcon(icon: hugeIcon, size: 18.sp, color: Colors.black),
+              : HugeIcon(icon: hugeIcon, size: 18.sp, color: primaryBlack),
         ),
         SizedBox(height: 0.h),
-        CustomText(title: label, fontSize: 12.sp),
+        CustomText(title: label, fontSize: 12.sp, color: primaryBlack),
       ],
     );
   }

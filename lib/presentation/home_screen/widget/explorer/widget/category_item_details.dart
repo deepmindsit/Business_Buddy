@@ -58,7 +58,7 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
 
   Widget _buildHeader() {
     return Container(
-      color: Colors.white,
+      color: Theme.of(context).scaffoldBackgroundColor,
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
       child: Row(
         spacing: 8,
@@ -70,6 +70,7 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
           CustomText(
             title: widget.title,
             fontSize: 18.sp,
+            color: primaryBlack,
             fontWeight: FontWeight.bold,
           ),
         ],
@@ -127,7 +128,7 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: Colors.grey.shade200),
+        border: Border.all(color: lightGrey),
       ),
       child: Stack(
         children: [
@@ -201,7 +202,7 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(
-            color: isSelected ? primaryColor : Colors.grey.shade200,
+            color: isSelected ? primaryColor : lightGrey,
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -335,7 +336,7 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
                     title: widget.title,
                     fontSize: 18.sp,
                     fontWeight: FontWeight.w700,
-                    color: Colors.black87,
+                    color: primaryBlack,
                     textAlign: TextAlign.start,
                     maxLines: 2,
                   ),
@@ -749,14 +750,14 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
           title: 'About',
           fontSize: 18.sp,
           fontWeight: FontWeight.w700,
-          color: Colors.black87,
+          color: primaryBlack,
         ),
         CustomText(
           title: controller.businessDetails['about_business'] ?? '',
           fontSize: 14.sp,
           maxLines: 20,
           textAlign: TextAlign.start,
-          color: Colors.grey.shade700,
+          color: textGrey,
         ),
         SizedBox(height: 16.h),
         const Divider(height: 1),
@@ -769,7 +770,7 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
       length: 2,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(12.r),
         ),
         child: Column(
@@ -805,21 +806,6 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
                 ],
               );
             }),
-            // --- Tab Content ---
-            // Flexible(
-            //   fit: FlexFit.loose,
-            //   // height: Get.height * 0.45.h,
-            //   child: TabBarView(
-            //     physics: const NeverScrollableScrollPhysics(), // prevents
-            //     children: [
-            //       buildGridImages(controller.businessDetails['posts'], 'post'),
-            //       buildGridImages(
-            //         controller.businessDetails['offers'],
-            //         'offer',
-            //       ),
-            //     ],
-            //   ),
-            // ),
           ],
         ),
       ),
@@ -858,10 +844,9 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
         fontSize: 16.sp,
         textAlign: TextAlign.start,
         fontWeight: FontWeight.w600,
-        color: Colors.black87,
+        color: primaryBlack,
       ),
       shape: const RoundedRectangleBorder(
-        // Remove border shape
         borderRadius: BorderRadius.all(Radius.circular(0)),
       ),
       collapsedShape: const RoundedRectangleBorder(
@@ -932,6 +917,7 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
                 fontSize: 14.sp,
                 textAlign: TextAlign.start,
                 maxLines: 2,
+                color: primaryBlack,
               ),
 
               // Rating
@@ -946,6 +932,7 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
               CustomText(
                 title: review,
                 fontSize: 13.sp,
+                color: primaryBlack,
                 textAlign: TextAlign.start,
                 maxLines: 20,
               ),

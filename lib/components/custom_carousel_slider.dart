@@ -55,10 +55,11 @@ class CustomCarouselSlider extends StatelessWidget {
                   imageUrl: imagePath['image'],
                   fit: BoxFit.cover,
                   width: double.infinity,
-                  placeholder: (context, url) =>Image.asset(Images.defaultImage),
-                  errorWidget: (context, url, error) =>Image.asset(Images.defaultImage),
-                )
-
+                  placeholder: (context, url) =>
+                      Image.asset(Images.defaultSlider),
+                  errorWidget: (context, url, error) =>
+                      Image.asset(Images.defaultSlider),
+                ),
 
                 // Image.network(
                 //   imagePath['image'],

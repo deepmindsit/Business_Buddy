@@ -52,11 +52,12 @@ class CatItemCard extends StatelessWidget {
         padding: EdgeInsets.all(12.w),
         margin: EdgeInsets.only(bottom: 12.h),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Get.theme.cardColor,
           borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(color: Get.theme.dividerColor, width: 0.5),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.08),
+              color: Colors.grey.withValues(alpha: 0.08),
               blurRadius: 12.r,
               offset: const Offset(0, 4),
             ),
@@ -136,7 +137,7 @@ class CatItemCard extends StatelessWidget {
                 title: name,
                 fontSize: 16.sp,
                 fontWeight: FontWeight.w700,
-                color: Colors.black,
+                color: primaryBlack,
                 textAlign: TextAlign.start,
                 maxLines: 2,
               ),
@@ -250,15 +251,13 @@ class CatItemCard extends StatelessWidget {
             maxLines: 2,
           ),
         ),
-        if (isSearch != true) _buildCategory(),
+        if (isSearch != true) _buildLocationIcon(),
       ],
     );
   }
 
-  Widget _buildCategory() {
-    return
-    // Direction Icon
-    Align(
+  Widget _buildLocationIcon() {
+    return Align(
       alignment: Alignment.centerRight,
       child: GestureDetector(
         onTap: () {
@@ -272,9 +271,9 @@ class CatItemCard extends StatelessWidget {
           width: 30.w,
           height: 30.h,
           decoration: BoxDecoration(
-            color: Colors.grey[50],
+            color: Get.theme.dividerColor,
             borderRadius: BorderRadius.circular(10.r),
-            border: Border.all(color: Colors.grey[200]!),
+            border: Border.all(color: lightGrey),
           ),
           child: Icon(
             Icons.location_on_outlined,
@@ -284,6 +283,7 @@ class CatItemCard extends StatelessWidget {
         ),
       ),
     );
+    // Direction Icon
 
     // Row(
     //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -338,7 +338,7 @@ class CatItemCard extends StatelessWidget {
                 child: HugeIcon(
                   icon: HugeIcons.strokeRoundedCall02,
                   size: 16.sp,
-                  color: Colors.black,
+                  color: primaryBlack,
                 ),
               ),
             ),
@@ -474,7 +474,9 @@ class CatItemCard extends StatelessWidget {
           children: [
             HugeIcon(
               icon: icon,
-              color: backgroundColor == primaryColor
+              color: icon == HugeIcons.strokeRoundedCall02
+                  ? primaryBlack
+                  : backgroundColor == primaryColor
                   ? Colors.white
                   : primaryColor,
               size: 16.sp,

@@ -1,4 +1,3 @@
-import 'package:businessbuddy/presentation/special_offer/widget/single_offer.dart';
 import 'package:businessbuddy/utils/exported_path.dart';
 
 class OfferCard extends StatelessWidget {
@@ -6,12 +5,14 @@ class OfferCard extends StatelessWidget {
   final dynamic followButton;
   final void Function() onLike;
   final void Function()? onFollow;
+  final Future<void> Function() onRefresh;
   OfferCard({
     super.key,
     this.data,
     required this.onLike,
     this.onFollow,
     this.followButton,
+    required this.onRefresh,
   });
 
   final navController = getIt<NavigationController>();
@@ -20,12 +21,12 @@ class OfferCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       surfaceTintColor: Colors.white,
-      color: Colors.white,
+      color: Get.theme.cardColor,
       elevation: 0,
       margin: EdgeInsets.all(8.w),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16.r),
-        side: BorderSide(color: Colors.grey.shade100, width: 1),
+        side: BorderSide(color: Get.theme.dividerColor, width: 0.5),
       ),
       child: Padding(
         padding: EdgeInsets.all(12.w),
@@ -51,7 +52,7 @@ class OfferCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
-        color: Colors.grey.shade100,
+        color: lightGrey,
         borderRadius: BorderRadius.circular(8.r),
       ),
       child: Row(
@@ -129,7 +130,7 @@ class OfferCard extends StatelessWidget {
                   title: data['business_name'] ?? '',
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w700,
-                  color: Colors.black87,
+                  color: primaryBlack,
                   maxLines: 1,
                 ),
 
@@ -144,7 +145,7 @@ class OfferCard extends StatelessWidget {
                       child: CustomText(
                         title: data['category'] ?? '',
                         fontSize: 10.sp,
-                        color: Colors.grey.shade600,
+                        color: textSmall,
                         maxLines: 1,
                       ),
                     ),
@@ -181,10 +182,7 @@ class OfferCard extends StatelessWidget {
     return Container(
       width: 3.r,
       height: 3.r,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.grey.shade400,
-      ),
+      decoration: BoxDecoration(shape: BoxShape.circle, color: textSmall),
     );
   }
 
@@ -198,7 +196,7 @@ class OfferCard extends StatelessWidget {
       title: getTimeAgo(createdAt),
       fontSize: 10.sp,
       textAlign: TextAlign.start,
-      color: Colors.grey.shade600,
+      color: textSmall,
       maxLines: 1,
     );
   }
@@ -327,7 +325,7 @@ class OfferCard extends StatelessWidget {
       onTap: () {
         Get.to(
           () => InstagramOfferView(
-            refresh: () {},
+            refresh: onRefresh,
             offerId: data['id']?.toString() ?? '',
             followButton: followButton,
           ),
@@ -337,7 +335,10 @@ class OfferCard extends StatelessWidget {
       },
       child: Container(
         alignment: Alignment.center,
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(12.r)),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(color: Get.theme.dividerColor, width: 0.5),
+        ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(12.r),
           child: ConstrainedBox(
@@ -408,7 +409,7 @@ class OfferCard extends StatelessWidget {
             Icon(
               Icons.calendar_month_rounded,
               size: 16.r,
-              color: Colors.grey.shade600,
+              // color: lightGrey,
             ),
             SizedBox(width: 6.w),
             Flexible(
@@ -416,7 +417,7 @@ class OfferCard extends StatelessWidget {
                 title:
                     '${data['start_date'] ?? ''} to ${data['end_date'] ?? ''}',
                 fontSize: 14.sp,
-                color: Colors.grey.shade700,
+                color: primaryBlack,
                 maxLines: 2,
                 textAlign: TextAlign.start,
               ),
@@ -428,11 +429,14 @@ class OfferCard extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: data['highlight_points'].map<Widget>((v) {
-            return buildBulletPoint(text: v);
+            return Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: buildBulletPoint(text: v),
+            );
           }).toList(),
         ),
         // _buildEngagementSection(),
-        Divider(height: 12, color: Colors.grey.shade100),
+        Divider(height: 12, color: lightGrey),
         _buildContentEngagement(),
       ],
     );
@@ -475,7 +479,7 @@ class OfferCard extends StatelessWidget {
     return Column(
       children: [
         _buildEngagementHeader(),
-        Divider(height: 12, color: Colors.grey.shade100),
+        Divider(height: 12, color: lightGrey),
         _buildEngagementActions(),
       ],
     );
@@ -488,7 +492,7 @@ class OfferCard extends StatelessWidget {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _buildAnimatedIcon(icon: Icons.favorite, color: Colors.red),
+            _buildAnimatedIcon(icon: Icons.favorite, color: primaryColor),
             SizedBox(width: 6.w),
             Text(
               formatCount(
@@ -497,7 +501,7 @@ class OfferCard extends StatelessWidget {
               style: TextStyle(
                 fontSize: 12.sp,
                 fontWeight: FontWeight.w600,
-                color: Colors.black,
+                color: primaryColor,
               ),
             ),
           ],
@@ -518,7 +522,7 @@ class OfferCard extends StatelessWidget {
         GestureDetector(
           onTap: onLike,
           child: EngagementAction(
-            color: data['is_offer_liked'] == true ? Colors.red : Colors.black,
+            color: data['is_offer_liked'] == true ? Colors.red : primaryBlack,
             icon: data['is_offer_liked'] == true
                 ? Icons.favorite
                 : Icons.favorite_border,
@@ -532,7 +536,18 @@ class OfferCard extends StatelessWidget {
             label: 'Comment',
           ),
         ),
-        // EngagementAction(hugeIcon: HugeIcons.strokeRoundedSent, label: 'Share'),
+        GestureDetector(
+          onTap: () {
+            AppShare.share(
+              type: ShareEntityType.offer,
+              id: data['id']?.toString() ?? '',
+            );
+          },
+          child: EngagementAction(
+            hugeIcon: HugeIcons.strokeRoundedSent,
+            label: 'Share',
+          ),
+        ),
       ],
     );
   }

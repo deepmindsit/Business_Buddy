@@ -3,13 +3,11 @@ import '../utils/exported_path.dart';
 class CustomMainHeader2 extends StatelessWidget {
   final bool showBackButton;
   final VoidCallback? onBackTap;
-  final TextEditingController searchController;
 
   const CustomMainHeader2({
     super.key,
     this.showBackButton = true,
     this.onBackTap,
-    required this.searchController,
   });
 
   @override
@@ -21,7 +19,10 @@ class CustomMainHeader2 extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 8.w).copyWith(top: 16.h),
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [primaryColor.withValues(alpha: 0.5), Colors.white],
+              // colors: [primaryColor.withValues(alpha: 0.5), Colors.white],
+              colors: Theme.of(context).brightness == Brightness.light
+                  ? [primaryColor.withValues(alpha: 0.5), Colors.white]
+                  : [primaryColor, Colors.black54],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
             ),
@@ -54,13 +55,13 @@ class CustomMainHeader2 extends StatelessWidget {
                                     children: [
                                       Icon(
                                         Icons.location_on,
-                                        color: Colors.black,
+                                        color: primaryBlack,
                                         size: 14.sp,
                                       ),
                                       CustomText(
                                         title: 'Location',
                                         fontSize: 13.sp,
-                                        color: Colors.black,
+                                        color: primaryBlack,
                                         maxLines: 1,
                                         textAlign: TextAlign.start,
                                       ),
@@ -76,7 +77,7 @@ class CustomMainHeader2 extends StatelessWidget {
                                               .address
                                               .value,
                                           fontSize: 13.sp,
-                                          color: Colors.black,
+                                          color: primaryBlack,
                                           fontWeight: FontWeight.bold,
                                           maxLines: 1,
                                           textAlign: TextAlign.start,
@@ -84,7 +85,7 @@ class CustomMainHeader2 extends StatelessWidget {
                                       ),
                                       Icon(
                                         Icons.arrow_drop_down,
-                                        color: Colors.black,
+                                        color: primaryBlack,
                                         size: 14.sp,
                                       ),
                                     ],
@@ -112,21 +113,16 @@ class CustomMainHeader2 extends StatelessWidget {
                     // height: 35.h,
                     child: TextFormField(
                       onTap: () => Get.toNamed(Routes.globalSearch),
-                      controller: searchController,
                       enabled: false,
 
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: Colors.white,
+                        fillColor: scaffoldBackground,
                         focusedBorder: buildOutlineInputBorder(),
                         enabledBorder: buildOutlineInputBorder(),
                         disabledBorder: buildOutlineInputBorder(),
                         // 👇 MAKE FIELD SMALL HEIGHT
-                        contentPadding: EdgeInsets.all(
-                          15,
-                          // vertical: 12,
-                          // horizontal: 12,
-                        ),
+                        contentPadding: const EdgeInsets.all(15),
                         isDense: true,
                         visualDensity: VisualDensity(
                           horizontal: -2,
@@ -144,7 +140,6 @@ class CustomMainHeader2 extends StatelessWidget {
                             height: 18,
                           ),
                         ),
-
                         hintText: 'Search Offer, Interest, etc.',
                         hintStyle: TextStyle(
                           fontSize: 14.sp,
@@ -201,13 +196,16 @@ class CustomMainHeader2 extends StatelessWidget {
 
   Widget _buildNotificationIcon() {
     return GestureDetector(
-      onTap: () => Get.toNamed(Routes.notificationList),
+      // onTap: () => Get.toNamed(Routes.notificationList),
+      onTap: () {
+        getIt<ThemeController>().toggleTheme();
+      },
       child: Stack(
         children: [
           Container(
             padding: EdgeInsets.all(8.w),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Get.theme.cardColor,
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
@@ -219,7 +217,7 @@ class CustomMainHeader2 extends StatelessWidget {
             ),
             child: Icon(
               Icons.notifications_outlined,
-              color: Colors.grey.shade700,
+              color: textSmall,
               size: 18.sp,
             ),
           ),
@@ -232,7 +230,7 @@ class CustomMainHeader2 extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.red,
                 shape: BoxShape.circle,
-                border: Border.all(color: Colors.white, width: 1.5),
+                border: Border.all(color: Get.theme.cardColor, width: 1.5),
               ),
             ),
           ),
@@ -251,9 +249,9 @@ class CustomMainHeader2 extends StatelessWidget {
         Get.toNamed(Routes.profile, arguments: {'user_id': 'self'});
       },
       child: Container(
-        padding: EdgeInsets.all(2.w),
+        padding: EdgeInsets.all(8.w),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Get.theme.cardColor,
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
@@ -263,14 +261,7 @@ class CustomMainHeader2 extends StatelessWidget {
             ),
           ],
         ),
-        child: Container(
-          padding: EdgeInsets.all(6.w),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            shape: BoxShape.circle,
-          ),
-          child: Icon(Icons.person_outline, color: primaryColor, size: 18.sp),
-        ),
+        child: Icon(Icons.person_outline, color: primaryColor, size: 18.sp),
       ),
     );
   }

@@ -55,6 +55,7 @@ class _ExplorerState extends State<Explorer> {
                   fontSize: 18.sp,
                   textAlign: TextAlign.start,
                   fontWeight: FontWeight.bold,
+                  color: textSmall,
                 ),
               ),
               Align(
@@ -227,7 +228,7 @@ Widget buildCategoryLoader() {
     itemCount: 8, // Show 8 shimmer items
     itemBuilder: (context, index) {
       return Shimmer.fromColors(
-        baseColor: Colors.grey.shade300,
+        baseColor: lightGrey,
         highlightColor: Colors.grey.shade100,
         child: Column(
           children: [

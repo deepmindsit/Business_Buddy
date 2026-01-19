@@ -92,8 +92,9 @@ class _ChatScreenState extends State<ChatScreen> {
       slivers: [
         SliverPadding(
           padding: EdgeInsets.zero,
-          sliver: SliverList(
-            delegate: SliverChildBuilderDelegate((context, index) {
+          sliver: SliverList.separated(
+            itemCount: controller.allChats.length,
+            itemBuilder: (BuildContext context, int index) {
               final chat = controller.allChats[index];
               return AnimationConfiguration.staggeredList(
                 position: index,
@@ -103,7 +104,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   child: FadeInAnimation(child: _chatTile(chat)),
                 ),
               );
-            }, childCount: controller.allChats.length),
+            },
+            separatorBuilder: (_, _) => Divider(color: lightGrey, height: 1),
           ),
         ),
         Obx(
@@ -134,6 +136,7 @@ class _ChatScreenState extends State<ChatScreen> {
         fontSize: 14.sp,
         textAlign: TextAlign.start,
         fontWeight: FontWeight.bold,
+        color: primaryBlack,
       ),
       subtitle: CustomText(
         title: chat['self_business_requirement'] == true
@@ -141,6 +144,7 @@ class _ChatScreenState extends State<ChatScreen> {
             : chat['business_requirement_user_name'] ?? '',
         fontSize: 12.sp,
         textAlign: TextAlign.start,
+        color: primaryBlack,
         // maxLines: 1,
       ),
       onTap: () {
@@ -151,11 +155,6 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
         );
       },
-      // trailing: CustomText(
-      //   title: '2h ago',
-      //   fontSize: 12.sp,
-      //   textAlign: TextAlign.start,
-      // ),
     );
   }
 }
@@ -175,7 +174,7 @@ class ChatListShimmer extends StatelessWidget {
           child: Row(
             children: [
               Shimmer.fromColors(
-                baseColor: Colors.grey.shade300,
+                baseColor: lightGrey,
                 highlightColor: Colors.grey.shade100,
                 child: CircleAvatar(radius: 24.r),
               ),
@@ -185,7 +184,7 @@ class ChatListShimmer extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Shimmer.fromColors(
-                      baseColor: Colors.grey.shade300,
+                      baseColor: lightGrey,
                       highlightColor: Colors.grey.shade100,
                       child: Container(
                         height: 14.h,
@@ -198,7 +197,7 @@ class ChatListShimmer extends StatelessWidget {
                     ),
                     SizedBox(height: 8.h),
                     Shimmer.fromColors(
-                      baseColor: Colors.grey.shade300,
+                      baseColor: lightGrey,
                       highlightColor: Colors.grey.shade100,
                       child: Container(
                         height: 12.h,

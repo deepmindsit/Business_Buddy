@@ -9,9 +9,9 @@ class SpecialOffer extends StatefulWidget {
 
 class _SpecialOfferState extends State<SpecialOffer> {
   final controller = getIt<SpecialOfferController>();
-  // final _homeController = getIt<HomeController>();
   final _feedController = getIt<FeedsController>();
   final double _headerHeight = 30.h;
+
   @override
   void initState() {
     super.initState();
@@ -25,7 +25,7 @@ class _SpecialOfferState extends State<SpecialOffer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Obx(() {
         /// 🔹 Feeds + Pagination
         return NotificationListener<ScrollNotification>(
@@ -80,6 +80,10 @@ class _SpecialOfferState extends State<SpecialOffer> {
                                         child: OfferCard(
                                           followButton: _followButton(i),
                                           data: item,
+                                          onRefresh: () async =>
+                                              await controller.getSpecialOffer(
+                                                showLoading: false,
+                                              ),
                                           onLike: () => handleOfferLike(
                                             item,
                                             () async => await controller
@@ -115,7 +119,7 @@ class _SpecialOfferState extends State<SpecialOffer> {
                 child: Container(
                   height: _headerHeight,
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  decoration: BoxDecoration(color: Colors.white),
+                  decoration: BoxDecoration(color: scaffoldBackground),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -123,6 +127,7 @@ class _SpecialOfferState extends State<SpecialOffer> {
                         title: 'Special Offers',
                         fontSize: 18.sp,
                         fontWeight: FontWeight.bold,
+                        color: primaryBlack,
                       ),
                       _buildFilterButton(),
                     ],

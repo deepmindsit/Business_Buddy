@@ -10,14 +10,14 @@ class RequestedScreen extends StatefulWidget {
 class _RequestedScreenState extends State<RequestedScreen> {
   final controller = getIt<InboxController>();
 
-
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          border: Border.all(color: lightGrey, width: 0.5),
+          color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(12.r),
         ),
         child: Column(
@@ -28,9 +28,9 @@ class _RequestedScreenState extends State<RequestedScreen> {
               height: 40.h,
               margin: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
               decoration: BoxDecoration(
-                color: Colors.grey.shade100,
+                color: scaffoldBackground,
                 borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(color: Colors.grey.shade300, width: 1),
+                border: Border.all(color: lightGrey, width: 0.5),
               ),
               child: TabBar(
                 indicator: BoxDecoration(
@@ -155,12 +155,14 @@ class _RequestedScreenState extends State<RequestedScreen> {
                               fontSize: 14.sp,
                               textAlign: TextAlign.start,
                               fontWeight: FontWeight.bold,
+                              color: primaryBlack,
                             ),
                             subtitle: CustomText(
                               title: data['requirement_name'] ?? '',
                               fontSize: 12.sp,
                               maxLines: 2,
                               textAlign: TextAlign.start,
+                              color: primaryBlack,
                             ),
                             onTap: () {},
                             trailing:
@@ -481,7 +483,7 @@ class _RequestedScreenState extends State<RequestedScreen> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
@@ -536,6 +538,7 @@ class _RequestedScreenState extends State<RequestedScreen> {
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16.sp,
+                        color: primaryBlack,
                       ),
                     ),
                     Text(
@@ -548,13 +551,13 @@ class _RequestedScreenState extends State<RequestedScreen> {
                   SizedBox(height: 3.h),
                   Text(
                     title,
-                    style: TextStyle(fontSize: 11.sp, color: Colors.black54),
+                    style: TextStyle(fontSize: 11.sp, color: primaryBlack),
                   ),
                 ],
                 SizedBox(height: 4.h),
                 Text(
                   message,
-                  style: TextStyle(fontSize: 11.sp, color: Colors.black87),
+                  style: TextStyle(fontSize: 11.sp, color: primaryBlack),
                 ),
                 SizedBox(height: 8.h),
                 Align(

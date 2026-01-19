@@ -19,6 +19,7 @@ class Images {
   static const noData = 'assets/images/no_data_found.png';
   static const emptyBusiness = 'assets/images/empty_business.png';
   static const defaultImage = 'assets/images/default.png';
+  static const defaultSlider = 'assets/images/default_slider.jpg';
   static const hotelImgLarge = 'assets/images/hotel_img_large.png';
   static const offerImage = 'assets/images/offer_image.png';
   static const appIcon = 'assets/images/app_icon.png';

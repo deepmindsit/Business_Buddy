@@ -4,11 +4,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool showBackButton;
   final List<Widget>? actions;
   final double? titleSpacing;
+  final bool? centerTitle;
   final Color backgroundColor;
 
   const CustomAppBar({
     super.key,
     this.showBackButton = true,
+    this.centerTitle = false,
     this.actions,
     this.titleSpacing = 0,
     this.backgroundColor = Colors.white,
@@ -20,10 +22,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.white,
-      surfaceTintColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      surfaceTintColor: Theme.of(context).scaffoldBackgroundColor,
       titleSpacing: titleSpacing,
-      centerTitle: false,
+      centerTitle: centerTitle,
       title: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0).copyWith(top: 16),
         child: Image.asset(Images.logo, width: Get.width * 0.4.w),

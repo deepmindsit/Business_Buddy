@@ -72,8 +72,8 @@ class AllDialogs {
       // Android style dialog
       Get.dialog(
         AlertDialog(
-          surfaceTintColor: Colors.white,
-          backgroundColor: Colors.white,
+          surfaceTintColor: Theme.of(Get.context!).scaffoldBackgroundColor,
+          backgroundColor: Theme.of(Get.context!).scaffoldBackgroundColor,
           content: Text('Are you sure you want to change\n+91 $number'),
           actions: [
             TextButton(
@@ -100,7 +100,7 @@ class AllDialogs {
           borderRadius: BorderRadius.circular(12.r),
         ),
         surfaceTintColor: Colors.white,
-        backgroundColor: Colors.white,
+        backgroundColor: scaffoldBackground,
         insetPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
         child: ConstrainedBox(
           constraints: BoxConstraints(maxHeight: Get.height * 0.7.h),
@@ -127,7 +127,7 @@ class AllDialogs {
                   ],
                 ),
                 SizedBox(height: 8.h),
-                const Divider(),
+                Divider(color: Get.theme.dividerColor),
                 // Offers list
 
                 // Offers list
@@ -266,7 +266,7 @@ class OfferTile extends StatelessWidget {
       margin: EdgeInsets.symmetric(vertical: 6.h),
       padding: EdgeInsets.all(10.w),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Get.theme.cardColor,
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
@@ -304,7 +304,7 @@ class OfferTile extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 13.sp,
                     fontWeight: FontWeight.w600,
-                    color: Colors.black87,
+                    color: primaryBlack,
                   ),
                 ),
                 SizedBox(height: 2.h),
@@ -327,7 +327,7 @@ class OfferTile extends StatelessWidget {
                     SizedBox(width: 4.w),
                     Text(
                       dateRange,
-                      style: TextStyle(fontSize: 11.sp, color: Colors.black54),
+                      style: TextStyle(fontSize: 11.sp, color: primaryBlack),
                     ),
                   ],
                 ),
@@ -353,6 +353,8 @@ class OfferTile extends StatelessWidget {
 
 Widget buildBulletPoint({required String text}) {
   return Row(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    mainAxisAlignment: MainAxisAlignment.center,
     children: [
       // Bullet point
       Container(
@@ -365,8 +367,9 @@ Widget buildBulletPoint({required String text}) {
       Expanded(
         child: CustomText(
           title: text,
+          maxLines: 4,
           fontSize: 12.sp,
-          color: Colors.grey.shade700,
+          color: textLightGrey,
           textAlign: TextAlign.start,
         ),
       ),

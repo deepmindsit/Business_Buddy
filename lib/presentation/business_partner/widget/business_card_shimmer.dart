@@ -8,11 +8,11 @@ class BusinessCardShimmer extends StatelessWidget {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 8.h),
       decoration: BoxDecoration(
-        color: const Color(0xffF4F4F4),
+        color: lightGrey,
         borderRadius: BorderRadius.circular(16.r),
       ),
       child: Shimmer.fromColors(
-        baseColor: Colors.grey.shade300,
+        baseColor: lightGrey,
         highlightColor: Colors.grey.shade100,
         child: IntrinsicHeight(
           child: Row(
@@ -38,10 +38,7 @@ class BusinessCardShimmer extends StatelessWidget {
                 ),
               ),
 
-              VerticalDivider(
-                color: Colors.grey.shade300,
-                thickness: 1,
-              ),
+              VerticalDivider(color: Colors.grey.shade300, thickness: 1),
 
               // RIGHT SECTION
               Expanded(
@@ -56,7 +53,7 @@ class BusinessCardShimmer extends StatelessWidget {
                     ],
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),

@@ -9,8 +9,12 @@ class RegisterScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       // resizeToAvoidBottomInset: true,
-      backgroundColor: Colors.white,
-      appBar: const CustomAppBar(showBackButton: false, titleSpacing: null),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: const CustomAppBar(
+        showBackButton: false,
+        centerTitle: true,
+        titleSpacing: null,
+      ),
       body: SafeArea(
         child: Column(
           children: [
@@ -135,6 +139,7 @@ class RegisterScreen extends StatelessWidget {
       children: [
         buildLabel(label),
         buildTextField(
+          fillColor: Theme.of(Get.context!).scaffoldBackgroundColor,
           controller: controller.nameController,
           hintText: 'Enter your full name',
           keyboardType: TextInputType.name,
@@ -152,6 +157,7 @@ class RegisterScreen extends StatelessWidget {
         buildLabel(label),
         SizedBox(height: 8.h),
         buildTextField(
+          fillColor: Theme.of(Get.context!).scaffoldBackgroundColor,
           controller: controller.numberController,
           hintText: 'Enter your mobile number',
           keyboardType: TextInputType.number,
@@ -180,6 +186,7 @@ class RegisterScreen extends StatelessWidget {
         buildLabel(label),
         // SizedBox(height: 8.h),
         buildTextField(
+          fillColor: Theme.of(Get.context!).scaffoldBackgroundColor,
           controller: controller.emailController,
           hintText: 'Enter your email address',
           keyboardType: TextInputType.emailAddress,

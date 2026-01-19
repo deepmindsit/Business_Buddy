@@ -3,8 +3,14 @@ import 'package:businessbuddy/utils/exported_path.dart';
 class InstagramPostView extends StatefulWidget {
   final String postId;
   final dynamic followButton;
+  final void Function() refresh;
 
-  const InstagramPostView({super.key, required this.postId, this.followButton});
+  const InstagramPostView({
+    super.key,
+    required this.postId,
+    this.followButton,
+    required this.refresh,
+  });
 
   @override
   State<InstagramPostView> createState() => _InstagramPostViewState();
@@ -42,7 +48,8 @@ class _InstagramPostViewState extends State<InstagramPostView> {
         appBar: AppbarPlain(title: "Post"),
         body: Obx(
           () => controller.isSinglePostLoading.isTrue
-              ? LoadingWidget(color: primaryColor)
+              // ? LoadingWidget(color: primaryColor)
+              ? OfferDetailShimmer()
               : Stack(
                   children: [
                     SingleChildScrollView(
@@ -51,6 +58,7 @@ class _InstagramPostViewState extends State<InstagramPostView> {
                           _buildPostHeader(),
                           SizedBox(
                             height: Get.height * 0.7.h,
+                            // aspectRatio: 1,
                             child: _buildPostMediaWithIcons(),
                           ),
                           _buildCaptionSection(),
@@ -82,13 +90,13 @@ class _InstagramPostViewState extends State<InstagramPostView> {
               radius: 20,
               backgroundColor: Colors.grey.shade200,
               child: ClipOval(
-                child: FadeInImage(
-                  placeholder: const AssetImage(Images.defaultImage),
-                  image: NetworkImage(image),
+                child: CachedNetworkImage(
+                  placeholder: (_, __) => Image.asset(Images.defaultImage),
+                  imageUrl: image,
                   width: double.infinity,
                   height: 100.w,
                   fit: BoxFit.cover,
-                  imageErrorBuilder: (context, error, stackTrace) {
+                  errorWidget: (context, error, stackTrace) {
                     return Center(
                       child: Image.asset(
                         Images.defaultImage,
@@ -111,7 +119,7 @@ class _InstagramPostViewState extends State<InstagramPostView> {
                 children: [
                   CustomText(
                     title: controller.singlePost['business_name'] ?? '',
-                    fontSize: 15.sp,
+                    fontSize: 14.5.sp,
                     fontWeight: FontWeight.w600,
                     textAlign: TextAlign.start,
                     color: Colors.black,
@@ -225,7 +233,7 @@ class _InstagramPostViewState extends State<InstagramPostView> {
             icon: HugeIcons.strokeRoundedSent,
             color: Colors.white,
             count: '0',
-            onTap: () {},
+            onTap: _handleShare,
             isShare: true,
           ),
         ],
@@ -236,32 +244,40 @@ class _InstagramPostViewState extends State<InstagramPostView> {
   Widget _buildLikeButton() {
     return Obx(() {
       final postId = controller.singlePost['id'].toString();
+      final isLiked = controller.singlePost['is_liked'] == true;
+      final likeCount = controller.singlePost['likes_count']?.toString() ?? '0';
       final isLoading = getIt<FeedsController>().isPostLikeLoading(postId);
+
       return AbsorbPointer(
         absorbing: isLoading,
         child: AnimatedOpacity(
           duration: const Duration(milliseconds: 200),
-          opacity: isLoading ? 0.4 : 1,
-          child: _buildRightIcon(
-            isLike: true,
-            icon: controller.singlePost['is_liked'] == true
-                ? Icons.favorite
-                : Icons.favorite_border,
-            color: controller.singlePost['is_liked'] == true
-                ? Colors.red
-                : Colors.white,
-            count: controller.singlePost['likes_count']?.toString() ?? '0',
-            onTap: () async {
-              await handleFeedLike(
-                isSingle: true,
-                controller.singlePost,
-                () async => await controller
-                    .getSinglePost(postId, showLoading: false)
-                    .then((v) {
-                      getIt<HomeController>().getHomeApi(showLoading: false);
-                    }),
-              );
+          opacity: isLoading ? 0.5 : 1,
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 250),
+            switchInCurve: Curves.easeOutBack,
+            switchOutCurve: Curves.easeIn,
+            transitionBuilder: (child, anim) {
+              return ScaleTransition(scale: anim, child: child);
             },
+            child: _buildRightIcon(
+              key: ValueKey(isLiked), // 🔥 REQUIRED
+              isLike: true,
+              icon: isLiked ? Icons.favorite : Icons.favorite_border,
+              color: isLiked ? Colors.red : Colors.white,
+              count: likeCount,
+              onTap: () async {
+                await handleFeedLike(
+                  isSingle: true,
+                  controller.singlePost,
+                  () async => await controller
+                      .getSinglePost(postId, showLoading: false)
+                      .then((v) {
+                        widget.refresh.call();
+                      }),
+                );
+              },
+            ),
           ),
         ),
       );
@@ -291,7 +307,12 @@ class _InstagramPostViewState extends State<InstagramPostView> {
     // Implement comment functionality
   }
 
+  void _handleShare() {
+    AppShare.share(type: ShareEntityType.post, id: widget.postId.toString());
+  }
+
   Widget _buildRightIcon({
+    Key? key,
     required dynamic icon,
     required Color color,
     required String count,
@@ -300,20 +321,21 @@ class _InstagramPostViewState extends State<InstagramPostView> {
     bool isShare = false,
   }) {
     return InkWell(
+      key: key,
       borderRadius: BorderRadius.circular(30.r),
       onTap: onTap,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            padding: const EdgeInsets.all(6),
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.35),
+              color: Colors.black.withValues(alpha: 0.45),
               shape: BoxShape.circle,
             ),
             child: isLike
-                ? Icon(icon, color: color, size: 18.r)
-                : HugeIcon(icon: icon, color: color, size: 18.r),
+                ? Icon(icon, color: color, size: 20.r)
+                : HugeIcon(icon: icon, color: color, size: 20.r),
           ),
           if (!isShare) const SizedBox(height: 4),
           if (!isShare)
@@ -321,7 +343,7 @@ class _InstagramPostViewState extends State<InstagramPostView> {
               count,
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 12,
+                fontSize: 11,
                 fontWeight: FontWeight.w600,
                 shadows: [Shadow(color: Colors.black54, blurRadius: 4)],
               ),
@@ -347,6 +369,7 @@ class _InstagramPostViewState extends State<InstagramPostView> {
     final content = controller.singlePost['details'] ?? '';
     return RichText(
       text: TextSpan(
+        style: TextStyle(fontSize: 13.5.sp, color: Colors.black, height: 1.4),
         children: [
           TextSpan(
             text: '${controller.singlePost['business_name']} ',

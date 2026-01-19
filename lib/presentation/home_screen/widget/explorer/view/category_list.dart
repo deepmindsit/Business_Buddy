@@ -28,7 +28,7 @@ class _CategoryListState extends State<CategoryList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: NotificationListener<ScrollNotification>(
         onNotification: (scroll) {
           if (scroll is ScrollEndNotification &&
@@ -41,30 +41,31 @@ class _CategoryListState extends State<CategoryList> {
           return false;
         },
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(8),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               /// 🔹 Header
               Container(
-                color: Colors.white,
+                color: scaffoldBackground,
                 padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                 child: Row(
                   spacing: 8,
                   children: [
                     GestureDetector(
                       onTap: () => navController.goBack(),
-                      child: const Icon(Icons.arrow_back),
+                      child: Icon(Icons.arrow_back, color: primaryBlack),
                     ),
                     CustomText(
                       title: widget.categoryName,
                       fontSize: 18.sp,
                       fontWeight: FontWeight.bold,
+                      color: primaryBlack,
                     ),
                   ],
                 ),
               ),
-              const Divider(),
+              Divider(color: lightGrey),
 
               /// 🔹 Category List
               Obx(() {

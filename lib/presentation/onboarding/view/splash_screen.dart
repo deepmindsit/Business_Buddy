@@ -19,6 +19,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> _initialize() async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await Future.delayed(const Duration(seconds: 1));
+      if (NotificationService.hasHandledNotificationNavigation) return;
       controller.expanded.value = true;
 
       final token = await LocalStorage.getString('auth_key');
@@ -27,6 +28,7 @@ class _SplashScreenState extends State<SplashScreen> {
       bool isConnected = await InternetConnectionChecker.instance.hasConnection;
 
       if (isConnected) {
+        // Get.offAllNamed(Routes.login);
         token != null
             ? Get.offAllNamed(Routes.mainScreen)
             : isOnboarded == true

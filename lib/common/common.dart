@@ -118,10 +118,7 @@ Widget buildGridImages(dynamic data, String type, {bool isEdit = false}) {
                     height: 110.h,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8.r),
-                      border: Border.all(
-                        color: Colors.grey.shade400,
-                        width: 1.5,
-                      ),
+                      border: Border.all(color: lightGrey, width: 1.5),
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8.r),
@@ -168,7 +165,7 @@ Widget buildGridImages(dynamic data, String type, {bool isEdit = false}) {
                 height: 110.h,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8.r),
-                  border: Border.all(color: Colors.grey.shade400, width: 1.5),
+                  border: Border.all(color: lightGrey, width: 1.5),
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8.r),
@@ -1019,7 +1016,6 @@ Future<dynamic> _showOffer(LBOController controller, {bool isEdit = false}) {
                                     right: 10.w,
                                     child: GestureDetector(
                                       onTap: () {
-
                                         Get.toNamed(
                                           Routes.editOffer,
                                           arguments: {
@@ -1482,7 +1478,12 @@ Widget buildHeadingWithButton({
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
-      CustomText(title: title, fontSize: 18.sp, fontWeight: FontWeight.bold),
+      CustomText(
+        title: title,
+        fontSize: 18.sp,
+        fontWeight: FontWeight.bold,
+        color: textSmall,
+      ),
       if (isMore)
         Container(
           padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 8),

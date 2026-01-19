@@ -1,4 +1,3 @@
-// import 'package:businessbuddy/components/custom_appbar.dart';
 import 'package:businessbuddy/utils/exported_path.dart';
 
 class NavigationScreen extends StatefulWidget {
@@ -25,45 +24,19 @@ class _NavigationScreenState extends State<NavigationScreen> {
           }
         },
         child: Scaffold(
-          backgroundColor: Colors.white,
-          body:
-              // controller.currentIndex.value == 0
-              //     ? NestedScrollView(
-              //         headerSliverBuilder: (context, innerBoxIsScrolled) {
-              //           return [
-              //             CustomSliverAppBar(isCollapsed: innerBoxIsScrolled),
-              //           ];
-              //         },
-              //
-              //         /// ✅ Only body is animated
-              //         body: AnimatedSwitcher(
-              //           transitionBuilder: (child, animation) {
-              //             return FadeTransition(opacity: animation, child: child);
-              //           },
-              //           duration: const Duration(milliseconds: 300),
-              //           child: Obx(() => controller.pageStack.last),
-              //         ),
-              //       )
-              //     :
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 300),
-                transitionBuilder: (child, animation) {
-                  return FadeTransition(opacity: animation, child: child);
-                },
-                child: Column(
-                  children: [
-                    CustomMainHeader2(
-                      searchController: TextEditingController(),
-                    ),
-                    // CustomSliverAppBar(),
-                    Expanded(child: Obx(() => controller.pageStack.last)),
-                    // Expanded(
-                    //   child: NavigationController
-                    //       .widgetOptions[controller.currentIndex.value],
-                    // ),
-                  ],
-                ),
-              ),
+          backgroundColor: scaffoldBackground,
+          body: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            transitionBuilder: (child, animation) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+            child: Column(
+              children: [
+                CustomMainHeader2(),
+                Expanded(child: Obx(() => controller.pageStack.last)),
+              ],
+            ),
+          ),
           bottomNavigationBar: Container(
             decoration: BoxDecoration(
               color: primaryColor,
@@ -72,28 +45,23 @@ class _NavigationScreenState extends State<NavigationScreen> {
                 topRight: Radius.circular(16.r),
               ),
               boxShadow: [
-                if (theme.brightness == Brightness.light)
-                  BoxShadow(
-                    color: mainGrey.withValues(alpha: 0.07),
-                    blurRadius: 10,
-                    offset: const Offset(0, -2),
-                  )
-                else
-                  BoxShadow(
-                    color: Colors.white.withValues(alpha: 0.08),
-                    blurRadius: 10,
-                    offset: const Offset(0, -2),
-                  ),
+                BoxShadow(
+                  color: theme.brightness == Brightness.light
+                      ? Colors.black.withValues(alpha: 0.07)
+                      : Colors.white.withValues(alpha: 0.08),
+                  blurRadius: 10,
+                  offset: const Offset(0, -2),
+                ),
               ],
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
               child: BottomNavigationBar(
                 type: BottomNavigationBarType.fixed,
-                backgroundColor: mainGrey,
-                selectedItemColor: Colors.red,
+                backgroundColor: navBackground,
+                selectedItemColor: primaryColor,
+                unselectedItemColor: textGrey,
                 showUnselectedLabels: true,
-                unselectedItemColor: Colors.black,
                 selectedLabelStyle: const TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: 12,
@@ -143,17 +111,17 @@ class _NavigationScreenState extends State<NavigationScreen> {
     double? iconSize,
   }) {
     return BottomNavigationBarItem(
-      backgroundColor: mainGrey,
+      // backgroundColor: scaffoldBackground,
       icon: Container(
         decoration: BoxDecoration(
-          color: isSelected ? Colors.red : Colors.transparent,
-          borderRadius: BorderRadius.circular(8),
+          color: isSelected ? primaryColor : Colors.transparent,
+          borderRadius: BorderRadius.circular(8.r),
         ),
         padding: const EdgeInsets.all(4.0),
         child: HugeIcon(
           size: iconSize ?? Get.width * 0.06,
           icon: icon,
-          color: isSelected ? Colors.white : Colors.black,
+          color: isSelected ? Colors.white : primaryBlack,
         ),
       ),
       label: label,

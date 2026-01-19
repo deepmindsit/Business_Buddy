@@ -27,7 +27,8 @@ class _BusinessCardState extends State<BusinessCard> {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 8.h),
       decoration: BoxDecoration(
-        color: const Color(0xffF4F4F4),
+        // color: const Color(0xffF4F4F4),
+        color: Get.theme.cardColor,
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
@@ -36,10 +37,7 @@ class _BusinessCardState extends State<BusinessCard> {
             offset: const Offset(0, 2),
           ),
         ],
-        border: Border.all(
-          color: Colors.grey.withValues(alpha: 0.2),
-          width: 1.w,
-        ),
+        border: Border.all(color: Get.theme.dividerColor, width: 0.5.w),
       ),
       child: IntrinsicHeight(
         child: Row(
@@ -49,7 +47,7 @@ class _BusinessCardState extends State<BusinessCard> {
 
             if (widget.isSearch != true)
               VerticalDivider(
-                color: Colors.grey.shade300,
+                color: Get.theme.dividerColor,
                 thickness: 1,
                 width: 1,
               ),
@@ -83,7 +81,7 @@ class _BusinessCardState extends State<BusinessCard> {
               maxLines: 2,
             ),
 
-            Divider(color: Colors.grey.shade300, thickness: 1),
+            Divider(color: Get.theme.dividerColor, thickness: 1),
 
             _buildDetailRow(
               firstText: 'Business Interest: ',
@@ -338,16 +336,13 @@ class _BusinessCardState extends State<BusinessCard> {
           text: firstText,
           style: TextStyle(
             fontSize: 13.sp,
-            color: Colors.grey.shade700,
+            color: textSmall,
             fontWeight: FontWeight.w600,
           ),
           children: [
             TextSpan(
               text: secondText,
-              style: TextStyle(
-                color: Colors.black87,
-                fontWeight: FontWeight.w400,
-              ),
+              style: TextStyle(color: textGrey, fontWeight: FontWeight.w400),
             ),
           ],
         ),

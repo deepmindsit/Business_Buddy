@@ -30,7 +30,8 @@ class _InboxListState extends State<InboxList> {
           SliverToBoxAdapter(
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                border: Border.all(color: lightGrey, width: 0.5),
+                color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(12.r),
               ),
               child: Column(
