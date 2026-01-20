@@ -21,7 +21,7 @@ class _EditOfferState extends State<EditOffer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppbarPlain(title: "Edit Offer"),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.w),
@@ -34,6 +34,7 @@ class _EditOfferState extends State<EditOffer> {
               Divider(height: 32.h),
               _buildLabel('Title'),
               buildTextField(
+                fillColor: Theme.of(context).scaffoldBackgroundColor,
                 controller: controller.titleCtrl,
                 hintText: 'Enter title',
                 validator: (value) =>
@@ -62,6 +63,7 @@ class _EditOfferState extends State<EditOffer> {
               SizedBox(height: 12.h),
               _buildLabel('Description'),
               buildTextField(
+                fillColor: Theme.of(context).scaffoldBackgroundColor,
                 controller: controller.descriptionCtrl,
                 hintText: 'Enter description',
                 maxLines: 3,
@@ -241,22 +243,28 @@ class _EditOfferState extends State<EditOffer> {
   }) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(12.r),
-      child: FadeInImage(
-        width: width,
-        height: height,
-        placeholder: const AssetImage(Images.logo),
-        image: imageProvider,
-        fit: BoxFit.cover,
-        placeholderFit: BoxFit.contain,
-        fadeInDuration: const Duration(milliseconds: 300),
-        imageErrorBuilder: (_, __, ___) {
-          return Image.asset(
-            Images.defaultImage,
-            width: width,
-            height: height,
-            fit: BoxFit.cover,
-          );
-        },
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: lightGrey),
+          borderRadius: BorderRadius.circular(12.r),
+        ),
+        child: FadeInImage(
+          width: width,
+          height: height,
+          placeholder: const AssetImage(Images.logo),
+          image: imageProvider,
+          fit: BoxFit.cover,
+          placeholderFit: BoxFit.contain,
+          fadeInDuration: const Duration(milliseconds: 300),
+          imageErrorBuilder: (_, __, ___) {
+            return Image.asset(
+              Images.defaultImage,
+              width: width,
+              height: height,
+              fit: BoxFit.cover,
+            );
+          },
+        ),
       ),
     );
   }
@@ -268,7 +276,15 @@ class _EditOfferState extends State<EditOffer> {
   }) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(12.r),
-      child: SizedBox(width: width, height: height, child: child),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: lightGrey),
+          borderRadius: BorderRadius.circular(12.r),
+        ),
+        width: width,
+        height: height,
+        child: child,
+      ),
     );
   }
 
@@ -346,7 +362,7 @@ class _EditOfferState extends State<EditOffer> {
           readOnly: true,
           decoration: InputDecoration(
             filled: true,
-            fillColor: Colors.white,
+            fillColor: Theme.of(context).scaffoldBackgroundColor,
             focusedBorder: buildOutlineInputBorder(),
             enabledBorder: buildOutlineInputBorder(),
             contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
@@ -419,19 +435,16 @@ class _EditOfferState extends State<EditOffer> {
               return Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
+                  color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(8.r),
-                  border: Border.all(color: Colors.grey.shade300),
+                  border: Border.all(color: lightGrey),
                 ),
                 child: Row(
                   children: [
                     Expanded(
                       child: Text(
                         controller.points[index],
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          color: Colors.black87,
-                        ),
+                        style: TextStyle(fontSize: 14.sp, color: primaryBlack),
                       ),
                     ),
                     GestureDetector(
@@ -457,10 +470,10 @@ class _EditOfferState extends State<EditOffer> {
                 decoration: InputDecoration(
                   hintText: 'Add highlight point',
                   filled: true,
-                  fillColor: Colors.white,
+                  fillColor: Theme.of(context).scaffoldBackgroundColor,
                   focusedBorder: buildOutlineInputBorder(),
                   enabledBorder: buildOutlineInputBorder(),
-                  contentPadding: EdgeInsets.symmetric(
+                  contentPadding: const EdgeInsets.symmetric(
                     horizontal: 12,
                     vertical: 12,
                   ),
@@ -494,27 +507,29 @@ class _EditOfferState extends State<EditOffer> {
     return Obx(
       () => controller.isOfferLoading.isTrue
           ? LoadingWidget(color: primaryColor)
-          : GestureDetector(
-              onTap: () async {
-                if (controller.offerKey.currentState!.validate()) {
-                  await controller.editOffer(
-                    Get.arguments['offerData']['id'].toString(),
-                  );
-                }
-              },
-              child: Container(
-                width: Get.width,
-                padding: EdgeInsets.symmetric(vertical: 14.h),
-                decoration: BoxDecoration(
-                  color: primaryColor,
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                alignment: Alignment.center,
-                child: CustomText(
-                  title: 'Update Offer',
-                  fontSize: 16.sp,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
+          : SafeArea(
+              child: GestureDetector(
+                onTap: () async {
+                  if (controller.offerKey.currentState!.validate()) {
+                    await controller.editOffer(
+                      Get.arguments['offerData']['id'].toString(),
+                    );
+                  }
+                },
+                child: Container(
+                  width: Get.width,
+                  padding: EdgeInsets.symmetric(vertical: 14.h),
+                  decoration: BoxDecoration(
+                    color: primaryColor,
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                  alignment: Alignment.center,
+                  child: CustomText(
+                    title: 'Update Offer',
+                    fontSize: 16.sp,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),
@@ -529,7 +544,7 @@ class _EditOfferState extends State<EditOffer> {
         style: TextStyle(
           fontSize: 14.sp,
           fontWeight: FontWeight.w600,
-          color: Colors.black87,
+          color: primaryBlack,
         ),
       ),
     );

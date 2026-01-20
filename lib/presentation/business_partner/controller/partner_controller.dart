@@ -136,6 +136,7 @@ class PartnerDataController extends GetxController {
       showError(e);
     } finally {
       if (showLoading) isLoading.value = false;
+      isBusinessLoadMore.value = false;
     }
   }
 

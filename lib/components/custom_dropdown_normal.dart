@@ -53,7 +53,7 @@ class AppDropdownField extends StatelessWidget {
               ),
               isDense: true,
               filled: true,
-              fillColor: Colors.white,
+              fillColor: Theme.of(Get.context!).scaffoldBackgroundColor,
               focusedBorder: buildOutlineInputBorder(),
               enabledBorder: buildOutlineInputBorder(),
               errorBorder: OutlineInputBorder(
@@ -67,7 +67,7 @@ class AppDropdownField extends StatelessWidget {
               errorMaxLines: 1,
             ),
             validator: validator,
-            dropdownColor: Colors.white,
+            dropdownColor: lightGrey,
             hint: Text(
               hintText,
               style: TextStyle(fontSize: 14.sp, color: primaryGrey),
@@ -101,7 +101,7 @@ class AppDropdownField extends StatelessWidget {
                           : CustomText(
                               textAlign: TextAlign.start,
                               title: value['name'],
-                              color: Colors.black,
+                              color: primaryBlack,
                               fontSize: 14.sp,
                             ),
                     );

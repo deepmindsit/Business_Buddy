@@ -40,13 +40,6 @@ class _ReviewDialogState extends State<ReviewDialog> {
       controller.rating.value,
       controller.reviewController.text.trim(),
     );
-
-    // Simulate API call delay
-    // Future.delayed(const Duration(milliseconds: 500), () {
-    //   if (mounted) {
-    //     Navigator.of(context).pop();
-    //   }
-    // });
   }
 
   void _showRatingRequiredDialog() {
@@ -92,7 +85,7 @@ class _ReviewDialogState extends State<ReviewDialog> {
           height: 60.h,
           width: 60.w,
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300),
+            border: Border.all(color: Colors.grey),
             borderRadius: BorderRadius.circular(8.r),
           ),
           child: ClipRRect(
@@ -113,7 +106,7 @@ class _ReviewDialogState extends State<ReviewDialog> {
         Expanded(
           child: CustomText(
             title: widget.productName,
-            color: Colors.black,
+            color: primaryBlack,
             fontWeight: FontWeight.bold,
             fontSize: 16.sp,
             maxLines: 2,
@@ -132,6 +125,7 @@ class _ReviewDialogState extends State<ReviewDialog> {
           title: 'How would you rate this product?',
           fontSize: 14.sp,
           textAlign: TextAlign.start,
+          color: primaryBlack,
         ),
         const SizedBox(height: 8),
         Obx(
@@ -317,8 +311,8 @@ class _ReviewDialogState extends State<ReviewDialog> {
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 2,
-      surfaceTintColor: Colors.white,
-      backgroundColor: Colors.white,
+      surfaceTintColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(

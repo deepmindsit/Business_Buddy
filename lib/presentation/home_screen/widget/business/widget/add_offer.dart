@@ -20,58 +20,62 @@ class _AddOfferState extends State<AddOffer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppbarPlain(title: "New Offer"),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.w),
         child: Form(
           key: controller.offerKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildProfileImage(),
-              Divider(height: 32.h),
-              _buildLabel('Title'),
-              buildTextField(
-                controller: controller.titleCtrl,
-                hintText: 'Enter title',
-                validator: (value) =>
-                    value!.trim().isEmpty ? 'Please enter title' : null,
-              ),
-              SizedBox(height: 12.h),
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildDateField(
-                      'Start Date',
-                      controller.startDateCtrl,
-                      true,
+          child: SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildProfileImage(),
+                Divider(height: 32.h),
+                _buildLabel('Title'),
+                buildTextField(
+                  fillColor: Theme.of(context).scaffoldBackgroundColor,
+                  controller: controller.titleCtrl,
+                  hintText: 'Enter title',
+                  validator: (value) =>
+                      value!.trim().isEmpty ? 'Please enter title' : null,
+                ),
+                SizedBox(height: 12.h),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildDateField(
+                        'Start Date',
+                        controller.startDateCtrl,
+                        true,
+                      ),
                     ),
-                  ),
-                  SizedBox(width: 12.w),
-                  Expanded(
-                    child: _buildDateField(
-                      'End Date',
-                      controller.endDateCtrl,
-                      false,
+                    SizedBox(width: 12.w),
+                    Expanded(
+                      child: _buildDateField(
+                        'End Date',
+                        controller.endDateCtrl,
+                        false,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 12.h),
-              _buildLabel('Description'),
-              buildTextField(
-                controller: controller.descriptionCtrl,
-                hintText: 'Enter description',
-                maxLines: 3,
-                validator: (value) =>
-                    value!.trim().isEmpty ? 'Please enter description' : null,
-              ),
-              SizedBox(height: 20.h),
-              _buildHighlightSection(),
-              SizedBox(height: 24.h),
-              _buildAddOfferButton(),
-            ],
+                  ],
+                ),
+                SizedBox(height: 12.h),
+                _buildLabel('Description'),
+                buildTextField(
+                  fillColor: Theme.of(context).scaffoldBackgroundColor,
+                  controller: controller.descriptionCtrl,
+                  hintText: 'Enter description',
+                  maxLines: 3,
+                  validator: (value) =>
+                      value!.trim().isEmpty ? 'Please enter description' : null,
+                ),
+                SizedBox(height: 20.h),
+                _buildHighlightSection(),
+                SizedBox(height: 24.h),
+                _buildAddOfferButton(),
+              ],
+            ),
           ),
         ),
       ),
@@ -246,7 +250,7 @@ class _AddOfferState extends State<AddOffer> {
           readOnly: true,
           decoration: InputDecoration(
             filled: true,
-            fillColor: Colors.white,
+            fillColor: Theme.of(context).scaffoldBackgroundColor,
             focusedBorder: buildOutlineInputBorder(),
             enabledBorder: buildOutlineInputBorder(),
             contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
@@ -319,19 +323,16 @@ class _AddOfferState extends State<AddOffer> {
               return Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
+                  color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(8.r),
-                  border: Border.all(color: Colors.grey.shade300),
+                  border: Border.all(color: lightGrey),
                 ),
                 child: Row(
                   children: [
                     Expanded(
                       child: Text(
                         controller.points[index],
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          color: Colors.black87,
-                        ),
+                        style: TextStyle(fontSize: 14.sp, color: primaryBlack),
                       ),
                     ),
                     GestureDetector(
@@ -357,7 +358,7 @@ class _AddOfferState extends State<AddOffer> {
                 decoration: InputDecoration(
                   hintText: 'Add highlight point',
                   filled: true,
-                  fillColor: Colors.white,
+                  fillColor: Theme.of(context).scaffoldBackgroundColor,
                   focusedBorder: buildOutlineInputBorder(),
                   enabledBorder: buildOutlineInputBorder(),
                   contentPadding: EdgeInsets.symmetric(
@@ -397,14 +398,6 @@ class _AddOfferState extends State<AddOffer> {
           : GestureDetector(
               onTap: () async {
                 if (controller.offerKey.currentState!.validate()) {
-                  // if (controller.points.isEmpty) {
-                  //   Get.snackbar(
-                  //     'Validation Error',
-                  //     'Please add at least one highlight point',
-                  //     snackPosition: SnackPosition.BOTTOM,
-                  //   );
-                  //   return;
-                  // }
                   await controller.addNewOffer();
                 }
               },
@@ -435,7 +428,7 @@ class _AddOfferState extends State<AddOffer> {
         style: TextStyle(
           fontSize: 14.sp,
           fontWeight: FontWeight.w600,
-          color: Colors.black87,
+          color: primaryBlack,
         ),
       ),
     );

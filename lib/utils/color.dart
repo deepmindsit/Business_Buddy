@@ -59,4 +59,4 @@ InputBorder get focusedBorder => OutlineInputBorder(
 );
 
 const Color lightRed = Color(0xffFFDDDD);
-Color primaryGrey = const Color(0xFFC4C4C4);
+const Color primaryGrey = Color(0xFFC4C4C4);

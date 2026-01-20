@@ -23,7 +23,7 @@ class _EditProfileState extends State<EditProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: _buildAppBar(),
       body: _buildBody(),
     );
@@ -31,17 +31,16 @@ class _EditProfileState extends State<EditProfile> {
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      surfaceTintColor: Colors.white,
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      surfaceTintColor: Theme.of(context).scaffoldBackgroundColor,
       elevation: 0,
       centerTitle: true,
       flexibleSpace: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              const Color(0XFFFF383C).withValues(alpha: 0.4),
-              Colors.white.withValues(alpha: 0.5),
-            ],
+            colors: Theme.of(context).brightness == Brightness.light
+                ? [primaryColor.withValues(alpha: 0.5), Colors.white]
+                : [primaryColor, Colors.black54],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -51,6 +50,7 @@ class _EditProfileState extends State<EditProfile> {
         title: "Update Profile",
         fontSize: 22.sp,
         fontWeight: FontWeight.bold,
+        color: primaryBlack,
       ),
     );
   }
@@ -134,6 +134,7 @@ class _EditProfileState extends State<EditProfile> {
                   children: [
                     buildLabel('Your name'),
                     buildTextField(
+                      fillColor: Theme.of(context).scaffoldBackgroundColor,
                       controller: controller.nameCtrl,
                       hintText: 'Enter name',
                       keyboardType: TextInputType.name,
@@ -187,6 +188,7 @@ class _EditProfileState extends State<EditProfile> {
           child: buildLabel('Experience'),
         ),
         buildTextField(
+          fillColor: Theme.of(context).scaffoldBackgroundColor,
           controller: controller.experienceCtrl,
           hintText: 'Enter Experience',
           validator: (value) =>
@@ -205,6 +207,7 @@ class _EditProfileState extends State<EditProfile> {
           child: buildLabel('Education'),
         ),
         buildTextField(
+          fillColor: Theme.of(context).scaffoldBackgroundColor,
           controller: controller.educationCtrl,
           hintText: 'Enter Education',
           validator: (value) =>
@@ -223,6 +226,7 @@ class _EditProfileState extends State<EditProfile> {
           child: buildLabel('About Me'),
         ),
         buildTextField(
+          fillColor: Theme.of(context).scaffoldBackgroundColor,
           controller: controller.aboutCtrl,
           hintText: 'Enter About',
           maxLines: 4,

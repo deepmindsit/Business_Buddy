@@ -117,7 +117,7 @@ class CustomMainHeader2 extends StatelessWidget {
 
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: scaffoldBackground,
+                        fillColor: Theme.of(context).scaffoldBackgroundColor,
                         focusedBorder: buildOutlineInputBorder(),
                         enabledBorder: buildOutlineInputBorder(),
                         disabledBorder: buildOutlineInputBorder(),
@@ -196,10 +196,10 @@ class CustomMainHeader2 extends StatelessWidget {
 
   Widget _buildNotificationIcon() {
     return GestureDetector(
-      // onTap: () => Get.toNamed(Routes.notificationList),
-      onTap: () {
-        getIt<ThemeController>().toggleTheme();
-      },
+      onTap: () => Get.toNamed(Routes.notificationList),
+      // onTap: () {
+      //   getIt<ThemeController>().toggleTheme();
+      // },
       child: Stack(
         children: [
           Container(

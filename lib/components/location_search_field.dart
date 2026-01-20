@@ -128,7 +128,7 @@ class _LocationSearchFieldState extends State<LocationSearchField> {
     return Container(
       margin: const EdgeInsets.only(top: 8),
       decoration: BoxDecoration(
-        color: Colors.grey.shade50,
+        color: lightGrey,
         borderRadius: BorderRadius.circular(16),
       ),
       child: ListView.separated(

@@ -56,6 +56,29 @@ class InstagramVideoPlayer extends StatelessWidget {
                             color: Colors.white,
                           ),
                         ),
+                      Positioned(
+                        top: 8,
+                        right: 8,
+                        child: GestureDetector(
+                          onTap: controller.toggleMute,
+                          child: Obx(() {
+                            return Container(
+                              decoration: BoxDecoration(
+                                color: Colors.black.withValues(alpha: 0.4),
+                                shape: BoxShape.circle,
+                              ),
+                              padding: const EdgeInsets.all(6),
+                              child: Icon(
+                                controller.isMuted.value
+                                    ? Icons.volume_off
+                                    : Icons.volume_up,
+                                color: Colors.white,
+                                size: 18,
+                              ),
+                            );
+                          }),
+                        ),
+                      ),
                     ],
                   ),
             ),

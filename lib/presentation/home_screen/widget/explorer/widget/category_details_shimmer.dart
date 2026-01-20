@@ -117,7 +117,7 @@ class CategoryDetailShimmer extends StatelessWidget {
 
   Widget _shimmerBox({double height = 12, double? width, double radius = 8}) {
     return Shimmer.fromColors(
-      baseColor: Colors.grey.shade300,
+      baseColor: lightGrey,
       highlightColor: Colors.grey.shade100,
       child: Container(
         height: height,
@@ -132,7 +132,7 @@ class CategoryDetailShimmer extends StatelessWidget {
 
   Widget _shimmerCircle(double size) {
     return Shimmer.fromColors(
-      baseColor: Colors.grey.shade300,
+      baseColor: lightGrey,
       highlightColor: Colors.grey.shade100,
       child: Container(
         width: size.w,

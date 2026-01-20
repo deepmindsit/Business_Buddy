@@ -68,7 +68,7 @@ class CustomFilePicker {
     bool allowMultipleDocuments = false,
   }) async {
     Get.bottomSheet(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(Get.context!).scaffoldBackgroundColor,
       SafeArea(
         child: Container(
           padding: const EdgeInsets.all(12),
@@ -204,6 +204,7 @@ class CustomFilePicker {
         title: title,
         fontSize: 14.sp,
         textAlign: TextAlign.start,
+        color: primaryBlack,
       ),
       onTap: onTap,
     );

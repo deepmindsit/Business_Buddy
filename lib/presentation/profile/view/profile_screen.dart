@@ -13,6 +13,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final controller = getIt<ProfileController>();
   final navController = getIt<NavigationController>();
+
   @override
   void initState() {
     super.initState();
@@ -37,7 +38,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: _buildAppBar(),
       body: Obx(() {
         if (controller.isLoading.isTrue) {
@@ -56,17 +57,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
   // ✅---------------- APP BAR ----------------✅
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      surfaceTintColor: Colors.white,
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      surfaceTintColor: Theme.of(context).scaffoldBackgroundColor,
       elevation: 0,
       centerTitle: true,
       flexibleSpace: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              const Color(0XFFFF383C).withValues(alpha: 0.4),
-              Colors.white.withValues(alpha: 0.5),
-            ],
+            colors: Theme.of(context).brightness == Brightness.light
+                ? [primaryColor.withValues(alpha: 0.5), Colors.white]
+                : [primaryColor, Colors.black54],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -77,16 +77,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
           title: controller.isMe.isTrue ? "My Account" : 'Profile',
           fontSize: 22.sp,
           fontWeight: FontWeight.bold,
+          color: primaryBlack,
         ),
       ),
       actions: [
         Obx(() {
           if (controller.isMe.isFalse) return SizedBox();
           return IconButton(
+            onPressed: () => getIt<ThemeController>().toggleTheme(),
+            icon: HugeIcon(
+              icon: Theme.of(context).brightness == Brightness.light
+                  ? HugeIcons.strokeRoundedSun01
+                  : HugeIcons.strokeRoundedMoon02,
+              color: primaryBlack,
+            ),
+          );
+        }),
+        Obx(() {
+          if (controller.isMe.isFalse) return SizedBox();
+          return IconButton(
             onPressed: () => Get.toNamed(Routes.editProfile),
             icon: HugeIcon(
               icon: HugeIcons.strokeRoundedPencilEdit02,
-              color: Colors.grey,
+              color: primaryBlack,
             ),
           );
         }),
@@ -102,9 +115,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       width: double.infinity,
       padding: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).scaffoldBackgroundColor,
         boxShadow: [
-          BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 2)),
+          BoxShadow(
+            color: Colors.grey.shade50,
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
         ],
       ),
       child: Column(
@@ -133,14 +150,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
             fontSize: 24.sp,
             fontWeight: FontWeight.bold,
             textAlign: TextAlign.start,
-            color: Colors.grey[800],
+            color: primaryBlack,
           ),
           const SizedBox(height: 8),
           // Category
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
             decoration: BoxDecoration(
-              color: primaryColor.withValues(alpha: 0.2),
+              color: Theme.of(context).brightness == Brightness.light
+                  ? primaryColor.withValues(alpha: 0.2)
+                  : Colors.white,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: primaryColor.withValues(alpha: 0.2)),
             ),
@@ -171,20 +190,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       '-',
                   fontSize: 22.sp,
                   fontWeight: FontWeight.bold,
-                  color: Colors.grey[900],
+                  color: primaryBlack,
                 ),
                 SizedBox(width: 6.w),
                 CustomText(
                   title: 'Following',
                   fontWeight: FontWeight.w500,
                   fontSize: 14.sp,
-                  color: Colors.grey[700],
+                  color: primaryBlack,
                 ),
                 SizedBox(width: 4.w),
                 Icon(
                   Icons.arrow_forward_ios_rounded,
                   size: 16.r,
-                  color: Colors.grey[600],
+                  color: primaryBlack,
                 ),
               ],
             ),
@@ -240,6 +259,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       fontSize: 16.sp,
                       textAlign: TextAlign.start,
                       fontWeight: FontWeight.bold,
+                      color: primaryBlack,
                     ),
                     trailing: Icon(
                       Icons.arrow_forward_ios_rounded,
@@ -268,7 +288,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       style: TextStyle(
         fontSize: 18.sp,
         fontWeight: FontWeight.w600,
-        color: Colors.grey[800],
+        color: primaryBlack,
         letterSpacing: -0.5,
       ),
     );
@@ -285,7 +305,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         title: about,
         maxLines: 10,
         fontSize: 15.sp,
-        color: Colors.grey[700],
+        color: primaryBlack,
         textAlign: TextAlign.justify,
       ),
     );
@@ -297,7 +317,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       padding: const EdgeInsets.all(20),
       decoration: _boxDecoration(),
       child: Column(
-        // crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildCategoryItem(
             'Specialization',
@@ -412,13 +431,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             fontSize: 14.sp,
                             fontWeight: FontWeight.w600,
                             textAlign: TextAlign.start,
+                            color: primaryBlack,
                           ),
                           Text(
                             business['category']?.toString() ?? '',
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              color: Colors.grey[600],
-                            ),
+                            style: TextStyle(fontSize: 12.sp, color: textGrey),
                           ),
                           SizedBox(height: 6.h),
                           Row(
@@ -433,7 +450,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 '${business['followers']?.toString() ?? '0'} Followers',
                                 style: TextStyle(
                                   fontSize: 11.sp,
-                                  color: Colors.grey[600],
+                                  color: textGrey,
                                 ),
                               ),
                             ],
@@ -465,8 +482,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _businessRequirement() {
     final businesses = controller.profileDetails['business_requirements'] ?? [];
-    // print('businesses.length');
-    // print(businesses.length);
     if (businesses.length == 0) return const SizedBox();
     return Column(
       spacing: 8.h,
@@ -592,7 +607,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         width: Get.width,
         padding: EdgeInsets.symmetric(vertical: 14.h),
         decoration: BoxDecoration(
-          color: lightGrey,
+          color: Colors.grey.shade100,
           borderRadius: BorderRadius.circular(100.r),
         ),
         alignment: Alignment.center,
@@ -608,11 +623,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   // ✅---------------- COMMON STYLES ----------------✅
   BoxDecoration _boxDecoration() {
+    final isDark = Theme.of(Get.context!).brightness == Brightness.dark;
+
     return BoxDecoration(
-      color: Colors.white,
+      color: Get.theme.cardColor,
       borderRadius: BorderRadius.circular(12),
       boxShadow: [
-        BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 2)),
+        BoxShadow(
+          color: isDark ? Colors.grey.withValues(alpha: 0.3) : Colors.black12,
+          blurRadius: 6,
+          offset: const Offset(0, 2),
+        ),
       ],
     );
   }
@@ -620,7 +641,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   TextStyle _labelStyle() {
     return TextStyle(
       fontWeight: FontWeight.w500,
-      color: Colors.grey[600],
+      color: textSmall,
       fontSize: 14.sp,
     );
   }
@@ -628,7 +649,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   TextStyle _valueStyle() {
     return TextStyle(
       fontWeight: FontWeight.w600,
-      color: Colors.grey[800],
+      color: textLightGrey,
       fontSize: 14.sp,
     );
   }

@@ -100,7 +100,7 @@ class AllDialogs {
           borderRadius: BorderRadius.circular(12.r),
         ),
         surfaceTintColor: Colors.white,
-        backgroundColor: scaffoldBackground,
+        backgroundColor: Theme.of(Get.context!).scaffoldBackgroundColor,
         insetPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
         child: ConstrainedBox(
           constraints: BoxConstraints(maxHeight: Get.height * 0.7.h),
@@ -172,8 +172,8 @@ class AllDialogs {
   }) {
     Get.dialog(
       Dialog(
-        surfaceTintColor: Colors.white,
-        backgroundColor: Colors.white,
+        surfaceTintColor: Theme.of(Get.context!).scaffoldBackgroundColor,
+        backgroundColor: Theme.of(Get.context!).scaffoldBackgroundColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16.r),
         ),
@@ -190,13 +190,17 @@ class AllDialogs {
               SizedBox(height: 10.h),
               Text(
                 title,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.sp),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18.sp,
+                  color: primaryBlack,
+                ),
               ),
               SizedBox(height: 8.h),
               Text(
                 message,
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 14.sp, color: Colors.grey[700]),
+                style: TextStyle(fontSize: 14.sp, color: textGrey),
               ),
               SizedBox(height: 20.h),
               Row(
@@ -284,12 +288,23 @@ class OfferTile extends StatelessWidget {
             heroAnimationTag: 'Tag $imageUrl',
             zoomWidget: ClipRRect(
               borderRadius: BorderRadius.circular(8.r),
-              child: Image.network(
-                imageUrl,
+              child: CachedNetworkImage(
+                placeholder: (_, __) => Image.asset(Images.defaultImage),
+                imageUrl: imageUrl,
                 height: 60.h,
                 width: 60.h,
                 fit: BoxFit.contain,
+                memCacheHeight: 600,
+                errorWidget: (_, __, ___) => Image.asset(Images.defaultImage),
+                fadeInDuration: Duration.zero,
               ),
+
+              // Image.network(
+              //   imageUrl,
+              //   height: 60.h,
+              //   width: 60.h,
+              //   fit: BoxFit.contain,
+              // ),
             ),
           ),
           SizedBox(width: 10.w),

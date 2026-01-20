@@ -23,8 +23,8 @@ class _CustomTabBarState extends State<CustomTabBar> {
         height: 35.h,
         margin: EdgeInsets.symmetric(vertical: 8.h),
         decoration: BoxDecoration(
-          color: scaffoldBackground,
-          border: Border.symmetric(horizontal:BorderSide(color: primaryColor)),
+          color: Theme.of(context).scaffoldBackgroundColor,
+          border: Border.symmetric(horizontal: BorderSide(color: primaryColor)),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -38,7 +38,9 @@ class _CustomTabBarState extends State<CustomTabBar> {
                 child: Container(
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: isSelected ? primaryColor : scaffoldBackground,
+                    color: isSelected
+                        ? primaryColor
+                        : Theme.of(context).scaffoldBackgroundColor,
                   ),
                   padding: EdgeInsets.symmetric(horizontal: 4.w),
                   child: Row(

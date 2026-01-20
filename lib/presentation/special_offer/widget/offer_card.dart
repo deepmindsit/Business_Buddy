@@ -21,7 +21,7 @@ class OfferCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       surfaceTintColor: Colors.white,
-      color: Get.theme.cardColor,
+      color: Theme.of(context).cardColor,
       elevation: 0,
       margin: EdgeInsets.all(8.w),
       shape: RoundedRectangleBorder(
@@ -52,7 +52,9 @@ class OfferCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
-        color: lightGrey,
+        color: Theme.of(Get.context!).brightness == Brightness.light
+            ? lightGrey
+            : Colors.white,
         borderRadius: BorderRadius.circular(8.r),
       ),
       child: Row(

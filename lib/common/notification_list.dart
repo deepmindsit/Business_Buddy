@@ -1,5 +1,4 @@
 import '../utils/exported_path.dart';
-
 import 'notification_controller.dart';
 
 class NotificationList extends StatefulWidget {
@@ -21,7 +20,7 @@ class _NotificationListState extends State<NotificationList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppbarPlain(title: "Notifications"),
       body: Obx(() {
         if (controller.isLoading.isTrue) {
@@ -118,7 +117,7 @@ class _NotificationListState extends State<NotificationList> {
             textAlign: TextAlign.center,
             fontSize: 20.sp,
             fontWeight: FontWeight.bold,
-            color: Colors.black,
+            color: primaryBlack,
             style: TextStyle(),
           ),
           SizedBox(height: 8.sp),
@@ -127,7 +126,7 @@ class _NotificationListState extends State<NotificationList> {
             textAlign: TextAlign.center,
             fontSize: 16.sp,
             fontWeight: FontWeight.w500,
-            color: Colors.grey,
+            color: primaryBlack,
           ),
         ],
       ),
@@ -136,7 +135,7 @@ class _NotificationListState extends State<NotificationList> {
 
   Widget _buildShimmerLoader() {
     return Shimmer.fromColors(
-      baseColor: Colors.grey.shade300,
+      baseColor: lightGrey,
       highlightColor: Colors.grey.shade100,
       child: ListView.builder(
         padding: const EdgeInsets.all(16),
@@ -154,22 +153,6 @@ class _NotificationListState extends State<NotificationList> {
   }
 }
 
-class NotificationItem {
-  final String title;
-  final String body;
-  final String time;
-  final bool isRead;
-  final IconData icon;
-
-  NotificationItem({
-    required this.title,
-    required this.body,
-    required this.time,
-    required this.isRead,
-    required this.icon,
-  });
-}
-
 class NotificationTile extends StatelessWidget {
   final dynamic notification;
   final VoidCallback onTap;
@@ -182,43 +165,19 @@ class NotificationTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isRead = notification['is_read'].toString() == '1';
     return Card(
       surfaceTintColor: Colors.white,
       margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      color: notification['is_read'].toString() == '1'
-          ? Colors.white
-          : Colors.blue[50],
+      color: isRead ? Get.theme.cardColor : lightRed,
       child: ListTile(
-        // leading: WidgetZoom(
-        //   heroAnimationTag: 'tag ${notification['image']}',
-        //   zoomWidget: ClipRRect(
-        //     borderRadius: BorderRadius.circular(8.r),
-        //     child: Image.network(
-        //       notification['image'] ??
-        //           '',
-        //       fit: BoxFit.contain,
-        //       width: 40.w,
-        //       errorBuilder:
-        //           (context, error, stackTrace) => Container(
-        //         color: Colors.grey.shade300,
-        //         alignment: Alignment.center,
-        //         child: Icon(
-        //           Icons.broken_image,
-        //           color: Colors.red,
-        //           size: 40.w,
-        //         ),
-        //       ),
-        //     ),
-        //   ),
-        // ),
         title: CustomText(
           title: notification['title'] ?? '',
           fontSize: 14.sp,
           textAlign: TextAlign.start,
           maxLines: 2,
-          fontWeight: notification['is_read'].toString() == '1'
-              ? FontWeight.normal
-              : FontWeight.bold,
+          color: isRead ? primaryBlack : Colors.black,
+          fontWeight: isRead ? FontWeight.normal : FontWeight.bold,
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -237,9 +196,9 @@ class NotificationTile extends StatelessWidget {
             ),
           ],
         ),
-        trailing: notification['is_read'].toString() == '1'
+        trailing: isRead
             ? null
-            : Icon(Icons.circle, color: Colors.blue, size: 12),
+            : Icon(Icons.circle, color: primaryColor, size: 12),
         onTap: onTap,
       ),
     );

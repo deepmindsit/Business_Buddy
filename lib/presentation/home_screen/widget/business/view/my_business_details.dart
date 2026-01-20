@@ -22,26 +22,24 @@ class _BusinessDetailsState extends State<BusinessDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: _buildAppBar(),
-      // floatingActionButton: _buildFloatingActionButton(),
       body: _buildBody(),
     );
   }
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      surfaceTintColor: Colors.white,
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      surfaceTintColor: Theme.of(context).scaffoldBackgroundColor,
       elevation: 0,
       centerTitle: true,
       flexibleSpace: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              Color(0XFFFF383C).withValues(alpha: 0.4),
-              Colors.white.withValues(alpha: 0.5),
-            ],
+            colors: Theme.of(context).brightness == Brightness.light
+                ? [primaryColor.withValues(alpha: 0.5), Colors.white]
+                : [primaryColor, Colors.black54],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -51,20 +49,10 @@ class _BusinessDetailsState extends State<BusinessDetails> {
         title: "Business Details",
         fontSize: 22.sp,
         fontWeight: FontWeight.bold,
-        color: Colors.black87,
+        color: primaryBlack,
       ),
     );
   }
-
-  // Widget _buildFloatingActionButton() {
-  //   return FloatingActionButton(
-  //     backgroundColor: primaryColor,
-  //     foregroundColor: Colors.white,
-  //     shape: const CircleBorder(),
-  //     onPressed: _addNewContent,
-  //     child: const Icon(Icons.add),
-  //   );
-  // }
 
   Widget _buildBody() {
     return Obx(
@@ -79,18 +67,18 @@ class _BusinessDetailsState extends State<BusinessDetails> {
                 children: [
                   _buildHeaderSection(),
                   SizedBox(height: 16.h),
-                  const Divider(),
+                  Divider(color: lightGrey),
                   _buildImageGallery(),
                   if (controller.businessDetails['attachments'].length != 0)
                     SizedBox(height: 16.h),
                   if (controller.businessDetails['attachments'].length != 0)
-                    const Divider(),
+                    Divider(color: lightGrey),
                   _buildAboutSection(),
                   // SizedBox(height: 24.h),
                   _buildContactSection(),
                   // const Divider(),
                   _buildPostAndOffersSection(),
-                  const Divider(),
+                  Divider(color: lightGrey),
                   _buildReviewsSection(),
                 ],
               ),
@@ -156,7 +144,7 @@ class _BusinessDetailsState extends State<BusinessDetails> {
                 title: controller.businessDetails['name'] ?? '',
                 fontSize: 18.sp,
                 fontWeight: FontWeight.w700,
-                color: Colors.black87,
+                color: primaryBlack,
                 maxLines: 2,
               ),
             ),
@@ -176,7 +164,9 @@ class _BusinessDetailsState extends State<BusinessDetails> {
       child: Container(
         padding: EdgeInsets.all(6.w),
         decoration: BoxDecoration(
-          color: primaryColor.withValues(alpha: 0.1),
+          color: Theme.of(context).brightness == Brightness.light
+              ? primaryColor.withValues(alpha: 0.1)
+              : Colors.white,
           borderRadius: BorderRadius.circular(8.r),
         ),
         child: Icon(Icons.edit_outlined, size: 18.w, color: primaryColor),
@@ -237,7 +227,7 @@ class _BusinessDetailsState extends State<BusinessDetails> {
           title: 'Gallery',
           fontSize: 16.sp,
           fontWeight: FontWeight.w600,
-          color: Colors.black87,
+          color: primaryBlack,
         ),
         SizedBox(height: 8.h),
         SizedBox(
@@ -261,7 +251,7 @@ class _BusinessDetailsState extends State<BusinessDetails> {
       width: 80.w,
       height: 80.h,
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade200),
+        border: Border.all(color: lightGrey),
         borderRadius: BorderRadius.circular(12.r),
       ),
       child: WidgetZoom(
@@ -293,7 +283,7 @@ class _BusinessDetailsState extends State<BusinessDetails> {
           title: 'About',
           fontSize: 18.sp,
           fontWeight: FontWeight.w700,
-          color: Colors.black87,
+          color: primaryBlack,
         ),
         SizedBox(height: 8.h),
         CustomText(
@@ -301,9 +291,9 @@ class _BusinessDetailsState extends State<BusinessDetails> {
           fontSize: 14.sp,
           maxLines: 10,
           textAlign: TextAlign.start,
-          color: Colors.grey.shade700,
+          color: textSmall,
         ),
-        Divider(),
+        Divider(color: lightGrey),
       ],
     );
   }
@@ -317,7 +307,7 @@ class _BusinessDetailsState extends State<BusinessDetails> {
           title: 'Contact Information',
           fontSize: 18.sp,
           fontWeight: FontWeight.w700,
-          color: Colors.black87,
+          color: primaryBlack,
         ),
         _buildContactItem(
           icon: Icons.phone_outlined,
@@ -375,7 +365,7 @@ class _BusinessDetailsState extends State<BusinessDetails> {
                   CustomText(
                     title: title,
                     fontSize: 14.sp,
-                    color: Colors.grey.shade600,
+                    color: textSmall,
                     fontWeight: FontWeight.w500,
                   ),
                   SizedBox(height: 4.h),
@@ -384,7 +374,7 @@ class _BusinessDetailsState extends State<BusinessDetails> {
                     textAlign: TextAlign.start,
                     title: value,
                     fontSize: 14.sp,
-                    color: Colors.black87,
+                    color: primaryBlack,
                     // lineHeight: 1.4,
                   ),
                 ],
@@ -407,7 +397,7 @@ class _BusinessDetailsState extends State<BusinessDetails> {
               title: 'Reviews & Ratings',
               fontSize: 18.sp,
               fontWeight: FontWeight.w700,
-              color: Colors.black87,
+              color: primaryBlack,
             ),
             _buildRatingSummary(),
           ],
@@ -527,6 +517,7 @@ class _BusinessDetailsState extends State<BusinessDetails> {
                 fontSize: 14.sp,
                 textAlign: TextAlign.start,
                 maxLines: 2,
+                color: primaryBlack,
               ),
 
               // Rating
@@ -543,6 +534,7 @@ class _BusinessDetailsState extends State<BusinessDetails> {
                 fontSize: 13.sp,
                 textAlign: TextAlign.start,
                 maxLines: 20,
+                color: primaryBlack,
               ),
             ],
           ),
@@ -556,7 +548,7 @@ class _BusinessDetailsState extends State<BusinessDetails> {
       length: 2,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
@@ -604,7 +596,8 @@ class _BusinessDetailsState extends State<BusinessDetails> {
   Widget _buildTabBar() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey.shade50,
+        color: Theme.of(context).scaffoldBackgroundColor,
+        border: Border.all(color: lightGrey, width: 0.5),
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(12.r),
           topRight: Radius.circular(12.r),

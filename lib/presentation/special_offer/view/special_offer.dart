@@ -119,7 +119,7 @@ class _SpecialOfferState extends State<SpecialOffer> {
                 child: Container(
                   height: _headerHeight,
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  decoration: BoxDecoration(color: scaffoldBackground),
+                  decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor,),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -236,7 +236,7 @@ class _SpecialOfferState extends State<SpecialOffer> {
                   borderRadius: BorderRadius.circular(8.r),
                   border: Border.all(
                     color: isFollowing
-                        ? Colors.grey.shade300
+                        ? lightGrey
                         : Colors.transparent,
                     width: 1,
                   ),
@@ -247,12 +247,12 @@ class _SpecialOfferState extends State<SpecialOffer> {
                     Icon(
                       isFollowing ? Icons.check : Icons.add,
                       size: 14.sp,
-                      color: isFollowing ? Colors.grey.shade600 : Colors.white,
+                      color: isFollowing ? textLightGrey : Colors.white,
                     ),
                     CustomText(
                       title: isFollowing ? 'Following' : 'Follow',
                       fontSize: 12.sp,
-                      color: isFollowing ? Colors.grey.shade700 : Colors.white,
+                      color: isFollowing ? textLightGrey : Colors.white,
                       fontWeight: FontWeight.w600,
                     ),
                   ],

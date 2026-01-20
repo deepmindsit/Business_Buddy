@@ -26,7 +26,7 @@ class OfferDetailShimmer extends StatelessWidget {
     BorderRadius? radius,
   }) {
     return Shimmer.fromColors(
-      baseColor: Colors.grey.shade300,
+      baseColor: lightGrey,
       highlightColor: Colors.grey.shade100,
       child: Container(
         height: height,
@@ -74,7 +74,7 @@ class OfferDetailShimmer extends StatelessWidget {
       width: double.infinity,
       color: Colors.white,
       child: Shimmer.fromColors(
-        baseColor: Colors.grey.shade300,
+        baseColor: lightGrey,
         highlightColor: Colors.grey.shade100,
         child: Container(color: Colors.grey),
       ),

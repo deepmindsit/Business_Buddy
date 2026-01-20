@@ -47,7 +47,7 @@ class _CategoryListState extends State<CategoryList> {
             children: [
               /// 🔹 Header
               Container(
-                color: scaffoldBackground,
+                color: Theme.of(context).scaffoldBackgroundColor,
                 padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                 child: Row(
                   spacing: 8,

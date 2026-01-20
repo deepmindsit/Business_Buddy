@@ -28,7 +28,7 @@ class _GlobalSearchState extends State<GlobalSearch> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppbarPlain(title: "Search"),
       body: SingleChildScrollView(
         child: Column(
@@ -102,7 +102,7 @@ class _GlobalSearchState extends State<GlobalSearch> {
       controller: _controller.searchController,
       decoration: InputDecoration(
         filled: true,
-        fillColor: Colors.white,
+        fillColor: Theme.of(context).scaffoldBackgroundColor,
         focusedBorder: buildOutlineInputBorder(),
         enabledBorder: buildOutlineInputBorder(),
         contentPadding: EdgeInsets.all(15),
@@ -114,6 +114,7 @@ class _GlobalSearchState extends State<GlobalSearch> {
                     _controller.businessList.value = [];
                     _controller.categoryList.value = [];
                     _controller.requirementList.value = [];
+                    _controller.expertList.value = [];
                     _controller.isLoading.value = false;
                   },
                   child: Container(
@@ -402,6 +403,7 @@ class _GlobalSearchState extends State<GlobalSearch> {
                                           fontSize: 14.sp,
                                           fontWeight: FontWeight.w600,
                                           textAlign: TextAlign.start,
+                                          color: primaryBlack,
                                         ),
                                         Text(
                                           expert['specialization']
@@ -409,7 +411,7 @@ class _GlobalSearchState extends State<GlobalSearch> {
                                               '',
                                           style: TextStyle(
                                             fontSize: 12.sp,
-                                            color: Colors.grey[600],
+                                            color: textLightGrey,
                                           ),
                                         ),
                                         if (expert['experience'] != null)
@@ -417,7 +419,7 @@ class _GlobalSearchState extends State<GlobalSearch> {
                                             '${expert['experience']?.toString() ?? '0'} Years',
                                             style: TextStyle(
                                               fontSize: 12.sp,
-                                              color: Colors.grey[600],
+                                              color: textLightGrey,
                                             ),
                                           ),
                                         SizedBox(height: 6.h),
@@ -426,6 +428,13 @@ class _GlobalSearchState extends State<GlobalSearch> {
                                   ),
                                   // if (controller.isMe.isTrue)
                                   GestureDetector(
+                                    onTap: () => Get.toNamed(
+                                      Routes.profile,
+                                      arguments: {
+                                        'user_id':
+                                            expert['user_id']?.toString() ?? '',
+                                      },
+                                    ),
                                     child: HugeIcon(
                                       icon: HugeIcons.strokeRoundedArrowRight01,
                                     ),
@@ -458,10 +467,14 @@ class _GlobalSearchState extends State<GlobalSearch> {
 
   BoxDecoration _boxDecoration() {
     return BoxDecoration(
-      color: Colors.white,
+      color: Theme.of(context).scaffoldBackgroundColor,
       borderRadius: BorderRadius.circular(12),
       boxShadow: [
-        BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 2)),
+        BoxShadow(
+          color: Colors.grey.shade100,
+          blurRadius: 6,
+          offset: Offset(0, 2),
+        ),
       ],
     );
   }

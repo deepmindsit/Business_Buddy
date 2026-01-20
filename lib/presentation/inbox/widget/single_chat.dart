@@ -20,7 +20,7 @@ class _SingleChatState extends State<SingleChat> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Obx(
         () => controller.isSingleLoading.isTrue
             ? LoadingWidget(color: primaryColor)
@@ -29,7 +29,7 @@ class _SingleChatState extends State<SingleChat> {
                 children: [
                   // Local back + title
                   _buildHeader(),
-                  const Divider(),
+                  Divider(color: lightGrey),
                   // Chat messages
                   _buildAllChat(),
 
@@ -43,7 +43,7 @@ class _SingleChatState extends State<SingleChat> {
 
   Widget _buildHeader() {
     return Container(
-      color: Colors.white,
+      color: Theme.of(context).scaffoldBackgroundColor,
       padding: EdgeInsets.symmetric(horizontal: 12.w),
       child: Row(
         spacing: 8.w,
@@ -116,6 +116,7 @@ class _SingleChatState extends State<SingleChat> {
                           fontWeight: FontWeight.w600,
                           textAlign: TextAlign.start,
                           maxLines: 1,
+                          color: primaryBlack,
                         ),
                         SizedBox(height: 2.h),
                         CustomText(
@@ -126,6 +127,7 @@ class _SingleChatState extends State<SingleChat> {
                           fontSize: 12.sp,
                           textAlign: TextAlign.start,
                           maxLines: 1,
+                          color: primaryBlack,
                         ),
                       ],
                     ),
@@ -215,8 +217,7 @@ class _SingleChatState extends State<SingleChat> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        // color: Colors.grey.shade100,
-        border: const Border(top: BorderSide(color: Colors.grey, width: 0.5)),
+        border: Border(top: BorderSide(color: lightGrey, width: 0.5)),
       ),
       child: Row(
         children: [
@@ -224,8 +225,9 @@ class _SingleChatState extends State<SingleChat> {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 14, vertical: 0),
               decoration: BoxDecoration(
-                color: Colors.grey.shade200,
+                color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(25.r),
+                border: Border.all(color: lightGrey, width: 1.5),
               ),
               child: TextField(
                 controller: controller.msgController,
@@ -336,7 +338,7 @@ class _SingleChatState extends State<SingleChat> {
   Widget _buildAllChat() {
     return Expanded(
       child: RefreshIndicator(
-        backgroundColor: Colors.white,
+        backgroundColor: primaryBlack,
         strokeWidth: 1,
         color: primaryColor,
         onRefresh: () async {
@@ -364,7 +366,7 @@ class _SingleChatState extends State<SingleChat> {
                 // 🔄 loader at top
                 if (index == controller.allMessages.length) {
                   return Padding(
-                    padding: EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(8),
                     child: Center(child: LoadingWidget(color: primaryColor)),
                   );
                 }
@@ -382,8 +384,10 @@ class _SingleChatState extends State<SingleChat> {
                       child: Card(
                         elevation: 0,
                         color: isMe
-                            ? Colors.grey.shade200
-                            : primaryColor.withValues(alpha: 0.05),
+                            ? lightGrey
+                            : Theme.of(context).brightness == Brightness.light
+                            ? primaryColor.withValues(alpha: 0.05)
+                            : Get.theme.cardColor,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -401,13 +405,14 @@ class _SingleChatState extends State<SingleChat> {
                                     : Alignment.centerLeft,
                                 child: CustomText(
                                   title: message['message'] ?? '',
-                                  fontSize: 13,
+                                  fontSize: 13.sp,
+                                  color: primaryBlack,
                                 ),
                               ),
                               SizedBox(height: 4),
                               CustomText(
                                 title: message['created_at'] ?? '',
-                                fontSize: 10,
+                                fontSize: 10.sp,
                                 color: Colors.grey,
                               ),
                             ],

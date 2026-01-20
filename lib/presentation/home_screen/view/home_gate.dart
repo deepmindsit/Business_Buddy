@@ -24,7 +24,7 @@ class _HomeGateScreenState extends State<HomeGateScreen> {
     return Obx(() {
       if (controller.hasError.value) {
         return Scaffold(
-          backgroundColor: scaffoldBackground,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           body: Center(
             child: Padding(
               padding: const EdgeInsets.all(24),
@@ -59,7 +59,7 @@ class _HomeGateScreenState extends State<HomeGateScreen> {
 
       if (!controller.isReady.value) {
         return Scaffold(
-          backgroundColor:scaffoldBackground,
+          backgroundColor:Theme.of(context).scaffoldBackgroundColor,
           body: Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,

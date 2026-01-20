@@ -75,7 +75,7 @@ class _LboScreenState extends State<LboScreen> {
         _buildFabChild(
           icon: Icons.post_add,
           text: 'Post',
-          color: Colors.black,
+          color: primaryBlack,
           onPressed: () => Get.toNamed(Routes.addPost),
         ),
         _buildFabChild(
@@ -104,15 +104,15 @@ class _LboScreenState extends State<LboScreen> {
         backgroundColor: color,
         foregroundColor: Colors.white,
         onPressed: onPressed,
-        icon: Icon(icon, size: 20),
+        icon: Icon(icon, size: 20,color: inverseColor,),
         label: Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           child: Text(
             text,
-            style: const TextStyle(
+            style:  TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
-              color: Colors.white,
+              color: inverseColor,
             ),
           ),
         ),
@@ -204,7 +204,7 @@ class _LboScreenState extends State<LboScreen> {
                 duration: const Duration(milliseconds: 250),
                 width: Get.width * 0.7.w,
                 decoration: BoxDecoration(
-                  color: scaffoldBackground,
+                  color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(16.r),
                   boxShadow: [
                     BoxShadow(
@@ -290,7 +290,7 @@ class _LboScreenState extends State<LboScreen> {
       length: 2,
       child: Container(
         decoration: BoxDecoration(
-          color: scaffoldBackground,
+          color: Theme.of(context).scaffoldBackgroundColor,
           border: Border.all(color: lightGrey, width: 0.5),
           borderRadius: BorderRadius.circular(12.r),
         ),
@@ -348,6 +348,7 @@ class _LboScreenState extends State<LboScreen> {
               title: 'No Business Added Yet!',
               fontSize: 22.sp,
               fontWeight: FontWeight.bold,
+              color: primaryBlack,
             ),
             SizedBox(height: 10.h),
             CustomText(
@@ -355,6 +356,7 @@ class _LboScreenState extends State<LboScreen> {
                   'Start by adding your business to showcase your brand, attract investors, and connect with potential partners.',
               fontSize: 14.sp,
               maxLines: 5,
+              color: primaryBlack,
             ),
             SizedBox(height: 20.h),
             CustomButton(
@@ -378,8 +380,8 @@ class _LboScreenState extends State<LboScreen> {
 
   Widget _pendingBusiness() {
     return Card(
-      color: Colors.white,
-      surfaceTintColor: Colors.white,
+      color: Get.theme.cardColor,
+      surfaceTintColor: Get.theme.cardColor,
       margin: const EdgeInsets.symmetric(horizontal: 24),
       child: Padding(
         padding: const EdgeInsets.all(18),
@@ -393,25 +395,29 @@ class _LboScreenState extends State<LboScreen> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: primaryColor.withValues(alpha: 0.1),
+                  color: Theme.of(context).brightness == Brightness.light
+                      ? primaryColor.withValues(alpha: 0.1)
+                      : Colors.white.withValues(alpha: 0.5),
                   width: 2,
                 ),
               ),
               child: HugeIcon(
                 icon: HugeIcons.strokeRoundedLoading01,
                 size: 12,
-                color: primaryColor.withValues(alpha: 0.5),
+                color: Theme.of(context).brightness == Brightness.light
+                    ? primaryColor.withValues(alpha: 0.5)
+                    : primaryColor,
               ),
             ),
 
             const SizedBox(height: 12),
 
-            const Text(
+            Text(
               "Approval Pending",
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 20.sp,
                 fontWeight: FontWeight.w700,
-                color: Colors.black87,
+                color: primaryBlack,
               ),
             ),
 
@@ -420,11 +426,7 @@ class _LboScreenState extends State<LboScreen> {
             Text(
               "Your business is currently under review. We'll notify you once the verification process is complete.",
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14,
-                height: 1.5,
-                color: Colors.grey.shade700,
-              ),
+              style: TextStyle(fontSize: 14.sp, height: 1.5, color: textSmall),
             ),
           ],
         ),
@@ -448,7 +450,7 @@ class _LboScreenState extends State<LboScreen> {
 
   Widget _shimmerAddBusinessButton() {
     return Shimmer.fromColors(
-      baseColor: Colors.grey.shade300,
+      baseColor: lightGrey,
       highlightColor: Colors.grey.shade100,
       child: Container(
         width: Get.width,
@@ -470,7 +472,7 @@ class _LboScreenState extends State<LboScreen> {
         separatorBuilder: (_, __) => SizedBox(width: 8.w),
         itemBuilder: (_, i) {
           return Shimmer.fromColors(
-            baseColor: Colors.grey.shade300,
+            baseColor: lightGrey,
             highlightColor: Colors.grey.shade100,
             child: Container(
               width: Get.width * 0.7.w,
@@ -520,7 +522,7 @@ class _LboScreenState extends State<LboScreen> {
 
   Widget _shimmerTabsSection() {
     return Shimmer.fromColors(
-      baseColor: Colors.grey.shade300,
+      baseColor: lightGrey,
       highlightColor: Colors.grey.shade100,
       child: Container(
         width: Get.width,

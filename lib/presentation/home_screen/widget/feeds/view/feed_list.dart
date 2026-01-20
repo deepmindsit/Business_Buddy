@@ -157,7 +157,9 @@ class _NewFeedState extends State<NewFeed> {
               child: Container(
                 height: _headerHeight,
                 padding: EdgeInsets.symmetric(horizontal: 16.w),
-                decoration: BoxDecoration(color: scaffoldBackground),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [

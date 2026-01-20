@@ -402,7 +402,7 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
         Container(
           padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
           decoration: BoxDecoration(
-            color: lightGrey,
+            color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(20.r),
           ),
           child: Row(
@@ -494,7 +494,7 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
             children: [
               Icon(
                 Icons.location_on_outlined,
-                color: Colors.grey.shade600,
+                color: textLightGrey,
                 size: 16.sp,
               ),
               SizedBox(width: 6.w),
@@ -503,7 +503,7 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
                 child: CustomText(
                   title: '$address | $distance km',
                   fontSize: 14.sp,
-                  color: Colors.grey.shade700,
+                  color: textLightGrey,
                   textAlign: TextAlign.start,
                   maxLines: 2,
                 ),
@@ -582,7 +582,11 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
             padding: EdgeInsets.all(12.w),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: primaryColor.withValues(alpha: 0.2)),
+              border: Border.all(
+                color: Theme.of(Get.context!).brightness == Brightness.light
+                    ? primaryColor.withValues(alpha: 0.2)
+                    : Colors.white,
+              ),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -590,14 +594,18 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
                 SizedBox(height: 4.h),
                 HugeIcon(
                   icon: HugeIcons.strokeRoundedDiscount,
-                  color: primaryColor,
+                  color: Theme.of(Get.context!).brightness == Brightness.light
+                      ? primaryColor
+                      : Colors.white,
                   size: 20.sp,
                 ),
                 SizedBox(height: 4.h),
                 CustomText(
                   title: 'See Offer',
                   fontSize: 10.sp,
-                  color: primaryColor,
+                  color: Theme.of(Get.context!).brightness == Brightness.light
+                      ? primaryColor
+                      : Colors.white,
                   fontWeight: FontWeight.w600,
                 ),
               ],
@@ -613,7 +621,9 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
                     vertical: 4.h,
                   ),
                   decoration: BoxDecoration(
-                    color: lightGrey,
+                    color: Theme.of(Get.context!).brightness == Brightness.light
+                        ? lightGrey
+                        : Colors.white,
                     borderRadius: BorderRadius.circular(20.r),
                   ),
                   child: Row(
@@ -718,7 +728,13 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
         decoration: BoxDecoration(
           color: isPrimary == false ? Colors.transparent : primaryColor,
-          border: Border.all(color: primaryColor),
+          border: Border.all(
+            color: text == ''
+                ? Theme.of(context).brightness == Brightness.light
+                      ? primaryColor
+                      : Colors.white
+                : primaryColor,
+          ),
           borderRadius: BorderRadius.circular(8.r),
         ),
         child: Row(

@@ -23,7 +23,7 @@ class _AddPostState extends State<AddPost> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppbarPlain(title: "New Post"),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.w),
@@ -35,6 +35,7 @@ class _AddPostState extends State<AddPost> {
               _buildProfileImage(),
               Divider(),
               buildTextField(
+                fillColor: Theme.of(context).scaffoldBackgroundColor,
                 maxLines: 3,
                 controller: controller.postAbout,
                 hintText: 'About Details',

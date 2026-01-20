@@ -11,8 +11,6 @@ class _EditBusinessState extends State<EditBusiness> {
   final navController = getIt<NavigationController>();
   final controller = getIt<LBOController>();
   final expController = getIt<ExplorerController>();
-  final RxBool _isSearchingLocation = false.obs;
-  final _debouncer = Debouncer(milliseconds: 500);
 
   @override
   void initState() {
@@ -34,7 +32,7 @@ class _EditBusinessState extends State<EditBusiness> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: _buildAppBar(),
       body: SingleChildScrollView(child: _buildBody()),
     );
@@ -42,17 +40,16 @@ class _EditBusinessState extends State<EditBusiness> {
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      surfaceTintColor: Colors.white,
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      surfaceTintColor: Theme.of(context).scaffoldBackgroundColor,
       elevation: 0,
       centerTitle: true,
       flexibleSpace: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              Color(0XFFFF383C).withValues(alpha: 0.4),
-              Colors.white.withValues(alpha: 0.5),
-            ],
+            colors: Theme.of(context).brightness == Brightness.light
+                ? [primaryColor.withValues(alpha: 0.5), Colors.white]
+                : [primaryColor, Colors.black54],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -62,7 +59,7 @@ class _EditBusinessState extends State<EditBusiness> {
         title: "Edit Business",
         fontSize: 22.sp,
         fontWeight: FontWeight.bold,
-        color: Colors.black87,
+        color: primaryBlack,
       ),
     );
   }
@@ -85,6 +82,9 @@ class _EditBusinessState extends State<EditBusiness> {
                     children: [
                       buildLabel('Business/Shop Name'),
                       buildTextField(
+                        fillColor: Theme.of(
+                          Get.context!,
+                        ).scaffoldBackgroundColor,
                         controller: controller.shopName,
                         hintText: 'Enter Business/Shop Name',
                         keyboardType: TextInputType.name,
@@ -200,254 +200,267 @@ class _EditBusinessState extends State<EditBusiness> {
   }
 
   Widget _buildLocation() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildLabel('Address'),
-        _buildSearchField(),
-        Obx(
-          () => _isSearchingLocation.value
-              ? _buildLoadingIndicator()
-              : controller.addressList.isNotEmpty
-              ? _buildResultsList()
-              : SizedBox(),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildLabel(String label) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 8.0),
-      child: buildLabel(label),
-    );
-  }
-
-  Widget _buildSearchField() {
-    return TextFormField(
-      minLines: 1,
-      maxLines: 3,
-      keyboardType: TextInputType.text,
+    return LocationSearchField(
+      label: 'Address',
+      hintText: 'Address',
       controller: controller.addressController,
-      style: TextStyle(color: Colors.black, fontSize: 16.sp),
-      decoration: InputDecoration(
-        filled: true,
-        fillColor: Colors.white,
-        suffixIcon: controller.addressController.text.isNotEmpty
-            ? GestureDetector(
-                onTap: () {
-                  controller.addressController.clear();
-                  controller.addressList.value = [];
-                  _isSearchingLocation.value = false;
-                  setState(() {});
-                },
-                child: Container(
-                  margin: EdgeInsets.all(8.w),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.close,
-                    size: 18,
-                    color: Colors.grey.shade600,
-                  ),
-                ),
-              )
-            : Icon(Icons.search, color: mainTextGrey),
-
-        // prefixIcon: Icon(Icons.search, color: primaryColor, size: 22),
-        hintText: 'Enter your address...',
-        hintStyle: TextStyle(color: mainTextGrey, fontSize: 14.sp),
-        contentPadding: EdgeInsets.all(16.w),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
-          borderSide: BorderSide(color: Colors.grey.shade300),
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
-          borderSide: BorderSide(color: Colors.grey.shade300),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
-          borderSide: BorderSide(color: primaryColor, width: 1.5),
-        ),
-      ),
-      autovalidateMode: AutovalidateMode.onUserInteraction,
-      validator: (value) =>
-          value!.isEmpty ? 'Please search your address' : null,
-      onChanged: (str) {
-        if (str.trim().isEmpty) {
-          controller.addressList.value = [];
-          _isSearchingLocation.value = false;
-          return;
-        }
-
-        _isSearchingLocation.value = true;
-        _debouncer.run(() {
-          getPlaces(str.trim())
-              .then((data) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  controller.addressList.value = data;
-                  _isSearchingLocation.value = false;
-                });
-              })
-              .catchError((error) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  _isSearchingLocation.value = false;
-                  controller.addressList.value = [];
-                });
-              });
-        });
+      results: controller.addressList,
+      onSearch: (query) => getPlaces(query),
+      onSelected: (place) {
+        controller.addressController.text = place['description'];
+        controller.lat.value = place['lat'];
+        controller.lng.value = place['lng'];
       },
     );
+
+    // Column(
+    //   crossAxisAlignment: CrossAxisAlignment.start,
+    //   children: [
+    //     _buildLabel('Address'),
+    //     _buildSearchField(),
+    //     Obx(
+    //       () => _isSearchingLocation.value
+    //           ? _buildLoadingIndicator()
+    //           : controller.addressList.isNotEmpty
+    //           ? _buildResultsList()
+    //           : SizedBox(),
+    //     ),
+    //   ],
+    // );
   }
+  //
+  // Widget _buildLabel(String label) {
+  //   return Padding(
+  //     padding: const EdgeInsets.only(left: 8.0),
+  //     child: buildLabel(label),
+  //   );
+  // }
+  //
+  // Widget _buildSearchField() {
+  //   return TextFormField(
+  //     minLines: 1,
+  //     maxLines: 3,
+  //     keyboardType: TextInputType.text,
+  //     controller: controller.addressController,
+  //     style: TextStyle(color: Colors.black, fontSize: 16.sp),
+  //     decoration: InputDecoration(
+  //       filled: true,
+  //       fillColor: Colors.white,
+  //       suffixIcon: controller.addressController.text.isNotEmpty
+  //           ? GestureDetector(
+  //               onTap: () {
+  //                 controller.addressController.clear();
+  //                 controller.addressList.value = [];
+  //                 _isSearchingLocation.value = false;
+  //                 setState(() {});
+  //               },
+  //               child: Container(
+  //                 margin: EdgeInsets.all(8.w),
+  //                 decoration: BoxDecoration(
+  //                   color: Colors.grey.shade200,
+  //                   shape: BoxShape.circle,
+  //                 ),
+  //                 child: Icon(
+  //                   Icons.close,
+  //                   size: 18,
+  //                   color: Colors.grey.shade600,
+  //                 ),
+  //               ),
+  //             )
+  //           : Icon(Icons.search, color: mainTextGrey),
+  //
+  //       // prefixIcon: Icon(Icons.search, color: primaryColor, size: 22),
+  //       hintText: 'Enter your address...',
+  //       hintStyle: TextStyle(color: mainTextGrey, fontSize: 14.sp),
+  //       contentPadding: EdgeInsets.all(16.w),
+  //       enabledBorder: OutlineInputBorder(
+  //         borderRadius: BorderRadius.circular(12.r),
+  //         borderSide: BorderSide(color: Colors.grey.shade300),
+  //       ),
+  //       border: OutlineInputBorder(
+  //         borderRadius: BorderRadius.circular(12.r),
+  //         borderSide: BorderSide(color: Colors.grey.shade300),
+  //       ),
+  //       focusedBorder: OutlineInputBorder(
+  //         borderRadius: BorderRadius.circular(12.r),
+  //         borderSide: BorderSide(color: primaryColor, width: 1.5),
+  //       ),
+  //     ),
+  //     autovalidateMode: AutovalidateMode.onUserInteraction,
+  //     validator: (value) =>
+  //         value!.isEmpty ? 'Please search your address' : null,
+  //     onChanged: (str) {
+  //       if (str.trim().isEmpty) {
+  //         controller.addressList.value = [];
+  //         _isSearchingLocation.value = false;
+  //         return;
+  //       }
+  //
+  //       _isSearchingLocation.value = true;
+  //       _debouncer.run(() {
+  //         getPlaces(str.trim())
+  //             .then((data) {
+  //               WidgetsBinding.instance.addPostFrameCallback((_) {
+  //                 controller.addressList.value = data;
+  //                 _isSearchingLocation.value = false;
+  //               });
+  //             })
+  //             .catchError((error) {
+  //               WidgetsBinding.instance.addPostFrameCallback((_) {
+  //                 _isSearchingLocation.value = false;
+  //                 controller.addressList.value = [];
+  //               });
+  //             });
+  //       });
+  //     },
+  //   );
+  // }
+  //
+  // Widget _buildLoadingIndicator() {
+  //   return Column(
+  //     mainAxisAlignment: MainAxisAlignment.center,
+  //     children: [
+  //       SizedBox(
+  //         width: 40.w,
+  //         height: 40.h,
+  //         child: LoadingWidget(color: primaryColor),
+  //       ),
+  //       SizedBox(height: 16.h),
+  //       Text(
+  //         'Searching address...',
+  //         style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade600),
+  //       ),
+  //     ],
+  //   );
+  // }
 
-  Widget _buildLoadingIndicator() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SizedBox(
-          width: 40.w,
-          height: 40.h,
-          child: LoadingWidget(color: primaryColor),
-        ),
-        SizedBox(height: 16.h),
-        Text(
-          'Searching address...',
-          style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade600),
-        ),
-      ],
-    );
-  }
+  // Widget _buildResultsList() {
+  //   return Container(
+  //     decoration: BoxDecoration(
+  //       color: Colors.grey.shade50,
+  //       borderRadius: BorderRadius.only(
+  //         topLeft: Radius.circular(20.r),
+  //         topRight: Radius.circular(20.r),
+  //       ),
+  //     ),
+  //     child: Column(
+  //       children: [
+  //         Padding(
+  //           padding: EdgeInsets.all(16.w),
+  //           child: Row(
+  //             children: [
+  //               Text(
+  //                 'Search Results',
+  //                 style: TextStyle(
+  //                   fontSize: 14.sp,
+  //                   fontWeight: FontWeight.w500,
+  //                   color: Colors.grey.shade600,
+  //                 ),
+  //               ),
+  //               SizedBox(width: 8.w),
+  //               Container(
+  //                 padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+  //                 decoration: BoxDecoration(
+  //                   color: primaryColor.withValues(alpha: 0.1),
+  //                   borderRadius: BorderRadius.circular(8.r),
+  //                 ),
+  //                 child: Text(
+  //                   '${controller.addressList.length}',
+  //                   style: TextStyle(
+  //                     fontSize: 12.sp,
+  //                     fontWeight: FontWeight.w600,
+  //                     color: primaryColor,
+  //                   ),
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //         ListView.separated(
+  //           shrinkWrap: true,
+  //           physics: NeverScrollableScrollPhysics(),
+  //           padding: EdgeInsets.only(bottom: 16.h),
+  //           separatorBuilder: (_, index) => Divider(
+  //             height: 1,
+  //             indent: 56.w,
+  //             endIndent: 16.w,
+  //             color: Colors.grey.shade200,
+  //           ),
+  //           itemCount: controller.addressList.length,
+  //           itemBuilder: (context, index) {
+  //             return Material(
+  //               color: Colors.transparent,
+  //               child: InkWell(
+  //                 onTap: () {
+  //                   _onLocationSelected(controller.addressList[index]);
+  //                 },
+  //                 child: Container(
+  //                   padding: EdgeInsets.symmetric(
+  //                     horizontal: 16.w,
+  //                     vertical: 12.h,
+  //                   ),
+  //                   child: Row(
+  //                     children: [
+  //                       Container(
+  //                         width: 36.w,
+  //                         height: 36.h,
+  //                         decoration: BoxDecoration(
+  //                           color: primaryColor.withValues(alpha: 0.1),
+  //                           shape: BoxShape.circle,
+  //                         ),
+  //                         child: Icon(
+  //                           Icons.place_outlined,
+  //                           color: primaryColor,
+  //                           size: 18,
+  //                         ),
+  //                       ),
+  //                       SizedBox(width: 12.w),
+  //                       Expanded(
+  //                         child: CustomText(
+  //                           title:
+  //                               controller.addressList[index]['description'] ??
+  //                               '',
+  //                           fontSize: 14.sp,
+  //                           fontWeight: FontWeight.w500,
+  //                           color: Colors.black87,
+  //                           maxLines: 10,
+  //                           textAlign: TextAlign.start,
+  //                           // overflow: TextOverflow.ellipsis,
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ),
+  //               ),
+  //             );
+  //           },
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
-  Widget _buildResultsList() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.grey.shade50,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20.r),
-          topRight: Radius.circular(20.r),
-        ),
-      ),
-      child: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.all(16.w),
-            child: Row(
-              children: [
-                Text(
-                  'Search Results',
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey.shade600,
-                  ),
-                ),
-                SizedBox(width: 8.w),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                  decoration: BoxDecoration(
-                    color: primaryColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  child: Text(
-                    '${controller.addressList.length}',
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w600,
-                      color: primaryColor,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          ListView.separated(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            padding: EdgeInsets.only(bottom: 16.h),
-            separatorBuilder: (_, index) => Divider(
-              height: 1,
-              indent: 56.w,
-              endIndent: 16.w,
-              color: Colors.grey.shade200,
-            ),
-            itemCount: controller.addressList.length,
-            itemBuilder: (context, index) {
-              return Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () {
-                    _onLocationSelected(controller.addressList[index]);
-                  },
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 12.h,
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 36.w,
-                          height: 36.h,
-                          decoration: BoxDecoration(
-                            color: primaryColor.withValues(alpha: 0.1),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.place_outlined,
-                            color: primaryColor,
-                            size: 18,
-                          ),
-                        ),
-                        SizedBox(width: 12.w),
-                        Expanded(
-                          child: CustomText(
-                            title:
-                                controller.addressList[index]['description'] ??
-                                '',
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black87,
-                            maxLines: 10,
-                            textAlign: TextAlign.start,
-                            // overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _onLocationSelected(Map<String, dynamic> searchPlace) {
-    controller.addressController.text = searchPlace['description'] ?? '';
-    controller.lat.value = searchPlace['lat'] ?? '';
-    controller.lng.value = searchPlace['lng'] ?? '';
-
-    // Uncomment and use these as needed
-    // Get.find<HomeControllerC>().area.value = searchPlace['area'];
-    // Get.find<HomeControllerC>().city.value = searchPlace['city'];
-    // Get.find<HomeControllerC>().state.value = searchPlace['state'];
-    // Get.find<HomeControllerC>().country.value = searchPlace['country'];
-    // controller.lat.value = searchPlace['lat'];
-    // controller.lng.value = searchPlace['lng'];
-    //
-    // debugPrint('Selected location: ${searchPlace['description']}');
-    // debugPrint('Latitude: ${searchPlace['lat']}');
-    // debugPrint('Longitude: ${searchPlace['lng']}');
-
-    controller.addressList.value = [];
-    _isSearchingLocation.value = false;
-    // Get.back();
-  }
+  // void _onLocationSelected(Map<String, dynamic> searchPlace) {
+  //   controller.addressController.text = searchPlace['description'] ?? '';
+  //   controller.lat.value = searchPlace['lat'] ?? '';
+  //   controller.lng.value = searchPlace['lng'] ?? '';
+  //
+  //   // Uncomment and use these as needed
+  //   // Get.find<HomeControllerC>().area.value = searchPlace['area'];
+  //   // Get.find<HomeControllerC>().city.value = searchPlace['city'];
+  //   // Get.find<HomeControllerC>().state.value = searchPlace['state'];
+  //   // Get.find<HomeControllerC>().country.value = searchPlace['country'];
+  //   // controller.lat.value = searchPlace['lat'];
+  //   // controller.lng.value = searchPlace['lng'];
+  //   //
+  //   // debugPrint('Selected location: ${searchPlace['description']}');
+  //   // debugPrint('Latitude: ${searchPlace['lat']}');
+  //   // debugPrint('Longitude: ${searchPlace['lng']}');
+  //
+  //   controller.addressList.value = [];
+  //   _isSearchingLocation.value = false;
+  //   // Get.back();
+  // }
 
   // Widget _buildAddress() {
   //   return Column(
@@ -477,6 +490,7 @@ class _EditBusinessState extends State<EditBusiness> {
         ),
         buildTextField(
           enabled: false,
+          fillColor: Theme.of(Get.context!).scaffoldBackgroundColor,
           controller: controller.numberCtrl,
           hintText: 'Enter your mobile number',
           keyboardType: TextInputType.number,
@@ -507,6 +521,7 @@ class _EditBusinessState extends State<EditBusiness> {
           child: buildLabel('Whatsapp Number'),
         ),
         buildTextField(
+          fillColor: Theme.of(Get.context!).scaffoldBackgroundColor,
           // enabled: false,
           controller: controller.whatsappCtrl,
           hintText: 'Enter your Whatsapp number',
@@ -561,6 +576,7 @@ class _EditBusinessState extends State<EditBusiness> {
         ),
         buildTextField(
           maxLines: 3,
+          fillColor: Theme.of(Get.context!).scaffoldBackgroundColor,
           controller: controller.aboutCtrl,
           hintText: 'Enter about',
           validator: (value) =>
@@ -594,7 +610,7 @@ class _EditBusinessState extends State<EditBusiness> {
       width: 80.w,
       height: 80.h,
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade200),
+        border: Border.all(color: lightGrey),
         borderRadius: BorderRadius.circular(12.r),
       ),
       child: Stack(
@@ -650,49 +666,49 @@ class _EditBusinessState extends State<EditBusiness> {
     );
   }
 
-  Widget _buildUploadDocuments() {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        color: Colors.white,
-      ),
-      child: GestureDetector(
-        onTap: () {
-          CustomFilePicker.showPickerBottomSheet(
-            onFilePicked: (file) {
-              controller.attachments.add(file);
-            },
-          );
-        },
-        child: DottedBorder(
-          dashPattern: [10, 5],
-          borderType: BorderType.RRect,
-          radius: const Radius.circular(10),
-          color: primaryGrey,
-          strokeWidth: 1,
-          padding: const EdgeInsets.all(16),
-          child: Container(
-            width: Get.width,
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
-            margin: const EdgeInsets.all(16),
-            child: Column(
-              spacing: 8.h,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                HugeIcon(icon: HugeIcons.strokeRoundedAddCircle),
-                Text(
-                  'Upload Images'.tr,
-                  style: TextStyle(decoration: TextDecoration.underline),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  // Widget _buildUploadDocuments() {
+  //   return Container(
+  //     decoration: BoxDecoration(
+  //       borderRadius: BorderRadius.circular(12),
+  //       color: Colors.white,
+  //     ),
+  //     child: GestureDetector(
+  //       onTap: () {
+  //         CustomFilePicker.showPickerBottomSheet(
+  //           onFilePicked: (file) {
+  //             controller.attachments.add(file);
+  //           },
+  //         );
+  //       },
+  //       child: DottedBorder(
+  //         dashPattern: [10, 5],
+  //         borderType: BorderType.RRect,
+  //         radius: const Radius.circular(10),
+  //         color: primaryGrey,
+  //         strokeWidth: 1,
+  //         padding: const EdgeInsets.all(16),
+  //         child: Container(
+  //           width: Get.width,
+  //           padding: const EdgeInsets.all(8),
+  //           decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
+  //           margin: const EdgeInsets.all(16),
+  //           child: Column(
+  //             spacing: 8.h,
+  //             mainAxisAlignment: MainAxisAlignment.center,
+  //             crossAxisAlignment: CrossAxisAlignment.center,
+  //             children: [
+  //               HugeIcon(icon: HugeIcons.strokeRoundedAddCircle),
+  //               Text(
+  //                 'Upload Images'.tr,
+  //                 style: TextStyle(decoration: TextDecoration.underline),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildSelectedFilesWrap() {
     return Obx(
@@ -812,77 +828,77 @@ class _EditBusinessState extends State<EditBusiness> {
     );
   }
 
-  Widget _buildPostAndOffersSection() {
-    return DefaultTabController(
-      length: 2,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12.r),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withValues(alpha: 0.1),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          children: [
-            _buildTabBar(),
-            Obx(() {
-              return IndexedStack(
-                index: controller.tabIndex.value,
-                children: [
-                  buildGridImages(
-                    controller.businessDetails['posts'],
-                    'post',
-                    isEdit: true,
-                  ),
-                  buildGridImages(
-                    controller.businessDetails['offers'],
-                    'offer',
-                    isEdit: true,
-                  ),
-                ],
-              );
-            }),
-          ],
-        ),
-      ),
-    );
-  }
+  // Widget _buildPostAndOffersSection() {
+  //   return DefaultTabController(
+  //     length: 2,
+  //     child: Container(
+  //       decoration: BoxDecoration(
+  //         color: Colors.white,
+  //         borderRadius: BorderRadius.circular(12.r),
+  //         boxShadow: [
+  //           BoxShadow(
+  //             color: Colors.grey.withValues(alpha: 0.1),
+  //             blurRadius: 8,
+  //             offset: const Offset(0, 2),
+  //           ),
+  //         ],
+  //       ),
+  //       child: Column(
+  //         children: [
+  //           _buildTabBar(),
+  //           Obx(() {
+  //             return IndexedStack(
+  //               index: controller.tabIndex.value,
+  //               children: [
+  //                 buildGridImages(
+  //                   controller.businessDetails['posts'],
+  //                   'post',
+  //                   isEdit: true,
+  //                 ),
+  //                 buildGridImages(
+  //                   controller.businessDetails['offers'],
+  //                   'offer',
+  //                   isEdit: true,
+  //                 ),
+  //               ],
+  //             );
+  //           }),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
-  Widget _buildTabBar() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.grey.shade50,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(12.r),
-          topRight: Radius.circular(12.r),
-        ),
-      ),
-      child: TabBar(
-        onTap: (i) {
-          controller.tabIndex.value = i;
-        },
-        indicatorColor: primaryColor,
-        labelColor: primaryColor,
-        indicatorSize: TabBarIndicatorSize.tab,
-        unselectedLabelColor: Colors.grey.shade600,
-        indicatorWeight: 2.0,
-        labelStyle: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
-        unselectedLabelStyle: TextStyle(
-          fontSize: 14.sp,
-          fontWeight: FontWeight.w500,
-        ),
-        tabs: const [
-          Tab(text: 'Posts'),
-          Tab(text: 'Offers'),
-        ],
-      ),
-    );
-  }
+  // Widget _buildTabBar() {
+  //   return Container(
+  //     decoration: BoxDecoration(
+  //       color: Colors.grey.shade50,
+  //       borderRadius: BorderRadius.only(
+  //         topLeft: Radius.circular(12.r),
+  //         topRight: Radius.circular(12.r),
+  //       ),
+  //     ),
+  //     child: TabBar(
+  //       onTap: (i) {
+  //         controller.tabIndex.value = i;
+  //       },
+  //       indicatorColor: primaryColor,
+  //       labelColor: primaryColor,
+  //       indicatorSize: TabBarIndicatorSize.tab,
+  //       unselectedLabelColor: Colors.grey.shade600,
+  //       indicatorWeight: 2.0,
+  //       labelStyle: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
+  //       unselectedLabelStyle: TextStyle(
+  //         fontSize: 14.sp,
+  //         fontWeight: FontWeight.w500,
+  //       ),
+  //       tabs: const [
+  //         Tab(text: 'Posts'),
+  //         Tab(text: 'Offers'),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildActionButtons() {
     return Row(

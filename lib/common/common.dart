@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:get_thumbnail_video/video_thumbnail.dart';
-import 'dart:typed_data';
+
 import 'package:businessbuddy/utils/exported_path.dart';
 import 'package:get_thumbnail_video/index.dart';
 
@@ -108,14 +108,15 @@ Widget buildGridImages(dynamic data, String type, {bool isEdit = false}) {
           );
         },
         child: Stack(
+          clipBehavior: Clip.none,
           children: [
             if (image['media_type'] == 'video')
               FutureBuilder<Uint8List?>(
                 future: getVideoThumbnail(image['video']),
                 builder: (context, snapshot) {
                   return Container(
-                    width: 100.w,
-                    height: 110.h,
+                    width: double.infinity,
+                    height: double.infinity,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8.r),
                       border: Border.all(color: lightGrey, width: 1.5),
@@ -161,8 +162,9 @@ Widget buildGridImages(dynamic data, String type, {bool isEdit = false}) {
               )
             else
               Container(
-                width: 100.w,
-                height: 110.h,
+                width: double.infinity,
+                height: double.infinity,
+
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8.r),
                   border: Border.all(color: lightGrey, width: 1.5),
@@ -181,8 +183,9 @@ Widget buildGridImages(dynamic data, String type, {bool isEdit = false}) {
             // Overlay for unapproved images
             if (isExpired)
               Container(
-                width: 100.w,
-                height: 110.h,
+                width: double.infinity,
+                height: double.infinity,
+
                 decoration: BoxDecoration(
                   color: Colors.black54,
                   border: Border.all(color: Colors.red.shade400, width: 1.5),
@@ -213,8 +216,9 @@ Widget buildGridImages(dynamic data, String type, {bool isEdit = false}) {
               ),
             if (!isApproved)
               Container(
-                width: 100.w,
-                height: 110.h,
+                width: double.infinity,
+                height: double.infinity,
+
                 decoration: BoxDecoration(
                   color: Colors.black54,
                   border: Border.all(color: Colors.red.shade400, width: 1.5),
@@ -244,33 +248,63 @@ Widget buildGridImages(dynamic data, String type, {bool isEdit = false}) {
                 ),
               ),
             if (isEdit)
-              Positioned(
-                top: 4,
-                right: 10,
-                child: GestureDetector(
-                  onTap: () {
-                    if (type == 'post') {
-                      Get.toNamed(
-                        Routes.editPost,
-                        arguments: {'postData': image},
-                      );
-                    } else {
-                      Get.toNamed(
-                        Routes.editOffer,
-                        arguments: {'offerData': image},
-                      );
-                    }
-                  },
-                  child: Container(
-                    padding: EdgeInsets.all(4.w),
-                    decoration: BoxDecoration(
-                      color: Colors.grey,
-                      shape: BoxShape.circle,
+              Align(
+                alignment: Alignment.topRight,
+                child: Padding(
+                  padding: EdgeInsets.only(top: 6.h, right: 6.w),
+                  child: GestureDetector(
+                    onTap: () {
+                      if (type == 'post') {
+                        Get.toNamed(
+                          Routes.editPost,
+                          arguments: {'postData': image},
+                        );
+                      } else {
+                        Get.toNamed(
+                          Routes.editOffer,
+                          arguments: {'offerData': image},
+                        );
+                      }
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(4.w),
+                      decoration: const BoxDecoration(
+                        color: Colors.grey,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(Icons.edit, color: Colors.white, size: 12.r),
                     ),
-                    child: Icon(Icons.edit, color: Colors.white, size: 12.r),
                   ),
                 ),
               ),
+            //
+            // Positioned(
+            //     top: 4,
+            //     right: 10,
+            //     child: GestureDetector(
+            //       onTap: () {
+            //         if (type == 'post') {
+            //           Get.toNamed(
+            //             Routes.editPost,
+            //             arguments: {'postData': image},
+            //           );
+            //         } else {
+            //           Get.toNamed(
+            //             Routes.editOffer,
+            //             arguments: {'offerData': image},
+            //           );
+            //         }
+            //       },
+            //       child: Container(
+            //         padding: EdgeInsets.all(4.w),
+            //         decoration: BoxDecoration(
+            //           color: Colors.grey,
+            //           shape: BoxShape.circle,
+            //         ),
+            //         child: Icon(Icons.edit, color: Colors.white, size: 12.r),
+            //       ),
+            //     ),
+            //   ),
           ],
         ),
       );
@@ -289,7 +323,6 @@ Future<Uint8List?> getVideoThumbnail(String url) async {
 
 bool isVideo(File file) {
   final ext = file.path.toLowerCase();
-  // print('extension+============>$ext');
   return ext.endsWith('.mp4') ||
       ext.endsWith('.mov') ||
       ext.endsWith('.avi') ||
@@ -326,12 +359,12 @@ Future<dynamic> _showPost(LBOController controller, {bool isEdit = false}) {
       constraints: BoxConstraints(maxHeight: Get.height * 0.85.h),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(Get.context!).scaffoldBackgroundColor,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
           boxShadow: [
             BoxShadow(
               blurRadius: 20,
-              color: Colors.black.withValues(alpha: 0.15),
+              color: Colors.black54.withValues(alpha: 0.15),
               offset: Offset(0, -2),
             ),
           ],
@@ -342,13 +375,13 @@ Future<dynamic> _showPost(LBOController controller, {bool isEdit = false}) {
             children: [
               // Drag handle
               Container(
-                padding: EdgeInsets.symmetric(vertical: 12),
+                padding: const EdgeInsets.symmetric(vertical: 12),
                 child: Container(
                   width: 40.w,
                   height: 4.h,
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade300,
-                    borderRadius: BorderRadius.circular(2),
+                    color: lightGrey,
+                    borderRadius: BorderRadius.circular(2.r),
                   ),
                 ),
               ),
@@ -374,7 +407,7 @@ Future<dynamic> _showPost(LBOController controller, {bool isEdit = false}) {
                             vertical: 8.h,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.grey.shade100,
+                            color: lightGrey,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Row(
@@ -432,7 +465,7 @@ Future<dynamic> _showPost(LBOController controller, {bool isEdit = false}) {
                             vertical: 8.h,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.grey.shade100,
+                            color: lightGrey,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Row(
@@ -475,10 +508,12 @@ Future<dynamic> _showPost(LBOController controller, {bool isEdit = false}) {
                             children: [
                               Container(
                                 decoration: BoxDecoration(
-                                  color: Colors.white,
+                                  color: Theme.of(
+                                    Get.context!,
+                                  ).scaffoldBackgroundColor,
                                   border: Border.all(
                                     width: 0.5,
-                                    color: Colors.grey.shade300,
+                                    color: lightGrey,
                                   ),
                                   borderRadius: BorderRadius.circular(16),
                                   boxShadow: [
@@ -546,14 +581,16 @@ Future<dynamic> _showPost(LBOController controller, {bool isEdit = false}) {
                                     child: Container(
                                       padding: EdgeInsets.all(8.w),
                                       decoration: BoxDecoration(
-                                        color: Colors.black.withValues(
-                                          alpha: 0.6,
-                                        ),
+                                        color: primaryBlack,
                                         shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: lightGrey,
+                                          width: 0.5,
+                                        ),
                                       ),
                                       child: Icon(
                                         Icons.edit,
-                                        color: Colors.white,
+                                        color: primaryColor,
                                         size: 18.r,
                                       ),
                                     ),
@@ -574,7 +611,7 @@ Future<dynamic> _showPost(LBOController controller, {bool isEdit = false}) {
                                   Icon(
                                     Icons.calendar_today_outlined,
                                     size: 14.r,
-                                    color: Colors.grey.shade600,
+                                    color: textGrey,
                                   ),
                                   SizedBox(width: 6.w),
                                   Text(
@@ -583,7 +620,7 @@ Future<dynamic> _showPost(LBOController controller, {bool isEdit = false}) {
                                         "",
                                     style: TextStyle(
                                       fontSize: 12.sp,
-                                      color: Colors.grey.shade700,
+                                      color: textGrey,
                                     ),
                                   ),
                                 ],
@@ -598,40 +635,7 @@ Future<dynamic> _showPost(LBOController controller, {bool isEdit = false}) {
                                   SizedBox(width: 8.w),
 
                                   // Comment count
-                                  Container(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 8.w,
-                                      vertical: 6.h,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey.shade50,
-                                      borderRadius: BorderRadius.circular(8.r),
-                                      border: Border.all(
-                                        color: Colors.grey.shade200,
-                                      ),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.comment_outlined,
-                                          size: 16.r,
-                                          color: Colors.grey.shade600,
-                                        ),
-                                        SizedBox(width: 6.w),
-                                        Text(
-                                          controller
-                                                  .singlePost['comments_count']
-                                                  ?.toString() ??
-                                              '0',
-                                          style: TextStyle(
-                                            fontSize: 14.sp,
-                                            color: Colors.grey.shade700,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
+                                  _buildComment(controller),
                                 ],
                               ),
                             ],
@@ -643,12 +647,11 @@ Future<dynamic> _showPost(LBOController controller, {bool isEdit = false}) {
                           Container(
                             padding: EdgeInsets.all(16.w),
                             decoration: BoxDecoration(
-                              color: Colors.grey.shade50,
+                              color: Theme.of(
+                                Get.context!,
+                              ).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(12.r),
-                              border: Border.all(
-                                color: Colors.grey.shade200,
-                                width: 1,
-                              ),
+                              border: Border.all(color: lightGrey, width: 1),
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -674,7 +677,7 @@ Future<dynamic> _showPost(LBOController controller, {bool isEdit = false}) {
                                       style: TextStyle(
                                         fontSize: 16.sp,
                                         fontWeight: FontWeight.w600,
-                                        color: Colors.black87,
+                                        color: primaryBlack,
                                       ),
                                     ),
                                   ],
@@ -690,7 +693,7 @@ Future<dynamic> _showPost(LBOController controller, {bool isEdit = false}) {
                                   style: TextStyle(
                                     fontSize: 15.sp,
                                     height: 1.6,
-                                    color: Colors.grey.shade700,
+                                    color: textLightGrey,
                                     letterSpacing: 0.2,
                                   ),
                                 ),
@@ -711,8 +714,33 @@ Future<dynamic> _showPost(LBOController controller, {bool isEdit = false}) {
       ),
     ),
     isScrollControlled: true,
-    backgroundColor: Colors.transparent,
+    backgroundColor: Colors.red.shade200,
     enableDrag: true,
+  );
+}
+
+Widget _buildComment(LBOController controller) {
+  return Container(
+    padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
+    decoration: BoxDecoration(
+      color: lightGrey,
+      borderRadius: BorderRadius.circular(8.r),
+      border: Border.all(color: textLightGrey),
+    ),
+    child: Row(
+      children: [
+        Icon(Icons.comment_outlined, size: 16.r, color: primaryBlack),
+        SizedBox(width: 6.w),
+        Text(
+          controller.singlePost['comments_count']?.toString() ?? '0',
+          style: TextStyle(
+            fontSize: 14.sp,
+            color: primaryBlack,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
+    ),
   );
 }
 
@@ -765,9 +793,9 @@ Widget _buildLikeIconData(LBOController controller) {
     child: Container(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
       decoration: BoxDecoration(
-        color: Colors.grey.shade50,
+        color: lightGrey,
         borderRadius: BorderRadius.circular(8.r),
-        border: Border.all(color: Colors.grey.shade200),
+        border: Border.all(color: textLightGrey),
       ),
       child: Row(
         children: [
@@ -793,7 +821,7 @@ Widget _buildLikeIconData(LBOController controller) {
                 ? Icon(Icons.favorite, color: Colors.red, size: 18.sp)
                 : HugeIcon(
                     icon: HugeIcons.strokeRoundedFavourite,
-                    color: Colors.grey.shade700,
+                    color: primaryBlack,
                     size: 18.sp,
                   );
           }),
@@ -802,7 +830,7 @@ Widget _buildLikeIconData(LBOController controller) {
             controller.singlePost['likes_count']?.toString() ?? '0',
             style: TextStyle(
               fontSize: 14.sp,
-              color: Colors.grey.shade700,
+              color: primaryBlack,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -820,7 +848,7 @@ Future<dynamic> _showOffer(LBOController controller, {bool isEdit = false}) {
       child: SafeArea(
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(Get.context!).scaffoldBackgroundColor,
             borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
           ),
           child: Obx(
@@ -829,16 +857,17 @@ Future<dynamic> _showOffer(LBOController controller, {bool isEdit = false}) {
               children: [
                 // Header with drag indicator
                 Container(
-                  padding: EdgeInsets.symmetric(vertical: 12),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
                   child: Container(
                     width: 40.w,
                     height: 4.h,
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
+                      color: lightGrey,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
                 ),
+
                 Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: 20.w,
@@ -849,7 +878,7 @@ Future<dynamic> _showOffer(LBOController controller, {bool isEdit = false}) {
                     children: [
                       // Previous Button
                       Opacity(
-                        opacity: controller.currentIndex.value > 0 ? 1.0 : 0.3,
+                        opacity: controller.currentIndex.value > 0 ? 1.0 : 0.5,
                         child: GestureDetector(
                           onTap: controller.currentIndex.value > 0
                               ? () {
@@ -862,7 +891,7 @@ Future<dynamic> _showOffer(LBOController controller, {bool isEdit = false}) {
                               vertical: 8.h,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.grey.shade100,
+                              color: lightGrey,
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Row(
@@ -905,7 +934,7 @@ Future<dynamic> _showOffer(LBOController controller, {bool isEdit = false}) {
                             controller.currentIndex.value <
                                 controller.currentPostsList.length - 1
                             ? 1.0
-                            : 0.3,
+                            : 0.5,
                         child: GestureDetector(
                           onTap:
                               controller.currentIndex.value <
@@ -920,7 +949,7 @@ Future<dynamic> _showOffer(LBOController controller, {bool isEdit = false}) {
                               vertical: 8.h,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.grey.shade100,
+                              color: lightGrey,
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Row(
@@ -936,6 +965,7 @@ Future<dynamic> _showOffer(LBOController controller, {bool isEdit = false}) {
                     ],
                   ),
                 ),
+
                 Expanded(
                   child: GestureDetector(
                     onHorizontalDragEnd: (details) {
@@ -959,10 +989,13 @@ Future<dynamic> _showOffer(LBOController controller, {bool isEdit = false}) {
                               children: [
                                 Container(
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(16),
+                                    color: Theme.of(
+                                      Get.context!,
+                                    ).scaffoldBackgroundColor,
+                                    borderRadius: BorderRadius.circular(16.r),
                                     border: Border.all(
                                       width: 0.5,
-                                      color: Colors.grey,
+                                      color: lightGrey,
                                     ),
                                   ),
                                   child: ClipRRect(
@@ -1026,14 +1059,18 @@ Future<dynamic> _showOffer(LBOController controller, {bool isEdit = false}) {
                                       child: Container(
                                         padding: EdgeInsets.all(8.w),
                                         decoration: BoxDecoration(
-                                          color: Colors.black.withValues(
-                                            alpha: 0.6,
+                                          color: primaryBlack.withValues(
+                                            alpha: 0.7,
                                           ),
                                           shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: lightGrey,
+                                            width: 0.5,
+                                          ),
                                         ),
                                         child: Icon(
                                           Icons.edit,
-                                          color: Colors.white,
+                                          color: primaryColor,
                                           size: 18.r,
                                         ),
                                       ),
@@ -1042,16 +1079,16 @@ Future<dynamic> _showOffer(LBOController controller, {bool isEdit = false}) {
                               ],
                             ),
 
-                            SizedBox(height: 20),
+                            const SizedBox(height: 20),
 
                             // Business Name
                             Text(
                               controller.singleOffer['business_name']
                                   .toString(),
                               style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 20.sp,
                                 fontWeight: FontWeight.w700,
-                                color: Colors.black87,
+                                color: primaryBlack,
                               ),
                             ),
 
@@ -1061,7 +1098,7 @@ Future<dynamic> _showOffer(LBOController controller, {bool isEdit = false}) {
                                   .toString(),
                               fontSize: 15.sp,
                               fontWeight: FontWeight.bold,
-                              color: Colors.grey.shade700,
+                              color: textLightGrey,
                               textAlign: TextAlign.start,
                             ),
 
@@ -1076,14 +1113,14 @@ Future<dynamic> _showOffer(LBOController controller, {bool isEdit = false}) {
                                 fontSize: 13.sp,
                                 maxLines: 10,
                                 textAlign: TextAlign.start,
-                                color: Colors.grey.shade700,
+                                color: textLightGrey,
                               ),
 
-                            SizedBox(height: 16),
+                            const SizedBox(height: 16),
 
                             // Date Range
                             Container(
-                              padding: EdgeInsets.symmetric(
+                              padding: const EdgeInsets.symmetric(
                                 horizontal: 12,
                                 vertical: 8,
                               ),
@@ -1116,7 +1153,7 @@ Future<dynamic> _showOffer(LBOController controller, {bool isEdit = false}) {
                               ),
                             ),
 
-                            SizedBox(height: 20),
+                            const SizedBox(height: 20),
 
                             // Highlights Section
                             if (controller.singleOffer['highlight_points'] !=
@@ -1127,12 +1164,12 @@ Future<dynamic> _showOffer(LBOController controller, {bool isEdit = false}) {
                                   Text(
                                     'Highlights',
                                     style: TextStyle(
-                                      fontSize: 16,
+                                      fontSize: 16.sp,
                                       fontWeight: FontWeight.w600,
-                                      color: Colors.black87,
+                                      color: primaryBlack,
                                     ),
                                   ),
-                                  SizedBox(height: 12),
+                                  const SizedBox(height: 12),
                                   Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -1146,13 +1183,12 @@ Future<dynamic> _showOffer(LBOController controller, {bool isEdit = false}) {
                                 ],
                               ),
 
-                            // SizedBox(height: 20),
                             Row(
                               children: [
                                 Icon(
                                   Icons.calendar_today_outlined,
                                   size: 14.r,
-                                  color: Colors.grey.shade600,
+                                  color: textLightGrey,
                                 ),
                                 SizedBox(width: 6),
                                 Text(
@@ -1161,7 +1197,7 @@ Future<dynamic> _showOffer(LBOController controller, {bool isEdit = false}) {
                                       "",
                                   style: TextStyle(
                                     fontSize: 12.sp,
-                                    color: Colors.grey.shade700,
+                                    color: textLightGrey,
                                   ),
                                 ),
                               ],
@@ -1433,11 +1469,7 @@ Widget buildHighlightPoint(String text) {
         Expanded(
           child: Text(
             text,
-            style: TextStyle(
-              fontSize: 14,
-              height: 1.4,
-              color: Colors.grey.shade700,
-            ),
+            style: TextStyle(fontSize: 14, height: 1.4, color: textLightGrey),
           ),
         ),
       ],

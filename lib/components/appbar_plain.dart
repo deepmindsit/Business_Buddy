@@ -22,16 +22,15 @@ class AppbarPlain extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      surfaceTintColor: Colors.white,
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      surfaceTintColor: Theme.of(context).scaffoldBackgroundColor,
       elevation: 0,
       flexibleSpace: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              Color(0XFFFF383C).withValues(alpha: 0.4),
-              Colors.white.withValues(alpha: 0.5),
-            ],
+            colors: Theme.of(context).brightness == Brightness.light
+                ? [primaryColor.withValues(alpha: 0.5), Colors.white]
+                : [primaryColor, Colors.black54],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -41,7 +40,7 @@ class AppbarPlain extends StatelessWidget implements PreferredSizeWidget {
       title: CustomText(
         title: title,
         fontSize: 22.sp,
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.bold,color: primaryBlack,
       ),
     );
 

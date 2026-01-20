@@ -19,7 +19,7 @@ class _FollowingListState extends State<FollowingList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: _buildAppBar(),
       body: Obx(() {
         /// 🔹 Initial Loading (Shimmer)
@@ -67,7 +67,7 @@ class _FollowingListState extends State<FollowingList> {
                             child: Container(
                               margin: EdgeInsets.symmetric(horizontal: 16.w),
                               decoration: BoxDecoration(
-                                color: Colors.white,
+                                color: Theme.of(context).scaffoldBackgroundColor,
                                 borderRadius: BorderRadius.circular(12.r),
                                 border: Border.all(
                                   color: Colors.grey.withValues(alpha: 0.3),
@@ -106,14 +106,14 @@ class _FollowingListState extends State<FollowingList> {
                                                 '',
                                             fontSize: 14.sp,
                                             fontWeight: FontWeight.w600,
-                                            textAlign: TextAlign.start,
+                                            textAlign: TextAlign.start,color: primaryBlack,
                                           ),
                                           Text(
                                             business['category']?.toString() ??
                                                 '',
                                             style: TextStyle(
                                               fontSize: 12.sp,
-                                              color: Colors.grey[600],
+                                              color: textGrey,
                                             ),
                                           ),
                                           SizedBox(height: 6.h),
@@ -265,17 +265,16 @@ class _FollowingListState extends State<FollowingList> {
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      surfaceTintColor: Colors.white,
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      surfaceTintColor: Theme.of(context).scaffoldBackgroundColor,
       elevation: 0,
       centerTitle: true,
       flexibleSpace: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              const Color(0XFFFF383C).withValues(alpha: 0.4),
-              Colors.white.withValues(alpha: 0.5),
-            ],
+            colors: Theme.of(context).brightness == Brightness.light
+                ? [primaryColor.withValues(alpha: 0.5), Colors.white]
+                : [primaryColor, Colors.black54],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -285,6 +284,7 @@ class _FollowingListState extends State<FollowingList> {
         title: "Following",
         fontSize: 22.sp,
         fontWeight: FontWeight.bold,
+        color: primaryBlack,
       ),
     );
   }

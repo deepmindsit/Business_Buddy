@@ -24,7 +24,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
           }
         },
         child: Scaffold(
-          backgroundColor: scaffoldBackground,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           body: AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
             transitionBuilder: (child, animation) {

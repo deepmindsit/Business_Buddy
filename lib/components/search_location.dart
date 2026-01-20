@@ -28,7 +28,7 @@ class _SearchLocationState extends State<SearchLocation> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(20.r),
           topRight: Radius.circular(20.r),
@@ -90,7 +90,7 @@ class _SearchLocationState extends State<SearchLocation> {
             style: TextStyle(
               fontSize: 18.sp,
               fontWeight: FontWeight.w600,
-              color: Colors.black87,
+              color: primaryBlack,
             ),
           ),
         ],
@@ -106,10 +106,10 @@ class _SearchLocationState extends State<SearchLocation> {
         maxLines: 1,
         keyboardType: TextInputType.text,
         controller: controller.addressController,
-        style: TextStyle(color: Colors.black, fontSize: 16.sp),
+        style: TextStyle(fontSize: 16.sp),
         decoration: InputDecoration(
           filled: true,
-          fillColor: Colors.white,
+          fillColor: Theme.of(context).scaffoldBackgroundColor,
           suffixIcon: controller.addressController.text.isNotEmpty
               ? GestureDetector(
                   onTap: () {
@@ -132,8 +132,6 @@ class _SearchLocationState extends State<SearchLocation> {
                   ),
                 )
               : Icon(Icons.search, color: mainTextGrey),
-
-          // prefixIcon: Icon(Icons.search, color: primaryColor, size: 22),
           hintText: 'Enter your location...',
           hintStyle: TextStyle(color: mainTextGrey, fontSize: 14.sp),
           contentPadding: EdgeInsets.all(16.w),
@@ -197,7 +195,9 @@ class _SearchLocationState extends State<SearchLocation> {
           child: Container(
             padding: EdgeInsets.all(16.w),
             decoration: BoxDecoration(
-              color: primaryColor.withValues(alpha: 0.1),
+              color: Theme.of(context).brightness == Brightness.light
+                  ? primaryColor.withValues(alpha: 0.1)
+                  : Get.theme.cardColor,
               border: Border.all(color: primaryColor.withValues(alpha: 0.3)),
               borderRadius: BorderRadius.circular(12.r),
             ),
@@ -214,7 +214,9 @@ class _SearchLocationState extends State<SearchLocation> {
                   Text(
                     'Use Current Location',
                     style: TextStyle(
-                      color: primaryColor,
+                      color: Theme.of(context).brightness == Brightness.light
+                          ? primaryColor
+                          : Colors.white,
                       fontWeight: FontWeight.w600,
                       fontSize: 14.sp,
                     ),
@@ -249,7 +251,7 @@ class _SearchLocationState extends State<SearchLocation> {
   Widget _buildResultsList() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey.shade50,
+        color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(20.r),
           topRight: Radius.circular(20.r),
@@ -266,7 +268,7 @@ class _SearchLocationState extends State<SearchLocation> {
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w500,
-                    color: Colors.grey.shade600,
+                    color: textGrey,
                   ),
                 ),
                 SizedBox(width: 8.w),
@@ -316,7 +318,8 @@ class _SearchLocationState extends State<SearchLocation> {
                           width: 36.w,
                           height: 36.h,
                           decoration: BoxDecoration(
-                            color: primaryColor.withValues(alpha: 0.1),
+                            color:Theme.of(context).brightness == Brightness.light
+                                ? primaryColor.withValues(alpha: 0.1) : Colors.white,
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
@@ -333,7 +336,7 @@ class _SearchLocationState extends State<SearchLocation> {
                                 '',
                             fontSize: 14.sp,
                             fontWeight: FontWeight.w500,
-                            color: Colors.black87,
+                            color: primaryBlack,
                             maxLines: 10,
                             textAlign: TextAlign.start,
                             // overflow: TextOverflow.ellipsis,

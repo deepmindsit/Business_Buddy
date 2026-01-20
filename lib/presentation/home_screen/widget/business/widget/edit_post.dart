@@ -24,7 +24,7 @@ class _EditPostState extends State<EditPost> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppbarPlain(title: "Edit Post"),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.w),
@@ -37,6 +37,7 @@ class _EditPostState extends State<EditPost> {
               Divider(),
               buildTextField(
                 maxLines: 3,
+                fillColor: Theme.of(context).scaffoldBackgroundColor,
                 controller: controller.postAbout,
                 hintText: 'About Details',
                 validator: (value) =>

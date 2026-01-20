@@ -7,7 +7,7 @@ class VideoPlayerControllerX extends GetxController {
   VideoPlayerControllerX(this.url);
 
   late bool isYouTube;
-
+  final isMuted = false.obs;
   VideoPlayerController? videoController;
   ChewieController? chewieController;
   YoutubePlayerController? youtubeController;
@@ -83,6 +83,21 @@ class VideoPlayerControllerX extends GetxController {
       videoController?.play();
     }
     isPlaying.value = true;
+  }
+
+  /// 🔊 Toggle mute / unmute
+  void toggleMute() {
+    isMuted.toggle();
+
+    if (isYouTube) {
+      if (isMuted.value) {
+        youtubeController?.mute();
+      } else {
+        youtubeController?.unMute();
+      }
+    } else {
+      chewieController?.videoPlayerController.setVolume(isMuted.value ? 0 : 1);
+    }
   }
 
   @override

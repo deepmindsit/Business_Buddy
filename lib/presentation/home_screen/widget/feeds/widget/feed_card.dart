@@ -20,7 +20,7 @@ class FeedCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       surfaceTintColor: Colors.white,
-      color: Get.theme.cardColor,
+      color: Theme.of(context).cardColor,
       elevation: 0,
       margin: EdgeInsets.all(8.w),
       shape: RoundedRectangleBorder(

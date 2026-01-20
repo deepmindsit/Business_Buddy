@@ -24,11 +24,11 @@ class _PolicyDataState extends State<PolicyData> {
     return Obx(
       () => controller.detailsLoading.isTrue
           ? Container(
-              color: Colors.white,
+              color: Theme.of(context).scaffoldBackgroundColor,
               child: LoadingWidget(color: primaryColor),
             )
           : Scaffold(
-              backgroundColor: Colors.white,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               appBar: AppbarPlain(
                 title: controller.legalPageDetails['name'] ?? '',
               ),

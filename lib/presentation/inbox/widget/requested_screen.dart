@@ -28,7 +28,7 @@ class _RequestedScreenState extends State<RequestedScreen> {
               height: 40.h,
               margin: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
               decoration: BoxDecoration(
-                color: scaffoldBackground,
+                color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(12.r),
                 border: Border.all(color: lightGrey, width: 0.5),
               ),

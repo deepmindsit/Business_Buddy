@@ -44,7 +44,7 @@ class _InstagramPostViewState extends State<InstagramPostView> {
   Widget build(BuildContext context) {
     return PopScope(
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppbarPlain(title: "Post"),
         body: Obx(
           () => controller.isSinglePostLoading.isTrue
@@ -58,7 +58,6 @@ class _InstagramPostViewState extends State<InstagramPostView> {
                           _buildPostHeader(),
                           SizedBox(
                             height: Get.height * 0.7.h,
-                            // aspectRatio: 1,
                             child: _buildPostMediaWithIcons(),
                           ),
                           _buildCaptionSection(),
@@ -78,9 +77,7 @@ class _InstagramPostViewState extends State<InstagramPostView> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: Colors.grey.shade200, width: 0.5),
-        ),
+        border: Border(bottom: BorderSide(color: lightGrey, width: 0.5)),
       ),
       child: Row(
         children: [
@@ -88,7 +85,7 @@ class _InstagramPostViewState extends State<InstagramPostView> {
             onTap: _openBusinessDetails,
             child: CircleAvatar(
               radius: 20,
-              backgroundColor: Colors.grey.shade200,
+              backgroundColor: lightGrey,
               child: ClipOval(
                 child: CachedNetworkImage(
                   placeholder: (_, __) => Image.asset(Images.defaultImage),
@@ -122,7 +119,7 @@ class _InstagramPostViewState extends State<InstagramPostView> {
                     fontSize: 14.5.sp,
                     fontWeight: FontWeight.w600,
                     textAlign: TextAlign.start,
-                    color: Colors.black,
+                    color: primaryBlack,
                     maxLines: 1,
                   ),
                   const SizedBox(height: 2),
@@ -132,7 +129,7 @@ class _InstagramPostViewState extends State<InstagramPostView> {
                         title: controller.singlePost['category'] ?? '',
                         fontSize: 10.sp,
                         textAlign: TextAlign.start,
-                        color: Colors.grey.shade600,
+                        color: textLightGrey,
                         maxLines: 1,
                       ),
                       Padding(
@@ -142,7 +139,7 @@ class _InstagramPostViewState extends State<InstagramPostView> {
                           height: 3.r,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: Colors.grey.shade400,
+                            color: textLightGrey,
                           ),
                         ),
                       ),
@@ -169,7 +166,7 @@ class _InstagramPostViewState extends State<InstagramPostView> {
       title: getTimeAgo(createdAt),
       fontSize: 10.sp,
       textAlign: TextAlign.start,
-      color: Colors.grey.shade600,
+      color: textLightGrey,
       maxLines: 1,
     );
   }
@@ -178,7 +175,6 @@ class _InstagramPostViewState extends State<InstagramPostView> {
     final image = controller.singlePost['image'] ?? '';
     final video = controller.singlePost['video'] ?? '';
     final mediaType = controller.singlePost['media_type'] ?? '';
-    // final heroTag = widget.heroTag ?? 'offer_${controller.singlePost['id']}';
 
     return Container(
       color: Colors.black,
@@ -358,8 +354,8 @@ class _InstagramPostViewState extends State<InstagramPostView> {
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: Colors.grey.shade200)),
+        color: Theme.of(context).scaffoldBackgroundColor,
+        border: Border(top: BorderSide(color: lightGrey)),
       ),
       child: _buildCaption(),
     );
@@ -369,20 +365,20 @@ class _InstagramPostViewState extends State<InstagramPostView> {
     final content = controller.singlePost['details'] ?? '';
     return RichText(
       text: TextSpan(
-        style: TextStyle(fontSize: 13.5.sp, color: Colors.black, height: 1.4),
+        style: TextStyle(fontSize: 13.5.sp, color: primaryBlack, height: 1.4),
         children: [
           TextSpan(
             text: '${controller.singlePost['business_name']} ',
             style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.w600,
+              color: primaryBlack,
+              fontWeight: FontWeight.bold,
               fontSize: 14,
               height: 1.5,
             ),
           ),
           TextSpan(
             text: content,
-            style: TextStyle(color: Colors.black, fontSize: 14, height: 1.5),
+            style: TextStyle(color: primaryBlack, fontSize: 14, height: 1.5),
           ),
         ],
       ),

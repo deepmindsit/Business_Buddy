@@ -27,7 +27,6 @@ class _BusinessCardState extends State<BusinessCard> {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 8.h),
       decoration: BoxDecoration(
-        // color: const Color(0xffF4F4F4),
         color: Get.theme.cardColor,
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
@@ -170,15 +169,17 @@ class _BusinessCardState extends State<BusinessCard> {
   Widget _buildSelf() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey[100],
+        // color: Colors.grey[100],
         borderRadius: BorderRadius.circular(12.r),
       ),
       child: PopupMenuButton<String>(
-        color: Colors.white,
+        color: Theme.of(context).brightness == Brightness.light
+            ? Colors.white
+            : Get.theme.cardColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16.r),
         ),
-        elevation: 0,
+        elevation: 2,
         popUpAnimationStyle: AnimationStyle(curve: Curves.easeInOut),
         padding: EdgeInsets.zero,
         surfaceTintColor: Colors.white,
@@ -186,7 +187,9 @@ class _BusinessCardState extends State<BusinessCard> {
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: primaryColor.withValues(alpha: 0.1),
+            color: Theme.of(context).brightness == Brightness.light
+                ? primaryColor.withValues(alpha: 0.1)
+                : Colors.white70,
           ),
           child: Icon(Icons.more_vert, color: primaryColor),
         ),
@@ -219,7 +222,9 @@ class _BusinessCardState extends State<BusinessCard> {
           width: 40.r,
           height: 40.r,
           decoration: BoxDecoration(
-            color: primaryColor.withValues(alpha: 0.1),
+            color: Theme.of(context).brightness == Brightness.light
+                ? primaryColor.withValues(alpha: 0.1)
+                : Colors.white70,
             shape: BoxShape.circle,
           ),
           child: Icon(icon, size: 20.r, color: primaryColor),
@@ -312,7 +317,9 @@ class _BusinessCardState extends State<BusinessCard> {
               height: 40.r,
               padding: EdgeInsets.all(8.r),
               decoration: BoxDecoration(
-                color: primaryColor.withValues(alpha: 0.1),
+                color: Theme.of(context).brightness == Brightness.light
+                    ? primaryColor.withValues(alpha: 0.1)
+                    : Colors.white70,
                 shape: BoxShape.circle,
               ),
               child: HugeIcon(
@@ -363,7 +370,7 @@ class _BusinessCardState extends State<BusinessCard> {
         children: [
           Icon(icon, color: color),
           const SizedBox(width: 12),
-          Text(text),
+          Text(text, style: TextStyle(color: textDarkGrey)),
         ],
       ),
     );

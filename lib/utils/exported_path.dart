@@ -31,7 +31,6 @@ export 'package:businessbuddy/presentation/business_partner/widget/edit_recruitm
 
 //widget
 export 'package:businessbuddy/network/all_url.dart';
-export 'package:businessbuddy/utils/app_colors.dart';
 export 'package:businessbuddy/utils/color.dart';
 export 'package:businessbuddy/di/injection.config.dart';
 export 'package:businessbuddy/di/injection.dart';

@@ -30,23 +30,23 @@ class _InstagramOfferViewState extends State<InstagramOfferView> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: false,
+      canPop: true,
       onPopInvokedWithResult: (_, didPop) {
-        if (didPop != null) {
-          // Route was already popped by system
-          return;
-        }
-
-        // 🔥 If we reach here, pop was NOT handled automatically
-        if (Navigator.of(context).canPop()) {
-          Navigator.of(context).pop();
-        } else {
-          // Opened via deep link → go to Main/Home
-          Get.offAllNamed(Routes.mainScreen);
-        }
+        // if (didPop != null) {
+        //   // Route was already popped by system
+        //   return;
+        // }
+        // Get.offAllNamed(Routes.mainScreen);
+        // // 🔥 If we reach here, pop was NOT handled automatically
+        // // if (Navigator.of(context).canPop()) {
+        // //   Get.back();
+        // // } else {
+        // //   // Opened via deep link → go to Main/Home
+        // //   Get.offAllNamed(Routes.mainScreen);
+        // // }
       },
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppbarPlain(title: 'Special Offer'),
         body: Obx(
           () => controller.isSingleOfferLoading.isTrue
@@ -89,9 +89,7 @@ class _InstagramOfferViewState extends State<InstagramOfferView> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: Colors.grey.shade200, width: 0.5),
-        ),
+        border: Border(bottom: BorderSide(color: lightGrey, width: 0.5)),
       ),
       child: Row(
         children: [
@@ -99,7 +97,7 @@ class _InstagramOfferViewState extends State<InstagramOfferView> {
             onTap: _openBusinessDetails,
             child: CircleAvatar(
               radius: 20,
-              backgroundColor: Colors.grey.shade200,
+              backgroundColor: lightGrey,
               child: ClipOval(
                 child: FadeInImage(
                   placeholder: const AssetImage(Images.defaultImage),
@@ -133,22 +131,22 @@ class _InstagramOfferViewState extends State<InstagramOfferView> {
                     fontSize: 15.sp,
                     fontWeight: FontWeight.w600,
                     textAlign: TextAlign.start,
-                    color: Colors.black,
+                    color: primaryBlack,
                     maxLines: 1,
                   ),
                   const SizedBox(height: 2),
                   Row(
                     children: [
-                      Expanded(
+                      Flexible(
                         child: CustomText(
                           title: controller.singleOffer['category'] ?? '',
                           fontSize: 10.sp,
                           textAlign: TextAlign.start,
-                          color: Colors.grey.shade600,
+                          color: textSmall,
                           maxLines: 1,
                         ),
                       ),
-
+                      const SizedBox(width: 4),
                       _dot(),
                       const SizedBox(width: 4),
                       _buildTimeDisplay(),
@@ -210,10 +208,7 @@ class _InstagramOfferViewState extends State<InstagramOfferView> {
   Widget _dot() => Container(
     width: 3,
     height: 3,
-    decoration: BoxDecoration(
-      shape: BoxShape.circle,
-      color: Colors.grey.shade400,
-    ),
+    decoration: BoxDecoration(shape: BoxShape.circle, color: textLightGrey),
   );
 
   Widget _buildTimeDisplay() {
@@ -224,7 +219,7 @@ class _InstagramOfferViewState extends State<InstagramOfferView> {
       title: getTimeAgo(createdAt),
       fontSize: 10.sp,
       textAlign: TextAlign.start,
-      color: Colors.grey.shade600,
+      color: textSmall,
       maxLines: 1,
     );
   }
@@ -406,12 +401,13 @@ class _InstagramOfferViewState extends State<InstagramOfferView> {
             textAlign: TextAlign.start,
             maxLines: 2,
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           // Offer Description
           CustomText(
             title: details,
             fontSize: 14.sp,
             textAlign: TextAlign.start,
+            // color: ,
             style: TextStyle(fontSize: 14.sp, height: 1.5),
             maxLines: 2,
           ),
@@ -450,12 +446,12 @@ class _InstagramOfferViewState extends State<InstagramOfferView> {
           Text(
             'Highlights:',
             style: TextStyle(
-              color: Colors.black,
+              color: primaryBlack,
               fontSize: 14.sp,
               fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Column(
             children: (_showAllPoints ? points : points.take(maxVisiblePoints))
                 .map<Widget>((point) {
@@ -494,27 +490,27 @@ class _InstagramOfferViewState extends State<InstagramOfferView> {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.grey.shade50,
+          color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.grey.shade200),
+          border: Border.all(color: lightGrey),
         ),
         child: Row(
           children: [
             Icon(Icons.calendar_today, color: primaryColor, size: 20),
-            SizedBox(width: 12),
+            const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Valid Until',
-                    style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                    style: TextStyle(color: textSmall, fontSize: 12.sp),
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
                     '$startDate - $endDate',
                     style: TextStyle(
-                      color: Colors.black,
+                      color: primaryBlack,
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
