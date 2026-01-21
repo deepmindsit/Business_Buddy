@@ -12,9 +12,9 @@ class AppShare {
   }) {
     switch (type) {
       case ShareEntityType.post:
-        return '$_baseUrl/post/$id';
+        return '$_baseUrl/app/post/$id';
       case ShareEntityType.offer:
-        return '$_baseUrl/offer/$id';
+        return '$_baseUrl/app/offer/$id';
     }
   }
 

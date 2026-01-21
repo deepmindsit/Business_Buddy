@@ -71,6 +71,8 @@ abstract class ApiService {
     @Part(name: "lat_long") String? latLong,
     @Part(name: "user_id") String? userId,
     @Part(name: "page_number") String pageNo,
+    @Part(name: "keyword") String keyword,
+    @Part(name: "location") String location,
   );
 
   @POST(AllUrl.businessDetails)

@@ -397,7 +397,9 @@ class OfferCard extends StatelessWidget {
           title: data['offer_name'] ?? '',
           fontSize: 16.sp,
           fontWeight: FontWeight.w600,
-          color: primaryColor,
+          color: Theme.of(Get.context!).brightness == Brightness.light
+              ? primaryColor
+              : lightRed,
           textAlign: TextAlign.start,
           maxLines: 2,
         ),

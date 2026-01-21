@@ -1,5 +1,4 @@
-import 'package:businessbuddy/utils/exported_path.dart' hide Position;
-import 'package:geolocator/geolocator.dart';
+import 'package:businessbuddy/utils/exported_path.dart';
 
 @lazySingleton
 class ExplorerController extends GetxController {
@@ -13,7 +12,11 @@ class ExplorerController extends GetxController {
   int perPage = 10;
   bool hasMore = true;
   final isLoadMore = false.obs;
-
+  final address = ''.obs;
+  final addressList = [].obs;
+  final addressController = TextEditingController();
+  final lat = ''.obs;
+  final lng = ''.obs;
   Future<void> getCategories({
     bool showLoading = true,
     bool isRefresh = false,
@@ -75,6 +78,8 @@ class ExplorerController extends GetxController {
   int pertBusinessPage = 10;
   bool hastBusinessMore = true;
   final isBusinessLoadMore = false.obs;
+  final searchController = TextEditingController();
+  final searchText = ''.obs;
 
   Future<void> getBusinesses(
     String catId, {
@@ -92,17 +97,21 @@ class ExplorerController extends GetxController {
         ? isBusinessLoading.value = showLoading
         : isBusinessLoadMore.value = true;
 
-    // if (showLoading) isBusinessLoading.value = true;
     final userId = await LocalStorage.getString('user_id') ?? '';
 
     try {
-      final lat = getIt<LocationController>().latitude.value.toString();
-      final lng = getIt<LocationController>().longitude.value.toString();
+      final latitude = getIt<LocationController>().latitude.value.toString();
+      final longitude = getIt<LocationController>().longitude.value.toString();
+      final String location = lat.value.isNotEmpty && lng.value.isNotEmpty
+          ? '${lat.value},${lng.value}'
+          : '';
       final response = await _apiService.explore(
         catId,
-        '$lat,$lng',
+        '$latitude,$longitude',
         userId,
         currentBusinessPage.toString(),
+        searchController.text.trim(),
+        location,
       );
       if (response['common']['status'] == true) {
         final data = response['data'];
@@ -145,9 +154,6 @@ class ExplorerController extends GetxController {
     final userId = await LocalStorage.getString('user_id') ?? '';
     if (showLoading) businessDetails.clear();
     try {
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
       final lat = getIt<LocationController>().latitude.value.toString();
       final lng = getIt<LocationController>().longitude.value.toString();
       final response = await _apiService.businessDetails(

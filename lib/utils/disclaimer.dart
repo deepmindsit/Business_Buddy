@@ -1,3 +1,4 @@
+import 'package:businessbuddy/utils/color.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -7,8 +8,8 @@ class DisclaimerDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      backgroundColor: Colors.white,
-      surfaceTintColor: Colors.white,
+      backgroundColor: Theme.of(context).cardColor,
+      surfaceTintColor: Theme.of(context).scaffoldBackgroundColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       insetPadding: const EdgeInsets.symmetric(horizontal: 24),
       child: Padding(
@@ -36,6 +37,8 @@ class DisclaimerDialog extends StatelessWidget {
               () => Row(
                 children: [
                   Checkbox(
+                    activeColor: primaryColor,
+                    side: BorderSide(color: Theme.of(context).scaffoldBackgroundColor),
                     value: isChecked.value,
                     onChanged: (value) {
                       isChecked.value = value ?? false;
@@ -55,6 +58,10 @@ class DisclaimerDialog extends StatelessWidget {
               children: [
                 Expanded(
                   child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor:  Theme.of(context).scaffoldBackgroundColor,
+                      side: BorderSide(color: primaryColor),
+                    ),
                     onPressed: () => Get.back(result: false),
                     child: const Text('Cancel'),
                   ),
@@ -63,6 +70,10 @@ class DisclaimerDialog extends StatelessWidget {
                 Expanded(
                   child: Obx(
                     () => ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: primaryColor,
+                        foregroundColor: Colors.white,
+                      ),
                       onPressed: isChecked.value
                           ? () => Get.back(result: true)
                           : null, // disables button

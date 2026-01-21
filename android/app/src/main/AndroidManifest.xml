@@ -59,7 +59,8 @@
 
                 <data
                     android:scheme="https"
-                    android:host="businessbuddy.deepmindsit.com" />
+                    android:host="businessbuddy.deepmindsit.com"
+                    android:pathPrefix="/app"/>
             </intent-filter>
             <intent-filter>
                 <action android:name="FLUTTER_NOTIFICATION_CLICK" />

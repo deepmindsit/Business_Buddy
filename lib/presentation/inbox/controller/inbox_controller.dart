@@ -38,6 +38,7 @@ class InboxController extends GetxController {
 
     // if (showLoading) isChatLoading.value = true;
     final userId = await LocalStorage.getString('user_id') ?? '';
+    print('userId==========>$userId');
     // allChats.clear();
     try {
       final response = await _apiService.getChatList(

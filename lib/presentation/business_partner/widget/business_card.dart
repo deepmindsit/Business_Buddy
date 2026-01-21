@@ -349,7 +349,7 @@ class _BusinessCardState extends State<BusinessCard> {
           children: [
             TextSpan(
               text: secondText,
-              style: TextStyle(color: textGrey, fontWeight: FontWeight.w400),
+              style: TextStyle(color: inverseColor),
             ),
           ],
         ),

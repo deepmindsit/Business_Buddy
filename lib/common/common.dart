@@ -4,6 +4,8 @@ import 'package:get_thumbnail_video/video_thumbnail.dart';
 import 'package:businessbuddy/utils/exported_path.dart';
 import 'package:get_thumbnail_video/index.dart';
 
+import '../utils/color.dart';
+
 Widget buildReviewTile({
   required String userName,
   required String review,
@@ -1703,14 +1705,14 @@ void expandContent(dynamic data) {
   // Implement content expansion
   Get.dialog(
     AlertDialog(
-      surfaceTintColor: Colors.white,
-      backgroundColor: Colors.white,
+      surfaceTintColor: Theme.of(Get.context!).scaffoldBackgroundColor,
+      backgroundColor: Theme.of(Get.context!).cardColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
       content: SingleChildScrollView(
         child: CustomText(
           title: data ?? '',
           fontSize: 14.sp,
-          maxLines: 30,
+          maxLines: 30,color:inverseColor,
           textAlign: TextAlign.start,
         ),
       ),

@@ -168,7 +168,7 @@ class _AddRecruitmentState extends State<AddRecruitment> {
           popupProps: PopupPropsMultiSelection.menu(
             showSelectedItems: false,
             menuProps: MenuProps(
-              backgroundColor: Colors.white,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(8),
             ),
             constraints: const BoxConstraints(maxHeight: 300),

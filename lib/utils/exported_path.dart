@@ -89,7 +89,7 @@ export 'package:businessbuddy/components/notification_service.dart';
 export 'package:businessbuddy/components/video_player.dart';
 export 'package:businessbuddy/components/location_search_field.dart';
 export 'package:businessbuddy/components/video_preview.dart';
-export 'package:businessbuddy/utils/app_share.dart';
+export 'package:businessbuddy/components/app_share.dart';
 export 'package:businessbuddy/utils/theme.dart';
 
 //controller

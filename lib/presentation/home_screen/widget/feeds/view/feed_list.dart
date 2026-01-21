@@ -469,16 +469,6 @@ class _NewFeedState extends State<NewFeed> {
     });
   }
 
-  int findFeedIndex(dynamic item) {
-    return controller.feedList.indexWhere((e) {
-      if (item['type'] == 'offer') {
-        return e['id'].toString() == item['id'].toString();
-      } else {
-        return e['post_id'].toString() == item['post_id'].toString();
-      }
-    });
-  }
-
   void _onFollow(dynamic item) async {
     final businessId = item['business_id'].toString();
 

@@ -20,9 +20,8 @@ class Images {
   static const emptyBusiness = 'assets/images/empty_business.png';
   static const defaultImage = 'assets/images/default.png';
   static const defaultSlider = 'assets/images/default_slider.jpg';
-  static const hotelImgLarge = 'assets/images/hotel_img_large.png';
-  static const offerImage = 'assets/images/offer_image.png';
   static const appIcon = 'assets/images/app_icon.png';
+  static const logoText = 'assets/images/logo_text.png';
   static const appMaintenance = 'assets/images/app_maintenance.png';
   static const noNotification = 'assets/images/ic_notitication.png';
   static const video = 'assets/icons/ic_video.png';

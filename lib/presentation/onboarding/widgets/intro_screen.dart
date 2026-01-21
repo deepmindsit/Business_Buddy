@@ -52,9 +52,12 @@ class IntroScreen extends StatelessWidget {
       },
 
       showSkipButton: true,
-      skip: const Text("Skip"),
-      next: const Icon(Icons.arrow_forward),
-      done: const Text("Done", style: TextStyle(fontWeight: FontWeight.bold)),
+      skip: const Text("Skip", style: TextStyle(color: primaryColor)),
+      next: const Icon(Icons.arrow_forward, color: Colors.grey),
+      done: const Text(
+        "Done",
+        style: TextStyle(fontWeight: FontWeight.bold, color: primaryColor),
+      ),
       dotsDecorator: getDotDecoration(),
     );
   }
@@ -77,7 +80,7 @@ class IntroScreen extends StatelessWidget {
         child: CustomText(
           title: body,
           textAlign: TextAlign.center,
-          color: textGrey,
+          color: inverseColor,
           fontSize: 16.sp,
           maxLines: 3,
           style: const TextStyle(height: 1.5),

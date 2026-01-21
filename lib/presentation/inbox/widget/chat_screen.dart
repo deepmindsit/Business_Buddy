@@ -124,12 +124,23 @@ class _ChatScreenState extends State<ChatScreen> {
     return ListTile(
       dense: true,
       leading: CircleAvatar(
-        backgroundImage: NetworkImage(
-          chat['self_business_requirement'] == true
-              ? chat['user_profile_image'] ?? ''
-              : chat['business_requirement_user_profile_image'] ?? '',
+        child: ClipOval(
+          child: CachedNetworkImage(
+            width: 44,
+            height: 44,
+            fit: BoxFit.cover,
+            imageUrl: chat['self_business_requirement'] == true
+                ? (chat['user_profile_image'] ?? '')
+                : (chat['business_requirement_user_profile_image'] ?? ''),
+            placeholder: (_, __) => Image.asset(Images.defaultImage),
+            errorWidget: (_, __, ___) => Image.asset(Images.defaultImage),
+          ),
         ),
-        //Images.hotelImg),
+        // backgroundImage: NetworkImage(
+        //   chat['self_business_requirement'] == true
+        //       ? chat['user_profile_image'] ?? ''
+        //       : chat['business_requirement_user_profile_image'] ?? '',
+        // ),
       ),
       title: CustomText(
         title: chat['business_requirement_name'] ?? '',

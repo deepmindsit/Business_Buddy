@@ -60,8 +60,8 @@ class _ReviewDialogState extends State<ReviewDialog> {
     } else {
       Get.dialog(
         AlertDialog(
-          surfaceTintColor: Colors.white,
-          backgroundColor: Colors.white,
+          surfaceTintColor: Theme.of(context).scaffoldBackgroundColor,
+          backgroundColor: Get.theme.cardColor,
           title: const Text('Rating Required'),
           content: const Text('Please select a rating before submitting.'),
           actions: [

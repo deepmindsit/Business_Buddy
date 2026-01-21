@@ -378,7 +378,7 @@ class _HomeScreenState extends State<HomeScreen> {
               physics: const NeverScrollableScrollPhysics(),
               padding: const EdgeInsets.all(8),
               itemCount: 6,
-              separatorBuilder: (_, __) =>const SizedBox(height: 10),
+              separatorBuilder: (_, __) => const SizedBox(height: 10),
               itemBuilder: (context, index) => const BusinessCardShimmer(),
             )
           : SectionContainer(

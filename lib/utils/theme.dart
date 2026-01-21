@@ -13,8 +13,8 @@ class AppTheme {
     textTheme: const TextTheme(
       bodyLarge: TextStyle(color: Colors.black),
       bodyMedium: TextStyle(color: Colors.black54),
-      headlineSmall: TextStyle(color: Colors.white),
-      bodySmall: TextStyle(color: Colors.grey),
+      headlineSmall: TextStyle(color: Color(0xff9CA3AF)),
+      bodySmall: TextStyle(color: Color(0xff111827)),
     ),
   );
 
@@ -30,8 +30,8 @@ class AppTheme {
     textTheme: const TextTheme(
       bodyLarge: TextStyle(color: Colors.white),
       bodyMedium: TextStyle(color: Colors.white70),
-      bodySmall: TextStyle(color: Colors.grey),
-      headlineSmall: TextStyle(color: Colors.black),
+      bodySmall: TextStyle(color: Color(0xffFFFFFF)),
+      headlineSmall: TextStyle(color: Color(0xff9CA3AF)),
     ),
   );
 }
