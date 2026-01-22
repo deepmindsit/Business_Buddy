@@ -1,3 +1,4 @@
+import 'package:businessbuddy/utils/disclaimer.dart';
 import 'package:businessbuddy/utils/exported_path.dart' hide Position;
 
 @lazySingleton
@@ -10,6 +11,7 @@ class PartnerDataController extends GetxController {
   final isSendLoading = false.obs;
   final isMainLoading = true.obs;
   final isFilterLoading = false.obs;
+  final isShowDisclaimer = false.obs;
 
   /* -------------------- FORM CONTROLLERS -------------------- */
 
@@ -74,7 +76,7 @@ class PartnerDataController extends GetxController {
   int totalBusinessPages = 1;
   int pertBusinessPage = 10;
   bool hastBusinessMore = true;
-  final isBusinessLoadMore = false.obs;
+  final isBusinessLoadMore = true.obs;
 
   Future<void> getBusinessRequired({
     bool showLoading = true,
@@ -114,14 +116,17 @@ class PartnerDataController extends GetxController {
         '${lat.value},${lng.value}',
       );
       if (response['common']['status'] == true) {
+        print('response');
+        print(response['data']);
         final data = response['data'];
-
+        isShowDisclaimer.value = data['is_disclaimer_accepted'] ?? true;
         final List list = data['business_requirements'] ?? [];
         pertBusinessPage = data['per_page'] ?? pertBusinessPage;
         totalBusinessPages = data['total_pages'] ?? totalBusinessPages;
 
         /// 🔹 IMPORTANT
         if (isRefresh || currentBusinessPage == 1) {
+          _checkDisc(data['disclaimer_acceptance_data'] ?? '');
           requirementList.assignAll(list); // 🔥 replaces list
         } else {
           requirementList.addAll(list); // pagination
@@ -137,6 +142,13 @@ class PartnerDataController extends GetxController {
     } finally {
       if (showLoading) isLoading.value = false;
       isBusinessLoadMore.value = false;
+    }
+  }
+
+  void _checkDisc(String data) {
+    if (getIt<DemoService>().isDemo && !isShowDisclaimer.value) {
+      showDisclaimerIfNeeded(data);
+      return;
     }
   }
 
@@ -417,6 +429,39 @@ class PartnerDataController extends GetxController {
       showError(e);
     } finally {
       if (showLoading) isRevokeLoading.value = false;
+    }
+  }
+
+  ///////////////////////////////////disclaimer///////////////////////////////
+  final isDisLoading = false.obs;
+
+  Future<void> acceptDisclaimer(String data, {bool showLoading = true}) async {
+    if (showLoading) isDisLoading.value = true;
+    final userId = await LocalStorage.getString('user_id') ?? '';
+    try {
+      final response = await _apiService.acceptDisclaimer(data, userId);
+      print(response);
+      if (response['common']['status'] == true) {
+        ToastUtils.showSuccessToast(response['common']['message']);
+        Get.back();
+      } else {
+        ToastUtils.showWarningToast(response['common']['message']);
+      }
+    } catch (e) {
+      showError(e);
+    } finally {
+      if (showLoading) isDisLoading.value = false;
+    }
+  }
+
+  Future<void> showDisclaimerIfNeeded(String data) async {
+    final result = await Get.dialog<bool>(
+      DisclaimerDialog(data: data),
+      barrierDismissible: false,
+    );
+
+    if (result == true) {
+      // await saveAccepted();
     }
   }
 }

@@ -116,13 +116,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       padding: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.shade50,
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
+        // boxShadow: [
+        //   BoxShadow(
+        //     color: Colors.red.shade50,
+        //     blurRadius: 8,
+        //     offset: Offset(0, 2),
+        //   ),
+        // ],
       ),
       child: Column(
         children: [
@@ -208,6 +208,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ],
             ),
           ),
+          Divider(color: lightGrey,height: 1)
         ],
       ),
     );
@@ -216,7 +217,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   // ✅---------------- PROFILE DETAILS ----------------✅
   Widget _buildProfileDetails() {
     return Padding(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 8),
       child: Column(
         spacing: 8.h,
         crossAxisAlignment: CrossAxisAlignment.start,

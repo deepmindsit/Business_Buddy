@@ -34,29 +34,31 @@ class MyApp extends StatelessWidget {
             data: themeController.isDark.value
                 ? AppTheme.darkTheme
                 : AppTheme.lightTheme,
-            child: GetMaterialApp(
-              debugShowCheckedModeBanner: false,
-              initialBinding: InitialBindings(),
-              builder: (context, child) {
-                final mediaQueryData = MediaQuery.of(context);
-                final textScaler = TextScaler.linear(
-                  mediaQueryData.textScaler.scale(1.0).clamp(0.8, 1.0),
-                );
-                final newMediaQueryData = mediaQueryData.copyWith(
-                  boldText: false,
-                  textScaler: textScaler,
-                );
-                return MediaQuery(data: newMediaQueryData, child: child!);
-              },
-              title: 'BizYaari',
-              initialRoute: Routes.splash,
-              theme: AppTheme.lightTheme,
-              darkTheme: AppTheme.darkTheme,
-              themeMode: ThemeMode.system,
-              defaultTransition: Transition.fadeIn,
-              transitionDuration: const Duration(milliseconds: 300),
-              getPages: AppRoutes.routes,
-              // home: IconTest(),
+            child: FeatureDiscovery(
+              child: GetMaterialApp(
+                debugShowCheckedModeBanner: false,
+                initialBinding: InitialBindings(),
+                builder: (context, child) {
+                  final mediaQueryData = MediaQuery.of(context);
+                  final textScaler = TextScaler.linear(
+                    mediaQueryData.textScaler.scale(1.0).clamp(0.8, 1.0),
+                  );
+                  final newMediaQueryData = mediaQueryData.copyWith(
+                    boldText: false,
+                    textScaler: textScaler,
+                  );
+                  return MediaQuery(data: newMediaQueryData, child: child!);
+                },
+                title: 'BizYaari',
+                initialRoute: Routes.splash,
+                theme: AppTheme.lightTheme,
+                darkTheme: AppTheme.darkTheme,
+                themeMode: ThemeMode.system,
+                defaultTransition: Transition.fadeIn,
+                transitionDuration: const Duration(milliseconds: 300),
+                getPages: AppRoutes.routes,
+                // home: IconTest(),
+              ),
             ),
           ),
         ),

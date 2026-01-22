@@ -80,6 +80,7 @@ class AllUrl {
   static const String updateFirebaseToken = '$baseUrl/update_firebase_token';
   static const String getNotification = '$baseUrl/get_notifications';
   static const String readNotification = '$baseUrl/read_notification';
+  static const String acceptDisclaimer = '$baseUrl/save_user_disclaimer';
 
   static const String privacyPolicy = '$base/legal_page/privacy_policy';
   static const String termsCondition = '$base/legal_page/terms_and_conditions';

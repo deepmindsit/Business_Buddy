@@ -1,4 +1,4 @@
-      import 'dart:io';
+import 'dart:io';
 import 'package:businessbuddy/network/all_url.dart';
 import 'package:injectable/injectable.dart';
 import 'package:retrofit/retrofit.dart';
@@ -71,8 +71,9 @@ abstract class ApiService {
     @Part(name: "lat_long") String? latLong,
     @Part(name: "user_id") String? userId,
     @Part(name: "page_number") String pageNo,
-    @Part(name: "keyword") String keyword,
     @Part(name: "location") String location,
+    @Part(name: "offer_available") String offerAvailable,
+    @Part(name: "rating[]") List<String> rating,
   );
 
   @POST(AllUrl.businessDetails)
@@ -146,8 +147,9 @@ abstract class ApiService {
 
   @POST(AllUrl.offerDetails)
   Future<dynamic> offerDetails(
-      @Part(name: "offer_id") String? offerId,
-      @Part(name: "user_id") String? userId,);
+    @Part(name: "offer_id") String? offerId,
+    @Part(name: "user_id") String? userId,
+  );
 
   @POST(AllUrl.getFeeds)
   Future<dynamic> getFeeds(
@@ -401,6 +403,12 @@ abstract class ApiService {
   Future<dynamic> readNotification(
     @Part(name: "user_id") String userId,
     @Part(name: "notification_id") String notificationId,
+  );
+
+  @POST(AllUrl.acceptDisclaimer)
+  Future<dynamic> acceptDisclaimer(
+    @Part(name: "data_accepted") String? data,
+    @Part(name: "user_id") String? userId,
   );
 }
 

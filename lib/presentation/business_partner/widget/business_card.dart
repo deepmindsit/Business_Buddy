@@ -24,36 +24,46 @@ class _BusinessCardState extends State<BusinessCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 8.h),
-      decoration: BoxDecoration(
-        color: Get.theme.cardColor,
-        borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1),
-            blurRadius: 8.r,
-            offset: const Offset(0, 2),
-          ),
-        ],
-        border: Border.all(color: Get.theme.dividerColor, width: 0.5.w),
-      ),
-      child: IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _buildLeftData(),
-
-            if (widget.isSearch != true)
-              VerticalDivider(
-                color: Get.theme.dividerColor,
-                thickness: 1,
-                width: 1,
-              ),
-
-            /// RIGHT SECTION
-            if (widget.isSearch != true) Expanded(child: _buildRightSection()),
+    return GestureDetector(
+      onTap: () {
+        Get.bottomSheet(
+          BusinessDetailBottomSheet(data: widget.data),
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent,
+        );
+      },
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 8.h),
+        decoration: BoxDecoration(
+          color: Get.theme.cardColor,
+          borderRadius: BorderRadius.circular(16.r),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withValues(alpha: 0.1),
+              blurRadius: 8.r,
+              offset: const Offset(0, 2),
+            ),
           ],
+          border: Border.all(color: Get.theme.dividerColor, width: 0.5.w),
+        ),
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _buildLeftData(),
+
+              if (widget.isSearch != true)
+                VerticalDivider(
+                  color: Get.theme.dividerColor,
+                  thickness: 1,
+                  width: 1,
+                ),
+
+              /// RIGHT SECTION
+              if (widget.isSearch != true)
+                Expanded(child: _buildRightSection()),
+            ],
+          ),
         ),
       ),
     );
@@ -98,9 +108,61 @@ class _BusinessCardState extends State<BusinessCard> {
               firstText: 'Location: ',
               secondText: widget.data['location'] ?? '',
             ),
+            if (widget.data['note'].toString().isNotEmpty)
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  _buildDetailRow(
+                    firstText: 'Note: ',
+                    secondText: widget.data['note'] ?? '',
+                  ),
+                  Expanded(child: _buildContentSection()),
+                ],
+              ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildContentSection() {
+    final content = widget.data['note'] ?? '';
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CustomText(
+          title: content,
+          fontSize: 14.sp,
+          color: inverseColor,
+          textAlign: TextAlign.start,
+          fontWeight: FontWeight.w600,
+          style: TextStyle(
+            fontSize: 14.sp,
+            height: 1.5,
+            color: inverseColor,
+            fontWeight: FontWeight.w600,
+          ),
+          maxLines: 2,
+        ),
+
+        // Read more button for long content
+        if (content.length > 150)
+          Padding(
+            padding: EdgeInsets.only(top: 4.h),
+            child: GestureDetector(
+              onTap: () => expandContent(content),
+              child: Text(
+                'Read more',
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: primaryColor,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 
@@ -347,10 +409,11 @@ class _BusinessCardState extends State<BusinessCard> {
             fontWeight: FontWeight.w600,
           ),
           children: [
-            TextSpan(
-              text: secondText,
-              style: TextStyle(color: inverseColor),
-            ),
+            if (firstText != 'Note: ')
+              TextSpan(
+                text: secondText,
+                style: TextStyle(color: inverseColor),
+              ),
           ],
         ),
       ),

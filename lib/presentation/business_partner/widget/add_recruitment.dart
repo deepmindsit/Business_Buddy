@@ -461,6 +461,7 @@ class _AddRecruitmentState extends State<AddRecruitment> {
       children: [
         _buildLabel('I can Invest (%)'),
         buildTextField(
+          fillColor: Theme.of(context).scaffoldBackgroundColor,
           inputFormatters: [
             FilteringTextInputFormatter.digitsOnly,
             // LengthLimitingTextInputFormatter(10),

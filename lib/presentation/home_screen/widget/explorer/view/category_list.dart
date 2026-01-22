@@ -23,6 +23,13 @@ class _CategoryListState extends State<CategoryList> {
   @override
   void initState() {
     controller.getBusinesses(widget.categoryId, isRefresh: true);
+    controller.addressController.clear();
+    controller.addressList.value = [];
+    controller.lat.value = '';
+    controller.lng.value = '';
+    controller.lng.value = '';
+    controller.selectedRatings.clear(); // ⭐
+    controller.offerAvailable.value = false; // ⭐
     super.initState();
   }
 
@@ -264,7 +271,7 @@ class _CategoryListState extends State<CategoryList> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      const ExploreFilter(),
+      ExploreFilter(categoryId: widget.categoryId),
     );
   }
 }

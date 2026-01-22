@@ -8,8 +8,8 @@ class AllDialogs {
       PopScope(
         canPop: false,
         child: AlertDialog(
-          surfaceTintColor: Colors.transparent,
-          backgroundColor: Colors.white,
+          surfaceTintColor: Theme.of(Get.context!).scaffoldBackgroundColor,
+          backgroundColor: Theme.of(Get.context!).cardColor,
           title: const Text(
             'No Internet Connection',
             style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
@@ -19,7 +19,10 @@ class AllDialogs {
             children: [
               Image.asset(Images.noInternet, width: Get.height * 0.25.w),
               const SizedBox(height: 12),
-              const Text('Please check your internet connection.'),
+              Text(
+                'Please check your internet connection.',
+                style: TextStyle(color: inverseColor),
+              ),
             ],
           ),
           actions: [
@@ -35,7 +38,7 @@ class AllDialogs {
                   Get.offAllNamed(Routes.splash);
                 }
               },
-              child: const Text('Retry', style: TextStyle(color: Colors.white)),
+              child: Text('Retry', style: TextStyle(color: Colors.white)),
             ),
           ],
         ),

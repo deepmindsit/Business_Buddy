@@ -304,8 +304,9 @@ class _ApiService implements ApiService {
     String? latLong,
     String? userId,
     String pageNo,
-    String keyword,
     String location,
+    String offerAvailable,
+    List<String> rating,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -322,8 +323,11 @@ class _ApiService implements ApiService {
       _data.fields.add(MapEntry('user_id', userId));
     }
     _data.fields.add(MapEntry('page_number', pageNo));
-    _data.fields.add(MapEntry('keyword', keyword));
     _data.fields.add(MapEntry('location', location));
+    _data.fields.add(MapEntry('offer_available', offerAvailable));
+    rating.forEach((i) {
+      _data.fields.add(MapEntry('rating[]', i));
+    });
     final _options = _setStreamType<dynamic>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
@@ -1949,6 +1953,34 @@ class _ApiService implements ApiService {
           .compose(
             _dio.options,
             'http://192.168.29.37/bizyaari/api/user/v1/read_notification',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch(_options);
+    final _value = _result.data;
+    return _value;
+  }
+
+  @override
+  Future<dynamic> acceptDisclaimer(String? data, String? userId) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    if (data != null) {
+      _data.fields.add(MapEntry('data_accepted', data));
+    }
+    if (userId != null) {
+      _data.fields.add(MapEntry('user_id', userId));
+    }
+    final _options = _setStreamType<dynamic>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'http://192.168.29.37/bizyaari/api/user/v1/save_user_disclaimer',
             queryParameters: queryParameters,
             data: _data,
           )

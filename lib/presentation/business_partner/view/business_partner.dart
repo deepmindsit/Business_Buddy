@@ -22,18 +22,12 @@ class _BusinessPartnerState extends State<BusinessPartner>
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      checkDisc();
       checkInternetAndShowPopup();
       loadAllData();
     });
   }
 
-  void checkDisc() {
-    if (getIt<DemoService>().isDemo) {
-      getIt<DisclaimerController>().showDisclaimerIfNeeded();
-      return;
-    }
-  }
+
 
   Future<void> loadAllData() async {
     controller.isMainLoading.value = true;

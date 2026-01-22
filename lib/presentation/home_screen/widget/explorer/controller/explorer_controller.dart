@@ -17,6 +17,7 @@ class ExplorerController extends GetxController {
   final addressController = TextEditingController();
   final lat = ''.obs;
   final lng = ''.obs;
+
   Future<void> getCategories({
     bool showLoading = true,
     bool isRefresh = false,
@@ -67,6 +68,10 @@ class ExplorerController extends GetxController {
     }
   }
 
+  // void updateSearchText(String value) {
+  //   searchText.value = value;
+  // }
+
   /////////////////////////////////business List///////////////////////////////
   final isBusinessLoading = false.obs;
   final isDetailsLoading = false.obs;
@@ -78,8 +83,18 @@ class ExplorerController extends GetxController {
   int pertBusinessPage = 10;
   bool hastBusinessMore = true;
   final isBusinessLoadMore = false.obs;
-  final searchController = TextEditingController();
-  final searchText = ''.obs;
+
+  // ⭐ NEW FILTER STATES
+  RxList<int> selectedRatings = <int>[].obs; // e.g. [3,4,5]
+  RxBool offerAvailable = false.obs;
+
+  void toggleRating(int rating) {
+    if (selectedRatings.contains(rating)) {
+      selectedRatings.remove(rating);
+    } else {
+      selectedRatings.add(rating);
+    }
+  }
 
   Future<void> getBusinesses(
     String catId, {
@@ -98,7 +113,7 @@ class ExplorerController extends GetxController {
         : isBusinessLoadMore.value = true;
 
     final userId = await LocalStorage.getString('user_id') ?? '';
-
+    List<String> ratings = selectedRatings.map((e) => e.toString()).toList();
     try {
       final latitude = getIt<LocationController>().latitude.value.toString();
       final longitude = getIt<LocationController>().longitude.value.toString();
@@ -110,8 +125,9 @@ class ExplorerController extends GetxController {
         '$latitude,$longitude',
         userId,
         currentBusinessPage.toString(),
-        searchController.text.trim(),
         location,
+        offerAvailable.value == true ? '1' : '',
+        ratings,
       );
       if (response['common']['status'] == true) {
         final data = response['data'];
@@ -140,7 +156,7 @@ class ExplorerController extends GetxController {
         type: ToastificationType.error,
         icon: Icons.error,
       );
-      // debugPrint("Error: $e");
+      debugPrint("Error: $e");
     } finally {
       if (showLoading) isBusinessLoading.value = false;
     }

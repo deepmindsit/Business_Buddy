@@ -16,8 +16,6 @@ import 'package:businessbuddy/common/location_controller.dart' as _i686;
 import 'package:businessbuddy/common/notification_controller.dart' as _i27;
 import 'package:businessbuddy/common/update_app.dart' as _i930;
 import 'package:businessbuddy/network/api_service.dart' as _i889;
-import 'package:businessbuddy/presentation/business_partner/controller/disclaimer_controller.dart'
-    as _i1030;
 import 'package:businessbuddy/presentation/business_partner/controller/partner_controller.dart'
     as _i235;
 import 'package:businessbuddy/presentation/home_screen/controller/home_controller.dart'
@@ -68,9 +66,6 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i27.NotificationController(),
     );
     gh.lazySingleton<_i930.UpdateController>(() => _i930.UpdateController());
-    gh.lazySingleton<_i1030.DisclaimerController>(
-      () => _i1030.DisclaimerController(),
-    );
     gh.lazySingleton<_i235.PartnerDataController>(
       () => _i235.PartnerDataController(),
     );

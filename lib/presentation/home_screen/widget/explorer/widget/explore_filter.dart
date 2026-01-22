@@ -1,8 +1,8 @@
 import 'package:businessbuddy/utils/exported_path.dart';
 
 class ExploreFilter extends StatefulWidget {
-  const ExploreFilter({super.key});
-
+  const ExploreFilter({super.key, required this.categoryId});
+  final String categoryId;
   @override
   State<ExploreFilter> createState() => _ExploreFilterState();
 }
@@ -74,56 +74,57 @@ class _ExploreFilterState extends State<ExploreFilter> {
           spacing: 16.h,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSearchField(),
+            // _buildSearchField(),
             _buildLocationSearch(),
+            _buildRatingFilter(), // ⭐ ADD
+            _buildOfferFilter(), // ⭐ ADD
             SizedBox(height: 16),
           ],
         ),
       ),
     );
   }
-
-  Widget _buildSearchField() {
-    return TextFormField(
-      controller: _explorerController.searchController,
-      decoration: InputDecoration(
-        filled: true,
-        fillColor: Theme.of(context).scaffoldBackgroundColor,
-        focusedBorder: buildOutlineInputBorder(),
-        enabledBorder: buildOutlineInputBorder(),
-        contentPadding: EdgeInsets.all(15),
-        suffixIcon: Obx(
-          () => _explorerController.searchText.value.isNotEmpty
-              ? GestureDetector(
-                  onTap: () {
-                    _explorerController.searchController.clear();
-                    // _explorerController.businessList.value = [];
-                  },
-                  child: Container(
-                    margin: EdgeInsets.all(8.w),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade200,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.close,
-                      size: 18,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
-                )
-              : Icon(Icons.search, color: mainTextGrey),
-        ),
-        prefixIconConstraints: BoxConstraints(maxWidth: Get.width * 0.1),
-        prefixIcon: Padding(
-          padding: const EdgeInsets.only(left: 8.0),
-          child: Image.asset(Images.appIcon, width: 30, height: 30),
-        ),
-        hintText: 'Search Offer, Interest, etc.',
-        hintStyle: TextStyle(fontSize: 14.sp, color: Colors.grey.shade500),
-      ),
-    );
-  }
+  //
+  // Widget _buildSearchField() {
+  //   return TextFormField(
+  //     controller: _explorerController.searchController,
+  //     onChanged: _onSearchChanged,
+  //     decoration: InputDecoration(
+  //       filled: true,
+  //       fillColor: Theme.of(context).scaffoldBackgroundColor,
+  //       focusedBorder: buildOutlineInputBorder(),
+  //       enabledBorder: buildOutlineInputBorder(),
+  //       contentPadding: const EdgeInsets.all(15),
+  //       suffixIcon: Obx(
+  //         () => _explorerController.searchText.value.isNotEmpty
+  //             ? GestureDetector(
+  //                 onTap: () {
+  //                   _explorerController.searchController.clear();
+  //                 },
+  //                 child: Container(
+  //                   margin: EdgeInsets.all(8.w),
+  //                   decoration: BoxDecoration(
+  //                     color: Colors.grey.shade200,
+  //                     shape: BoxShape.circle,
+  //                   ),
+  //                   child: Icon(
+  //                     Icons.close,
+  //                     size: 18,
+  //                     color: Colors.grey.shade600,
+  //                   ),
+  //                 ),
+  //               )
+  //             : Icon(Icons.search, color: Colors.grey),
+  //       ),
+  //       hintText: 'Search by name',
+  //       hintStyle: TextStyle(fontSize: 14.sp, color: Colors.grey.shade500),
+  //     ),
+  //   );
+  // }
+  //
+  // void _onSearchChanged(String text) {
+  //   _explorerController.updateSearchText(text);
+  // }
 
   Widget _buildLocationSearch() {
     return LocationSearchField(
@@ -138,6 +139,67 @@ class _ExploreFilterState extends State<ExploreFilter> {
     );
   }
 
+  Widget _buildRatingFilter() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Rating",
+          style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
+        ),
+        SizedBox(height: 8.h),
+
+        Obx(
+          () => Wrap(
+            spacing: 12.w,
+            children: List.generate(5, (index) {
+              final rating = index + 1;
+              final isSelected = _explorerController.selectedRatings.contains(
+                rating,
+              );
+
+              return FilterChip(
+                surfaceTintColor: Theme.of(context).scaffoldBackgroundColor,
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                selected: isSelected,
+                selectedColor: primaryColor,
+                label: Row(
+                  spacing: 8,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text("$rating"),
+                    Icon(Icons.star, size: 16, color: Colors.amber),
+                  ],
+                ),
+                onSelected: (_) {
+                  _explorerController.toggleRating(rating);
+                },
+              );
+            }),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildOfferFilter() {
+    return Obx(
+      () => CheckboxListTile(
+        activeColor: primaryColor,
+        value: _explorerController.offerAvailable.value,
+        onChanged: (val) {
+          _explorerController.offerAvailable.value = val ?? false;
+        },
+        contentPadding: EdgeInsets.zero,
+        title: Text(
+          "Offer Available",
+          style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
+        ),
+        controlAffinity: ListTileControlAffinity.leading,
+      ),
+    );
+  }
+
   Widget _buildActionButtons() {
     return Row(
       children: [
@@ -148,7 +210,14 @@ class _ExploreFilterState extends State<ExploreFilter> {
               _explorerController.addressList.value = [];
               _explorerController.lat.value = '';
               _explorerController.lng.value = '';
+
+              _explorerController.selectedRatings.clear(); // ⭐
+              _explorerController.offerAvailable.value = false; // ⭐
               Get.back();
+              await _explorerController.getBusinesses(
+                widget.categoryId,
+                isRefresh: true,
+              );
             },
             style: OutlinedButton.styleFrom(
               side: BorderSide(color: Colors.red),
@@ -162,6 +231,10 @@ class _ExploreFilterState extends State<ExploreFilter> {
         Expanded(
           child: ElevatedButton(
             onPressed: () async {
+              await _explorerController.getBusinesses(
+                widget.categoryId,
+                isRefresh: true,
+              );
               Get.back();
             },
             style: ElevatedButton.styleFrom(

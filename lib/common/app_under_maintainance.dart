@@ -8,21 +8,18 @@ class Maintenance extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(
-              Images.appMaintenance,
-              width: Get.width * 0.6,
-            ),
+            Image.asset(Images.appMaintenance, width: Get.width * 0.6),
             Text(
               'Under Maintenance',
               style: TextStyle(
-                color: Colors.black,
+                color: inverseColor,
                 fontWeight: FontWeight.bold,
                 fontSize: Get.width * 0.06,
               ),
@@ -32,7 +29,7 @@ class Maintenance extends StatelessWidget {
               child: Text(
                 msg,
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.black),
+                style: TextStyle(color: inverseColor),
               ),
             ),
             OutlinedButton(
