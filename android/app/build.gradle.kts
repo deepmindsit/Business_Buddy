@@ -3,7 +3,6 @@ import java.io.FileInputStream
 import java.util.*
 import java.util.Properties
 
-
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -37,7 +36,7 @@ android {
         applicationId = "com.bizyaari.android"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
+        minSdk = 23
         targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -45,10 +44,10 @@ android {
 
     signingConfigs {
         create("release") {
-            keyAlias = keystoreProperties.getProperty("keyAlias")
-            keyPassword = keystoreProperties.getProperty("keyPassword")
-            storeFile = keystoreProperties.getProperty("storeFile")?.let { file(it) }
-            storePassword = keystoreProperties.getProperty("storePassword")
+            keyAlias = keystoreProperties["keyAlias"] as String
+            keyPassword = keystoreProperties["keyPassword"] as String
+            storeFile = keystoreProperties["storeFile"]?.let { file(it) }
+            storePassword = keystoreProperties["storePassword"] as String
         }
     }
     buildTypes {
