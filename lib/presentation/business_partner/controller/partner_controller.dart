@@ -116,8 +116,6 @@ class PartnerDataController extends GetxController {
         '${lat.value},${lng.value}',
       );
       if (response['common']['status'] == true) {
-        print('response');
-        print(response['data']);
         final data = response['data'];
         isShowDisclaimer.value = data['is_disclaimer_accepted'] ?? true;
         final List list = data['business_requirements'] ?? [];

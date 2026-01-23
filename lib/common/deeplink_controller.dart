@@ -23,19 +23,28 @@ class DeepLinkController extends GetxController {
   }
 
   void _handleDeepLink(Uri uri) {
-    if (uri.pathSegments.length < 2) return;
+    if (uri.pathSegments.length < 3) return;
 
-    final type = uri.pathSegments[0];
-    final id = uri.pathSegments[1];
+    final slug = uri.pathSegments[0];
+    final type = uri.pathSegments[1];
+    final id = uri.pathSegments[2];
+
+    NotificationService.hasHandledNotificationNavigation = true;
 
     if (type == 'post') {
-      NotificationService.hasHandledNotificationNavigation = true;
-      Get.to(() => InstagramPostView(postId: id, refresh: () {}));
+      Get.to(
+        () => InstagramPostView(postId: id, refresh: () {}, isFrom: 'deep'),
+      );
     }
 
     if (type == 'offer') {
-      NotificationService.hasHandledNotificationNavigation = true;
-      Get.to(() => InstagramOfferView(offerId: id, refresh: () async {}));
+      Get.to(
+        () => InstagramOfferView(
+          offerId: id,
+          refresh: () async {},
+          isFrom: 'deep',
+        ),
+      );
     }
   }
 

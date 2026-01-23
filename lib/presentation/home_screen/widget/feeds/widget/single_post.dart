@@ -2,6 +2,7 @@ import 'package:businessbuddy/utils/exported_path.dart';
 
 class InstagramPostView extends StatefulWidget {
   final String postId;
+  final String isFrom;
   final dynamic followButton;
   final void Function() refresh;
 
@@ -9,6 +10,7 @@ class InstagramPostView extends StatefulWidget {
     super.key,
     required this.postId,
     this.followButton,
+    required this.isFrom,
     required this.refresh,
   });
 
@@ -43,6 +45,20 @@ class _InstagramPostViewState extends State<InstagramPostView> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, Object? result) {
+        if (didPop) return;
+
+        Future.microtask(() {
+          if (!mounted) return;
+
+          if (widget.isFrom == 'deep') {
+            Get.offAllNamed(Routes.mainScreen);
+          } else {
+            Get.back();
+          }
+        });
+      },
       child: Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppbarPlain(title: "Post"),
@@ -304,7 +320,11 @@ class _InstagramPostViewState extends State<InstagramPostView> {
   }
 
   void _handleShare() {
-    AppShare.share(type: ShareEntityType.post, id: widget.postId.toString());
+    AppShare.share(
+      type: ShareEntityType.post,
+      id: widget.postId.toString(),
+      slug: controller.singlePost['business_slug']?.toString() ?? '',
+    );
   }
 
   Widget _buildRightIcon({

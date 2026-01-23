@@ -326,7 +326,7 @@ class OfferCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         Get.to(
-          () => InstagramOfferView(
+          () => InstagramOfferView(isFrom: '',
             refresh: onRefresh,
             offerId: data['id']?.toString() ?? '',
             followButton: followButton,
@@ -545,6 +545,7 @@ class OfferCard extends StatelessWidget {
             AppShare.share(
               type: ShareEntityType.offer,
               id: data['id']?.toString() ?? '',
+              slug: data['business_slug']?.toString() ?? '',
             );
           },
           child: EngagementAction(

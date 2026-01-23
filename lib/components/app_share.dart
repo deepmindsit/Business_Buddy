@@ -9,12 +9,13 @@ class AppShare {
   static String generateLink({
     required ShareEntityType type,
     required String id,
+    required String slug,
   }) {
     switch (type) {
       case ShareEntityType.post:
-        return '$_baseUrl/app/post/$id';
+        return '$_baseUrl/$slug/post/$id';
       case ShareEntityType.offer:
-        return '$_baseUrl/app/offer/$id';
+        return '$_baseUrl/$slug/offer/$id';
     }
   }
 
@@ -22,8 +23,9 @@ class AppShare {
   static Future<void> share({
     required ShareEntityType type,
     required String id,
+    required String slug,
   }) async {
-    final link = generateLink(type: type, id: id);
+    final link = generateLink(type: type, id: id, slug: slug);
 
     await SharePlus.instance.share(ShareParams(text: link));
   }

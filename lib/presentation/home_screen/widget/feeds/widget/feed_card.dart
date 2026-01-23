@@ -153,6 +153,7 @@ class FeedCard extends StatelessWidget {
       onTap: () {
         Get.to(
           () => InstagramPostView(
+            isFrom: '',
             refresh: onRefresh!,
             followButton: followButton,
             postId: data['post_id']?.toString() ?? '',
@@ -358,6 +359,7 @@ class FeedCard extends StatelessWidget {
         GestureDetector(
           onTap: () {
             AppShare.share(
+              slug: data['business_slug']?.toString() ?? '',
               type: ShareEntityType.post,
               id: data['post_id']?.toString() ?? '',
             );

@@ -2,12 +2,14 @@ import 'package:businessbuddy/utils/exported_path.dart';
 
 class InstagramOfferView extends StatefulWidget {
   final String offerId;
+  final String isFrom;
   final dynamic followButton;
   final Future<void> Function() refresh;
 
   const InstagramOfferView({
     super.key,
     required this.offerId,
+    required this.isFrom,
     this.followButton,
     required this.refresh,
   });
@@ -30,24 +32,24 @@ class _InstagramOfferViewState extends State<InstagramOfferView> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: true,
-      onPopInvokedWithResult: (_, didPop) {
-        // if (didPop != null) {
-        //   // Route was already popped by system
-        //   return;
-        // }
-        // Get.offAllNamed(Routes.mainScreen);
-        // // 🔥 If we reach here, pop was NOT handled automatically
-        // // if (Navigator.of(context).canPop()) {
-        // //   Get.back();
-        // // } else {
-        // //   // Opened via deep link → go to Main/Home
-        // //   Get.offAllNamed(Routes.mainScreen);
-        // // }
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, Object? result) {
+        if (didPop) return;
+
+        Future.microtask(() {
+          if (!mounted) return;
+
+          if (widget.isFrom == 'deep') {
+            Get.offAllNamed(Routes.mainScreen);
+          } else {
+            Get.back();
+          }
+        });
+
       },
       child: Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        appBar: AppbarPlain(title: 'Special Offer'),
+        appBar: AppbarPlain(title: 'Special Offer',showBackButton: false,),
         body: Obx(
           () => controller.isSingleOfferLoading.isTrue
               ? OfferDetailShimmer()
@@ -314,7 +316,11 @@ class _InstagramOfferViewState extends State<InstagramOfferView> {
   }
 
   void _handleShare() {
-    AppShare.share(type: ShareEntityType.offer, id: widget.offerId.toString());
+    AppShare.share(
+      type: ShareEntityType.offer,
+      id: widget.offerId.toString(),
+      slug: controller.singleOffer['business_slug']?.toString() ?? '',
+    );
   }
 
   void _handleComment() {

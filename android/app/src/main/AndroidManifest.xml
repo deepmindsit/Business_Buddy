@@ -57,10 +57,18 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
+
+                <!-- /{slug}/post/{id} -->
                 <data
                     android:scheme="https"
                     android:host="businessbuddy.deepmindsit.com"
-                    android:pathPrefix="/app"/>
+                    android:pathPattern="/.*/post/.*" />
+
+                <!-- /{slug}/offer/{id} -->
+                <data
+                    android:scheme="https"
+                    android:host="businessbuddy.deepmindsit.com"
+                    android:pathPattern="/.*/offer/.*" />
             </intent-filter>
             <intent-filter>
                 <action android:name="FLUTTER_NOTIFICATION_CLICK" />
