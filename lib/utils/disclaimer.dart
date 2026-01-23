@@ -8,7 +8,7 @@ class DisclaimerDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-       canPop: false,
+      canPop: false,
       child: Dialog(
         constraints: BoxConstraints(maxHeight: Get.height * 0.8),
         backgroundColor: Theme.of(context).cardColor,
@@ -63,39 +63,22 @@ class DisclaimerDialog extends StatelessWidget {
               Obx(
                 () => getIt<PartnerDataController>().isDisLoading.value
                     ? LoadingWidget(color: primaryColor)
-                    : Row(
-                        children: [
-                          Expanded(
-                            child: OutlinedButton(
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: Theme.of(
-                                  context,
-                                ).textTheme.bodyMedium!.color!,
-                                side: BorderSide(color: primaryColor),
-                              ),
-                              onPressed: () => Get.back(result: false),
-                              child: const Text('Cancel'),
+                    : Obx(
+                        () => Center(
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: primaryColor,
+                              foregroundColor: Colors.white,
                             ),
+                            onPressed: isChecked.value
+                                ? () async {
+                                    await getIt<PartnerDataController>()
+                                        .acceptDisclaimer(data);
+                                  }
+                                : null, // disables button
+                            child: const Text('I Agree'),
                           ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Obx(
-                              () => ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: primaryColor,
-                                  foregroundColor: Colors.white,
-                                ),
-                                onPressed: isChecked.value
-                                    ? () async {
-                                        await getIt<PartnerDataController>()
-                                            .acceptDisclaimer(data);
-                                      }
-                                    : null, // disables button
-                                child: const Text('I Agree'),
-                              ),
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
               ),
             ],
