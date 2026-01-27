@@ -130,6 +130,7 @@ class _BusinessCardState extends State<BusinessCard> {
     final content = widget.data['note'] ?? '';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         CustomText(
           title: content,

@@ -82,7 +82,7 @@ class _AddPostState extends State<AddPost> {
               child: FadeInImage(
                 width: Get.width * 0.7.w,
                 height: Get.height * 0.3.h,
-                placeholder: const AssetImage(Images.logo),
+                placeholder: const AssetImage(Images.defaultImage),
                 image: imageProvider,
                 fit: BoxFit.cover,
               ),

@@ -54,27 +54,72 @@ class _NotificationListState extends State<NotificationList> {
                       return NotificationTile(
                         notification: notification,
                         onTap: () async {
-                          if (notification['data']['action'] == 'message') {
+                          final action = notification['action'];
+                          final data = notification['data'] ?? {};
+
+                          /// 🔹 Close notification panel / bottom sheet if open
+                          if (Get.isOverlaysOpen) {
                             Get.back();
-                            getIt<NavigationController>().openSubPage(
-                              SingleChat(
-                                chatId:
-                                    notification['data']['chat_id']
-                                        ?.toString() ??
-                                    '',
-                              ),
+                          }
+                          if (notification['type'] == 'business_follow') {
+                            Get.toNamed(
+                              Routes.profile,
+                              arguments: {
+                                'user_id':
+                                    data['follower_id']?.toString() ?? '',
+                              },
                             );
                           }
+                          if (notification['type'] == 'chat_message') {
+                            _openChat(data);
+                          }
+                          switch (action) {
+                            case 'message':
+                              _openChat(data);
+                              break;
+
+                            case 'post':
+                              _openPost(data);
+                              break;
+
+                            case 'offer':
+                              _openOffer(data);
+                              break;
+
+                            default:
+                              debugPrint(
+                                'Unknown notification action: $action',
+                              );
+                          }
+
+                          /// 🔹 Mark notification as read
                           await controller.readNotification(
                             notification['id'].toString(),
                           );
-                          // Get.toNamed(
-                          //   Routes.newsDetails,
-                          //   arguments: {
-                          //     'newsId': notification['news_id'].toString(),
-                          //   },
-                          // );
                         },
+
+                        // onTap: () async {
+                        //   if (notification['data']['action'] == 'message') {
+                        //     Get.back();
+                        //     getIt<NavigationController>().openSubPage(
+                        //       SingleChat(
+                        //         chatId:
+                        //             notification['data']['chat_id']
+                        //                 ?.toString() ??
+                        //             '',
+                        //       ),
+                        //     );
+                        //   }
+                        //   await controller.readNotification(
+                        //     notification['id'].toString(),
+                        //   );
+                        //   // Get.toNamed(
+                        //   //   Routes.newsDetails,
+                        //   //   arguments: {
+                        //   //     'newsId': notification['news_id'].toString(),
+                        //   //   },
+                        //   // );
+                        // },
                       );
                     },
                   ),
@@ -87,6 +132,46 @@ class _NotificationListState extends State<NotificationList> {
           ),
         );
       }),
+    );
+  }
+
+  void _openChat(Map data) {
+    final chatId = data['chat_id']?.toString();
+    if (chatId == null || chatId.isEmpty) return;
+
+    Get.back();
+    getIt<NavigationController>().openSubPage(SingleChat(chatId: chatId));
+  }
+
+  void _openPost(Map data) {
+    final postId = data['post_id']?.toString();
+    if (postId == null || postId.isEmpty) return;
+
+    Get.to(
+      () => InstagramPostView(
+        isFrom: '',
+        refresh: () {},
+        followButton: const SizedBox(),
+        postId: postId,
+      ),
+      transition: Transition.cupertino,
+      duration: const Duration(milliseconds: 300),
+    );
+  }
+
+  void _openOffer(Map data) {
+    final offerId = data['offer_id']?.toString();
+    if (offerId == null || offerId.isEmpty) return;
+
+    Get.to(
+      () => InstagramOfferView(
+        isFrom: '',
+        refresh: () async {},
+        followButton: const SizedBox(),
+        offerId: offerId,
+      ),
+      transition: Transition.cupertino,
+      duration: const Duration(milliseconds: 300),
     );
   }
 

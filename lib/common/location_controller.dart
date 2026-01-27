@@ -24,8 +24,7 @@ class LocationController extends GetxController {
       isLocationReady.value = true;
 
       await LocalStorage.setString('address_source', 'gps');
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   /// ✅ When user searches a new location

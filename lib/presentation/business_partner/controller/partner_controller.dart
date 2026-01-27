@@ -438,7 +438,6 @@ class PartnerDataController extends GetxController {
     final userId = await LocalStorage.getString('user_id') ?? '';
     try {
       final response = await _apiService.acceptDisclaimer(data, userId);
-      print(response);
       if (response['common']['status'] == true) {
         ToastUtils.showSuccessToast(response['common']['message']);
         Get.back();

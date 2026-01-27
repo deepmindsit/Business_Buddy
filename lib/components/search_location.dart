@@ -318,8 +318,10 @@ class _SearchLocationState extends State<SearchLocation> {
                           width: 36.w,
                           height: 36.h,
                           decoration: BoxDecoration(
-                            color:Theme.of(context).brightness == Brightness.light
-                                ? primaryColor.withValues(alpha: 0.1) : Colors.white,
+                            color:
+                                Theme.of(context).brightness == Brightness.light
+                                ? primaryColor.withValues(alpha: 0.1)
+                                : Colors.white,
                             shape: BoxShape.circle,
                           ),
                           child: Icon(

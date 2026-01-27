@@ -61,7 +61,6 @@ class _LboScreenState extends State<LboScreen> {
         foregroundColor: Colors.white,
         shape: const CircleBorder(),
         elevation: 0,
-        // elevation: 8,
       ),
       closeButtonBuilder: RotateFloatingActionButtonBuilder(
         fabSize: ExpandableFabSize.small,
@@ -69,7 +68,6 @@ class _LboScreenState extends State<LboScreen> {
         backgroundColor: Colors.redAccent,
         foregroundColor: Colors.white,
         shape: const CircleBorder(),
-        // elevation: 6,
       ),
       children: [
         _buildFabChild(
@@ -77,11 +75,13 @@ class _LboScreenState extends State<LboScreen> {
           text: 'Post',
           color: primaryBlack,
           onPressed: () => Get.toNamed(Routes.addPost),
+          textColor: lightGrey,
         ),
         _buildFabChild(
           icon: Icons.local_offer,
           text: 'Offer',
           color: Colors.red,
+          textColor: Colors.white,
           onPressed: () => Get.toNamed(Routes.addOffer),
         ),
       ],
@@ -93,6 +93,7 @@ class _LboScreenState extends State<LboScreen> {
     required IconData icon,
     required String text,
     required Color color,
+    required Color textColor,
     required VoidCallback onPressed,
   }) {
     return Container(
@@ -104,15 +105,15 @@ class _LboScreenState extends State<LboScreen> {
         backgroundColor: color,
         foregroundColor: Colors.white,
         onPressed: onPressed,
-        icon: Icon(icon, size: 20,color: inverseColor,),
+        icon: Icon(icon, size: 20, color: textColor),
         label: Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           child: Text(
             text,
-            style:  TextStyle(
+            style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
-              color: inverseColor,
+              color: textColor,
             ),
           ),
         ),
@@ -236,7 +237,7 @@ class _LboScreenState extends State<LboScreen> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(100.r),
                           child: FadeInImage(
-                            placeholder: const AssetImage(Images.logo),
+                            placeholder: const AssetImage(Images.defaultImage),
                             image: NetworkImage(business['image'] ?? ''),
                             imageErrorBuilder: (context, error, stackTrace) {
                               return Image.asset(

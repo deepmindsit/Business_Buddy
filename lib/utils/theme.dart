@@ -10,6 +10,7 @@ class AppTheme {
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       backgroundColor: Colors.white,
     ),
+    useMaterial3: false, // optional but safer for consistency
     textTheme: const TextTheme(
       bodyLarge: TextStyle(color: Colors.black),
       bodyMedium: TextStyle(color: Colors.black54),
@@ -24,6 +25,7 @@ class AppTheme {
     scaffoldBackgroundColor: const Color(0xFF121212),
     cardColor: const Color(0xff262425),
     dividerColor: Colors.grey.shade700,
+    useMaterial3: false, // optional but safer for consistency
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       backgroundColor: Color(0xFF1E1E1E),
     ),

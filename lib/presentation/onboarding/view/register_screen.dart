@@ -99,7 +99,7 @@ class RegisterScreen extends StatelessWidget {
                       : const AssetImage(Images.defaultImage);
 
                   return FadeInImage(
-                    placeholder: const AssetImage(Images.logo),
+                    placeholder: const AssetImage(Images.defaultImage),
                     image: imageProvider,
                     imageErrorBuilder: (context, error, stackTrace) {
                       return Image.asset(

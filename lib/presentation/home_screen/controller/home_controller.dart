@@ -44,10 +44,7 @@ class HomeController extends GetxController {
     try {
       final serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        Get.snackbar(
-          'Location Disabled',
-          'Please enable location services',
-        );
+        Get.snackbar('Location Disabled', 'Please enable location services');
         await Geolocator.openLocationSettings();
         return false;
       }
@@ -82,7 +79,6 @@ class HomeController extends GetxController {
     }
   }
 
-
   Future<void> getHomeApi({bool showLoading = true}) async {
     final locationController = getIt<LocationController>();
 
@@ -90,7 +86,7 @@ class HomeController extends GetxController {
 
     final latLng = hasLocation
         ? '${locationController.latitude.value},${locationController.longitude.value}'
-        : '';
+        : '18.5204,73.8567';
 
     // final lat = getIt<LocationController>().latitude.value.toString();
     // final lng = getIt<LocationController>().longitude.value.toString();

@@ -17,14 +17,12 @@ Future<String> updateUserLocation() async {
       position.longitude,
     );
 
-    Placemark placemark = placemarks[0];
-
     if (placemarks.isNotEmpty) {
-      userLocation = '${placemark.subLocality}, ${placemark.locality},';
+      final placemark = placemarks.first;
+      return '${placemark.subLocality}, ${placemark.locality}';
     }
-    return userLocation;
   } catch (e) {
-    // print('Error getting user location: $e');
+    return 'Pune, Maharashtra';
   }
   return userLocation;
 }

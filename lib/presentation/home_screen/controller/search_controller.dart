@@ -6,7 +6,16 @@ class SearchNewController extends GetxController {
   final addressList = [].obs;
   final addressController = TextEditingController();
 
-  void getLiveLocation() async {
+  Future<void> getLiveLocation({bool forcePune = false}) async {
+    if (forcePune) {
+      setPuneLocation();
+      return;
+    }
+
     address.value = await updateUserLocation();
+  }
+
+  void setPuneLocation() {
+    address.value = 'Pune, Maharashtra';
   }
 }

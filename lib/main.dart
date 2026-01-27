@@ -57,7 +57,6 @@ class MyApp extends StatelessWidget {
                 defaultTransition: Transition.fadeIn,
                 transitionDuration: const Duration(milliseconds: 300),
                 getPages: AppRoutes.routes,
-                // home: IconTest(),
               ),
             ),
           ),

@@ -252,7 +252,7 @@ class _EditPostState extends State<EditPost> {
       child: FadeInImage(
         width: width,
         height: height,
-        placeholder: const AssetImage(Images.logo),
+        placeholder: const AssetImage(Images.defaultImage),
         image: imageProvider,
         fit: BoxFit.cover,
         placeholderFit: BoxFit.contain,

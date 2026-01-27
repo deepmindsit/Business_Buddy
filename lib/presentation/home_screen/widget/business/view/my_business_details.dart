@@ -115,14 +115,14 @@ class _BusinessDetailsState extends State<BusinessDetails> {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12.r),
         child: FadeInImage(
-          placeholder: const AssetImage(Images.logo),
+          placeholder: const AssetImage(Images.defaultImage),
           image: NetworkImage(image),
           fit: BoxFit.cover,
           imageErrorBuilder: (context, error, stackTrace) {
             return Container(
               color: lightGrey,
               padding: EdgeInsets.all(20.w),
-              child: Image.asset(Images.logo, fit: BoxFit.contain),
+              child: Image.asset(Images.defaultImage, fit: BoxFit.contain),
             );
           },
           fadeInDuration: const Duration(milliseconds: 300),

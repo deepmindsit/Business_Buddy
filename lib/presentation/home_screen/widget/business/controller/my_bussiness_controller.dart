@@ -443,6 +443,8 @@ class LBOController extends GetxController {
     endDateCtrl.text = data['end_date'] ?? '';
     descriptionCtrl.text = data['details'] ?? '';
     points.value = List<String>.from(data['highlight_points'] ?? []);
+    offerImage.value = null;
+    offerVideo.value = null;
   }
 
   /// ------------------------
