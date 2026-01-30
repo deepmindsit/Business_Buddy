@@ -74,22 +74,17 @@ class _LoginScreenState extends State<LoginScreen> {
       showBackButton: false,
       titleSpacing: null,
       actions: [
-        GestureDetector(
+        InkWell(
           onTap: () async {
             await getIt<DemoService>().updateDemoStatus("demo");
             Get.offAllNamed(Routes.mainScreen);
           },
-          child: Container(
-            margin: EdgeInsets.symmetric(horizontal: 12.w),
-            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-            decoration: BoxDecoration(
-              border: Border.all(color: primaryColor),
-              borderRadius: BorderRadius.circular(100.r),
-            ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
             child: CustomText(
               title: 'Skip',
-              fontSize: 12.sp,
-              color: textSmall,
+              fontSize: 13.sp,
+              color: primaryColor,
               fontWeight: FontWeight.w600,
             ),
           ),

@@ -208,7 +208,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ],
             ),
           ),
-          Divider(color: lightGrey,height: 1)
+          Divider(color: lightGrey, height: 1),
         ],
       ),
     );
@@ -217,7 +217,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   // ✅---------------- PROFILE DETAILS ----------------✅
   Widget _buildProfileDetails() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       child: Column(
         spacing: 8.h,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -519,7 +519,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: BackdropFilter(
                         filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
                         child: Container(
-                          color: Colors.black.withValues(alpha: 0.25),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Get.theme.dividerColor,
+                              width: 0.5.w,
+                            ),
+                            color: Colors.black.withValues(alpha: 0.25),
+                          ),
+
                           alignment: Alignment.center,
                           child: Text(
                             'Deleted Requirement',
@@ -540,7 +547,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     top: 8.h,
                     right: 8.w,
                     child: PopupMenuButton<String>(
-                      color: Colors.white,
+                      color: Theme.of(Get.context!).cardColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16.r),
                       ),
@@ -549,7 +556,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         curve: Curves.easeInOut,
                       ),
                       padding: EdgeInsets.zero,
-                      surfaceTintColor: Colors.white,
+                      surfaceTintColor: Theme.of(
+                        Get.context!,
+                      ).scaffoldBackgroundColor,
                       onSelected: (value) async {
                         if (value == 'revoke') {
                           await getIt<PartnerDataController>()

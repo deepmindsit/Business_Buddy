@@ -129,10 +129,7 @@ class _FeedSheetState extends State<FeedSheet> {
                                 controller.selectedDateRange.value ??
                                     "Select Date Range",
                                 style: TextStyle(
-                                  color:
-                                      controller.selectedDateRange.value != null
-                                      ? Colors.black
-                                      : Colors.grey,
+                                  color: primaryBlack,
                                 ),
                               ),
                             ),

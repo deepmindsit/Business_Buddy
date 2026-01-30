@@ -2,17 +2,19 @@ import 'package:businessbuddy/utils/exported_path.dart';
 
 class BusinessDetailBottomSheet extends StatelessWidget {
   final dynamic data;
-
-  const BusinessDetailBottomSheet({super.key, required this.data});
+  final bool isRequested;
+  const BusinessDetailBottomSheet({
+    super.key,
+    required this.data,
+    this.isRequested = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Wrap(
       children: [
         Container(
-          constraints: BoxConstraints(
-            maxHeight: Get.height * 0.75,
-          ),
+          constraints: BoxConstraints(maxHeight: Get.height * 0.75),
           decoration: BoxDecoration(
             color: Get.theme.cardColor,
             borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
@@ -40,10 +42,13 @@ class BusinessDetailBottomSheet extends StatelessWidget {
                     children: [
                       /// Business Name
                       CustomText(
-                        title: data['name'] ?? '',
+                        title: isRequested == true
+                            ? data['requirement_name'] ?? ''
+                            : data['name'] ?? '',
                         fontSize: 18.sp,
                         fontWeight: FontWeight.w700,
-                        color: primaryColor,
+                        color: primaryColor,maxLines: 10,
+                        textAlign: TextAlign.start,
                       ),
 
                       SizedBox(height: 12.h),

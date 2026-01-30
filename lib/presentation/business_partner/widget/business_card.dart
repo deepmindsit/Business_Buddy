@@ -27,7 +27,10 @@ class _BusinessCardState extends State<BusinessCard> {
     return GestureDetector(
       onTap: () {
         Get.bottomSheet(
-          BusinessDetailBottomSheet(data: widget.data),
+          BusinessDetailBottomSheet(
+            data: widget.data,
+            isRequested: widget.isRequested,
+          ),
           isScrollControlled: true,
           backgroundColor: Colors.transparent,
         );

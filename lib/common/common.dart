@@ -568,7 +568,7 @@ Future<dynamic> _showPost(LBOController controller, {bool isEdit = false}) {
                               // ✏️ Edit Icon
                               if (isEdit)
                                 Positioned(
-                                  top: 10.h,
+                                  bottom: 10.h,
                                   right: 10.w,
                                   child: GestureDetector(
                                     onTap: () {
@@ -583,7 +583,9 @@ Future<dynamic> _showPost(LBOController controller, {bool isEdit = false}) {
                                     child: Container(
                                       padding: EdgeInsets.all(8.w),
                                       decoration: BoxDecoration(
-                                        color: primaryBlack,
+                                        color: Theme.of(
+                                          Get.context!,
+                                        ).dividerColor,
                                         shape: BoxShape.circle,
                                         border: Border.all(
                                           color: lightGrey,
@@ -1047,7 +1049,7 @@ Future<dynamic> _showOffer(LBOController controller, {bool isEdit = false}) {
                                 ),
                                 if (isEdit)
                                   Positioned(
-                                    top: 10.h,
+                                    bottom: 10.h,
                                     right: 10.w,
                                     child: GestureDetector(
                                       onTap: () {
@@ -1061,9 +1063,9 @@ Future<dynamic> _showOffer(LBOController controller, {bool isEdit = false}) {
                                       child: Container(
                                         padding: EdgeInsets.all(8.w),
                                         decoration: BoxDecoration(
-                                          color: primaryBlack.withValues(
-                                            alpha: 0.7,
-                                          ),
+                                          color: Theme.of(
+                                            Get.context!,
+                                          ).dividerColor,
                                           shape: BoxShape.circle,
                                           border: Border.all(
                                             color: lightGrey,
@@ -1712,7 +1714,8 @@ void expandContent(dynamic data) {
         child: CustomText(
           title: data ?? '',
           fontSize: 14.sp,
-          maxLines: 30,color:inverseColor,
+          maxLines: 30,
+          color: inverseColor,
           textAlign: TextAlign.start,
         ),
       ),

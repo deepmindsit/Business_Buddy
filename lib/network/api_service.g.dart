@@ -30,7 +30,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/check_user',
+            'https://beta.bizyaari.com/api/user/v1/check_user',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -53,7 +53,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/verify_user',
+            'https://beta.bizyaari.com/api/user/v1/verify_user',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -101,7 +101,7 @@ class _ApiService implements ApiService {
           )
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/register_user',
+            'https://beta.bizyaari.com/api/user/v1/register_user',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -183,7 +183,7 @@ class _ApiService implements ApiService {
           )
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/register_business',
+            'https://beta.bizyaari.com/api/user/v1/register_business',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -265,7 +265,7 @@ class _ApiService implements ApiService {
           )
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/update_business',
+            'https://beta.bizyaari.com/api/user/v1/update_business',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -287,7 +287,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/get_categories',
+            'https://beta.bizyaari.com/api/user/v1/get_categories',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -332,7 +332,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/explore',
+            'https://beta.bizyaari.com/api/user/v1/explore',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -367,7 +367,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/business_details',
+            'https://beta.bizyaari.com/api/user/v1/business_details',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -402,7 +402,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/my_business_details',
+            'https://beta.bizyaari.com/api/user/v1/my_business_details',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -427,7 +427,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/my_businesses',
+            'https://beta.bizyaari.com/api/user/v1/my_businesses',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -489,7 +489,7 @@ class _ApiService implements ApiService {
           )
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/add_business_post',
+            'https://beta.bizyaari.com/api/user/v1/add_business_post',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -549,7 +549,7 @@ class _ApiService implements ApiService {
           )
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/update_business_post',
+            'https://beta.bizyaari.com/api/user/v1/update_business_post',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -621,7 +621,7 @@ class _ApiService implements ApiService {
           )
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/add_business_offer',
+            'https://beta.bizyaari.com/api/user/v1/add_business_offer',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -691,7 +691,7 @@ class _ApiService implements ApiService {
           )
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/update_business_offer',
+            'https://beta.bizyaari.com/api/user/v1/update_business_offer',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -719,7 +719,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/get_post_details',
+            'https://beta.bizyaari.com/api/user/v1/get_post_details',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -747,7 +747,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/get_offer_details',
+            'https://beta.bizyaari.com/api/user/v1/get_offer_details',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -792,7 +792,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/get_feeds',
+            'https://beta.bizyaari.com/api/user/v1/get_feeds',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -820,7 +820,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/home',
+            'https://beta.bizyaari.com/api/user/v1/home',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -863,7 +863,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/get_special_offers',
+            'https://beta.bizyaari.com/api/user/v1/get_special_offers',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -912,7 +912,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/business_requirement_list',
+            'https://beta.bizyaari.com/api/user/v1/business_requirement_list',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -933,7 +933,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/get_wulf_list',
+            'https://beta.bizyaari.com/api/user/v1/get_wulf_list',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -958,7 +958,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/get_investment_capacity_list',
+            'https://beta.bizyaari.com/api/user/v1/get_investment_capacity_list',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -983,7 +983,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/delete_business_requirement',
+            'https://beta.bizyaari.com/api/user/v1/delete_business_requirement',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1008,7 +1008,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/revoke_business_requirement',
+            'https://beta.bizyaari.com/api/user/v1/revoke_business_requirement',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1052,7 +1052,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/add_business_requirement',
+            'https://beta.bizyaari.com/api/user/v1/add_business_requirement',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1096,7 +1096,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/update_business_requirement',
+            'https://beta.bizyaari.com/api/user/v1/update_business_requirement',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1121,7 +1121,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/my_profile_details',
+            'https://beta.bizyaari.com/api/user/v1/my_profile_details',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1147,7 +1147,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/get_business_following_list',
+            'https://beta.bizyaari.com/api/user/v1/get_business_following_list',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1173,7 +1173,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/my_business_followers',
+            'https://beta.bizyaari.com/api/user/v1/my_business_followers',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1198,7 +1198,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/user_profile_details',
+            'https://beta.bizyaari.com/api/user/v1/user_profile_details',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1252,7 +1252,7 @@ class _ApiService implements ApiService {
           )
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/update_profile',
+            'https://beta.bizyaari.com/api/user/v1/update_profile',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1283,7 +1283,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/send_business_requirement_request',
+            'https://beta.bizyaari.com/api/user/v1/send_business_requirement_request',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1309,7 +1309,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/my_requested_business_requirements',
+            'https://beta.bizyaari.com/api/user/v1/my_requested_business_requirements',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1338,7 +1338,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/my_received_business_requirement_requests',
+            'https://beta.bizyaari.com/api/user/v1/my_received_business_requirement_requests',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1366,7 +1366,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/accept_business_requirement_request',
+            'https://beta.bizyaari.com/api/user/v1/accept_business_requirement_request',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1394,7 +1394,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/follow_business',
+            'https://beta.bizyaari.com/api/user/v1/follow_business',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1422,7 +1422,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/unfollow_business',
+            'https://beta.bizyaari.com/api/user/v1/unfollow_business',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1457,7 +1457,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/like_business_post',
+            'https://beta.bizyaari.com/api/user/v1/like_business_post',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1485,7 +1485,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/unlike_business_post',
+            'https://beta.bizyaari.com/api/user/v1/unlike_business_post',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1520,7 +1520,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/like_business_offer',
+            'https://beta.bizyaari.com/api/user/v1/like_business_offer',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1548,7 +1548,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/unlike_business_offer',
+            'https://beta.bizyaari.com/api/user/v1/unlike_business_offer',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1587,7 +1587,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/add_review_rating',
+            'https://beta.bizyaari.com/api/user/v1/add_review_rating',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1626,7 +1626,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/add_business_post_comment',
+            'https://beta.bizyaari.com/api/user/v1/add_business_post_comment',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1665,7 +1665,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/add_business_offer_comment',
+            'https://beta.bizyaari.com/api/user/v1/add_business_offer_comment',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1691,7 +1691,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/get_chat_list',
+            'https://beta.bizyaari.com/api/user/v1/get_chat_list',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1724,7 +1724,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/get_messages',
+            'https://beta.bizyaari.com/api/user/v1/get_messages',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1759,7 +1759,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/send_message',
+            'https://beta.bizyaari.com/api/user/v1/send_message',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1787,7 +1787,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/initiate_chat',
+            'https://beta.bizyaari.com/api/user/v1/initiate_chat',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1812,7 +1812,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/global_search',
+            'https://beta.bizyaari.com/api/user/v1/global_search',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1833,7 +1833,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/get_page_list',
+            'https://beta.bizyaari.com/api/user/v1/get_page_list',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1858,7 +1858,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/get_page_details',
+            'https://beta.bizyaari.com/api/user/v1/get_page_details',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1883,7 +1883,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/delete_account',
+            'https://beta.bizyaari.com/api/user/v1/delete_account',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1906,7 +1906,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/update_firebase_token',
+            'https://beta.bizyaari.com/api/user/v1/update_firebase_token',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1929,7 +1929,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/get_notifications',
+            'https://beta.bizyaari.com/api/user/v1/get_notifications',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1952,7 +1952,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/read_notification',
+            'https://beta.bizyaari.com/api/user/v1/read_notification',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1980,7 +1980,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'https://businessbuddy.deepmindsit.com/api/user/v1/save_user_disclaimer',
+            'https://beta.bizyaari.com/api/user/v1/save_user_disclaimer',
             queryParameters: queryParameters,
             data: _data,
           )

@@ -27,8 +27,6 @@ class _BusinessPartnerState extends State<BusinessPartner>
     });
   }
 
-
-
   Future<void> loadAllData() async {
     controller.isMainLoading.value = true;
     await Future.wait([

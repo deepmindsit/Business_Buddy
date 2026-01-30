@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:businessbuddy/utils/exported_path.dart';
 import 'package:intl/intl.dart';
 
@@ -397,10 +399,33 @@ class _AddOfferState extends State<AddOffer> {
           ? LoadingWidget(color: primaryColor)
           : GestureDetector(
               onTap: () async {
-                if (controller.offerKey.currentState!.validate()) {
-                  await controller.addNewOffer();
+                // 1️⃣ Validate text fields
+                if (!controller.offerKey.currentState!.validate()) return;
+
+                // 2️⃣ Validate media
+                if (!_isMediaSelected()) {
+                  ToastUtils.showWarningToast('Please select image or video');
+                  return;
                 }
+
+                // 3️⃣ Validate video size
+                final video = controller.offerVideo.value;
+                if (video != null && !_isVideoSizeValid(video)) {
+                  ToastUtils.showWarningToast(
+                    'Video size should be less than 20MB',
+                  );
+                  return;
+                }
+
+                // 4️⃣ Submit
+                await controller.addNewOffer();
               },
+
+              // onTap: () async {
+              //   if (controller.offerKey.currentState!.validate()) {
+              //     await controller.addNewOffer();
+              //   }
+              // },
               child: Container(
                 width: Get.width,
                 padding: EdgeInsets.symmetric(vertical: 14.h),
@@ -418,6 +443,16 @@ class _AddOfferState extends State<AddOffer> {
               ),
             ),
     );
+  }
+
+  bool _isMediaSelected() {
+    return controller.offerImage.value != null ||
+        controller.offerVideo.value != null;
+  }
+
+  bool _isVideoSizeValid(File video) {
+    final sizeInMB = video.lengthSync() / (1024 * 1024);
+    return sizeInMB <= 20;
   }
 
   Widget _buildLabel(String title) {
