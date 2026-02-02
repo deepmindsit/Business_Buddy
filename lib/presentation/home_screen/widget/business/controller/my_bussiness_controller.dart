@@ -527,4 +527,25 @@ class LBOController extends GetxController {
   /// ------------------------
   /// COMMON ERROR HANDLER
   /// ------------------------
+  ///
+  Future<void> deleteBusiness(
+    String businessId, {
+    bool showLoading = true,
+  }) async {
+    if (showLoading) isDetailsLoading.value = true;
+    try {
+      final response = await _apiService.deleteBusiness(businessId);
+
+      if (response['common']['status'] == true) {
+        ToastUtils.showSuccessToast(response['common']['message']);
+        Get.offAllNamed(Routes.mainScreen);
+      } else {
+        ToastUtils.showWarningToast(response['common']['message']);
+      }
+    } catch (e) {
+      showError(e);
+    } finally {
+      if (showLoading) isDetailsLoading.value = false;
+    }
+  }
 }

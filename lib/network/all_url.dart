@@ -12,9 +12,9 @@ Future<http.Client> getHttpClient() async {
 const googleMapsApi = 'AIzaSyAvg-gpAbB2_lKgSIJ9tG6JqjGJFaVeXNc';
 
 class AllUrl {
-  // static const String base = "http://192.168.29.37/bizyaari";
+  static const String base = "http://192.168.29.112/bizyaari";
   // static const String base = "https://businessbuddy.deepmindsit.com";
-  static const String base = "https://beta.bizyaari.com";
+  // static const String base = "https://beta.bizyaari.com";
   static const String baseUrl = "$base/api/user/v1";
 
   static const String sendOtp = '$baseUrl/check_user';
@@ -44,6 +44,7 @@ class AllUrl {
   static const String editBusinessReq = '$baseUrl/update_business_requirement';
   static const String deleteBusinessReq =
       '$baseUrl/delete_business_requirement';
+  static const String deleteBusiness = '$baseUrl/delete_business';
   static const String revokeBusinessReq =
       '$baseUrl/revoke_business_requirement';
   static const String getMyProfile = '$baseUrl/my_profile_details';
@@ -84,4 +85,5 @@ class AllUrl {
 
   static const String privacyPolicy = '$base/legal_page/privacy_policy';
   static const String termsCondition = '$base/legal_page/terms_and_conditions';
+  static const String helpAndSupport = '$base/help_and_support';
 }

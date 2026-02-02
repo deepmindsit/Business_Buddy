@@ -6,6 +6,7 @@ Future<void> makePhoneCall(String phoneNumber) async {
 }
 
 void sendingMails(String mail) async {
+  print('mail=======>$mail');
   final Uri params = Uri(scheme: 'mailto', path: mail);
   var url = Uri.parse(params.toString());
   if (await canLaunchUrl(url)) {

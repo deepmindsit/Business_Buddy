@@ -260,4 +260,28 @@ class ProfileController extends GetxController {
       isFollowLoadMore.value = false;
     }
   }
+
+  //////////////////////////////////////////help and support////////////////////////////////////////
+  final isHelpLoading = false.obs;
+  final helpMail = ''.obs;
+
+  Future<void> helpAndSupport({bool showLoading = true}) async {
+    if (showLoading) isHelpLoading.value = true;
+
+    try {
+      final response = await _apiService.helpAndSupport();
+
+      print(response);
+      print('response');
+      if (response['common']['status'] == true) {
+        helpMail.value = response['data']['email'] ?? '';
+      }
+    } catch (e) {
+      print('error');
+      print(e);
+      showError(e);
+    } finally {
+      if (showLoading) isHelpLoading.value = false;
+    }
+  }
 }

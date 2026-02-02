@@ -59,14 +59,18 @@ class _NavigationScreenState extends State<NavigationScreen> {
               child: BottomNavigationBar(
                 type: BottomNavigationBarType.fixed,
                 backgroundColor: navBackground,
-                selectedItemColor: primaryColor,
+                selectedItemColor: controller.currentIndex.value == -1
+                    ? Colors.grey
+                    : primaryColor,
                 unselectedItemColor: textGrey,
                 showUnselectedLabels: true,
                 selectedLabelStyle: const TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: 12,
                 ),
-                currentIndex: controller.currentIndex.value,
+                currentIndex: controller.currentIndex.value == -1
+                    ? 0
+                    : controller.currentIndex.value,
                 onTap: controller.updateBottomIndex,
                 items: [
                   _buildNavItem(

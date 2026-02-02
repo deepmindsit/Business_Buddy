@@ -326,7 +326,9 @@ class OfferCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         Get.to(
-          () => InstagramOfferView(isFrom: '',
+          () => InstagramOfferView(
+            isFrom: '',
+            showController: true,
             refresh: onRefresh,
             offerId: data['id']?.toString() ?? '',
             followButton: followButton,

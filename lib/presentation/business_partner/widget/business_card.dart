@@ -235,7 +235,6 @@ class _BusinessCardState extends State<BusinessCard> {
   Widget _buildSelf() {
     return Container(
       decoration: BoxDecoration(
-        // color: Colors.grey[100],
         borderRadius: BorderRadius.circular(12.r),
       ),
       child: PopupMenuButton<String>(

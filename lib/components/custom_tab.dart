@@ -66,6 +66,7 @@ class _CustomTabBarState extends State<CustomTabBar> {
                   title: Text(tabs[index]['label']),
                   description: Text(tabs[index]['intro']),
                   featureId: tabs[index]['featureId'],
+                  backgroundDismissible: true,
                   tapTarget: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

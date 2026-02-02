@@ -3,15 +3,16 @@ import 'package:businessbuddy/utils/exported_path.dart';
 @lazySingleton
 class VideoPlayerControllerX extends GetxController {
   final String url;
+  final bool showControllers;
 
-  VideoPlayerControllerX(this.url);
+  VideoPlayerControllerX(this.url, this.showControllers);
 
   late bool isYouTube;
-  final isMuted = false.obs;
+
   VideoPlayerController? videoController;
   ChewieController? chewieController;
   YoutubePlayerController? youtubeController;
-
+  final globalMute = getIt<GlobalVideoMuteController>();
   final isInitialized = false.obs;
   final isPlaying = false.obs;
   final aspectR = (9 / 16).obs;
@@ -21,23 +22,32 @@ class VideoPlayerControllerX extends GetxController {
     super.onInit();
     isYouTube = url.contains('youtube.com') || url.contains('youtu.be');
     _initialize();
+
+    /// 🔥 GLOBAL MUTE LISTENER
+    ever(globalMute.isMuted, (bool muted) {
+      if (isYouTube) {
+        muted ? youtubeController?.mute() : youtubeController?.unMute();
+      } else {
+        videoController?.setVolume(muted ? 0 : 1);
+      }
+    });
   }
 
   Future<void> _initialize() async {
     if (isYouTube) {
       youtubeController = YoutubePlayerController(
         initialVideoId: YoutubePlayer.convertUrlToId(url)!,
-        flags: const YoutubePlayerFlags(
+        flags: YoutubePlayerFlags(
           autoPlay: false,
-          mute: true,
+          mute: globalMute.isMuted.value,
           loop: true,
         ),
       );
+
       isInitialized.value = true;
     } else {
       videoController = VideoPlayerController.networkUrl(Uri.parse(url));
       await videoController!.initialize();
-      // videoController!.pause();
 
       // ✅ ORIGINAL ASPECT RATIO
       aspectR.value = videoController!.value.aspectRatio;
@@ -46,9 +56,12 @@ class VideoPlayerControllerX extends GetxController {
         videoPlayerController: videoController!,
         autoPlay: false,
         looping: true,
-        showControls: false,
-        allowFullScreen: false,
+
+        showControls: !showControllers,
+        // allowFullScreen: false,
       );
+
+      videoController!.setVolume(globalMute.isMuted.value ? 0 : 1);
 
       isInitialized.value = true;
       isPlaying.value = true;
@@ -87,16 +100,18 @@ class VideoPlayerControllerX extends GetxController {
 
   /// 🔊 Toggle mute / unmute
   void toggleMute() {
-    isMuted.toggle();
+    globalMute.toggleMute();
 
     if (isYouTube) {
-      if (isMuted.value) {
+      if (globalMute.isMuted.value) {
         youtubeController?.mute();
       } else {
         youtubeController?.unMute();
       }
     } else {
-      chewieController?.videoPlayerController.setVolume(isMuted.value ? 0 : 1);
+      chewieController?.videoPlayerController.setVolume(
+        globalMute.isMuted.value ? 0 : 1,
+      );
     }
   }
 

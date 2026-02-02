@@ -52,6 +52,7 @@ class NavigationController extends GetxController {
     topTabIndex.value = index;
     isTopTabSelected.value = true;
     isSubPageOpen.value = false;
+    currentIndex.value = -1;
 
     switch (index) {
       case 0:

@@ -4,6 +4,7 @@ class InstagramOfferView extends StatefulWidget {
   final String offerId;
   final String isFrom;
   final dynamic followButton;
+  final bool showController;
   final Future<void> Function() refresh;
 
   const InstagramOfferView({
@@ -12,6 +13,7 @@ class InstagramOfferView extends StatefulWidget {
     required this.isFrom,
     this.followButton,
     required this.refresh,
+    this.showController = true,
   });
 
   @override
@@ -45,11 +47,10 @@ class _InstagramOfferViewState extends State<InstagramOfferView> {
             Get.back();
           }
         });
-
       },
       child: Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        appBar: AppbarPlain(title: 'Special Offer',showBackButton: false,),
+        appBar: AppbarPlain(title: 'Special Offer', showBackButton: false),
         body: Obx(
           () => controller.isSingleOfferLoading.isTrue
               ? OfferDetailShimmer()

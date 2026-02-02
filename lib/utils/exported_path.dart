@@ -95,6 +95,7 @@ export 'package:businessbuddy/presentation/business_partner/widget/business_bott
 
 //controller
 export 'package:businessbuddy/common/deeplink_controller.dart';
+export 'package:businessbuddy/components/mute_controller.dart';
 export 'package:businessbuddy/utils/theme_controller.dart';
 export 'package:businessbuddy/presentation/onboarding/controller/splash_controller.dart';
 export 'package:businessbuddy/presentation/onboarding/controller/onboarding_controller.dart';

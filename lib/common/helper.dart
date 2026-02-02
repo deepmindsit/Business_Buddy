@@ -132,3 +132,4 @@ void onWhatsApp(String phoneNumber) async {
     Get.snackbar('Error', 'WhatsApp not installed');
   }
 }
+

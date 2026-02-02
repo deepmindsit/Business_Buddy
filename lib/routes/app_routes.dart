@@ -8,6 +8,8 @@ import 'package:businessbuddy/presentation/profile/widget/following_list.dart';
 import '../presentation/home_screen/widget/business/widget/edit_offer.dart'
     show EditOffer;
 import '../presentation/profile/view/profile_screen.dart';
+import '../presentation/socket/services/socket_binding.dart';
+import '../presentation/socket/view/chat_test.dart';
 import '../utils/exported_path.dart';
 
 class AppRoutes {
@@ -32,5 +34,6 @@ class AppRoutes {
     GetPage(name: Routes.notificationList, page: () => NotificationList()),
     GetPage(name: Routes.globalSearch, page: () => GlobalSearch()),
     GetPage(name: Routes.followersList, page: () => FollowersList()),
+    GetPage(name: Routes.chat, page: () => ChatView(), binding: ChatBinding()),
   ];
 }

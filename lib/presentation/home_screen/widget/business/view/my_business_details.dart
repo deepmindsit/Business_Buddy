@@ -159,19 +159,92 @@ class _BusinessDetailsState extends State<BusinessDetails> {
   }
 
   Widget _buildEditButton() {
-    return GestureDetector(
-      onTap: () => Get.toNamed(Routes.editBusiness, arguments: {'data': {}}),
-      child: Container(
-        padding: EdgeInsets.all(6.w),
-        decoration: BoxDecoration(
-          color: Theme.of(context).brightness == Brightness.light
-              ? primaryColor.withValues(alpha: 0.1)
-              : Colors.white,
-          borderRadius: BorderRadius.circular(8.r),
+    return Container(
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(12.r)),
+      child: PopupMenuButton<String>(
+        color: Theme.of(context).brightness == Brightness.light
+            ? Colors.white
+            : Get.theme.cardColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
         ),
-        child: Icon(Icons.edit_outlined, size: 18.w, color: primaryColor),
+        elevation: 2,
+        popUpAnimationStyle: AnimationStyle(curve: Curves.easeInOut),
+        padding: EdgeInsets.zero,
+        surfaceTintColor: Colors.white,
+        icon: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Theme.of(context).brightness == Brightness.light
+                ? primaryColor.withValues(alpha: 0.1)
+                : Colors.white70,
+          ),
+          child: Icon(Icons.more_vert, color: primaryColor),
+        ),
+        onSelected: (value) {
+          _handleMenuSelection(value);
+        },
+        itemBuilder: (context) => [
+          _buildMenuItem('edit', Icons.edit, 'Edit', primaryColor),
+          _buildMenuItem('delete', Icons.delete, 'Delete', Colors.grey),
+        ],
       ),
     );
+
+    //   GestureDetector(
+    //   onTap: () => Get.toNamed(Routes.editBusiness, arguments: {'data': {}}),
+    //   child: Container(
+    //     padding: EdgeInsets.all(6.w),
+    //     decoration: BoxDecoration(
+    //       color: Theme.of(context).brightness == Brightness.light
+    //           ? primaryColor.withValues(alpha: 0.1)
+    //           : Colors.white,
+    //       borderRadius: BorderRadius.circular(8.r),
+    //     ),
+    //     child: Icon(Icons.edit_outlined, size: 18.w, color: primaryColor),
+    //   ),
+    // );
+  }
+
+  PopupMenuItem<String> _buildMenuItem(
+    String value,
+    IconData icon,
+    String text,
+    Color color,
+  ) {
+    return PopupMenuItem<String>(
+      value: value,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          Icon(icon, color: color),
+          const SizedBox(width: 12),
+          Text(text, style: TextStyle(color: textDarkGrey)),
+        ],
+      ),
+    );
+  }
+
+  void _handleMenuSelection(String value) {
+    switch (value) {
+      case 'edit':
+        // Get.back();
+        Get.toNamed(Routes.editBusiness, arguments: {'data': {}});
+        break;
+      case 'delete':
+        AllDialogs().showConfirmationDialog(
+          'Delete Business',
+          'Are you sure you want to delete this Business?',
+          onConfirm: () async {
+            Get.back();
+            await controller.deleteBusiness(
+              controller.businessDetails['id']?.toString() ?? '',
+            );
+          },
+        );
+        break;
+    }
   }
 
   Widget _buildCategoryAndFollowers() {

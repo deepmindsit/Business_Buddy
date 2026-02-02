@@ -24,4 +24,5 @@ class Routes {
   static const String notificationList = '/notificationList';
   static const String globalSearch = '/globalSearch';
   static const String followersList = '/followersList';
+  static const String chat = '/chat';
 }

@@ -11,6 +11,7 @@ class OnboardingController extends GetxController {
 
   final numberController = TextEditingController();
   final otpController = TextEditingController();
+
   var start = 30.obs;
   Timer? _timer;
 

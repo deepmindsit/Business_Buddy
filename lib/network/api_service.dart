@@ -200,6 +200,9 @@ abstract class ApiService {
     @Part(name: "requirement_id") String? requirementId,
   );
 
+  @POST(AllUrl.deleteBusiness)
+  Future<dynamic> deleteBusiness(@Part(name: "business_id") String? businessId);
+
   @POST(AllUrl.revokeBusinessReq)
   Future<dynamic> revokeBusinessReq(
     @Part(name: "requirement_id") String? requirementId,
@@ -410,6 +413,9 @@ abstract class ApiService {
     @Part(name: "data_accepted") String? data,
     @Part(name: "user_id") String? userId,
   );
+
+  @POST(AllUrl.helpAndSupport)
+  Future<dynamic> helpAndSupport();
 }
 
 //

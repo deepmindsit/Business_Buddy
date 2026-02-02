@@ -23,9 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (number != null && number.isNotEmpty) {
         controller.numberController.text = number;
       }
-    } catch (e) {
-      // print("Error getting number: $e");
-    }
+    } catch (_) {}
   }
 
   @override

@@ -198,7 +198,14 @@ class CustomMainHeader2 extends StatelessWidget {
     return GestureDetector(
       onTap: () => Get.toNamed(Routes.notificationList),
       // onTap: () {
-      //   getIt<ThemeController>().toggleTheme();
+      //   Get.toNamed(
+      //     Routes.chat,
+      //     parameters: {
+      //       'userId': '101',
+      //       'roomId': 'room_1',
+      //     },
+      //   );
+      //
       // },
       child: Stack(
         children: [
@@ -221,19 +228,19 @@ class CustomMainHeader2 extends StatelessWidget {
               size: 18.sp,
             ),
           ),
-          Positioned(
-            right: 0,
-            top: 0,
-            child: Container(
-              width: 8.w,
-              height: 8.w,
-              decoration: BoxDecoration(
-                color: Colors.red,
-                shape: BoxShape.circle,
-                border: Border.all(color: Get.theme.cardColor, width: 1.5),
-              ),
-            ),
-          ),
+          // Positioned(
+          //   right: 0,
+          //   top: 0,
+          //   child: Container(
+          //     width: 8.w,
+          //     height: 8.w,
+          //     decoration: BoxDecoration(
+          //       color: Colors.red,
+          //       shape: BoxShape.circle,
+          //       border: Border.all(color: Get.theme.cardColor, width: 1.5),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );

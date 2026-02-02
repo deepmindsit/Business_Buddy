@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import '../../../common/policy_data.dart';
 import '../../../utils/exported_path.dart';
 
@@ -19,6 +18,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       checkInternetAndShowPopup();
+      controller.helpAndSupport();
       checkIsMe();
     });
   }
@@ -102,6 +102,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
               color: primaryBlack,
             ),
           );
+        }),
+        Obx(() {
+          if (controller.isMe.isFalse) {
+            return IconButton(
+              onPressed: () {},
+              icon: HugeIcon(
+                icon: HugeIcons.strokeRoundedBubbleChat,
+                color: primaryBlack,
+              ),
+            );
+          }
+          return SizedBox();
         }),
       ],
     );
@@ -238,6 +250,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _businessCard(),
           _businessRequirement(),
           if (controller.isMe.isTrue) ...[_buildLogoutButton()],
+          Divider(
+            color: Colors.grey.shade300,
+            indent: Get.width * 0.04,
+            endIndent: Get.width * 0.04,
+          ),
+          ListTile(
+            visualDensity: VisualDensity(vertical: -4),
+            dense: true,
+            onTap: () => sendingMails(controller.helpMail.value),
+            title: CustomText(
+              title: 'Help and Support',
+              fontSize: 16.sp,
+              textAlign: TextAlign.start,
+              fontWeight: FontWeight.bold,
+              color: primaryBlack,
+            ),
+            trailing: Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: 16.r,
+              color: Colors.grey,
+            ),
+          ),
           if (controller.legalPageList.isNotEmpty)
             Divider(
               color: Colors.grey.shade300,

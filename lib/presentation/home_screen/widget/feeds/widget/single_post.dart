@@ -202,6 +202,7 @@ class _InstagramPostViewState extends State<InstagramPostView> {
       child: mediaType == 'video'
           ? InstagramVideoPlayer(
               isSingleView: true,
+              showController: true,
               key: ValueKey(video),
               url: video?.toString() ?? '',
             )
