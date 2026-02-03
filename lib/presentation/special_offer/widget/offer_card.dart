@@ -49,6 +49,7 @@ class OfferCard extends StatelessWidget {
   }
 
   Widget _buildTypeBadge() {
+    if (data['special_offer'] == false) return SizedBox();
     return Container(
       padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
@@ -328,7 +329,6 @@ class OfferCard extends StatelessWidget {
         Get.to(
           () => InstagramOfferView(
             isFrom: '',
-            showController: true,
             refresh: onRefresh,
             offerId: data['id']?.toString() ?? '',
             followButton: followButton,
@@ -349,7 +349,6 @@ class OfferCard extends StatelessWidget {
             constraints: BoxConstraints(maxHeight: 380.h),
             child: mediaType == 'video'
                 ? InstagramVideoPlayer(
-                    // isSingleView: true,
                     key: ValueKey(video),
                     url: video?.toString() ?? '',
                   )

@@ -43,6 +43,8 @@ import 'package:businessbuddy/presentation/onboarding/controller/splash_controll
     as _i446;
 import 'package:businessbuddy/presentation/profile/controller/profile_controller.dart'
     as _i634;
+import 'package:businessbuddy/presentation/profile/controller/tutorials_controller.dart'
+    as _i592;
 import 'package:businessbuddy/presentation/special_offer/controller/special_offer_controller.dart'
     as _i68;
 import 'package:businessbuddy/utils/theme_controller.dart' as _i1040;
@@ -97,6 +99,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i446.SplashController>(() => _i446.SplashController());
     gh.lazySingleton<_i634.ProfileController>(() => _i634.ProfileController());
+    gh.lazySingleton<_i592.TutorialsController>(
+      () => _i592.TutorialsController(),
+    );
     gh.lazySingleton<_i68.SpecialOfferController>(
       () => _i68.SpecialOfferController(),
     );

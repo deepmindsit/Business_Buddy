@@ -4,9 +4,7 @@ import 'package:businessbuddy/utils/exported_path.dart';
 class VideoPlayerControllerX extends GetxController {
   final String url;
   final bool showControllers;
-
   VideoPlayerControllerX(this.url, this.showControllers);
-
   late bool isYouTube;
 
   VideoPlayerController? videoController;
@@ -56,8 +54,7 @@ class VideoPlayerControllerX extends GetxController {
         videoPlayerController: videoController!,
         autoPlay: false,
         looping: true,
-
-        showControls: !showControllers,
+        showControls: false,
         // allowFullScreen: false,
       );
 

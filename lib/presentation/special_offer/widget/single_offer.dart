@@ -4,7 +4,6 @@ class InstagramOfferView extends StatefulWidget {
   final String offerId;
   final String isFrom;
   final dynamic followButton;
-  final bool showController;
   final Future<void> Function() refresh;
 
   const InstagramOfferView({
@@ -13,7 +12,6 @@ class InstagramOfferView extends StatefulWidget {
     required this.isFrom,
     this.followButton,
     required this.refresh,
-    this.showController = true,
   });
 
   @override
@@ -27,8 +25,9 @@ class _InstagramOfferViewState extends State<InstagramOfferView> {
 
   @override
   void initState() {
-    controller.getSingleOffer(widget.offerId.toString());
     super.initState();
+    getIt<GlobalVideoMuteController>().makeViewTrue();
+    controller.getSingleOffer(widget.offerId.toString());
   }
 
   @override

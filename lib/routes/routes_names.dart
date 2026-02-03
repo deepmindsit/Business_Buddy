@@ -25,4 +25,6 @@ class Routes {
   static const String globalSearch = '/globalSearch';
   static const String followersList = '/followersList';
   static const String chat = '/chat';
+  static const String tutorials = '/tutorials';
+  static const String helpAndSupport = '/helpNSupport';
 }

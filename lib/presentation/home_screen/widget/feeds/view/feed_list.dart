@@ -16,6 +16,7 @@ class _NewFeedState extends State<NewFeed> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       checkInternetAndShowPopup();
+      getIt<GlobalVideoMuteController>().makeViewFalse();
       getIt<SpecialOfferController>().resetData();
       controller.getFeeds(isRefresh: true);
     });

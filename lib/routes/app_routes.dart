@@ -5,9 +5,11 @@ import 'package:businessbuddy/presentation/home_screen/widget/business/widget/ed
 import 'package:businessbuddy/presentation/profile/widget/edit_profile.dart';
 import 'package:businessbuddy/presentation/profile/widget/followers_list.dart';
 import 'package:businessbuddy/presentation/profile/widget/following_list.dart';
+import 'package:businessbuddy/presentation/profile/widget/tutorials.dart';
 import '../presentation/home_screen/widget/business/widget/edit_offer.dart'
     show EditOffer;
 import '../presentation/profile/view/profile_screen.dart';
+import '../presentation/profile/widget/help_support.dart';
 import '../presentation/socket/services/socket_binding.dart';
 import '../presentation/socket/view/chat_test.dart';
 import '../utils/exported_path.dart';
@@ -35,5 +37,7 @@ class AppRoutes {
     GetPage(name: Routes.globalSearch, page: () => GlobalSearch()),
     GetPage(name: Routes.followersList, page: () => FollowersList()),
     GetPage(name: Routes.chat, page: () => ChatView(), binding: ChatBinding()),
+    GetPage(name: Routes.tutorials, page: () => TutorialsList()),
+    GetPage(name: Routes.helpAndSupport, page: () => HelpSupportScreen()),
   ];
 }

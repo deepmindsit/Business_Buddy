@@ -16,22 +16,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       checkInternetAndShowPopup();
       controller.helpAndSupport();
-      checkIsMe();
+      await _checkProfileType();
     });
   }
 
-  void checkIsMe() async {
-    final isMe = Get.arguments['user_id'] ?? 'self';
-    if (isMe == 'self') {
+  Future<void> _checkProfileType() async {
+    final userId = Get.arguments['user_id'] ?? 'self';
+
+    if (userId == 'self') {
       controller.isMe.value = true;
       await controller.getProfile();
       await controller.legalPageListApi();
     } else {
       controller.isMe.value = false;
-      await controller.getUserProfile(isMe);
+      await controller.getUserProfile(userId);
     }
   }
 
@@ -46,8 +47,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         }
 
         return SingleChildScrollView(
+          padding: const EdgeInsets.only(bottom: 24),
           child: Column(
-            children: [_buildProfileHeader(), _buildProfileDetails()],
+            children: [_buildProfileHeader(), _buildProfileContent()],
           ),
         );
       }),
@@ -81,42 +83,212 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       ),
       actions: [
-        Obx(() {
-          if (controller.isMe.isFalse) return SizedBox();
-          return IconButton(
-            onPressed: () => getIt<ThemeController>().toggleTheme(),
-            icon: HugeIcon(
-              icon: Theme.of(context).brightness == Brightness.light
-                  ? HugeIcons.strokeRoundedSun01
-                  : HugeIcons.strokeRoundedMoon02,
-              color: primaryBlack,
-            ),
-          );
-        }),
-        Obx(() {
-          if (controller.isMe.isFalse) return SizedBox();
-          return IconButton(
-            onPressed: () => Get.toNamed(Routes.editProfile),
-            icon: HugeIcon(
-              icon: HugeIcons.strokeRoundedPencilEdit02,
-              color: primaryBlack,
-            ),
-          );
-        }),
-        Obx(() {
-          if (controller.isMe.isFalse) {
-            return IconButton(
-              onPressed: () {},
-              icon: HugeIcon(
-                icon: HugeIcons.strokeRoundedBubbleChat,
-                color: primaryBlack,
-              ),
-            );
-          }
-          return SizedBox();
-        }),
+        Obx(() => controller.isMe.isTrue ? _ownerActions() : _visitorActions()),
+
+        // Obx(() {
+        //   if (controller.isMe.isFalse) return SizedBox();
+        //   return IconButton(
+        //     onPressed: () => getIt<ThemeController>().toggleTheme(),
+        //     icon: HugeIcon(
+        //       icon: Theme.of(context).brightness == Brightness.light
+        //           ? HugeIcons.strokeRoundedSun01
+        //           : HugeIcons.strokeRoundedMoon02,
+        //       color: primaryBlack,
+        //     ),
+        //   );
+        // }),
+        // Obx(() {
+        //   if (controller.isMe.isFalse) return SizedBox();
+        //   return IconButton(
+        //     onPressed: () => Get.toNamed(Routes.editProfile),
+        //     icon: HugeIcon(
+        //       icon: HugeIcons.strokeRoundedPencilEdit02,
+        //       color: primaryBlack,
+        //     ),
+        //   );
+        // }),
+        // Obx(() {
+        //   if (controller.isMe.isFalse) {
+        //     return IconButton(
+        //       onPressed: () {},
+        //       icon: HugeIcon(
+        //         icon: HugeIcons.strokeRoundedBubbleChat,
+        //         color: primaryBlack,
+        //       ),
+        //     );
+        //   }
+        //
+        //   return SizedBox();
+        // }),
+        // Obx(() {
+        //   if (controller.isMe.isFalse) {
+        //     return Container(
+        //       decoration: BoxDecoration(
+        //         borderRadius: BorderRadius.circular(12.r),
+        //       ),
+        //       child: PopupMenuButton<String>(
+        //         color: Theme.of(context).brightness == Brightness.light
+        //             ? Colors.white
+        //             : Get.theme.cardColor,
+        //         shape: RoundedRectangleBorder(
+        //           borderRadius: BorderRadius.circular(16.r),
+        //         ),
+        //         elevation: 2,
+        //         popUpAnimationStyle: AnimationStyle(curve: Curves.easeInOut),
+        //         padding: EdgeInsets.zero,
+        //         surfaceTintColor: Colors.white,
+        //         icon: Container(
+        //           padding: const EdgeInsets.all(8),
+        //           margin: const EdgeInsets.only(right: 8),
+        //           decoration: BoxDecoration(
+        //             shape: BoxShape.circle,
+        //             color: Colors.white70,
+        //           ),
+        //           child: Icon(Icons.more_vert, color: primaryColor),
+        //         ),
+        //         onSelected: (value) {
+        //           _handleMenuSelection(value);
+        //         },
+        //         itemBuilder: (context) => [
+        //           _buildMenuItem(
+        //             'block',
+        //             controller.isBlocked.isTrue
+        //                 ? Icons.u_turn_left_rounded
+        //                 : Icons.block,
+        //             controller.isBlocked.isTrue ? 'Unblock User' : 'Block User',
+        //             primaryColor,
+        //           ),
+        //         ],
+        //       ),
+        //     );
+        //   }
+        //   return SizedBox();
+        // }),
       ],
     );
+  }
+
+  Widget _ownerActions() {
+    return Row(
+      children: [
+        IconButton(
+          onPressed: () => getIt<ThemeController>().toggleTheme(),
+          icon: HugeIcon(
+            icon: Theme.of(context).brightness == Brightness.light
+                ? HugeIcons.strokeRoundedSun01
+                : HugeIcons.strokeRoundedMoon02,
+            color: primaryBlack,
+          ),
+        ),
+        IconButton(
+          onPressed: () => Get.toNamed(Routes.editProfile),
+          icon: HugeIcon(
+            icon: HugeIcons.strokeRoundedPencilEdit02,
+            color: primaryBlack,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _visitorActions() {
+    return Row(
+      children: [
+        IconButton(
+          onPressed: () {},
+          icon: HugeIcon(
+            icon: HugeIcons.strokeRoundedBubbleChat,
+            color: primaryBlack,
+          ),
+        ),
+        Container(
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(12.r)),
+          child: PopupMenuButton<String>(
+            color: Theme.of(context).brightness == Brightness.light
+                ? Colors.white
+                : Get.theme.cardColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16.r),
+            ),
+            elevation: 2,
+            popUpAnimationStyle: AnimationStyle(curve: Curves.easeInOut),
+            padding: EdgeInsets.zero,
+            surfaceTintColor: Colors.white,
+            icon: Container(
+              padding: const EdgeInsets.all(8),
+              margin: const EdgeInsets.only(right: 8),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white70,
+              ),
+              child: Icon(Icons.more_vert, color: primaryColor),
+            ),
+            onSelected: (value) {
+              _handleMenuSelection(value);
+            },
+            itemBuilder: (context) => [
+              _buildMenuItem(
+                'block',
+                controller.isBlocked.isTrue
+                    ? Icons.u_turn_left_rounded
+                    : Icons.block,
+                controller.isBlocked.isTrue ? 'Unblock User' : 'Block User',
+                primaryColor,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  PopupMenuItem<String> _buildMenuItem(
+    String value,
+    IconData icon,
+    String text,
+    Color color,
+  ) {
+    return PopupMenuItem<String>(
+      value: value,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Obx(
+        () => Row(
+          children: [
+            Icon(
+              controller.isBlocked.isTrue
+                  ? Icons.u_turn_left_rounded
+                  : Icons.block,
+              color: color,
+            ),
+            const SizedBox(width: 12),
+            Text(
+              controller.isBlocked.isTrue ? 'Unblock User' : 'Block User',
+              style: TextStyle(color: textDarkGrey),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _handleMenuSelection(String value) {
+    switch (value) {
+      case 'block':
+        AllDialogs().showConfirmationDialog(
+          controller.profileDetails['is_block'] == true
+              ? 'Unblock User'
+              : 'Block user',
+
+          controller.profileDetails['is_block'] == true
+              ? 'Are you sure you want to unblock this user?'
+              : 'Are you sure you want to block this user?',
+          onConfirm: () async {
+            Get.back();
+            await controller.blockUser(Get.arguments['user_id']);
+          },
+        );
+        break;
+    }
   }
 
   // ✅---------------- PROFILE HEADER ----------------✅
@@ -125,195 +297,239 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.symmetric(vertical: 24),
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
-        // boxShadow: [
-        //   BoxShadow(
-        //     color: Colors.red.shade50,
-        //     blurRadius: 8,
-        //     offset: Offset(0, 2),
-        //   ),
-        // ],
       ),
       child: Column(
         children: [
           // Profile Image
-          Container(
-            width: 120.w,
-            height: 120.h,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.blueGrey.shade100, width: 3),
-            ),
-            child: ClipOval(
-              child: CachedNetworkImage(
-                imageUrl: image,
-                fit: BoxFit.cover,
-                placeholder: (_, __) => Image.asset(Images.defaultImage),
-                errorWidget: (_, __, ___) => Image.asset(Images.defaultImage),
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-          // Name
+          _profileImage(image),
+          const SizedBox(height: 16),
           CustomText(
             title: controller.profileDetails['name'] ?? '',
-            fontSize: 24.sp,
+            fontSize: 22.sp,
             fontWeight: FontWeight.bold,
             textAlign: TextAlign.start,
             color: primaryBlack,
           ),
           const SizedBox(height: 8),
           // Category
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-            decoration: BoxDecoration(
-              color: Theme.of(context).brightness == Brightness.light
-                  ? primaryColor.withValues(alpha: 0.2)
-                  : Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: primaryColor.withValues(alpha: 0.2)),
-            ),
-            child: CustomText(
-              title: controller.profileDetails['specialization'] ?? '-',
-              color: primaryColor,
-              fontWeight: FontWeight.w500,
-              fontSize: 14.sp,
-            ),
-          ),
+          _specializationChip(),
           const SizedBox(height: 8),
           // Name
-          GestureDetector(
-            onTap: () => Get.toNamed(
-              Routes.followingList,
-              arguments: {
-                'user_id': controller.profileDetails['id']?.toString() ?? '',
-              },
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CustomText(
-                  title:
-                      controller.profileDetails['followed_businesses_count']
-                          ?.toString() ??
-                      '-',
-                  fontSize: 22.sp,
-                  fontWeight: FontWeight.bold,
-                  color: primaryBlack,
-                ),
-                SizedBox(width: 6.w),
-                CustomText(
-                  title: 'Following',
-                  fontWeight: FontWeight.w500,
-                  fontSize: 14.sp,
-                  color: primaryBlack,
-                ),
-                SizedBox(width: 4.w),
-                Icon(
-                  Icons.arrow_forward_ios_rounded,
-                  size: 16.r,
-                  color: primaryBlack,
-                ),
-              ],
-            ),
-          ),
+          _followingCount(),
           Divider(color: lightGrey, height: 1),
         ],
       ),
     );
   }
 
+  Widget _profileImage(image) {
+    return Container(
+      width: 110.w,
+      height: 110.h,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.blueGrey.shade300, width: 2),
+      ),
+      child: ClipOval(
+        child: CachedNetworkImage(
+          imageUrl: image,
+          fit: BoxFit.cover,
+          placeholder: (_, __) => Image.asset(Images.defaultImage),
+          errorWidget: (_, __, ___) => Image.asset(Images.defaultImage),
+        ),
+      ),
+    );
+  }
+
+  Widget _specializationChip() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      decoration: BoxDecoration(
+        color: Theme.of(context).brightness == Brightness.light
+            ? primaryColor.withValues(alpha: 0.2)
+            : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: primaryColor.withValues(alpha: 0.2)),
+      ),
+      child: CustomText(
+        title: controller.profileDetails['specialization'] ?? '-',
+        color: primaryColor,
+        fontWeight: FontWeight.w500,
+        fontSize: 14.sp,
+      ),
+    );
+  }
+
+  Widget _followingCount() {
+    return GestureDetector(
+      onTap: () => Get.toNamed(
+        Routes.followingList,
+        arguments: {
+          'user_id': controller.profileDetails['id']?.toString() ?? '',
+        },
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CustomText(
+            title:
+                controller.profileDetails['followed_businesses_count']
+                    ?.toString() ??
+                '0',
+            fontSize: 20.sp,
+            fontWeight: FontWeight.bold,
+            color: primaryBlack,
+          ),
+          SizedBox(width: 6.w),
+          CustomText(
+            title: 'Following',
+            fontWeight: FontWeight.w500,
+            fontSize: 14.sp,
+            color: primaryBlack,
+          ),
+          SizedBox(width: 4.w),
+          Icon(Icons.arrow_forward_ios, size: 14.r, color: primaryBlack),
+        ],
+      ),
+    );
+  }
+
   // ✅---------------- PROFILE DETAILS ----------------✅
-  Widget _buildProfileDetails() {
+  Widget _buildProfileContent() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         spacing: 8.h,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (controller.profileDetails['about'] != null) ...[
-            _buildSectionTitle('About Me'),
-            _buildAboutMeSection(),
+            _Section(
+              title: 'About Me',
+              child: Text(
+                controller.profileDetails['about'],
+                textAlign: TextAlign.justify,
+              ),
+            ),
+            // _buildSectionTitle('About Me'),
+            // _buildAboutMeSection(),
           ],
+          _Section(
+            title: 'Professional Details',
+            child: Column(
+              spacing: 8.h,
+              children: [
+                _InfoRow(
+                  'Specialization',
+                  controller.profileDetails['specialization'],
+                ),
+                _InfoRow('Experience', controller.profileDetails['experience']),
+                _InfoRow('Education', controller.profileDetails['education']),
+              ],
+            ),
+          ),
 
-          _buildSectionTitle('Professional Details'),
+          // _buildSectionTitle('Professional Details'),
+          //
+          // _buildCategorySection(),
+          if (controller.isMe.isTrue)
+            _Section(
+              title: 'Contact Information',
+              child: Column(
+                spacing: 12.h,
+                children: [
+                  _ContactRow(
+                    HugeIcons.strokeRoundedMail01,
+                    controller.profileDetails['email_id'],
+                  ),
+                  _ContactRow(
+                    HugeIcons.strokeRoundedCall02,
+                    controller.profileDetails['mobile_number'],
+                  ),
+                ],
+              ),
+            ),
 
-          _buildCategorySection(),
-          if (controller.isMe.isTrue) ...[
-            _buildSectionTitle('Contact Information'),
-
-            _buildContactSection(),
-          ],
+          // if (controller.isMe.isTrue) ...[
+          //   _buildSectionTitle('Contact Information'),
+          //   _buildContactSection(),
+          // ],
           _businessCard(),
           _businessRequirement(),
-          if (controller.isMe.isTrue) ...[_buildLogoutButton()],
-          Divider(
-            color: Colors.grey.shade300,
-            indent: Get.width * 0.04,
-            endIndent: Get.width * 0.04,
-          ),
-          ListTile(
-            visualDensity: VisualDensity(vertical: -4),
-            dense: true,
-            onTap: () => sendingMails(controller.helpMail.value),
-            title: CustomText(
-              title: 'Help and Support',
-              fontSize: 16.sp,
-              textAlign: TextAlign.start,
-              fontWeight: FontWeight.bold,
-              color: primaryBlack,
+          if (controller.isMe.isTrue) ...[
+            _buildLogoutButton(),
+            _buildDivider(),
+            _SimpleTile(
+              title: 'How to use?',
+              onTap: () => Get.toNamed(Routes.tutorials),
             ),
-            trailing: Icon(
-              Icons.arrow_forward_ios_rounded,
-              size: 16.r,
-              color: Colors.grey,
+            _buildDivider(),
+            _SimpleTile(
+              title: 'Help & Support',
+              // onTap: () => sendingMails(controller.helpMail.value),
+              onTap: () => Get.toNamed(Routes.helpAndSupport),
             ),
-          ),
-          if (controller.legalPageList.isNotEmpty)
-            Divider(
-              color: Colors.grey.shade300,
-              indent: Get.width * 0.04,
-              endIndent: Get.width * 0.04,
-            ),
-          Column(
-            children: List.generate(controller.legalPageList.length, (index) {
-              final v = controller.legalPageList[index];
-              return Column(
-                children: [
-                  ListTile(
-                    visualDensity: VisualDensity(vertical: -4),
-                    dense: true,
-                    onTap: () {
-                      Get.to(() => PolicyData(slug: v['slug'] ?? ''));
-                    },
-                    title: CustomText(
+            _buildDivider(),
+            if (controller.legalPageList.isNotEmpty)
+              ...controller.legalPageList.map(
+                (v) => Column(
+                  children: [
+                    _SimpleTile(
                       title: v['name'] ?? '',
-                      fontSize: 16.sp,
-                      textAlign: TextAlign.start,
-                      fontWeight: FontWeight.bold,
-                      color: primaryBlack,
+                      onTap: () =>
+                          Get.to(() => PolicyData(slug: v['slug'] ?? '')),
                     ),
-                    trailing: Icon(
-                      Icons.arrow_forward_ios_rounded,
-                      size: 16.r,
-                      color: Colors.grey,
-                    ),
-                  ),
-                  if (index != controller.legalPageList.length - 1)
-                    Divider(
-                      color: Colors.grey.shade300,
-                      indent: Get.width * 0.04,
-                      endIndent: Get.width * 0.04,
-                    ),
-                ],
-              );
-            }),
-          ),
+                    _buildDivider(),
+                  ],
+                ),
+              ),
+          ],
+          // if (controller.isMe.isTrue &&
+          //     controller.legalPageList.isNotEmpty) ...[
+          //   _buildDivider(),
+          //   Column(
+          //     children: List.generate(controller.legalPageList.length, (index) {
+          //       final v = controller.legalPageList[index];
+          //       return Column(
+          //         children: [
+          //           ListTile(
+          //             visualDensity: VisualDensity(vertical: -4),
+          //             dense: true,
+          //             onTap: () {
+          //               Get.to(() => PolicyData(slug: v['slug'] ?? ''));
+          //             },
+          //             title: CustomText(
+          //               title: v['name'] ?? '',
+          //               fontSize: 16.sp,
+          //               textAlign: TextAlign.start,
+          //               fontWeight: FontWeight.bold,
+          //               color: primaryBlack,
+          //             ),
+          //             trailing: Icon(
+          //               Icons.arrow_forward_ios_rounded,
+          //               size: 16.r,
+          //               color: Colors.grey,
+          //             ),
+          //           ),
+          //           if (index != controller.legalPageList.length - 1)
+          //             _buildDivider(),
+          //         ],
+          //       );
+          //     }),
+          //   ),
+          // ],
         ],
       ),
+    );
+  }
+
+  Widget _buildDivider() {
+    return Divider(
+      color: Colors.grey.shade300,
+      indent: Get.width * 0.04,
+      endIndent: Get.width * 0.04,
     );
   }
 
@@ -328,91 +544,92 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
+  //
+  // Widget _buildAboutMeSection() {
+  //   final about = controller.profileDetails['about'] ?? '';
+  //   // if (about == null) return SizedBox();
+  //   return Container(
+  //     width: double.infinity,
+  //     padding: const EdgeInsets.all(20),
+  //     decoration: _boxDecoration(),
+  //     child: CustomText(
+  //       title: about,
+  //       maxLines: 10,
+  //       fontSize: 15.sp,
+  //       color: primaryBlack,
+  //       textAlign: TextAlign.justify,
+  //     ),
+  //   );
+  // }
+  //
+  // Widget _buildCategorySection() {
+  //   return Container(
+  //     width: double.infinity,
+  //     padding: const EdgeInsets.all(20),
+  //     decoration: _boxDecoration(),
+  //     child: Column(
+  //       children: [
+  //         _buildCategoryItem(
+  //           'Specialization',
+  //           controller.profileDetails['specialization'] ?? '-',
+  //         ),
+  //         const SizedBox(height: 12),
+  //         _buildCategoryItem(
+  //           'Experience',
+  //           controller.profileDetails['experience'] ?? '-',
+  //         ),
+  //         const SizedBox(height: 12),
+  //         _buildCategoryItem(
+  //           'Education',
+  //           controller.profileDetails['education'] ?? '-',
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
-  Widget _buildAboutMeSection() {
-    final about = controller.profileDetails['about'] ?? '';
-    // if (about == null) return SizedBox();
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: _boxDecoration(),
-      child: CustomText(
-        title: about,
-        maxLines: 10,
-        fontSize: 15.sp,
-        color: primaryBlack,
-        textAlign: TextAlign.justify,
-      ),
-    );
-  }
+  // Widget _buildCategoryItem(String title, String value) {
+  //   return Row(
+  //     children: [
+  //       Expanded(flex: 2, child: Text(title, style: _labelStyle())),
+  //       Expanded(flex: 3, child: Text(value, style: _valueStyle())),
+  //     ],
+  //   );
+  // }
 
-  Widget _buildCategorySection() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: _boxDecoration(),
-      child: Column(
-        children: [
-          _buildCategoryItem(
-            'Specialization',
-            controller.profileDetails['specialization'] ?? '-',
-          ),
-          const SizedBox(height: 12),
-          _buildCategoryItem(
-            'Experience',
-            controller.profileDetails['experience'] ?? '-',
-          ),
-          const SizedBox(height: 12),
-          _buildCategoryItem(
-            'Education',
-            controller.profileDetails['education'] ?? '-',
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildContactSection() {
+  //   return Container(
+  //     width: double.infinity,
+  //     padding: const EdgeInsets.all(20),
+  //     decoration: _boxDecoration(),
+  //     child: Column(
+  //       spacing: 12.h,
+  //       children: [
+  //         _buildContactItem(
+  //           HugeIcons.strokeRoundedMail01,
+  //           controller.profileDetails['email_id'] ?? '-',
+  //         ),
+  //         _buildContactItem(
+  //           HugeIcons.strokeRoundedCall02,
+  //           controller.profileDetails['mobile_number'] ?? '-',
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
-  Widget _buildCategoryItem(String title, String value) {
-    return Row(
-      children: [
-        Expanded(flex: 2, child: Text(title, style: _labelStyle())),
-        Expanded(flex: 3, child: Text(value, style: _valueStyle())),
-      ],
-    );
-  }
-
-  Widget _buildContactSection() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: _boxDecoration(),
-      child: Column(
-        spacing: 12.h,
-        children: [
-          _buildContactItem(
-            HugeIcons.strokeRoundedMail01,
-            controller.profileDetails['email_id'] ?? '-',
-          ),
-          _buildContactItem(
-            HugeIcons.strokeRoundedCall02,
-            controller.profileDetails['mobile_number'] ?? '-',
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildContactItem(var icon, String text) {
-    return Row(
-      spacing: 12.w,
-      children: [
-        HugeIcon(icon: icon, size: 20.r, color: primaryColor),
-        Expanded(child: Text(text, style: _valueStyle())),
-      ],
-    );
-  }
+  // Widget _buildContactItem(var icon, String text) {
+  //   return Row(
+  //     spacing: 12.w,
+  //     children: [
+  //       HugeIcon(icon: icon, size: 20.r, color: primaryColor),
+  //       Expanded(child: Text(text, style: _valueStyle())),
+  //     ],
+  //   );
+  // }
 
   // ✅---------------- BUSINESS CARD ----------------✅
+
   Widget _businessCard() {
     final businesses = controller.profileDetails['businesses'] ?? [];
     if (businesses.length == 0) return const SizedBox();
@@ -666,37 +883,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   // ✅---------------- COMMON STYLES ----------------✅
-  BoxDecoration _boxDecoration() {
-    final isDark = Theme.of(Get.context!).brightness == Brightness.dark;
 
-    return BoxDecoration(
-      color: Get.theme.cardColor,
-      borderRadius: BorderRadius.circular(12),
-      boxShadow: [
-        BoxShadow(
-          color: isDark ? Colors.grey.withValues(alpha: 0.3) : Colors.black12,
-          blurRadius: 6,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    );
-  }
-
-  TextStyle _labelStyle() {
-    return TextStyle(
-      fontWeight: FontWeight.w500,
-      color: textSmall,
-      fontSize: 14.sp,
-    );
-  }
-
-  TextStyle _valueStyle() {
-    return TextStyle(
-      fontWeight: FontWeight.w600,
-      color: textLightGrey,
-      fontSize: 14.sp,
-    );
-  }
+  // TextStyle _labelStyle() {
+  //   return TextStyle(
+  //     fontWeight: FontWeight.w500,
+  //     color: textSmall,
+  //     fontSize: 14.sp,
+  //   );
+  // }
 
   // Widget _buildDeleteButton() {
   //   return GestureDetector(
@@ -723,4 +917,114 @@ class _ProfileScreenState extends State<ProfileScreen> {
   //     ),
   //   );
   // }
+}
+
+BoxDecoration _boxDecoration() {
+  final isDark = Theme.of(Get.context!).brightness == Brightness.dark;
+
+  return BoxDecoration(
+    color: Get.theme.cardColor,
+    borderRadius: BorderRadius.circular(12),
+    boxShadow: [
+      BoxShadow(
+        color: isDark ? Colors.grey.withValues(alpha: 0.3) : Colors.black12,
+        blurRadius: 6,
+        offset: const Offset(0, 2),
+      ),
+    ],
+  );
+}
+
+TextStyle _valueStyle() {
+  return TextStyle(
+    fontWeight: FontWeight.w600,
+    color: textLightGrey,
+    fontSize: 14.sp,
+  );
+}
+
+class _SimpleTile extends StatelessWidget {
+  final String title;
+  final VoidCallback onTap;
+
+  const _SimpleTile({required this.title, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      visualDensity: VisualDensity(vertical: -4),
+      dense: true,
+      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
+      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+      onTap: onTap,
+    );
+  }
+}
+
+class _InfoRow extends StatelessWidget {
+  final String label;
+  final String? value;
+
+  const _InfoRow(this.label, this.value);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(child: Text(label)),
+        Expanded(child: Text(value ?? '-', style: _valueStyle())),
+      ],
+    );
+  }
+}
+
+class _Section extends StatelessWidget {
+  final String title;
+  final Widget child;
+
+  const _Section({required this.title, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 18.sp,
+            fontWeight: FontWeight.w600,
+            color: primaryBlack,
+            letterSpacing: -0.5,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(16),
+          decoration: _boxDecoration(),
+          child: child,
+        ),
+        const SizedBox(height: 16),
+      ],
+    );
+  }
+}
+
+class _ContactRow extends StatelessWidget {
+  final dynamic icon;
+  final String? value;
+
+  const _ContactRow(this.icon, this.value);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      spacing: 12.w,
+      children: [
+        HugeIcon(icon: icon, color: primaryColor, size: 20.r),
+        Expanded(child: Text(value ?? '-', style: _valueStyle())),
+      ],
+    );
+  }
 }

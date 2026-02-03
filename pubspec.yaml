@@ -79,6 +79,7 @@ dependencies:
   app_links: ^6.4.1
   feature_discovery: ^0.14.2
   socket_io_client: ^3.1.4
+  flutter_svg: ^2.2.3
 
 dev_dependencies:
   flutter_test:

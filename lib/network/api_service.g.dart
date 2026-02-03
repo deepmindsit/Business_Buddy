@@ -1210,7 +1210,7 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<dynamic> getUserProfile(String? userId) async {
+  Future<dynamic> getUserProfile(String? userId, String? loginUserId) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     queryParameters.removeWhere((k, v) => v == null);
@@ -1218,6 +1218,9 @@ class _ApiService implements ApiService {
     final _data = FormData();
     if (userId != null) {
       _data.fields.add(MapEntry('user_id', userId));
+    }
+    if (loginUserId != null) {
+      _data.fields.add(MapEntry('login_user_id', loginUserId));
     }
     final _options = _setStreamType<dynamic>(
       Options(method: 'POST', headers: _headers, extra: _extra)
@@ -2026,7 +2029,57 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'http://192.168.29.112/bizyaari/help_and_support',
+            'http://192.168.29.112/bizyaari/api/user/v1/help_and_support',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch(_options);
+    final _value = _result.data;
+    return _value;
+  }
+
+  @override
+  Future<dynamic> blockUser(String? userId, String? blockUserId) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    if (userId != null) {
+      _data.fields.add(MapEntry('user_id', userId));
+    }
+    if (blockUserId != null) {
+      _data.fields.add(MapEntry('block_user_id', blockUserId));
+    }
+    final _options = _setStreamType<dynamic>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'http://192.168.29.112/bizyaari/api/user/v1/block_user',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch(_options);
+    final _value = _result.data;
+    return _value;
+  }
+
+  @override
+  Future<dynamic> getTutorials(String pageNo) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    _data.fields.add(MapEntry('page_number', pageNo));
+    final _options = _setStreamType<dynamic>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'http://192.168.29.112/bizyaari/api/user/v1/get_tutorials',
             queryParameters: queryParameters,
             data: _data,
           )

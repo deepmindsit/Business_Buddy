@@ -7,6 +7,7 @@ class HomeController extends GetxController {
 
   final isLoading = false.obs;
   final isMainLoading = false.obs;
+  final showNotificationDot = false.obs;
 
   final feedsList = [].obs;
   final categoryList = [].obs;
@@ -105,6 +106,7 @@ class HomeController extends GetxController {
         categoryList.value = data['categories'] ?? [];
         requirementList.value = data['business_requirements'] ?? [];
         sliderList.value = data['sliders'] ?? [];
+        showNotificationDot.value = data['show_notification'] ?? false;
       }
     } catch (e) {
       showError(e);

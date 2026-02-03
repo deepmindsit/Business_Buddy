@@ -252,7 +252,10 @@ abstract class ApiService {
   );
 
   @POST(AllUrl.getUserProfile)
-  Future<dynamic> getUserProfile(@Part(name: "user_id") String? userId);
+  Future<dynamic> getUserProfile(
+    @Part(name: "user_id") String? userId,
+    @Part(name: "login_user_id") String? loginUserId,
+  );
 
   @POST(AllUrl.updateProfile)
   @MultiPart()
@@ -416,6 +419,15 @@ abstract class ApiService {
 
   @POST(AllUrl.helpAndSupport)
   Future<dynamic> helpAndSupport();
+
+  @POST(AllUrl.blockUser)
+  Future<dynamic> blockUser(
+    @Part(name: "user_id") String? userId,
+    @Part(name: "block_user_id") String? blockUserId,
+  );
+
+  @POST(AllUrl.tutorials)
+  Future<dynamic> getTutorials(@Part(name: "page_number") String pageNo);
 }
 
 //

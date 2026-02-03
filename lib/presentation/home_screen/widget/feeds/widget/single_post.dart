@@ -25,6 +25,7 @@ class _InstagramPostViewState extends State<InstagramPostView> {
   @override
   void initState() {
     controller.getSinglePost(widget.postId.toString());
+    getIt<GlobalVideoMuteController>().makeViewTrue();
     super.initState();
   }
 
@@ -202,7 +203,6 @@ class _InstagramPostViewState extends State<InstagramPostView> {
       child: mediaType == 'video'
           ? InstagramVideoPlayer(
               isSingleView: true,
-              showController: true,
               key: ValueKey(video),
               url: video?.toString() ?? '',
             )

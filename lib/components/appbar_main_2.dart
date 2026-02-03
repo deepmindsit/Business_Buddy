@@ -228,19 +228,23 @@ class CustomMainHeader2 extends StatelessWidget {
               size: 18.sp,
             ),
           ),
-          // Positioned(
-          //   right: 0,
-          //   top: 0,
-          //   child: Container(
-          //     width: 8.w,
-          //     height: 8.w,
-          //     decoration: BoxDecoration(
-          //       color: Colors.red,
-          //       shape: BoxShape.circle,
-          //       border: Border.all(color: Get.theme.cardColor, width: 1.5),
-          //     ),
-          //   ),
-          // ),
+          Positioned(
+            right: 0,
+            top: 0,
+            child: Obx(() {
+              if (getIt<HomeController>().showNotificationDot.isFalse)
+                return SizedBox();
+              return Container(
+                width: 8.w,
+                height: 8.w,
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Get.theme.cardColor, width: 1.5),
+                ),
+              );
+            }),
+          ),
         ],
       ),
     );

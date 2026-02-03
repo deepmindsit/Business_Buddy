@@ -253,7 +253,7 @@ class NotificationTile extends StatelessWidget {
     final isRead = notification['is_read'].toString() == '1';
     return Card(
       surfaceTintColor: Colors.white,
-      margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       color: isRead ? Get.theme.cardColor : lightRed,
       child: ListTile(
         title: CustomText(

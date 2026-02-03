@@ -18,7 +18,7 @@ class UpdateController extends GetxController {
   Future<void> _getProfileData() async {
     final userId = await LocalStorage.getString('user_id');
     try {
-      final res = await _apiService.getUserProfile(userId);
+      final res = await _apiService.getMyProfile(userId);
       res['common']['status'] == true
           ? updateData.value = res['android']
           : updateData.value = {};

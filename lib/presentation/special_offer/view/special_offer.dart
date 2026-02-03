@@ -17,6 +17,7 @@ class _SpecialOfferState extends State<SpecialOffer> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       checkInternetAndShowPopup();
+      getIt<GlobalVideoMuteController>().makeViewFalse();
       controller.resetData();
       controller.getSpecialOffer(isRefresh: true);
     });
@@ -119,7 +120,9 @@ class _SpecialOfferState extends State<SpecialOffer> {
                 child: Container(
                   height: _headerHeight,
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor,),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -235,9 +238,7 @@ class _SpecialOfferState extends State<SpecialOffer> {
                         ),
                   borderRadius: BorderRadius.circular(8.r),
                   border: Border.all(
-                    color: isFollowing
-                        ? lightGrey
-                        : Colors.transparent,
+                    color: isFollowing ? lightGrey : Colors.transparent,
                     width: 1,
                   ),
                 ),

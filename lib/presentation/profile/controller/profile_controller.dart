@@ -15,6 +15,7 @@ class ProfileController extends GetxController {
   final profileDetails = {}.obs;
   final followList = [].obs;
   final isMe = true.obs;
+  final isBlocked = false.obs;
 
   void setPreselected() {
     nameCtrl.text = profileDetails['name'] ?? '';
@@ -43,11 +44,13 @@ class ProfileController extends GetxController {
 
   Future<void> getUserProfile(String userId, {bool showLoading = true}) async {
     if (showLoading) isLoading.value = true;
+    final myId = await LocalStorage.getString('user_id') ?? '';
     try {
-      final response = await _apiService.getUserProfile(userId);
+      final response = await _apiService.getUserProfile(userId, myId);
 
       if (response['common']['status'] == true) {
         profileDetails.value = response['data'] ?? {};
+        isBlocked.value = response['data']['is_block'] ?? false;
       }
     } catch (e) {
       showError(e);
@@ -263,6 +266,7 @@ class ProfileController extends GetxController {
 
   //////////////////////////////////////////help and support////////////////////////////////////////
   final isHelpLoading = false.obs;
+  final isBlockLoading = false.obs;
   final helpMail = ''.obs;
 
   Future<void> helpAndSupport({bool showLoading = true}) async {
@@ -271,17 +275,33 @@ class ProfileController extends GetxController {
     try {
       final response = await _apiService.helpAndSupport();
 
-      print(response);
-      print('response');
       if (response['common']['status'] == true) {
         helpMail.value = response['data']['email'] ?? '';
       }
     } catch (e) {
-      print('error');
-      print(e);
       showError(e);
     } finally {
       if (showLoading) isHelpLoading.value = false;
+    }
+  }
+
+  Future<void> blockUser(String otherUserId, {bool showLoading = true}) async {
+    if (showLoading) isLoading.value = true;
+    final userId = await LocalStorage.getString('user_id') ?? '';
+    try {
+      final response = await _apiService.blockUser(userId, otherUserId);
+
+      if (response['common']['status'] == true) {
+        ToastUtils.showSuccessToast(response['common']['message']);
+        await getUserProfile(otherUserId);
+        // Get.offAllNamed(Routes.mainScreen);
+      } else {
+        ToastUtils.showWarningToast(response['common']['message']);
+      }
+    } catch (e) {
+      showError(e);
+    } finally {
+      if (showLoading) isLoading.value = false;
     }
   }
 }

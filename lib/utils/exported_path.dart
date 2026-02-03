@@ -92,9 +92,11 @@ export 'package:businessbuddy/components/video_preview.dart';
 export 'package:businessbuddy/components/app_share.dart';
 export 'package:businessbuddy/utils/theme.dart';
 export 'package:businessbuddy/presentation/business_partner/widget/business_bottomsheet.dart';
+export 'package:businessbuddy/components/video_timeline.dart';
 
 //controller
 export 'package:businessbuddy/common/deeplink_controller.dart';
+export 'package:businessbuddy/presentation/profile/controller/tutorials_controller.dart';
 export 'package:businessbuddy/components/mute_controller.dart';
 export 'package:businessbuddy/utils/theme_controller.dart';
 export 'package:businessbuddy/presentation/onboarding/controller/splash_controller.dart';

@@ -85,5 +85,7 @@ class AllUrl {
 
   static const String privacyPolicy = '$base/legal_page/privacy_policy';
   static const String termsCondition = '$base/legal_page/terms_and_conditions';
-  static const String helpAndSupport = '$base/help_and_support';
+  static const String helpAndSupport = '$baseUrl/help_and_support';
+  static const String blockUser = '$baseUrl/block_user';
+  static const String tutorials = '$baseUrl/get_tutorials';
 }
