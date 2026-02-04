@@ -1,20 +1,19 @@
-import 'package:businessbuddy/presentation/profile/widget/video_popup.dart';
 import 'package:businessbuddy/utils/exported_path.dart';
 
-class TutorialsList extends StatefulWidget {
-  const TutorialsList({super.key});
+class BlockUserList extends StatefulWidget {
+  const BlockUserList({super.key});
 
   @override
-  State<TutorialsList> createState() => _TutorialsListState();
+  State<BlockUserList> createState() => _BlockUserListState();
 }
 
-class _TutorialsListState extends State<TutorialsList> {
-  final controller = getIt<TutorialsController>();
+class _BlockUserListState extends State<BlockUserList> {
+  final controller = getIt<ProfileController>();
 
   @override
   void initState() {
-    controller.getTutorials(isRefresh: true);
     super.initState();
+    controller.getBlockList(isRefresh: true);
   }
 
   @override
@@ -24,14 +23,14 @@ class _TutorialsListState extends State<TutorialsList> {
       appBar: _buildAppBar(),
       body: Obx(() {
         /// 🔹 Initial Loading (Shimmer)
-        if (controller.isLoading.isTrue) {
+        if (controller.isBlockListLoading.isTrue) {
           return LoadingWidget(color: primaryColor);
         }
 
         /// 🔹 Empty State
-        if (controller.tutorialList.isEmpty) {
+        if (controller.blockList.isEmpty) {
           return Center(
-            child: CustomText(title: 'No video found', fontSize: 14.sp),
+            child: CustomText(title: 'No block user', fontSize: 14.sp),
           );
         }
 
@@ -40,10 +39,10 @@ class _TutorialsListState extends State<TutorialsList> {
           onNotification: (scroll) {
             if (scroll is ScrollEndNotification &&
                 scroll.metrics.pixels >= scroll.metrics.maxScrollExtent - 50 &&
-                controller.hasMore &&
-                !controller.isLoadMore.value &&
-                !controller.isLoading.value) {
-              controller.getTutorials(showLoading: false);
+                controller.hasBlockMore &&
+                !controller.isBlockLoadMore.value &&
+                !controller.isBlockLoading.value) {
+              controller.getBlockList(showLoading: false);
             }
             return false;
           },
@@ -56,102 +55,94 @@ class _TutorialsListState extends State<TutorialsList> {
                   child: ListView.separated(
                     shrinkWrap: true,
                     separatorBuilder: (_, __) => SizedBox(height: 12.h),
-                    itemCount: controller.tutorialList.length,
+                    itemCount: controller.blockList.length,
                     itemBuilder: (_, index) {
-                      final tutor = controller.tutorialList[index];
+                      final block = controller.blockList[index];
                       return AnimationConfiguration.staggeredList(
                         position: index,
                         duration: const Duration(milliseconds: 375),
                         child: SlideAnimation(
                           verticalOffset: 50,
                           child: FadeInAnimation(
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(14.r),
-                              onTap: () {
-                                Get.dialog(
-                                  TutorialVideoPopup(
-                                    title: tutor['name'] ?? '',
-                                    videoUrl: tutor['youtube_url'] ?? '',
-                                  ),
-                                  // isScrollControlled: true,
-                                  // backgroundColor: Colors.transparent,
+                            child: GestureDetector(
+                              onTap: () async {
+                                AllDialogs().showConfirmationDialog(
+                                  'Unblock User',
+                                  'Are you sure you want to unblock this user?',
+                                  onConfirm: () async {
+                                    Get.back();
+                                    await controller
+                                        .blockUser(
+                                          block['id']?.toString() ?? '',
+                                        )
+                                        .then(
+                                          (v) async => await controller
+                                              .getBlockList(isRefresh: true),
+                                        );
+                                  },
                                 );
                               },
-
                               child: Container(
                                 margin: EdgeInsets.symmetric(horizontal: 16.w),
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(14.r),
                                   color: Theme.of(
                                     context,
                                   ).scaffoldBackgroundColor,
+                                  borderRadius: BorderRadius.circular(12.r),
                                   border: Border.all(
-                                    color: Colors.grey.shade400,
-                                    width: 0.5,
+                                    color: Colors.grey.withValues(alpha: 0.3),
+                                    width: 1,
                                   ),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withValues(
+                                      color: Colors.grey.withValues(
                                         alpha: 0.08,
                                       ),
-                                      blurRadius: 10,
-                                      offset: const Offset(0, 4),
+                                      blurRadius: 6,
+                                      offset: const Offset(0, 2),
                                     ),
                                   ],
                                 ),
                                 child: Padding(
-                                  padding: EdgeInsets.all(12.w),
+                                  padding: EdgeInsets.all(10.w),
                                   child: Row(
                                     children: [
-                                      /// 🎥 Video Thumbnail / Icon
-                                      Container(
-                                        height: 60.h,
-                                        width: 60.h,
-                                        decoration: BoxDecoration(
-                                          color: Colors.red.withValues(
-                                            alpha: 0.9,
-                                          ),
-                                          borderRadius: BorderRadius.circular(
-                                            12.r,
-                                          ),
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(
+                                          8.r,
                                         ),
-                                        child: const Icon(
-                                          Icons.play_arrow_rounded,
-                                          color: Colors.white,
-                                          size: 34,
+                                        child: Image.network(
+                                          block['image']?.toString() ?? '',
+                                          width: 50.w,
+                                          height: 50.h,
+                                          fit: BoxFit.cover,
                                         ),
                                       ),
-
                                       SizedBox(width: 12.w),
-
-                                      /// 📄 Title + Subtitle
                                       Expanded(
                                         child: Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
                                             CustomText(
-                                              title: tutor['name'] ?? '',
-                                              fontSize: 15.sp,
+                                              title:
+                                                  block['name']?.toString() ??
+                                                  '',
+                                              fontSize: 14.sp,
                                               fontWeight: FontWeight.w600,
+                                              textAlign: TextAlign.start,
                                               color: primaryBlack,
-                                              maxLines: 1,
                                             ),
-                                            SizedBox(height: 4.h),
-                                            CustomText(
-                                              title: "Watch short tutorial",
-                                              fontSize: 12.sp,
-                                              color: Colors.grey,
+                                            Text(
+                                              block['email']?.toString() ?? '',
+                                              style: TextStyle(
+                                                fontSize: 12.sp,
+                                                color: textGrey,
+                                              ),
                                             ),
+                                            SizedBox(height: 6.h),
                                           ],
                                         ),
-                                      ),
-
-                                      /// ➡ Arrow
-                                      Icon(
-                                        Icons.arrow_forward_ios_rounded,
-                                        size: 16.r,
-                                        color: Colors.grey,
                                       ),
                                     ],
                                   ),
@@ -167,7 +158,7 @@ class _TutorialsListState extends State<TutorialsList> {
 
                 /// 🔹 Pagination Loader
                 Obx(
-                  () => controller.isLoadMore.value
+                  () => controller.isBlockLoadMore.value
                       ? Padding(
                           padding: EdgeInsets.symmetric(vertical: 16.h),
                           child: LoadingWidget(color: primaryColor),
@@ -201,7 +192,7 @@ class _TutorialsListState extends State<TutorialsList> {
         ),
       ),
       title: CustomText(
-        title: "How To Use ?",
+        title: "Blocked User",
         fontSize: 22.sp,
         fontWeight: FontWeight.bold,
         color: primaryBlack,

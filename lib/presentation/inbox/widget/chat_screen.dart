@@ -136,11 +136,6 @@ class _ChatScreenState extends State<ChatScreen> {
             errorWidget: (_, __, ___) => Image.asset(Images.defaultImage),
           ),
         ),
-        // backgroundImage: NetworkImage(
-        //   chat['self_business_requirement'] == true
-        //       ? chat['user_profile_image'] ?? ''
-        //       : chat['business_requirement_user_profile_image'] ?? '',
-        // ),
       ),
       title: CustomText(
         title: chat['business_requirement_name'] ?? '',
@@ -149,22 +144,59 @@ class _ChatScreenState extends State<ChatScreen> {
         fontWeight: FontWeight.bold,
         color: primaryBlack,
       ),
-      subtitle: CustomText(
-        title: chat['self_business_requirement'] == true
-            ? chat['user_name'] ?? ''
-            : chat['business_requirement_user_name'] ?? '',
-        fontSize: 12.sp,
-        textAlign: TextAlign.start,
-        color: primaryBlack,
-        // maxLines: 1,
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CustomText(
+            title: chat['self_business_requirement'] == true
+                ? chat['user_name'] ?? ''
+                : chat['business_requirement_user_name'] ?? '',
+            fontSize: 12.sp,
+            textAlign: TextAlign.start,
+            color: primaryBlack,
+            // maxLines: 1,
+          ),
+          if (chat['is_blocked'] == true)
+            CustomText(
+              title: chat['blocked_by_me'] == false
+                  ? 'You have been blocked by user'
+                  : 'You Blocked this user',
+              fontSize: 14.sp,
+              textAlign: TextAlign.start,
+              color: primaryColor,
+            ),
+        ],
       ),
       onTap: () {
+        if (chat['is_blocked'] != true) {
+          navController.openSubPage(
+            SingleChat(
+              chatId: chat['business_requirement_chat_id']?.toString() ?? '',
+            ),
+          );
+        }
+        // else {
+        //   if (chat['blocked_by_me'] == true) {
+        //     AllDialogs().showConfirmationDialog(
+        //       'Unblock User',
+        //       'Are you sure you want to unblock this user?',
+        //       onConfirm: () async {
+        //         Get.back();
+        //         await getIt<ProfileController>()
+        //             .blockUser(
+        //               chat['self_business_requirement'] == true
+        //                   ? (chat['user_id']?.toString() ?? '')
+        //                   : (chat['business_requirement_user_id']?.toString() ??
+        //                         ''),
+        //             )
+        //             .then(
+        //               (v) async => await controller.getAllChat(isRefresh: true),
+        //             );
+        //       },
+        //     );
+        //   }
+        // }
         // Push a subpage within Inbox
-        navController.openSubPage(
-          SingleChat(
-            chatId: chat['business_requirement_chat_id']?.toString() ?? '',
-          ),
-        );
       },
     );
   }

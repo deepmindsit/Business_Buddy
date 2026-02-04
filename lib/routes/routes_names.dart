@@ -27,4 +27,5 @@ class Routes {
   static const String chat = '/chat';
   static const String tutorials = '/tutorials';
   static const String helpAndSupport = '/helpNSupport';
+  static const String blockUserList = '/blockUserList';
 }

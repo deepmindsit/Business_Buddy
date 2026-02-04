@@ -61,6 +61,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return AppBar(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       surfaceTintColor: Theme.of(context).scaffoldBackgroundColor,
+      foregroundColor: primaryBlack,
       elevation: 0,
       centerTitle: true,
       flexibleSpace: Container(
@@ -194,13 +195,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _visitorActions() {
     return Row(
       children: [
-        IconButton(
-          onPressed: () {},
-          icon: HugeIcon(
-            icon: HugeIcons.strokeRoundedBubbleChat,
-            color: primaryBlack,
-          ),
-        ),
+        // IconButton(
+        //   onPressed: () {},
+        //   icon: HugeIcon(
+        //     icon: HugeIcons.strokeRoundedBubbleChat,
+        //     color: primaryBlack,
+        //   ),
+        // ),
         Container(
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(12.r)),
           child: PopupMenuButton<String>(
@@ -284,7 +285,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               : 'Are you sure you want to block this user?',
           onConfirm: () async {
             Get.back();
-            await controller.blockUser(Get.arguments['user_id']);
+            await controller.blockUser(
+              Get.arguments['user_id']?.toString() ?? '',
+            );
           },
         );
         break;
@@ -467,8 +470,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             _buildDivider(),
             _SimpleTile(
+              title: 'Blocked User',
+              onTap: () => Get.toNamed(Routes.blockUserList),
+            ),
+            _buildDivider(),
+            _SimpleTile(
               title: 'Help & Support',
-              // onTap: () => sendingMails(controller.helpMail.value),
               onTap: () => Get.toNamed(Routes.helpAndSupport),
             ),
             _buildDivider(),

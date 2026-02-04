@@ -15,7 +15,7 @@ class InstagramVideoPlayer extends StatelessWidget {
     final globalMute = getIt<GlobalVideoMuteController>();
 
     return GetBuilder<VideoPlayerControllerX>(
-      init: VideoPlayerControllerX(url, isSingleView),
+      init: VideoPlayerControllerX(url),
       autoRemove: true,
       tag: url,
       // global: false,

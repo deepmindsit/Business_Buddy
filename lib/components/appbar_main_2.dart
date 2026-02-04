@@ -232,8 +232,7 @@ class CustomMainHeader2 extends StatelessWidget {
             right: 0,
             top: 0,
             child: Obx(() {
-              if (getIt<HomeController>().showNotificationDot.isFalse)
-                return SizedBox();
+              if (getIt<HomeController>().showNotificationDot.isFalse) return SizedBox();
               return Container(
                 width: 8.w,
                 height: 8.w,

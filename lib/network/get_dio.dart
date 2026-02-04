@@ -79,11 +79,11 @@ class DioClient {
           return handler.next(response);
         },
         onError: (error, handler) {
-          if (kDebugMode) {
-            debugPrint(
-              '❌ Dio Error [${error.response?.statusCode}] → ${error.message}',
-            );
-          }
+          // if (kDebugMode) {
+          //   debugPrint(
+          //     '❌ Dio Error [${error.response?.statusCode}] → ${error.message}',
+          //   );
+          // }
           return handler.next(error);
         },
       ),

@@ -107,11 +107,11 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i1040.ThemeController>(() => _i1040.ThemeController());
     gh.factory<_i889.ApiService>(() => _i889.ApiService(gh<_i361.Dio>()));
-    gh.lazySingleton<_i557.VideoPlayerControllerX>(
-      () => _i557.VideoPlayerControllerX(gh<String>(), gh<bool>()),
-    );
     gh.lazySingleton<_i686.LocationController>(
       () => _i686.LocationController(gh<_i55.LocationService>()),
+    );
+    gh.lazySingleton<_i557.VideoPlayerControllerX>(
+      () => _i557.VideoPlayerControllerX(gh<String>()),
     );
     return this;
   }

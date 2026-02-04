@@ -48,7 +48,7 @@ class FeedsController extends GetxController {
         location,
         currentPage.toString(),
       );
-      print('response feed===============>$response');
+
       if (response['common']['status'] == true) {
         final data = response['data'];
 
@@ -98,7 +98,6 @@ class FeedsController extends GetxController {
   }) async {
     followingLoadingMap[businessId] = true;
     followingLoadingMap.refresh();
-    print('businessId================>$businessId');
     final userId = await LocalStorage.getString('user_id') ?? '';
     try {
       final response = await _apiService.followBusiness(userId, businessId);
@@ -121,7 +120,6 @@ class FeedsController extends GetxController {
     String followId, {
     bool showLoading = true,
   }) async {
-    print('followId================>$followId');
     followingLoadingMap[followId] = true;
     followingLoadingMap.refresh();
 

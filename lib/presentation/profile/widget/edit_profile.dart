@@ -33,6 +33,7 @@ class _EditProfileState extends State<EditProfile> {
     return AppBar(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       surfaceTintColor: Theme.of(context).scaffoldBackgroundColor,
+      foregroundColor: primaryBlack,
       elevation: 0,
       centerTitle: true,
       flexibleSpace: Container(

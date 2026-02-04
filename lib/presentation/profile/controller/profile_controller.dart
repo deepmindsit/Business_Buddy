@@ -47,7 +47,6 @@ class ProfileController extends GetxController {
     final myId = await LocalStorage.getString('user_id') ?? '';
     try {
       final response = await _apiService.getUserProfile(userId, myId);
-
       if (response['common']['status'] == true) {
         profileDetails.value = response['data'] ?? {};
         isBlocked.value = response['data']['is_block'] ?? false;
@@ -266,7 +265,6 @@ class ProfileController extends GetxController {
 
   //////////////////////////////////////////help and support////////////////////////////////////////
   final isHelpLoading = false.obs;
-  final isBlockLoading = false.obs;
   final helpMail = ''.obs;
 
   Future<void> helpAndSupport({bool showLoading = true}) async {
@@ -294,7 +292,6 @@ class ProfileController extends GetxController {
       if (response['common']['status'] == true) {
         ToastUtils.showSuccessToast(response['common']['message']);
         await getUserProfile(otherUserId);
-        // Get.offAllNamed(Routes.mainScreen);
       } else {
         ToastUtils.showWarningToast(response['common']['message']);
       }
@@ -302,6 +299,65 @@ class ProfileController extends GetxController {
       showError(e);
     } finally {
       if (showLoading) isLoading.value = false;
+    }
+  }
+
+  ///////////////////////block User list///////////////////////////////
+
+  final isBlockListLoading = false.obs;
+  final blockList = [].obs;
+  final isBlockLoading = false.obs;
+  final isBlockLoadMore = false.obs;
+  int currentBlockPage = 1;
+  int totalBlockPages = 1;
+  int perBlockPage = 10;
+  bool hasBlockMore = true;
+
+  Future<void> getBlockList({
+    bool showLoading = true,
+    bool isRefresh = false,
+  }) async {
+    if (isRefresh) {
+      currentBlockPage = 1;
+      totalBlockPages = 1;
+      hasBlockMore = true;
+      blockList.clear();
+    }
+
+    currentBlockPage == 1
+        ? isBlockListLoading.value = showLoading
+        : isBlockLoadMore.value = true;
+    try {
+      final userId = await LocalStorage.getString('user_id') ?? '';
+      final response = await _apiService.blockUserList(
+        userId,
+        currentBlockPage.toString(),
+      );
+      if (response['common']['status'] == true) {
+        final data = response['data'];
+
+        final List list = data['blocked_users'] ?? [];
+
+        perBlockPage = data['per_page'] ?? perBlockPage;
+        totalBlockPages = data['total_pages'] ?? totalBlockPages;
+
+        /// 🔹 IMPORTANT
+        if (isRefresh || currentBlockPage == 1) {
+          blockList.assignAll(list); // 🔥 replaces list
+        } else {
+          blockList.addAll(list); // pagination
+        }
+
+        /// 👇 backend-accurate pagination check
+        hasBlockMore = currentBlockPage < totalBlockPages;
+
+        if (hasBlockMore) currentBlockPage++;
+      }
+    } catch (e) {
+      showError(e);
+    } finally {
+      if (showLoading) isBlockListLoading.value = false;
+      isBlockLoadMore.value = false;
     }
   }
 }

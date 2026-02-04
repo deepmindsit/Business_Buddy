@@ -382,7 +382,10 @@ abstract class ApiService {
   );
 
   @POST(AllUrl.globalSearch)
-  Future<dynamic> globalSearch(@Part(name: "keyword") String? keyword);
+  Future<dynamic> globalSearch(
+    @Part(name: "keyword") String? keyword,
+    @Part(name: "user_id") String? userId,
+  );
 
   @POST(AllUrl.legalPageList)
   Future<dynamic> legalPageList();
@@ -428,6 +431,12 @@ abstract class ApiService {
 
   @POST(AllUrl.tutorials)
   Future<dynamic> getTutorials(@Part(name: "page_number") String pageNo);
+
+  @POST(AllUrl.blockUserList)
+  Future<dynamic> blockUserList(
+    @Part(name: "user_id") String? userId,
+    @Part(name: "page_number") String pageNo,
+  );
 }
 
 //

@@ -35,8 +35,9 @@ class GlobalSearchController extends GetxController {
   Future<void> searchData({bool showLoading = true}) async {
     if (showLoading) isLoading.value = true;
     try {
+      final userId = await LocalStorage.getString('user_id') ?? '';
       final response = await _apiService.globalSearch(
-        searchController.text.trim(),
+        searchController.text.trim(),userId
       );
 
       if (response['common']['status'] == true) {

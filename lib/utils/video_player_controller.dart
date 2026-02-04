@@ -3,8 +3,7 @@ import 'package:businessbuddy/utils/exported_path.dart';
 @lazySingleton
 class VideoPlayerControllerX extends GetxController {
   final String url;
-  final bool showControllers;
-  VideoPlayerControllerX(this.url, this.showControllers);
+  VideoPlayerControllerX(this.url);
   late bool isYouTube;
 
   VideoPlayerController? videoController;

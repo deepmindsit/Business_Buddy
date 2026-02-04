@@ -267,6 +267,7 @@ class _FollowingListState extends State<FollowingList> {
     return AppBar(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       surfaceTintColor: Theme.of(context).scaffoldBackgroundColor,
+      foregroundColor: primaryBlack,
       elevation: 0,
       centerTitle: true,
       flexibleSpace: Container(
