@@ -360,4 +360,29 @@ class ProfileController extends GetxController {
       isBlockLoadMore.value = false;
     }
   }
+
+  /////////////////////////////////////////////////send chat request////////////////////////////////////////////////
+  final chatReqLoading = false.obs;
+
+  Future<void> sendChatReq(
+    String otherUserId, {
+    bool showLoading = true,
+  }) async {
+    if (showLoading) chatReqLoading.value = true;
+    final userId = await LocalStorage.getString('user_id') ?? '';
+    try {
+      final response = await _apiService.sendChatRequest(userId, otherUserId);
+
+      if (response['common']['status'] == true) {
+        ToastUtils.showSuccessToast(response['common']['message']);
+        await getUserProfile(otherUserId);
+      } else {
+        ToastUtils.showWarningToast(response['common']['message']);
+      }
+    } catch (e) {
+      showError(e);
+    } finally {
+      if (showLoading) chatReqLoading.value = false;
+    }
+  }
 }

@@ -165,22 +165,44 @@ class InboxController extends GetxController {
 
   final initiateLoadingMap = <String, bool>{}.obs;
 
-  Future<void> initiateChat(String reqId) async {
+  Future<void> initiateChat({
+    String reqId = '',
+    String otherUserId = '',
+    String type = '',
+    String from = '',
+  }) async {
     initiateLoadingMap[reqId] = true;
     initiateLoadingMap.refresh();
     final userId = await LocalStorage.getString('user_id') ?? '';
     try {
-      final response = await _apiService.initiateChat(userId, reqId);
+      final response = await _apiService.initiateChat(
+        userId,
+        reqId,
+        otherUserId,
+        type,
+      );
 
+      print('response');
+      print(response);
       if (response['common']['status'] == true) {
-        getIt<NavigationController>().openSubPage(
-          SingleChat(
-            chatId:
-                response['data']['business_requirement_chat_details']['business_requirement_chat_id']
-                    ?.toString() ??
-                '',
-          ),
-        );
+        if (from == 'profile') {
+          Get.back();
+          getIt<NavigationController>().openSubPage(
+            SingleChat(
+              chatId:
+                  response['data']['chat_details']['chat_id']?.toString() ?? '',
+            ),
+          );
+        } else {
+          getIt<NavigationController>().openSubPage(
+            SingleChat(
+              chatId:
+                  response['data']['business_requirement_chat_details']['business_requirement_chat_id']
+                      ?.toString() ??
+                  '',
+            ),
+          );
+        }
       } else {
         ToastUtils.showErrorToast(response['common']['message'].toString());
       }

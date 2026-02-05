@@ -129,7 +129,9 @@ class _ChatScreenState extends State<ChatScreen> {
             width: 44,
             height: 44,
             fit: BoxFit.cover,
-            imageUrl: chat['self_business_requirement'] == true
+            imageUrl: chat['chat_type'] == 'user_to_user'
+                ? (chat['other_user_profile_image'] ?? '')
+                : chat['self_business_requirement'] == true
                 ? (chat['user_profile_image'] ?? '')
                 : (chat['business_requirement_user_profile_image'] ?? ''),
             placeholder: (_, __) => Image.asset(Images.defaultImage),
@@ -138,7 +140,9 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
       ),
       title: CustomText(
-        title: chat['business_requirement_name'] ?? '',
+        title: chat['chat_type'] == 'user_to_user'
+            ? chat['other_user_name'] ?? ''
+            : chat['business_requirement_name'] ?? '',
         fontSize: 14.sp,
         textAlign: TextAlign.start,
         fontWeight: FontWeight.bold,
@@ -147,15 +151,17 @@ class _ChatScreenState extends State<ChatScreen> {
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CustomText(
-            title: chat['self_business_requirement'] == true
-                ? chat['user_name'] ?? ''
-                : chat['business_requirement_user_name'] ?? '',
-            fontSize: 12.sp,
-            textAlign: TextAlign.start,
-            color: primaryBlack,
-            // maxLines: 1,
-          ),
+          chat['chat_type'] == 'user_to_user'
+              ? SizedBox()
+              : CustomText(
+                  title: chat['self_business_requirement'] == true
+                      ? chat['user_name'] ?? ''
+                      : chat['business_requirement_user_name'] ?? '',
+                  fontSize: 12.sp,
+                  textAlign: TextAlign.start,
+                  color: primaryBlack,
+                  // maxLines: 1,
+                ),
           if (chat['is_blocked'] == true)
             CustomText(
               title: chat['blocked_by_me'] == false
@@ -175,28 +181,6 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           );
         }
-        // else {
-        //   if (chat['blocked_by_me'] == true) {
-        //     AllDialogs().showConfirmationDialog(
-        //       'Unblock User',
-        //       'Are you sure you want to unblock this user?',
-        //       onConfirm: () async {
-        //         Get.back();
-        //         await getIt<ProfileController>()
-        //             .blockUser(
-        //               chat['self_business_requirement'] == true
-        //                   ? (chat['user_id']?.toString() ?? '')
-        //                   : (chat['business_requirement_user_id']?.toString() ??
-        //                         ''),
-        //             )
-        //             .then(
-        //               (v) async => await controller.getAllChat(isRefresh: true),
-        //             );
-        //       },
-        //     );
-        //   }
-        // }
-        // Push a subpage within Inbox
       },
     );
   }

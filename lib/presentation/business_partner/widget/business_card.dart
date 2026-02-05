@@ -234,9 +234,7 @@ class _BusinessCardState extends State<BusinessCard> {
 
   Widget _buildSelf() {
     return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12.r),
-      ),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(12.r)),
       child: PopupMenuButton<String>(
         color: Theme.of(context).brightness == Brightness.light
             ? Colors.white
@@ -359,7 +357,8 @@ class _BusinessCardState extends State<BusinessCard> {
             );
           } else {
             await getIt<InboxController>().initiateChat(
-              widget.data['id'].toString(),
+              reqId: widget.data['id'].toString(),
+              type: 'business_requirement',
             );
           }
         }

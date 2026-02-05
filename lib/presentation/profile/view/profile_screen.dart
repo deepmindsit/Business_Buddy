@@ -195,12 +195,58 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _visitorActions() {
     return Row(
       children: [
+        Obx(() {
+          return controller.isBlocked.isFalse
+              ? IconButton(
+                  onPressed: () async => _handleChatAction(),
+                  icon: _buildChatIcon(),
+                )
+              : SizedBox();
+        }),
+
         // IconButton(
-        //   onPressed: () {},
-        //   icon: HugeIcon(
-        //     icon: HugeIcons.strokeRoundedBubbleChat,
-        //     color: primaryBlack,
-        //   ),
+        //   onPressed: () async {
+        //     controller.profileDetails['chat_initiated'] == true
+        //         ? {
+        //             Get.back(),
+        //             getIt<NavigationController>().openSubPage(
+        //               SingleChat(
+        //                 chatId:
+        //                     controller.profileDetails['chat_id']?.toString() ??
+        //                     '',
+        //               ),
+        //             ),
+        //           }
+        //         : controller.profileDetails['request_sent'] == true
+        //         ? controller.profileDetails['is_request_accepted'] == true
+        //               ? await getIt<InboxController>().initiateChat(
+        //                   from: 'profile',
+        //                   otherUserId: controller
+        //                       .profileDetails['other_user_id']
+        //                       .toString(),
+        //                   type: 'user_to_user',
+        //                 )
+        //               : null
+        //         : await controller.sendChatReq(
+        //             controller.profileDetails['id']?.toString() ?? '',
+        //           );
+        //   },
+        //   icon: controller.profileDetails['chat_initiated'] == true
+        //       ? HugeIcon(
+        //           icon: HugeIcons.strokeRoundedBubbleChat,
+        //           color: primaryBlack,
+        //         )
+        //       : controller.profileDetails['request_sent'] == true
+        //       ? controller.profileDetails['is_request_accepted'] == true
+        //             ? HugeIcon(
+        //                 icon: HugeIcons.strokeRoundedBubbleChat,
+        //                 color: primaryBlack,
+        //               )
+        //             : HugeIcon(
+        //                 icon: HugeIcons.strokeRoundedLoading01,
+        //                 color: primaryBlack,
+        //               )
+        //       : Image.asset(Images.sendReq),
         // ),
         Container(
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(12.r)),
@@ -241,6 +287,59 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       ],
     );
+  }
+
+  Future<void> _handleChatAction() async {
+    final details = controller.profileDetails;
+
+    final chatInitiated = details['chat_initiated'] == true;
+    final requestSent = details['request_sent'] == true;
+    final requestAccepted = details['is_request_accepted'] == true;
+
+    if (chatInitiated) {
+      Get.back();
+      getIt<NavigationController>().openSubPage(
+        SingleChat(chatId: details['chat_id']?.toString() ?? ''),
+      );
+      return;
+    }
+
+    if (requestSent) {
+      if (!requestAccepted) return;
+
+      await getIt<InboxController>().initiateChat(
+        from: 'profile',
+        otherUserId: details['other_user_id']?.toString() ?? '',
+        type: 'user_to_user',
+      );
+      return;
+    }
+
+    await controller.sendChatReq(details['id']?.toString() ?? '');
+  }
+
+  Widget _buildChatIcon() {
+    final details = controller.profileDetails;
+
+    final chatInitiated = details['chat_initiated'] == true;
+    final requestSent = details['request_sent'] == true;
+    final requestAccepted = details['is_request_accepted'] == true;
+
+    if (chatInitiated || (requestSent && requestAccepted)) {
+      return HugeIcon(
+        icon: HugeIcons.strokeRoundedBubbleChat,
+        color: primaryBlack,
+      );
+    }
+
+    if (requestSent && !requestAccepted) {
+      return HugeIcon(
+        icon: HugeIcons.strokeRoundedLoading01,
+        color: primaryBlack,
+      );
+    }
+
+    return Image.asset(Images.sendReq);
   }
 
   PopupMenuItem<String> _buildMenuItem(
@@ -286,7 +385,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           onConfirm: () async {
             Get.back();
             await controller.blockUser(
-              Get.arguments['user_id']?.toString() ?? '',
+              controller.profileDetails['id']?.toString() ?? '',
             );
           },
         );
@@ -368,12 +467,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _followingCount() {
     return GestureDetector(
-      onTap: () => Get.toNamed(
-        Routes.followingList,
-        arguments: {
-          'user_id': controller.profileDetails['id']?.toString() ?? '',
-        },
-      ),
+      onTap: () {
+        if (controller.isBlocked.isFalse) {
+          Get.toNamed(
+            Routes.followingList,
+            arguments: {
+              'user_id': controller.profileDetails['id']?.toString() ?? '',
+            },
+          );
+        }
+      },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

@@ -25,4 +25,5 @@ class Images {
   static const appMaintenance = 'assets/images/app_maintenance.png';
   static const noNotification = 'assets/images/ic_notitication.png';
   static const video = 'assets/icons/ic_video.png';
+  static const sendReq = 'assets/icons/ic_send_req.png';
 }

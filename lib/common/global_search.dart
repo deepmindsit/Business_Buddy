@@ -362,12 +362,24 @@ class _GlobalSearchState extends State<GlobalSearch> {
                     : Column(
                         children: _controller.expertList.map<Widget>((expert) {
                           return GestureDetector(
-                            onTap: () => Get.toNamed(
-                              Routes.profile,
-                              arguments: {
-                                'user_id': expert['user_id']?.toString() ?? '',
-                              },
-                            ),
+                            onTap: () async {
+                              final userId =
+                                  await LocalStorage.getString('user_id') ?? '';
+                              if (userId == expert['user_id']?.toString()) {
+                                Get.toNamed(
+                                  Routes.profile,
+                                  arguments: {'user_id': 'self'},
+                                );
+                              } else {
+                                Get.toNamed(
+                                  Routes.profile,
+                                  arguments: {
+                                    'user_id':
+                                        expert['user_id']?.toString() ?? '',
+                                  },
+                                );
+                              }
+                            },
                             child: Container(
                               margin: EdgeInsets.symmetric(
                                 horizontal: 12.w,

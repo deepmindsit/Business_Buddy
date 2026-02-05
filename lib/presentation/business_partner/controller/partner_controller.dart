@@ -361,7 +361,7 @@ class PartnerDataController extends GetxController {
       if (response['common']['status'] == true) {
         final data = response['data'];
 
-        final List list = data['business_requirements'] ?? [];
+        final List list = data['sent_requests'] ?? [];
 
         perPage = data['per_page'] ?? perPage;
         totalPages = data['total_pages'] ?? totalPages;

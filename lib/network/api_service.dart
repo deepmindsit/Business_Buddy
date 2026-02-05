@@ -379,6 +379,8 @@ abstract class ApiService {
   Future<dynamic> initiateChat(
     @Part(name: "user_id") String? userId,
     @Part(name: "business_requirement_id") String? chatId,
+    @Part(name: "other_user_id") String? otherUserId,
+    @Part(name: "type") String? type,
   );
 
   @POST(AllUrl.globalSearch)
@@ -436,6 +438,12 @@ abstract class ApiService {
   Future<dynamic> blockUserList(
     @Part(name: "user_id") String? userId,
     @Part(name: "page_number") String pageNo,
+  );
+
+  @POST(AllUrl.sendChatRequest)
+  Future<dynamic> sendChatRequest(
+    @Part(name: "user_id") String? userId,
+    @Part(name: "other_user_id") String otherUserid,
   );
 }
 
