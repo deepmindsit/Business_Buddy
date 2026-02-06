@@ -1,5 +1,4 @@
 import 'dart:math';
-import '../main.dart';
 import '../utils/exported_path.dart';
 
 class NotificationService {
@@ -30,7 +29,7 @@ class NotificationService {
   /// Request notification permissions
   Future<void> requestNotificationPermissions() async {
     await _firebaseMessaging.requestPermission();
-    final token = await _firebaseMessaging.getToken();
+    await _firebaseMessaging.getToken();
     // print('FCM Token: $token');
   }
 

@@ -28,6 +28,7 @@ export 'package:businessbuddy/presentation/home_screen/widget/business/view/add_
 export 'package:businessbuddy/presentation/inbox/widget/chat_screen.dart';
 export 'package:businessbuddy/presentation/inbox/widget/requested_screen.dart';
 export 'package:businessbuddy/presentation/business_partner/widget/edit_recruitment.dart';
+export 'package:businessbuddy/main.dart';
 
 //widget
 export 'package:businessbuddy/network/all_url.dart';
@@ -69,7 +70,6 @@ export 'package:businessbuddy/components/appbar_logo.dart';
 export 'package:businessbuddy/components/custom_loader.dart';
 export 'package:businessbuddy/components/custom_button.dart';
 export 'package:businessbuddy/components/custom_textfield.dart';
-export 'package:businessbuddy/components/appbar_main.dart';
 export 'package:businessbuddy/presentation/home_screen/widget/explorer/widget/category_card.dart';
 export 'package:businessbuddy/components/custom_file_picker.dart';
 export 'package:businessbuddy/components/custom_dropdown_normal.dart';
@@ -118,6 +118,7 @@ export 'package:businessbuddy/common/update_app.dart';
 export 'package:businessbuddy/utils/video_player_controller.dart';
 export 'package:businessbuddy/presentation/home_screen/controller/update_firebase_token.dart';
 export 'package:businessbuddy/presentation/business_partner/controller/disclaimer_controller.dart';
+export 'package:businessbuddy/common/notification_controller.dart';
 
 //plugins
 export 'package:get/get.dart';
@@ -151,3 +152,5 @@ export 'package:chewie/chewie.dart';
 export 'package:video_player/video_player.dart';
 export 'package:youtube_player_flutter/youtube_player_flutter.dart';
 export 'package:visibility_detector/visibility_detector.dart';
+export 'package:get_thumbnail_video/index.dart';
+export 'package:get_thumbnail_video/video_thumbnail.dart';

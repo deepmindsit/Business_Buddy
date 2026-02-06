@@ -13,6 +13,7 @@ class VideoPlayerControllerX extends GetxController {
   final isInitialized = false.obs;
   final isPlaying = false.obs;
   final aspectR = (9 / 16).obs;
+  late Worker _muteWorker;
 
   @override
   void onInit() {
@@ -21,13 +22,26 @@ class VideoPlayerControllerX extends GetxController {
     _initialize();
 
     /// 🔥 GLOBAL MUTE LISTENER
-    ever(globalMute.isMuted, (bool muted) {
+    _muteWorker = ever(globalMute.isMuted, (bool muted) {
+      if (isClosed) return;
+
       if (isYouTube) {
         muted ? youtubeController?.mute() : youtubeController?.unMute();
       } else {
-        videoController?.setVolume(muted ? 0 : 1);
+        if (videoController != null && videoController!.value.isInitialized) {
+          videoController!.setVolume(muted ? 0 : 1);
+        }
       }
     });
+    // ever(globalMute.isMuted, (bool muted) {
+    //   if (isYouTube) {
+    //     muted ? youtubeController?.mute() : youtubeController?.unMute();
+    //   } else {
+    //     if (videoController != null && videoController!.value.isInitialized) {
+    //       videoController!.setVolume(muted ? 0 : 1);
+    //     }
+    //   }
+    // });
   }
 
   Future<void> _initialize() async {
@@ -113,6 +127,7 @@ class VideoPlayerControllerX extends GetxController {
 
   @override
   void onClose() {
+    _muteWorker.dispose(); // 🔥 MOST IMPORTANT LINE
     chewieController?.pause();
     videoController?.pause();
 

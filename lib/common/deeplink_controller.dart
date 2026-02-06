@@ -25,7 +25,6 @@ class DeepLinkController extends GetxController {
   void _handleDeepLink(Uri uri) {
     if (uri.pathSegments.length < 3) return;
 
-    final slug = uri.pathSegments[0];
     final type = uri.pathSegments[1];
     final id = uri.pathSegments[2];
 

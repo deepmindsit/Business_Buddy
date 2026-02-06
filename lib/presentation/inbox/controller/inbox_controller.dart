@@ -173,36 +173,60 @@ class InboxController extends GetxController {
   }) async {
     initiateLoadingMap[reqId] = true;
     initiateLoadingMap.refresh();
-    final userId = await LocalStorage.getString('user_id') ?? '';
+    print(otherUserId);
+    print('from');
+    print(type);
+    print(from);
+
     try {
+      final userId = await LocalStorage.getString('user_id') ?? '';
       final response = await _apiService.initiateChat(
         userId,
         reqId,
         otherUserId,
         type,
       );
-
-      print('response');
-      print(response);
+      print('API Response: $response');
       if (response['common']['status'] == true) {
+        String chatId = '';
+
         if (from == 'profile') {
-          Get.back();
-          getIt<NavigationController>().openSubPage(
-            SingleChat(
-              chatId:
-                  response['data']['chat_details']['chat_id']?.toString() ?? '',
-            ),
-          );
+          chatId =
+              response['data']?['chat_details']?['chat_id']?.toString() ?? '';
+
+          // Get.back();
+          // getIt<NavigationController>().openSubPage(
+          //   SingleChat(
+          //     chatId:
+          //         response['data']['chat_details']['chat_id']?.toString() ?? '',
+          //   ),
+          // );
         } else {
-          getIt<NavigationController>().openSubPage(
-            SingleChat(
-              chatId:
-                  response['data']['business_requirement_chat_details']['business_requirement_chat_id']
-                      ?.toString() ??
-                  '',
-            ),
-          );
+          chatId =
+              response['data']['business_requirement_chat_details']['business_requirement_chat_id']
+                  ?.toString() ??
+              '';
+
+          // getIt<NavigationController>().openSubPage(
+          //   SingleChat(
+          //     chatId:
+          //         response['data']['business_requirement_chat_details']['business_requirement_chat_id']
+          //             ?.toString() ??
+          //         '',
+          //   ),
+          // );
         }
+
+        if (chatId.isEmpty) {
+          ToastUtils.showErrorToast("Chat ID not found!");
+          return;
+        }
+        // Navigate to chat page
+        if (from == 'profile') {
+          Get.back(); // Close previous screen
+        }
+
+        getIt<NavigationController>().openSubPage(SingleChat(chatId: chatId));
       } else {
         ToastUtils.showErrorToast(response['common']['message'].toString());
       }

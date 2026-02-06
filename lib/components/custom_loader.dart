@@ -1,6 +1,5 @@
 import 'dart:io' show Platform;
 import 'package:flutter/cupertino.dart';
-
 import '../utils/exported_path.dart';
 
 class LoadingWidget extends StatelessWidget {

@@ -1,7 +1,6 @@
 import '../utils/exported_path.dart';
 
 final _feedController = getIt<FeedsController>();
-// final _homeController = getIt<HomeController>();
 bool isUserAuthenticated() {
   return getIt<DemoService>().isDemo;
 }

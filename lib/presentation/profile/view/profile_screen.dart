@@ -339,7 +339,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     }
 
-    return Image.asset(Images.sendReq);
+    return HugeIcon(
+      icon: HugeIcons.strokeRoundedUserAdd01,
+      color: primaryBlack,
+    );
   }
 
   PopupMenuItem<String> _buildMenuItem(

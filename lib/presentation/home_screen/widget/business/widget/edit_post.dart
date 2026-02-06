@@ -232,10 +232,10 @@ class _EditPostState extends State<EditPost> {
     );
   }
 
-  bool _isMediaSelected() {
-    return controller.postImage.value != null ||
-        controller.postVideo.value != null;
-  }
+  // bool _isMediaSelected() {
+  //   return controller.postImage.value != null ||
+  //       controller.postVideo.value != null;
+  // }
 
   bool _isVideoSizeValid(File video) {
     final sizeInMB = video.lengthSync() / (1024 * 1024);

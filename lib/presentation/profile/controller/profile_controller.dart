@@ -47,6 +47,7 @@ class ProfileController extends GetxController {
     final myId = await LocalStorage.getString('user_id') ?? '';
     try {
       final response = await _apiService.getUserProfile(userId, myId);
+      print(response);
       if (response['common']['status'] == true) {
         profileDetails.value = response['data'] ?? {};
         isBlocked.value = response['data']['is_block'] ?? false;

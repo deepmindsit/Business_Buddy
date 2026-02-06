@@ -56,7 +56,7 @@ class _InstagramPostViewState extends State<InstagramPostView> {
           if (widget.isFrom == 'deep') {
             Get.offAllNamed(Routes.mainScreen);
           } else {
-            Get.back();
+            Navigator.of(Get.context!).pop(); // ✅ SAFE
           }
         });
       },

@@ -75,6 +75,6 @@ class NotificationController extends GetxController {
       if (res['common']['status'] == true) {
         await getNotificationInitial(showLoading: false);
       }
-    } catch (e) {}
+    } finally {}
   }
 }

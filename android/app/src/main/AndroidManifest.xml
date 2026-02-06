@@ -27,7 +27,7 @@
     </queries>
     <application
         android:name="${applicationName}"
-        android:label="BizYarri"
+        android:label="BizYaari"
         android:icon="@mipmap/ic_launcher"
         android:enableOnBackInvokedCallback="true"
         android:usesCleartextTraffic="true">

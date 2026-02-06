@@ -1,5 +1,4 @@
 import '../utils/exported_path.dart';
-import 'notification_controller.dart';
 
 class NotificationList extends StatefulWidget {
   const NotificationList({super.key});

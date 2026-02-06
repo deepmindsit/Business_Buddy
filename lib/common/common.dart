@@ -1,10 +1,5 @@
 import 'dart:io';
-import 'package:get_thumbnail_video/video_thumbnail.dart';
-
 import 'package:businessbuddy/utils/exported_path.dart';
-import 'package:get_thumbnail_video/index.dart';
-
-import '../utils/color.dart';
 
 Widget buildReviewTile({
   required String userName,

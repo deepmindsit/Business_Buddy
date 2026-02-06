@@ -437,36 +437,36 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Future<void> _handleFeedFollow(Map<String, dynamic> item) async {
-    if (_feedController.isFollowProcessing.value) return;
+  // Future<void> _handleFeedFollow(Map<String, dynamic> item) async {
+  //   if (_feedController.isFollowProcessing.value) return;
+  //
+  //   if (!isUserAuthenticated()) {
+  //     ToastUtils.showLoginToast();
+  //     return;
+  //   }
+  //
+  //   await _feedController.isFollowProcessing.runWithLoader(() async {
+  //     await _toggleFeedFollow(item);
+  //   });
+  // }
 
-    if (!isUserAuthenticated()) {
-      ToastUtils.showLoginToast();
-      return;
-    }
-
-    await _feedController.isFollowProcessing.runWithLoader(() async {
-      await _toggleFeedFollow(item);
-    });
-  }
-
-  Future<void> _toggleFeedFollow(Map<String, dynamic> item) async {
-    final bool wasFollowed = item['is_followed'] ?? false;
-
-    try {
-      if (wasFollowed) {
-        await _feedController.unfollowBusiness(item['follow_id'].toString());
-      } else {
-        await _feedController.followBusiness(item['business_id'].toString());
-      }
-
-      item['is_followed'] = !wasFollowed;
-      await _homeController.getHomeApi(showLoading: false);
-    } catch (e) {
-      handleError('Follow error: $e');
-      // Consider showing an error toast to the user
-    }
-  }
+  // Future<void> _toggleFeedFollow(Map<String, dynamic> item) async {
+  //   final bool wasFollowed = item['is_followed'] ?? false;
+  //
+  //   try {
+  //     if (wasFollowed) {
+  //       await _feedController.unfollowBusiness(item['follow_id'].toString());
+  //     } else {
+  //       await _feedController.followBusiness(item['business_id'].toString());
+  //     }
+  //
+  //     item['is_followed'] = !wasFollowed;
+  //     await _homeController.getHomeApi(showLoading: false);
+  //   } catch (e) {
+  //     handleError('Follow error: $e');
+  //     // Consider showing an error toast to the user
+  //   }
+  // }
 
   // Future<void> _handleOfferLike(Map<String, dynamic> item) async {
   //   if (_feedController.isLikeProcessing.value) return;
