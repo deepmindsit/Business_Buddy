@@ -24,6 +24,7 @@ class _BusinessCardState extends State<BusinessCard> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.data['request_type'] == 'user_chat') return SizedBox();
     return GestureDetector(
       onTap: () {
         Get.bottomSheet(
@@ -94,11 +95,11 @@ class _BusinessCardState extends State<BusinessCard> {
             ),
 
             Divider(color: Get.theme.dividerColor, thickness: 1),
-
-            _buildDetailRow(
-              firstText: 'Business Interest: ',
-              secondText: widget.data['category_names'].join(", "),
-            ),
+            if (widget.isRequested != true)
+              _buildDetailRow(
+                firstText: 'Business Interest: ',
+                secondText: widget.data['category_names'].join(", "),
+              ),
 
             _buildDetailRow(
               firstText: widget.data['what_you_look_for_id'].toString() == '3'
@@ -111,7 +112,7 @@ class _BusinessCardState extends State<BusinessCard> {
               firstText: 'Location: ',
               secondText: widget.data['location'] ?? '',
             ),
-            if (widget.data['note'].toString().isNotEmpty)
+            if (widget.data['note']?.toString().isNotEmpty == true)
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -186,6 +187,12 @@ class _BusinessCardState extends State<BusinessCard> {
         widget.data['self'] == false) {
       return _rightWrapper(child: _buildTextOnly("Your request\nis pending"));
     }
+
+    // if (widget.data['requested'] == true &&
+    //     widget.data['accepted'] == false &&
+    //     widget.isRequested == true) {
+    //   return _rightWrapper(child: _buildTextOnly("Your request\nis pending"));
+    // }
 
     if (widget.data['requested'] == false && widget.data['self'] == false) {
       return Obx(() {
@@ -359,6 +366,7 @@ class _BusinessCardState extends State<BusinessCard> {
             await getIt<InboxController>().initiateChat(
               reqId: widget.data['id'].toString(),
               type: 'business_requirement',
+              from: 'rec',
             );
           }
         }
@@ -445,7 +453,9 @@ class _BusinessCardState extends State<BusinessCard> {
     // Handle different menu selections
     switch (value) {
       case 'edit':
-        Get.back();
+        if (Navigator.of(context).canPop()) {
+          Navigator.of(context).pop();
+        }
         getIt<NavigationController>().openSubPage(
           EditRecruitment(recruitmentData: widget.data),
         );

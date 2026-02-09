@@ -61,13 +61,13 @@
                 <!-- /{slug}/post/{id} -->
                 <data
                     android:scheme="https"
-                    android:host="businessbuddy.deepmindsit.com"
+                    android:host="beta.bizyaari.com"
                     android:pathPattern="/.*/post/.*" />
 
                 <!-- /{slug}/offer/{id} -->
                 <data
                     android:scheme="https"
-                    android:host="businessbuddy.deepmindsit.com"
+                    android:host="beta.bizyaari.com"
                     android:pathPattern="/.*/offer/.*" />
             </intent-filter>
             <intent-filter>

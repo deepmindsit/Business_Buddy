@@ -694,7 +694,7 @@ class _AddBusinessState extends State<AddBusiness> {
             text: 'Close',
             onPressed: () {
               controller.clearData();
-              Get.back();
+              navController.backToHome();
             },
             backgroundColor: primaryColor,
             isPrimary: false,

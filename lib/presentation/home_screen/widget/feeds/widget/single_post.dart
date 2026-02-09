@@ -47,22 +47,34 @@ class _InstagramPostViewState extends State<InstagramPostView> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvokedWithResult: (bool didPop, Object? result) {
-        if (didPop) return;
-
-        Future.microtask(() {
-          if (!mounted) return;
-
-          if (widget.isFrom == 'deep') {
-            Get.offAllNamed(Routes.mainScreen);
-          } else {
-            Navigator.of(Get.context!).pop(); // ✅ SAFE
-          }
-        });
-      },
+      onPopInvokedWithResult: (_, __) => _handleBack(),
       child: Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        appBar: AppbarPlain(title: "Post"),
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          surfaceTintColor: Theme.of(context).scaffoldBackgroundColor,
+          foregroundColor: primaryBlack,
+          elevation: 0,
+          leading: BackButton(onPressed: () => _handleBack()),
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: Theme.of(context).brightness == Brightness.light
+                    ? [primaryColor.withValues(alpha: 0.5), Colors.white]
+                    : [primaryColor, Colors.black54],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+            ),
+          ),
+          centerTitle: true,
+          title: CustomText(
+            title: 'Post',
+            fontSize: 22.sp,
+            fontWeight: FontWeight.bold,
+            color: primaryBlack,
+          ),
+        ),
         body: Obx(
           () => controller.isSinglePostLoading.isTrue
               // ? LoadingWidget(color: primaryColor)
@@ -87,6 +99,28 @@ class _InstagramPostViewState extends State<InstagramPostView> {
         ),
       ),
     );
+  }
+
+  void _handleBack() {
+    if (Get.isBottomSheetOpen ?? false) {
+      Navigator.of(context).pop(); // close only bottomsheet
+      return;
+    }
+
+    if (widget.isFrom == 'deep') {
+      Get.offAllNamed(Routes.mainScreen);
+      return;
+    }
+
+    if (Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
+    }
+
+    // if (widget.isFrom == 'deep') {
+    //   Get.offAllNamed(Routes.mainScreen);
+    // } else {
+    //   Get.back();
+    // }
   }
 
   Widget _buildPostHeader() {
@@ -274,7 +308,8 @@ class _InstagramPostViewState extends State<InstagramPostView> {
               return ScaleTransition(scale: anim, child: child);
             },
             child: _buildRightIcon(
-              key: ValueKey(isLiked), // 🔥 REQUIRED
+              key: ValueKey(isLiked),
+              // 🔥 REQUIRED
               isLike: true,
               icon: isLiked ? Icons.favorite : Icons.favorite_border,
               color: isLiked ? Colors.red : Colors.white,
@@ -304,6 +339,7 @@ class _InstagramPostViewState extends State<InstagramPostView> {
     }
     Get.bottomSheet(
       CommentsBottomSheet(
+        isSingle: true,
         postId: controller.singlePost['id']?.toString() ?? '',
       ),
       isDismissible: true,

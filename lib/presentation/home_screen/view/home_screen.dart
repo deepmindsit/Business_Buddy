@@ -74,7 +74,106 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: SingleChildScrollView(child: _buildHomeContent()),
+      body: Obx(
+        () => _homeController.isAvailable.isTrue
+            ? _serviceNotFound()
+            : SingleChildScrollView(child: _buildHomeContent()),
+      ),
+    );
+  }
+
+  Widget _serviceNotFound() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            /// 🚫 Icon / Illustration
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.red.withValues(alpha: 0.1),
+              ),
+              child: const Icon(
+                Icons.location_off_rounded,
+                size: 72,
+                color: Colors.red,
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            /// Title
+            const CustomText(
+              title: 'Service Not Available',
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
+
+            /// Description
+            const Text(
+              'Sorry, we’re not providing services in your area at the moment.',
+              style: TextStyle(fontSize: 14, color: Colors.grey),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Please try a different location or check back later.',
+              style: TextStyle(fontSize: 12, color: Colors.grey),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 32),
+
+            /// 🔁 Action Button
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Get.bottomSheet(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(24.r),
+                        topRight: Radius.circular(24.r),
+                      ),
+                    ),
+                    backgroundColor: Colors.white,
+                    isScrollControlled: true,
+                    SafeArea(
+                      child: DraggableScrollableSheet(
+                        expand: false,
+                        initialChildSize: 0.85,
+                        minChildSize: 0.5,
+                        maxChildSize: 1.0,
+                        builder: (_, controllerScroll) {
+                          return SearchLocation();
+                        },
+                      ),
+                    ),
+                    enableDrag: true,
+                    isDismissible: true,
+                  );
+                  // OR:open location picker
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: primaryColor,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
+                child: const Text(
+                  'Change Location',
+                  style: TextStyle(fontSize: 16),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -113,6 +212,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return Obx(
       () => _homeController.isMainLoading.isTrue
           ? _buildSliderLoader()
+          : _homeController.sliderList.isEmpty
+          ? const SizedBox.shrink()
           : AnimationLimiter(
               child: AnimationConfiguration.staggeredList(
                 position: 0,

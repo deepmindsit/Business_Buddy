@@ -434,7 +434,7 @@ class FeedCard extends StatelessWidget {
       return;
     }
     Get.bottomSheet(
-      CommentsBottomSheet(postId: data['post_id']?.toString() ?? ''),
+      CommentsBottomSheet(postId: data['post_id']?.toString() ?? '',isSingle: false,),
       isDismissible: true,
       isScrollControlled: true,
       backgroundColor: Colors.grey.withValues(alpha: 0.05),

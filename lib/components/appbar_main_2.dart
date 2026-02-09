@@ -256,7 +256,7 @@ class CustomMainHeader2 extends StatelessWidget {
           ToastUtils.showLoginToast();
           return;
         }
-        Get.toNamed(Routes.profile, arguments: {'user_id': 'self'});
+        Get.toNamed(Routes.profile, arguments: {'user_id': 'self','is_search': false,});
       },
       child: Container(
         padding: EdgeInsets.all(8.w),

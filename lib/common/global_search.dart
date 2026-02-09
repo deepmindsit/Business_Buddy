@@ -363,6 +363,11 @@ class _GlobalSearchState extends State<GlobalSearch> {
                         children: _controller.expertList.map<Widget>((expert) {
                           return GestureDetector(
                             onTap: () async {
+                              if (!getIt<DemoService>().isDemo) {
+                                ToastUtils.showLoginToast();
+                                return;
+                              }
+
                               final userId =
                                   await LocalStorage.getString('user_id') ?? '';
                               if (userId == expert['user_id']?.toString()) {
@@ -376,6 +381,7 @@ class _GlobalSearchState extends State<GlobalSearch> {
                                   arguments: {
                                     'user_id':
                                         expert['user_id']?.toString() ?? '',
+                                    'is_search': true,
                                   },
                                 );
                               }
@@ -440,13 +446,13 @@ class _GlobalSearchState extends State<GlobalSearch> {
                                   ),
                                   // if (controller.isMe.isTrue)
                                   GestureDetector(
-                                    onTap: () => Get.toNamed(
-                                      Routes.profile,
-                                      arguments: {
-                                        'user_id':
-                                            expert['user_id']?.toString() ?? '',
-                                      },
-                                    ),
+                                    // onTap: () => Get.toNamed(
+                                    //   Routes.profile,
+                                    //   arguments: {
+                                    //     'user_id':
+                                    //         expert['user_id']?.toString() ?? '',
+                                    //   },
+                                    // ),
                                     child: HugeIcon(
                                       icon: HugeIcons.strokeRoundedArrowRight01,
                                     ),

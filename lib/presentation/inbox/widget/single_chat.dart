@@ -65,6 +65,7 @@ class _SingleChatState extends State<SingleChat> {
               onTap: () => Get.toNamed(
                 Routes.profile,
                 arguments: {
+                  'is_search': false,
                   'user_id':
                       controller.singleChat['other_user_id']?.toString() ?? '',
                 },

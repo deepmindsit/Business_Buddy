@@ -295,9 +295,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final chatInitiated = details['chat_initiated'] == true;
     final requestSent = details['request_sent'] == true;
     final requestAccepted = details['is_request_accepted'] == true;
-
+    final args = Get.arguments as Map<String, dynamic>?; // 👈 SAFE
+    final isSearch = args?['is_search'] == true;
     if (chatInitiated) {
       Get.back();
+      if (isSearch) {
+        Get.back();
+      }
       getIt<NavigationController>().openSubPage(
         SingleChat(chatId: details['chat_id']?.toString() ?? ''),
       );
@@ -424,7 +428,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           const SizedBox(height: 8),
           // Name
           _followingCount(),
-          Divider(color: lightGrey, height: 1),
         ],
       ),
     );
@@ -514,6 +517,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         spacing: 8.h,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Divider(color: lightGrey, height: 1),
           if (controller.profileDetails['about'] != null) ...[
             _Section(
               title: 'About Me',

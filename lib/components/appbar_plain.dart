@@ -26,6 +26,7 @@ class AppbarPlain extends StatelessWidget implements PreferredSizeWidget {
       surfaceTintColor: Theme.of(context).scaffoldBackgroundColor,
       foregroundColor: primaryBlack,
       elevation: 0,
+      leading: BackButton(),
       flexibleSpace: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(

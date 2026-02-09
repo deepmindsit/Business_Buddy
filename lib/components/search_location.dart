@@ -390,28 +390,21 @@ class _SearchLocationState extends State<SearchLocation> {
     );
   }
 
-  void _onLocationSelected(Map<String, dynamic> searchPlace) {
+  void _onLocationSelected(Map<String, dynamic> searchPlace) async {
     controller.addressController.text = searchPlace['description'] ?? '';
     controller.address.value = searchPlace['description'] ?? '';
     getIt<LocationController>().updateLocation(
       lat: double.parse(searchPlace['lat']),
       lng: double.parse(searchPlace['lng']),
     );
-    // Uncomment and use these as needed
-    // Get.find<HomeControllerC>().area.value = searchPlace['area'];
-    // Get.find<HomeControllerC>().city.value = searchPlace['city'];
-    // Get.find<HomeControllerC>().state.value = searchPlace['state'];
-    // Get.find<HomeControllerC>().country.value = searchPlace['country'];
-    // controller.lat.value = searchPlace['lat'];
-    // controller.lng.value = searchPlace['lng'];
-
-    // debugPrint('Selected location: ${searchPlace['description']}');
-    // debugPrint('Latitude: ${searchPlace['lat']}');
-    // debugPrint('Longitude: ${searchPlace['lng']}');
-
     controller.addressList.value = [];
-    Get.back();
     _isLoading.value = false;
+    if (Get.isSnackbarOpen) {
+      Get.closeAllSnackbars();
+    }
+
+    Get.back();
+    await getIt<HomeController>().getHomeApi();
   }
 
   void _showCurrentLocationLoader() {

@@ -164,6 +164,7 @@ class InboxController extends GetxController {
   }
 
   final initiateLoadingMap = <String, bool>{}.obs;
+  final nav = getIt<NavigationController>();
 
   Future<void> initiateChat({
     String reqId = '',
@@ -173,10 +174,6 @@ class InboxController extends GetxController {
   }) async {
     initiateLoadingMap[reqId] = true;
     initiateLoadingMap.refresh();
-    print(otherUserId);
-    print('from');
-    print(type);
-    print(from);
 
     try {
       final userId = await LocalStorage.getString('user_id') ?? '';
@@ -186,47 +183,29 @@ class InboxController extends GetxController {
         otherUserId,
         type,
       );
-      print('API Response: $response');
       if (response['common']['status'] == true) {
         String chatId = '';
 
-        if (from == 'profile') {
-          chatId =
-              response['data']?['chat_details']?['chat_id']?.toString() ?? '';
-
-          // Get.back();
-          // getIt<NavigationController>().openSubPage(
-          //   SingleChat(
-          //     chatId:
-          //         response['data']['chat_details']['chat_id']?.toString() ?? '',
-          //   ),
-          // );
-        } else {
-          chatId =
-              response['data']['business_requirement_chat_details']['business_requirement_chat_id']
-                  ?.toString() ??
-              '';
-
-          // getIt<NavigationController>().openSubPage(
-          //   SingleChat(
-          //     chatId:
-          //         response['data']['business_requirement_chat_details']['business_requirement_chat_id']
-          //             ?.toString() ??
-          //         '',
-          //   ),
-          // );
-        }
+        chatId =
+            response['data']?['chat_details']?['chat_id']?.toString() ?? '';
 
         if (chatId.isEmpty) {
           ToastUtils.showErrorToast("Chat ID not found!");
           return;
         }
-        // Navigate to chat page
-        if (from == 'profile') {
-          Get.back(); // Close previous screen
-        }
 
-        getIt<NavigationController>().openSubPage(SingleChat(chatId: chatId));
+        if (from == 'profile') {
+          Get.back();
+          nav.openSubPage(SingleChat(chatId: chatId));
+        } else if (from == 'rec') {
+          nav.updateBottomIndex(1); // Inbox
+          // wait for stack rebuild
+          Future.microtask(() {
+            nav.openSubPage(SingleChat(chatId: chatId));
+          });
+        } else {
+          nav.openSubPage(SingleChat(chatId: chatId));
+        }
       } else {
         ToastUtils.showErrorToast(response['common']['message'].toString());
       }
@@ -268,6 +247,7 @@ class InboxController extends GetxController {
         userId,
         currentRecPage.toString(),
       );
+
       if (response['common']['status'] == true) {
         final data = response['data'];
 
@@ -308,7 +288,7 @@ class InboxController extends GetxController {
       final response = await _apiService.acceptBusinessRequest(userId, reqId);
 
       if (response['common']['status'] == true) {
-        await getReceiveBusinessRequest();
+        await getReceiveBusinessRequest(isRefresh: true);
         ToastUtils.showSuccessToast(response['common']['message']);
       } else {
         ToastUtils.showWarningToast(response['common']['message']);

@@ -3,11 +3,13 @@ import '../../../../../utils/exported_path.dart';
 class CommentsBottomSheet extends StatefulWidget {
   final String postId;
   final bool isPost;
+  final bool isSingle;
 
   const CommentsBottomSheet({
     super.key,
     required this.postId,
     this.isPost = true,
+    this.isSingle = false,
   });
 
   @override
@@ -17,16 +19,19 @@ class CommentsBottomSheet extends StatefulWidget {
 class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
   final commentController = getIt<FeedsController>();
   final controller = getIt<LBOController>();
+
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (widget.isPost == true) {
-        commentController.getSinglePost(widget.postId);
-      } else {
-        controller.getSingleOffer(widget.postId);
-      }
-    });
     super.initState();
+    if (widget.isSingle == false) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (widget.isPost == true) {
+          commentController.getSinglePost(widget.postId);
+        } else {
+          controller.getSingleOffer(widget.postId);
+        }
+      });
+    }
   }
 
   @override
@@ -48,7 +53,10 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
             children: [
               // Header
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 12,
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -60,8 +68,8 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                       color: primaryBlack,
                     ),
                     IconButton(
-                      onPressed: () => Get.back(),
-                      icon: Icon(Icons.close, size: 24),
+                      onPressed: closeBottomSheet,
+                      icon: Icon(Icons.close, size: 24.sp),
                       padding: EdgeInsets.zero,
                       constraints: BoxConstraints(),
                     ),
@@ -121,6 +129,24 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
         );
       },
     );
+  }
+
+  void closeBottomSheet() {
+    if (Get.isBottomSheetOpen ?? false) {
+      Navigator.of(context).pop(); // close bottom sheet only
+      return;
+    }
+
+    if (Get.isDialogOpen ?? false) {
+      Get.back(); // dialog is safe
+      return;
+    }
+
+    Get.back();
+
+    // if (Get.isBottomSheetOpen ?? false) {
+    //   Get.back();
+    // }
   }
 
   Widget _buildEmptyComment() {

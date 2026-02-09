@@ -30,7 +30,7 @@ class _BlockUserListState extends State<BlockUserList> {
         /// 🔹 Empty State
         if (controller.blockList.isEmpty) {
           return Center(
-            child: CustomText(title: 'No block user', fontSize: 14.sp),
+            child: CustomText(title: 'No block user', fontSize: 14.sp,color: primaryBlack,),
           );
         }
 

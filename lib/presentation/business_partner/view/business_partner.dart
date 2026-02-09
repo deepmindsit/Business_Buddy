@@ -317,13 +317,11 @@ class _BusinessPartnerState extends State<BusinessPartner>
                 child: ListView.separated(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
-                  separatorBuilder: (context, index) =>
-                      Divider(height: 5, color: lightGrey),
+                  separatorBuilder: (context, index) => SizedBox.shrink(),
                   padding: const EdgeInsets.all(8),
                   itemCount: controller.requestedBusinessList.length,
                   itemBuilder: (context, index) {
                     final data = controller.requestedBusinessList[index];
-
                     return AnimationConfiguration.staggeredList(
                       position: index,
                       duration: const Duration(milliseconds: 375),

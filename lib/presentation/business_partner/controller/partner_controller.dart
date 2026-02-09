@@ -96,14 +96,6 @@ class PartnerDataController extends GetxController {
 
     final latitude = getIt<LocationController>().latitude.value.toString();
     final longitude = getIt<LocationController>().longitude.value.toString();
-    // print('search.value=======>  ${lat.value},${lng.value},');
-    // print('live.value=======>$latitude,$longitude');
-    // print('currentBusinessPage=======>$currentBusinessPage');
-    // print('selectedCategory=======>$selectedCategory');
-    // print('sort=======>$sort');
-    // print('lookingFor=======>$lookingFor');
-    // print('selectedExp=======>$selectedExp');
-    // print('userId=======>$userId');
     try {
       final response = await _apiService.businessReqList(
         userId,
@@ -439,9 +431,10 @@ class PartnerDataController extends GetxController {
     try {
       final response = await _apiService.acceptDisclaimer(data, userId);
       if (response['common']['status'] == true) {
-        ToastUtils.showSuccessToast(response['common']['message']);
         Get.back();
+        ToastUtils.showSuccessToast(response['common']['message']);
       } else {
+        Get.back();
         ToastUtils.showWarningToast(response['common']['message']);
       }
     } catch (e) {

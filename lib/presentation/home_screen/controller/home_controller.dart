@@ -8,7 +8,7 @@ class HomeController extends GetxController {
   final isLoading = false.obs;
   final isMainLoading = false.obs;
   final showNotificationDot = false.obs;
-
+  final isAvailable = false.obs;
   final feedsList = [].obs;
   final categoryList = [].obs;
   final requirementList = [].obs;
@@ -19,7 +19,6 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-
     _loadInitialHome();
     requestLocationPermission();
 
@@ -35,7 +34,9 @@ class HomeController extends GetxController {
 
   Future<void> _loadInitialHome() async {
     isMainLoading.value = true;
-    await getHomeApi();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await getHomeApi();
+    });
     _initialApiCalled.value = true;
     isMainLoading.value = false;
   }
@@ -107,6 +108,8 @@ class HomeController extends GetxController {
         requirementList.value = data['business_requirements'] ?? [];
         sliderList.value = data['sliders'] ?? [];
         showNotificationDot.value = data['show_notification'] ?? false;
+      } else {
+        isAvailable.value = response['common']['no_data_found'] ?? false;
       }
     } catch (e) {
       showError(e);

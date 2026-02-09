@@ -16,8 +16,13 @@ class _EditBusinessState extends State<EditBusiness> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       expController.getCategories();
-      if (Get.arguments['data'] != null) {
-        controller.setBusinessDetails(Get.arguments['data']);
+      final args = Get.arguments;
+      if (args != null && args['data'] != null) {
+        final Map<String, dynamic> data = Map<String, dynamic>.from(
+          args['data'],
+        );
+
+        controller.setBusinessDetails(data);
       }
     });
     getUserNumber();

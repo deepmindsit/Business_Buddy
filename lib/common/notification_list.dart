@@ -60,10 +60,16 @@ class _NotificationListState extends State<NotificationList> {
                           if (Get.isOverlaysOpen) {
                             Get.back();
                           }
+                          if (notification['title'] == 'Request Accepted') {
+                            Get.back();
+                            getIt<NavigationController>().updateBottomIndex(2);
+                            return;
+                          }
                           if (notification['type'] == 'business_follow') {
                             Get.toNamed(
                               Routes.profile,
                               arguments: {
+                                'is_search': false,
                                 'user_id':
                                     data['follower_id']?.toString() ?? '',
                               },

@@ -31,7 +31,7 @@ class _ChatScreenState extends State<ChatScreen> {
               scroll.metrics.pixels >= scroll.metrics.maxScrollExtent - 50 &&
               controller.hasMore &&
               !controller.isLoadMore.value &&
-              !controller.isLoading.value) {
+              !controller.isChatLoading.value) {
             controller.getAllChat(showLoading: false);
           }
           return false;
@@ -112,7 +112,9 @@ class _ChatScreenState extends State<ChatScreen> {
           () => controller.isLoadMore.value
               ? SliverPadding(
                   padding: EdgeInsets.symmetric(vertical: 16.h),
-                  sliver: LoadingWidget(color: primaryColor),
+                  sliver: SliverToBoxAdapter(
+                    child: LoadingWidget(color: primaryColor),
+                  ),
                 )
               : SliverToBoxAdapter(child: const SizedBox()),
         ),
@@ -152,7 +154,15 @@ class _ChatScreenState extends State<ChatScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           chat['chat_type'] == 'user_to_user'
-              ? SizedBox()
+              ? CustomText(
+                  title: chat['latest_message'] == null
+                      ? 'No messages yet'
+                      : chat['latest_message'] ?? '',
+                  fontSize: 12.sp,
+                  textAlign: TextAlign.start,
+                  color: primaryBlack,
+                  // maxLines: 1,
+                )
               : CustomText(
                   title: chat['self_business_requirement'] == true
                       ? chat['user_name'] ?? ''

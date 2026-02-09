@@ -34,22 +34,36 @@ class _InstagramOfferViewState extends State<InstagramOfferView> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvokedWithResult: (bool didPop, Object? result) {
-        if (didPop) return;
-
-        Future.microtask(() {
-          if (!mounted) return;
-
-          if (widget.isFrom == 'deep') {
-            Get.offAllNamed(Routes.mainScreen);
-          } else {
-            Get.back();
-          }
-        });
-      },
+      onPopInvokedWithResult: (_, __) => _handleBack(),
       child: Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        appBar: AppbarPlain(title: 'Special Offer', showBackButton: false),
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          surfaceTintColor: Theme.of(context).scaffoldBackgroundColor,
+          foregroundColor: primaryBlack,
+          elevation: 0,
+          leading: BackButton(onPressed: () => _handleBack()),
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: Theme.of(context).brightness == Brightness.light
+                    ? [primaryColor.withValues(alpha: 0.5), Colors.white]
+                    : [primaryColor, Colors.black54],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+            ),
+          ),
+          centerTitle: true,
+          title: CustomText(
+            title: 'Special Offer',
+            fontSize: 22.sp,
+            fontWeight: FontWeight.bold,
+            color: primaryBlack,
+          ),
+        ),
+
+        // AppbarPlain(title: 'Special Offer', showBackButton: false),
         body: Obx(
           () => controller.isSingleOfferLoading.isTrue
               ? OfferDetailShimmer()
@@ -83,6 +97,28 @@ class _InstagramOfferViewState extends State<InstagramOfferView> {
         ),
       ),
     );
+  }
+
+  void _handleBack() {
+    if (Get.isBottomSheetOpen ?? false) {
+      Navigator.of(context).pop(); // close only bottomsheet
+      return;
+    }
+
+    if (widget.isFrom == 'deep') {
+      Get.offAllNamed(Routes.mainScreen);
+      return;
+    }
+
+    if (Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
+    }
+
+    // if (widget.isFrom == 'deep') {
+    //   Get.offAllNamed(Routes.mainScreen);
+    // } else {
+    //   Get.back();
+    // }
   }
 
   Widget _buildOfferHeader() {
@@ -332,6 +368,7 @@ class _InstagramOfferViewState extends State<InstagramOfferView> {
       CommentsBottomSheet(
         postId: controller.singleOffer['id']?.toString() ?? '',
         isPost: false,
+        isSingle: true,
       ),
       isDismissible: true,
       isScrollControlled: true,

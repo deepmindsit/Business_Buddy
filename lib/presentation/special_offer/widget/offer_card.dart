@@ -603,7 +603,7 @@ class OfferCard extends StatelessWidget {
       return;
     }
     Get.bottomSheet(
-      CommentsBottomSheet(postId: data['id']?.toString() ?? '', isPost: false),
+      CommentsBottomSheet(postId: data['id']?.toString() ?? '', isPost: false,isSingle: false,),
       isDismissible: true,
       isScrollControlled: true,
       backgroundColor: Colors.grey.withValues(alpha: 0.05),

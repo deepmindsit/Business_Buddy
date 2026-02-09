@@ -211,9 +211,11 @@ class ExplorerController extends GetxController {
         rating.value.toString(),
       );
       if (response['common']['status'] == true) {
+        Get.back();
         // await getBusinessDetails(businessId, showLoading: false);
         ToastUtils.showSuccessToast(response['common']['message'].toString());
       } else {
+        Get.back();
         ToastUtils.showErrorToast(response['common']['message'].toString());
       }
     } catch (e) {
